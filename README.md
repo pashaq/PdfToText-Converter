@@ -17,7 +17,7 @@ namespace Convers.test
     {
         static void Main(string[] args)
         {
-            //var lines = Converter.PdfConverter.ToText("d:/pdf.pdf");
+            //var lines = Converter.PdfConverter.ToStrings("d:/pdf.pdf");
             var text = Converter.PdfConverter.ToText("d:/pdf.pdf");
 
             text = text.Replace('\t', ' ');
