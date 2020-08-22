@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30320.27
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Convers", "Convers\Convers.csproj", "{AA868F2F-5B2D-4FCC-AFD9-6451C0DBBA49}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Convers.Test", "Convers.test\Convers.Test.csproj", "{18EA5C42-C2DD-4597-8995-47C51ED87994}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AA868F2F-5B2D-4FCC-AFD9-6451C0DBBA49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA868F2F-5B2D-4FCC-AFD9-6451C0DBBA49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA868F2F-5B2D-4FCC-AFD9-6451C0DBBA49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA868F2F-5B2D-4FCC-AFD9-6451C0DBBA49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18EA5C42-C2DD-4597-8995-47C51ED87994}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18EA5C42-C2DD-4597-8995-47C51ED87994}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18EA5C42-C2DD-4597-8995-47C51ED87994}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18EA5C42-C2DD-4597-8995-47C51ED87994}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8FA12C92-4817-4A18-9513-ADE3586A679F}
+	EndGlobalSection
+EndGlobal
