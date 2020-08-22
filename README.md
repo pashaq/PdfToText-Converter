@@ -2,6 +2,7 @@
 Converting the Pdf document to text or to the list of articles.
 
 Using open source itext7.
+Dependence as dependence itext7.
 
 Correct articles definition.
 
