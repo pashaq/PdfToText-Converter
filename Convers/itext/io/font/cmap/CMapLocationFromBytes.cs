@@ -41,23 +41,19 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Source;
 using System;
+using iText.IO.Source;
 
-namespace iText.IO.Font.Cmap
-{
+namespace iText.IO.Font.Cmap {
     /// <author>psoares</author>
-    public class CMapLocationFromBytes : ICMapLocation
-    {
+    public class CMapLocationFromBytes : ICMapLocation {
         private byte[] data;
 
-        public CMapLocationFromBytes(byte[] data)
-        {
+        public CMapLocationFromBytes(byte[] data) {
             this.data = data;
         }
 
-        public virtual PdfTokenizer GetLocation(String location)
-        {
+        public virtual PdfTokenizer GetLocation(String location) {
             return new PdfTokenizer(new RandomAccessFileOrArray(new RandomAccessSourceFactory().CreateSource(data)));
         }
     }

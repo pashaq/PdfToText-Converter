@@ -27,99 +27,99 @@
 //        SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //        http://www.adobe.com/devnet/xmp/library/eula-xmp-library-java.html
-using iText.IO.Util;
-using iText.Kernel.XMP.Options;
 using System;
 using System.IO;
+using iText.IO.Util;
+using iText.Kernel.XMP.Options;
 
 namespace iText.Kernel.XMP.Impl
 {
-    /// <summary>
-    /// Serializes the <code>XMPMeta</code>-object to an <code>OutputStream</code> according to the
-    /// <code>SerializeOptions</code>.
-    /// </summary>
-    /// <since>11.07.2006</since>
-    public class XMPSerializerHelper
-    {
-        /// <summary>Static method to serialize the metadata object.</summary>
-        /// <remarks>
-        /// Static method to serialize the metadata object. For each serialisation, a new XMPSerializer
-        /// instance is created, either XMPSerializerRDF or XMPSerializerPlain so thats its possible to
-        /// serialialize the same XMPMeta objects in two threads.
-        /// </remarks>
-        /// <param name="xmp">a metadata implementation object</param>
-        /// <param name="out">the output stream to serialize to</param>
-        /// <param name="options">serialization options, can be <code>null</code> for default.
-        /// 	</param>
-        /// <exception cref="iText.Kernel.XMP.XMPException">if serialization failed</exception>
-        public static void Serialize(XMPMetaImpl xmp, Stream output, SerializeOptions options
-            )
-        {
-            options = options != null ? options : new SerializeOptions();
-            // sort the internal data model on demand
-            if (options.GetSort())
-            {
-                xmp.Sort();
-            }
-            new XMPSerializerRdf().Serialize(xmp, output, options);
-        }
+	/// <summary>
+	/// Serializes the <code>XMPMeta</code>-object to an <code>OutputStream</code> according to the
+	/// <code>SerializeOptions</code>.
+	/// </summary>
+	/// <since>11.07.2006</since>
+	public class XMPSerializerHelper
+	{
+		/// <summary>Static method to serialize the metadata object.</summary>
+		/// <remarks>
+		/// Static method to serialize the metadata object. For each serialisation, a new XMPSerializer
+		/// instance is created, either XMPSerializerRDF or XMPSerializerPlain so thats its possible to
+		/// serialialize the same XMPMeta objects in two threads.
+		/// </remarks>
+		/// <param name="xmp">a metadata implementation object</param>
+		/// <param name="out">the output stream to serialize to</param>
+		/// <param name="options">serialization options, can be <code>null</code> for default.
+		/// 	</param>
+		/// <exception cref="iText.Kernel.XMP.XMPException">if serialization failed</exception>
+		public static void Serialize(XMPMetaImpl xmp, Stream output, SerializeOptions options
+			)
+		{
+			options = options != null ? options : new SerializeOptions();
+			// sort the internal data model on demand
+			if (options.GetSort())
+			{
+				xmp.Sort();
+			}
+			new XMPSerializerRdf().Serialize(xmp, output, options);
+		}
 
-        /// <summary>Serializes an <code>XMPMeta</code>-object as RDF into a string.</summary>
-        /// <remarks>
-        /// Serializes an <code>XMPMeta</code>-object as RDF into a string.
-        /// <em>Note:</em> Encoding is forced to UTF-16 when serializing to a
-        /// string to ensure the correctness of &quot;exact packet size&quot;.
-        /// </remarks>
-        /// <param name="xmp">a metadata implementation object</param>
-        /// <param name="options">
-        /// Options to control the serialization (see
-        /// <see cref="iText.Kernel.XMP.Options.SerializeOptions"/>
-        /// ).
-        /// </param>
-        /// <returns>Returns a string containing the serialized RDF.</returns>
-        /// <exception cref="iText.Kernel.XMP.XMPException">on serialization errors.</exception>
-        public static String SerializeToString(XMPMetaImpl xmp, SerializeOptions options)
-        {
-            // forces the encoding to be UTF-16 to get the correct string length
-            options = options ?? new SerializeOptions();
-            options.SetEncodeUTF16BE(true);
+		/// <summary>Serializes an <code>XMPMeta</code>-object as RDF into a string.</summary>
+		/// <remarks>
+		/// Serializes an <code>XMPMeta</code>-object as RDF into a string.
+		/// <em>Note:</em> Encoding is forced to UTF-16 when serializing to a
+		/// string to ensure the correctness of &quot;exact packet size&quot;.
+		/// </remarks>
+		/// <param name="xmp">a metadata implementation object</param>
+		/// <param name="options">
+		/// Options to control the serialization (see
+		/// <see cref="iText.Kernel.XMP.Options.SerializeOptions"/>
+		/// ).
+		/// </param>
+		/// <returns>Returns a string containing the serialized RDF.</returns>
+		/// <exception cref="iText.Kernel.XMP.XMPException">on serialization errors.</exception>
+		public static String SerializeToString(XMPMetaImpl xmp, SerializeOptions options)
+		{
+			// forces the encoding to be UTF-16 to get the correct string length
+			options = options ?? new SerializeOptions();
+			options.SetEncodeUTF16BE(true);
 
-            MemoryStream output = new MemoryStream(2048);
-            Serialize(xmp, output, options);
+			MemoryStream output = new MemoryStream(2048);
+			Serialize(xmp, output, options);
 
-            try
-            {
-                return new EncodingNoPreamble(IanaEncodings.GetEncodingEncoding(options.GetEncoding())).GetString(output.GetBuffer());
-            }
-            catch (Exception)
-            {
-                // cannot happen as UTF-8/16LE/BE is required to be implemented in
-                // Java
-                return GetString(output.GetBuffer());
-            }
-        }
+			try
+			{
+				return new EncodingNoPreamble(IanaEncodings.GetEncodingEncoding(options.GetEncoding())).GetString(output.GetBuffer());
+			}
+			catch (Exception)
+			{
+				// cannot happen as UTF-8/16LE/BE is required to be implemented in
+				// Java
+				return GetString(output.GetBuffer());
+			}
+		}
 
-        /// <summary>Serializes an <code>XMPMeta</code>-object as RDF into a byte buffer.</summary>
-        /// <param name="xmp">a metadata implementation object</param>
-        /// <param name="options">
-        /// Options to control the serialization (see
-        /// <see cref="iText.Kernel.XMP.Options.SerializeOptions"/>
-        /// ).
-        /// </param>
-        /// <returns>Returns a byte buffer containing the serialized RDF.</returns>
-        /// <exception cref="iText.Kernel.XMP.XMPException">on serialization errors.</exception>
-        public static byte[] SerializeToBuffer(XMPMetaImpl xmp, SerializeOptions options)
-        {
-            MemoryStream output = new MemoryStream(2048);
-            Serialize(xmp, output, options);
-            return output.ToArray();
-        }
+		/// <summary>Serializes an <code>XMPMeta</code>-object as RDF into a byte buffer.</summary>
+		/// <param name="xmp">a metadata implementation object</param>
+		/// <param name="options">
+		/// Options to control the serialization (see
+		/// <see cref="iText.Kernel.XMP.Options.SerializeOptions"/>
+		/// ).
+		/// </param>
+		/// <returns>Returns a byte buffer containing the serialized RDF.</returns>
+		/// <exception cref="iText.Kernel.XMP.XMPException">on serialization errors.</exception>
+		public static byte[] SerializeToBuffer(XMPMetaImpl xmp, SerializeOptions options)
+		{
+			MemoryStream output = new MemoryStream(2048);
+			Serialize(xmp, output, options);
+			return output.ToArray();
+		}
 
-        static string GetString(byte[] bytes)
-        {
-            char[] chars = new char[bytes.Length / sizeof(char)];
-            Buffer.BlockCopy(bytes, 0, chars, 0, bytes.Length);
-            return new string(chars);
-        }
-    }
+		static string GetString(byte[] bytes)
+		{
+			char[] chars = new char[bytes.Length / sizeof(char)];
+			Buffer.BlockCopy(bytes, 0, chars, 0, bytes.Length);
+			return new string(chars);
+		}
+	}
 }

@@ -41,16 +41,14 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
 using Common.Logging;
 using iText.IO.Util;
 using iText.Kernel.Pdf.Colorspace;
-using System;
 
-namespace iText.Kernel.Colors
-{
+namespace iText.Kernel.Colors {
     /// <summary>Color space to specify colors according to RGB color model.</summary>
-    public class DeviceRgb : Color
-    {
+    public class DeviceRgb : Color {
         /// <summary>Predefined black DeviceRgb color</summary>
         public static readonly Color BLACK = new iText.Kernel.Colors.DeviceRgb(0, 0, 0);
 
@@ -77,8 +75,7 @@ namespace iText.Kernel.Colors
         /// <param name="g">the intensity of green colorant</param>
         /// <param name="b">the intensity of blue colorant</param>
         public DeviceRgb(int r, int g, int b)
-            : this(r / 255f, g / 255f, b / 255f)
-        {
+            : this(r / 255f, g / 255f, b / 255f) {
         }
 
         /// <summary>Creates DeviceRgb color by intensities of red, green and blue colorants.</summary>
@@ -92,11 +89,9 @@ namespace iText.Kernel.Colors
         /// <param name="g">the intensity of green colorant</param>
         /// <param name="b">the intensity of blue colorant</param>
         public DeviceRgb(float r, float g, float b)
-            : base(new PdfDeviceCs.Rgb(), new float[] { r > 1 ? 1 : (r > 0 ? r : 0), g > 1 ? 1 : (g > 0 ? g : 0), b >
-                1 ? 1 : (b > 0 ? b : 0) })
-        {
-            if (r > 1 || r < 0 || g > 1 || g < 0 || b > 1 || b < 0)
-            {
+            : base(new PdfDeviceCs.Rgb(), new float[] { r > 1 ? 1 : (r > 0 ? r : 0), g > 1 ? 1 : (g > 0 ? g : 0), b > 
+                1 ? 1 : (b > 0 ? b : 0) }) {
+            if (r > 1 || r < 0 || g > 1 || g < 0 || b > 1 || b < 0) {
                 ILog LOGGER = LogManager.GetLogger(typeof(iText.Kernel.Colors.DeviceRgb));
                 LOGGER.Warn(iText.IO.LogMessageConstant.COLORANT_INTENSITIES_INVALID);
             }
@@ -104,8 +99,7 @@ namespace iText.Kernel.Colors
 
         /// <summary>Creates DeviceRgb color with all colorants intensities initialised as zeroes.</summary>
         public DeviceRgb()
-            : this(0f, 0f, 0f)
-        {
+            : this(0f, 0f, 0f) {
         }
 
 #if !NETSTANDARD1_6
@@ -117,10 +111,8 @@ namespace iText.Kernel.Colors
         /// </summary>
         /// <param name="color">the color which RGB values are used</param>
         public DeviceRgb(System.Drawing.Color color)
-            : this(color.R, color.G, color.B)
-        {
-            if (color.A != 255)
-            {
+            : this(color.R, color.G, color.B) {
+            if (color.A != 255) {
                 ILog LOGGER = LogManager.GetLogger(typeof(iText.Kernel.Colors.DeviceRgb));
                 LOGGER.Warn(MessageFormatUtil.Format(iText.IO.LogMessageConstant.COLOR_ALPHA_CHANNEL_IS_IGNORED, color.A));
             }
@@ -135,14 +127,12 @@ namespace iText.Kernel.Colors
         /// </summary>
         /// <param name="rgbColor">the DeviceRgb color to be made lighter</param>
         /// <returns>lighter color</returns>
-        public static iText.Kernel.Colors.DeviceRgb MakeLighter(iText.Kernel.Colors.DeviceRgb rgbColor)
-        {
+        public static iText.Kernel.Colors.DeviceRgb MakeLighter(iText.Kernel.Colors.DeviceRgb rgbColor) {
             float r = rgbColor.GetColorValue()[0];
             float g = rgbColor.GetColorValue()[1];
             float b = rgbColor.GetColorValue()[2];
             float v = Math.Max(r, Math.Max(g, b));
-            if (v == 0f)
-            {
+            if (v == 0f) {
                 return new iText.Kernel.Colors.DeviceRgb(0x54, 0x54, 0x54);
             }
             float multiplier = Math.Min(1f, v + 0.33f) / v;
@@ -159,8 +149,7 @@ namespace iText.Kernel.Colors
         /// </summary>
         /// <param name="rgbColor">the DeviceRgb color to be made darker</param>
         /// <returns>darker color</returns>
-        public static iText.Kernel.Colors.DeviceRgb MakeDarker(iText.Kernel.Colors.DeviceRgb rgbColor)
-        {
+        public static iText.Kernel.Colors.DeviceRgb MakeDarker(iText.Kernel.Colors.DeviceRgb rgbColor) {
             float r = rgbColor.GetColorValue()[0];
             float g = rgbColor.GetColorValue()[1];
             float b = rgbColor.GetColorValue()[2];

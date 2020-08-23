@@ -42,16 +42,15 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using System;
+using iText.Kernel;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Collection
-{
-    public class PdfCollectionItem : PdfObjectWrapper<PdfDictionary>
-    {
+namespace iText.Kernel.Pdf.Collection {
+    public class PdfCollectionItem : PdfObjectWrapper<PdfDictionary> {
         private PdfCollectionSchema schema;
 
         public PdfCollectionItem(PdfCollectionSchema schema)
-            : base(new PdfDictionary())
-        {
+            : base(new PdfDictionary()) {
             this.schema = schema;
         }
 
@@ -59,8 +58,7 @@ namespace iText.Kernel.Pdf.Collection
         /// <param name="key">is a key with which the specified value is to be associated</param>
         /// <param name="value">is a value to be associated with the specified key</param>
         /// <returns>this instance to support fluent interface</returns>
-        public virtual iText.Kernel.Pdf.Collection.PdfCollectionItem AddItem(String key, String value)
-        {
+        public virtual iText.Kernel.Pdf.Collection.PdfCollectionItem AddItem(String key, String value) {
             PdfCollectionField field = schema.GetField(key);
             GetPdfObject().Put(new PdfName(key), field.GetValue(value));
             return this;
@@ -73,11 +71,9 @@ namespace iText.Kernel.Pdf.Collection
         /// <see cref="iText.Kernel.Pdf.PdfDate">PDF date</see>
         /// value to be associated with the specified key
         /// </param>
-        public virtual void AddItem(String key, PdfDate date)
-        {
+        public virtual void AddItem(String key, PdfDate date) {
             PdfCollectionField field = schema.GetField(key);
-            if (field.subType == PdfCollectionField.DATE)
-            {
+            if (field.subType == PdfCollectionField.DATE) {
                 GetPdfObject().Put(new PdfName(key), date.GetPdfObject());
             }
         }
@@ -89,11 +85,9 @@ namespace iText.Kernel.Pdf.Collection
         /// <see cref="iText.Kernel.Pdf.PdfNumber">PDF number</see>
         /// value to be associated with the specified key
         /// </param>
-        public virtual void AddItem(String key, PdfNumber number)
-        {
+        public virtual void AddItem(String key, PdfNumber number) {
             PdfCollectionField field = schema.GetField(key);
-            if (field.subType == PdfCollectionField.NUMBER)
-            {
+            if (field.subType == PdfCollectionField.NUMBER) {
                 GetPdfObject().Put(new PdfName(key), number);
             }
         }
@@ -106,12 +100,10 @@ namespace iText.Kernel.Pdf.Collection
         /// <param name="key">is a key identifying the Collection item</param>
         /// <param name="prefix">is a prefix to be added</param>
         /// <returns>this instance to support fluent interface</returns>
-        public virtual iText.Kernel.Pdf.Collection.PdfCollectionItem SetPrefix(String key, String prefix)
-        {
+        public virtual iText.Kernel.Pdf.Collection.PdfCollectionItem SetPrefix(String key, String prefix) {
             PdfName fieldName = new PdfName(key);
             PdfObject obj = GetPdfObject().Get(fieldName);
-            if (obj == null)
-            {
+            if (obj == null) {
                 throw new PdfException(PdfException.YouMustSetAValueBeforeAddingAPrefix);
             }
             PdfDictionary subItem = new PdfDictionary();
@@ -121,8 +113,7 @@ namespace iText.Kernel.Pdf.Collection
             return this;
         }
 
-        protected internal override bool IsWrappedObjectMustBeIndirect()
-        {
+        protected internal override bool IsWrappedObjectMustBeIndirect() {
             return false;
         }
     }

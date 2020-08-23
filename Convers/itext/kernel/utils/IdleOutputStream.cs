@@ -44,55 +44,54 @@ address: sales@itextpdf.com
 using System;
 using System.IO;
 
-namespace iText.Kernel.Utils
-{
+namespace iText.Kernel.Utils {
     internal class IdleOutputStream : Stream
-    {
-        public override void Flush()
-        {
+	{
+	    public override void Flush()
+	    {
+	        
+	    }
 
-        }
+	    public override long Seek(long offset, SeekOrigin origin)
+	    {
+	        throw new NotSupportedException();
+	    }
 
-        public override long Seek(long offset, SeekOrigin origin)
-        {
+	    public override void SetLength(long value)
+	    {
             throw new NotSupportedException();
-        }
+	    }
 
-        public override void SetLength(long value)
-        {
+	    public override int Read(byte[] buffer, int offset, int count)
+	    {
             throw new NotSupportedException();
-        }
+	    }
 
-        public override int Read(byte[] buffer, int offset, int count)
-        {
-            throw new NotSupportedException();
-        }
+	    public override void Write(byte[] buffer, int offset, int count)
+	    {
+	        
+	    }
 
-        public override void Write(byte[] buffer, int offset, int count)
-        {
+	    public override bool CanRead
+	    {
+	        get { return false; }
+	    }
 
-        }
+	    public override bool CanSeek
+	    {
+	        get { return false; }
+	    }
 
-        public override bool CanRead
-        {
-            get { return false; }
-        }
+	    public override bool CanWrite
+	    {
+	        get { return true; }
+	    }
 
-        public override bool CanSeek
-        {
-            get { return false; }
-        }
-
-        public override bool CanWrite
-        {
-            get { return true; }
-        }
-
-        public override long Length
-        {
+	    public override long Length
+	    {
             get { throw new NotSupportedException(); }
-        }
+	    }
 
-        public override long Position { get; set; }
-    }
+	    public override long Position { get; set; }
+	}
 }

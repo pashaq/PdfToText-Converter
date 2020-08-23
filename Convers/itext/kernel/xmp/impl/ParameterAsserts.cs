@@ -28,90 +28,72 @@
 //
 //        http://www.adobe.com/devnet/xmp/library/eula-xmp-library-java.html
 using System;
+using iText.Kernel.XMP;
 
-namespace iText.Kernel.XMP.Impl
-{
+namespace iText.Kernel.XMP.Impl {
     /// <since>11.08.2006</since>
-    internal class ParameterAsserts : XMPConst
-    {
+    internal class ParameterAsserts : XMPConst {
         /// <summary>private constructor</summary>
-        private ParameterAsserts()
-        {
+        private ParameterAsserts() {
         }
 
         // EMPTY
         /// <summary>Asserts that an array name is set.</summary>
         /// <param name="arrayName">an array name</param>
-        public static void AssertArrayName(String arrayName)
-        {
-            if (arrayName == null || arrayName.Length == 0)
-            {
+        public static void AssertArrayName(String arrayName) {
+            if (arrayName == null || arrayName.Length == 0) {
                 throw new XMPException("Empty array name", XMPError.BADPARAM);
             }
         }
 
         /// <summary>Asserts that a property name is set.</summary>
         /// <param name="propName">a property name or path</param>
-        public static void AssertPropName(String propName)
-        {
-            if (propName == null || propName.Length == 0)
-            {
+        public static void AssertPropName(String propName) {
+            if (propName == null || propName.Length == 0) {
                 throw new XMPException("Empty property name", XMPError.BADPARAM);
             }
         }
 
         /// <summary>Asserts that a schema namespace is set.</summary>
         /// <param name="schemaNS">a schema namespace</param>
-        public static void AssertSchemaNS(String schemaNS)
-        {
-            if (schemaNS == null || schemaNS.Length == 0)
-            {
+        public static void AssertSchemaNS(String schemaNS) {
+            if (schemaNS == null || schemaNS.Length == 0) {
                 throw new XMPException("Empty schema namespace URI", XMPError.BADPARAM);
             }
         }
 
         /// <summary>Asserts that a prefix is set.</summary>
         /// <param name="prefix">a prefix</param>
-        public static void AssertPrefix(String prefix)
-        {
-            if (prefix == null || prefix.Length == 0)
-            {
+        public static void AssertPrefix(String prefix) {
+            if (prefix == null || prefix.Length == 0) {
                 throw new XMPException("Empty prefix", XMPError.BADPARAM);
             }
         }
 
         /// <summary>Asserts that a specific language is set.</summary>
         /// <param name="specificLang">a specific lang</param>
-        public static void AssertSpecificLang(String specificLang)
-        {
-            if (specificLang == null || specificLang.Length == 0)
-            {
+        public static void AssertSpecificLang(String specificLang) {
+            if (specificLang == null || specificLang.Length == 0) {
                 throw new XMPException("Empty specific language", XMPError.BADPARAM);
             }
         }
 
         /// <summary>Asserts that a struct name is set.</summary>
         /// <param name="structName">a struct name</param>
-        public static void AssertStructName(String structName)
-        {
-            if (structName == null || structName.Length == 0)
-            {
+        public static void AssertStructName(String structName) {
+            if (structName == null || structName.Length == 0) {
                 throw new XMPException("Empty array name", XMPError.BADPARAM);
             }
         }
 
         /// <summary>Asserts that any string parameter is set.</summary>
         /// <param name="param">any string parameter</param>
-        public static void AssertNotNull(Object param)
-        {
-            if (param == null)
-            {
+        public static void AssertNotNull(Object param) {
+            if (param == null) {
                 throw new XMPException("Parameter must not be null", XMPError.BADPARAM);
             }
-            else
-            {
-                if ((param is String) && ((String)param).Length == 0)
-                {
+            else {
+                if ((param is String) && ((String)param).Length == 0) {
                     throw new XMPException("Parameter must not be null or empty", XMPError.BADPARAM);
                 }
             }
@@ -124,16 +106,12 @@ namespace iText.Kernel.XMP.Impl
         /// ).
         /// </summary>
         /// <param name="xmp">the XMP object</param>
-        public static void AssertImplementation(XMPMeta xmp)
-        {
-            if (xmp == null)
-            {
+        public static void AssertImplementation(XMPMeta xmp) {
+            if (xmp == null) {
                 throw new XMPException("Parameter must not be null", XMPError.BADPARAM);
             }
-            else
-            {
-                if (!(xmp is XMPMetaImpl))
-                {
+            else {
+                if (!(xmp is XMPMetaImpl)) {
                     throw new XMPException("The XMPMeta-object is not compatible with this implementation", XMPError.BADPARAM);
                 }
             }

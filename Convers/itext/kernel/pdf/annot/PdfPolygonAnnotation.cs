@@ -41,23 +41,19 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Annot
-{
-    internal class PdfPolygonAnnotation : PdfPolyGeomAnnotation
-    {
+namespace iText.Kernel.Pdf.Annot {
+    internal class PdfPolygonAnnotation : PdfPolyGeomAnnotation {
         internal PdfPolygonAnnotation(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
         internal PdfPolygonAnnotation(Rectangle rect, float[] vertices)
-            : base(rect, vertices)
-        {
+            : base(rect, vertices) {
         }
 
-        public override PdfName GetSubtype()
-        {
+        public override PdfName GetSubtype() {
             return PdfName.Polygon;
         }
     }

@@ -41,25 +41,22 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
+using System.Collections.Generic;
 using iText.IO.Font.Constants;
 using iText.IO.Font.Woff2;
 using iText.IO.Source;
 using iText.IO.Util;
-using System;
-using System.Collections.Generic;
 
-namespace iText.IO.Font
-{
+namespace iText.IO.Font {
     /// <summary>Provides methods for creating various types of fonts.</summary>
-    public sealed class FontProgramFactory
-    {
+    public sealed class FontProgramFactory {
         /// <summary>This is the default value of the <var>cached</var> variable.</summary>
         private static bool DEFAULT_CACHED = true;
 
         private static FontRegisterProvider fontRegisterProvider = new FontRegisterProvider();
 
-        private FontProgramFactory()
-        {
+        private FontProgramFactory() {
         }
 
         /// <summary>Creates a new standard Helvetica font program file.</summary>
@@ -68,8 +65,7 @@ namespace iText.IO.Font
         /// <see cref="FontProgram"/>
         /// object with Helvetica font description
         /// </returns>
-        public static FontProgram CreateFont()
-        {
+        public static FontProgram CreateFont() {
             return CreateFont(StandardFonts.HELVETICA);
         }
 
@@ -91,8 +87,7 @@ namespace iText.IO.Font
         /// <see cref="FontProgram"/>
         /// . This font program may come from the cache
         /// </returns>
-        public static FontProgram CreateFont(String fontProgram)
-        {
+        public static FontProgram CreateFont(String fontProgram) {
             return CreateFont(fontProgram, null, DEFAULT_CACHED);
         }
 
@@ -115,8 +110,7 @@ namespace iText.IO.Font
         /// <see cref="FontProgram"/>
         /// . This font program may come from the cache
         /// </returns>
-        public static FontProgram CreateFont(String fontProgram, bool cached)
-        {
+        public static FontProgram CreateFont(String fontProgram, bool cached) {
             return CreateFont(fontProgram, null, cached);
         }
 
@@ -138,8 +132,7 @@ namespace iText.IO.Font
         /// <see cref="FontProgram"/>
         /// . This font program may come from the cache
         /// </returns>
-        public static FontProgram CreateFont(byte[] fontProgram)
-        {
+        public static FontProgram CreateFont(byte[] fontProgram) {
             return CreateFont(null, fontProgram, DEFAULT_CACHED);
         }
 
@@ -162,134 +155,99 @@ namespace iText.IO.Font
         /// <see cref="FontProgram"/>
         /// . This font program may come from the cache
         /// </returns>
-        public static FontProgram CreateFont(byte[] fontProgram, bool cached)
-        {
+        public static FontProgram CreateFont(byte[] fontProgram, bool cached) {
             return CreateFont(null, fontProgram, cached);
         }
 
-        private static FontProgram CreateFont(String name, byte[] fontProgram, bool cached)
-        {
+        private static FontProgram CreateFont(String name, byte[] fontProgram, bool cached) {
             String baseName = FontProgram.TrimFontStyle(name);
             //yes, we trying to find built-in standard font with original name, not baseName.
             bool isBuiltinFonts14 = StandardFonts.IsStandardFont(name);
             bool isCidFont = !isBuiltinFonts14 && FontCache.IsPredefinedCidFont(baseName);
             FontProgram fontFound;
             FontCacheKey fontKey = null;
-            if (cached)
-            {
+            if (cached) {
                 fontKey = CreateFontCacheKey(name, fontProgram);
                 fontFound = FontCache.GetFont(fontKey);
-                if (fontFound != null)
-                {
+                if (fontFound != null) {
                     return fontFound;
                 }
             }
             FontProgram fontBuilt = null;
-            if (name == null)
-            {
-                if (fontProgram != null)
-                {
-                    try
-                    {
-                        if (WoffConverter.IsWoffFont(fontProgram))
-                        {
+            if (name == null) {
+                if (fontProgram != null) {
+                    try {
+                        if (WoffConverter.IsWoffFont(fontProgram)) {
                             fontProgram = WoffConverter.Convert(fontProgram);
                         }
-                        else
-                        {
-                            if (Woff2Converter.IsWoff2Font(fontProgram))
-                            {
+                        else {
+                            if (Woff2Converter.IsWoff2Font(fontProgram)) {
                                 fontProgram = Woff2Converter.Convert(fontProgram);
                             }
                         }
                         fontBuilt = new TrueTypeFont(fontProgram);
                     }
-                    catch (Exception)
-                    {
+                    catch (Exception) {
                     }
-                    if (fontBuilt == null)
-                    {
-                        try
-                        {
+                    if (fontBuilt == null) {
+                        try {
                             fontBuilt = new Type1Font(null, null, fontProgram, null);
                         }
-                        catch (Exception)
-                        {
+                        catch (Exception) {
                         }
                     }
                 }
             }
-            else
-            {
+            else {
                 String fontFileExtension = null;
                 int extensionBeginIndex = baseName.LastIndexOf('.');
-                if (extensionBeginIndex > 0)
-                {
+                if (extensionBeginIndex > 0) {
                     fontFileExtension = baseName.Substring(extensionBeginIndex).ToLowerInvariant();
                 }
-                if (isBuiltinFonts14 || ".afm".Equals(fontFileExtension) || ".pfm".Equals(fontFileExtension))
-                {
+                if (isBuiltinFonts14 || ".afm".Equals(fontFileExtension) || ".pfm".Equals(fontFileExtension)) {
                     fontBuilt = new Type1Font(name, null, null, null);
                 }
-                else
-                {
-                    if (isCidFont)
-                    {
+                else {
+                    if (isCidFont) {
                         fontBuilt = new CidFont(name, FontCache.GetCompatibleCmaps(baseName));
                     }
-                    else
-                    {
-                        if (".ttf".Equals(fontFileExtension) || ".otf".Equals(fontFileExtension))
-                        {
-                            if (fontProgram != null)
-                            {
+                    else {
+                        if (".ttf".Equals(fontFileExtension) || ".otf".Equals(fontFileExtension)) {
+                            if (fontProgram != null) {
                                 fontBuilt = new TrueTypeFont(fontProgram);
                             }
-                            else
-                            {
+                            else {
                                 fontBuilt = new TrueTypeFont(name);
                             }
                         }
-                        else
-                        {
-                            if (".woff".Equals(fontFileExtension) || ".woff2".Equals(fontFileExtension))
-                            {
-                                if (fontProgram == null)
-                                {
+                        else {
+                            if (".woff".Equals(fontFileExtension) || ".woff2".Equals(fontFileExtension)) {
+                                if (fontProgram == null) {
                                     fontProgram = ReadFontBytesFromPath(baseName);
                                 }
-                                if (".woff".Equals(fontFileExtension))
-                                {
-                                    try
-                                    {
+                                if (".woff".Equals(fontFileExtension)) {
+                                    try {
                                         fontProgram = WoffConverter.Convert(fontProgram);
                                     }
-                                    catch (ArgumentException woffException)
-                                    {
+                                    catch (ArgumentException woffException) {
                                         throw new iText.IO.IOException(iText.IO.IOException.InvalidWoffFile, woffException);
                                     }
                                 }
-                                else
-                                {
+                                else {
                                     // ".woff2".equals(fontFileExtension)
-                                    try
-                                    {
+                                    try {
                                         fontProgram = Woff2Converter.Convert(fontProgram);
                                     }
-                                    catch (FontCompressionException woff2Exception)
-                                    {
+                                    catch (FontCompressionException woff2Exception) {
                                         throw new iText.IO.IOException(iText.IO.IOException.InvalidWoff2File, woff2Exception);
                                     }
                                 }
                                 fontBuilt = new TrueTypeFont(fontProgram);
                             }
-                            else
-                            {
+                            else {
                                 int ttcSplit = baseName.ToLowerInvariant().IndexOf(".ttc,", StringComparison.Ordinal);
-                                if (ttcSplit > 0)
-                                {
-                                    try
-                                    {
+                                if (ttcSplit > 0) {
+                                    try {
                                         // count(.ttc) = 4
                                         String ttcName = baseName.JSubstring(0, ttcSplit + 4);
                                         // count(.ttc,) = 5)
@@ -297,8 +255,7 @@ namespace iText.IO.Font
                                             );
                                         fontBuilt = new TrueTypeFont(ttcName, ttcIndex);
                                     }
-                                    catch (FormatException nfe)
-                                    {
+                                    catch (FormatException nfe) {
                                         throw new iText.IO.IOException(nfe.Message, nfe);
                                     }
                                 }
@@ -307,14 +264,11 @@ namespace iText.IO.Font
                     }
                 }
             }
-            if (fontBuilt == null)
-            {
-                if (name != null)
-                {
+            if (fontBuilt == null) {
+                if (name != null) {
                     throw new iText.IO.IOException(iText.IO.IOException.TypeOfFont1IsNotRecognized).SetMessageParams(name);
                 }
-                else
-                {
+                else {
                     throw new iText.IO.IOException(iText.IO.IOException.TypeOfFontIsNotRecognized);
                 }
             }
@@ -329,8 +283,7 @@ namespace iText.IO.Font
         /// <see cref="FontProgram"/>
         /// instance
         /// </returns>
-        public static FontProgram CreateType1Font(byte[] afm, byte[] pfb)
-        {
+        public static FontProgram CreateType1Font(byte[] afm, byte[] pfb) {
             return CreateType1Font(afm, pfb, DEFAULT_CACHED);
         }
 
@@ -347,8 +300,7 @@ namespace iText.IO.Font
         /// <see cref="FontProgram"/>
         /// instance
         /// </returns>
-        public static FontProgram CreateType1Font(byte[] afm, byte[] pfb, bool cached)
-        {
+        public static FontProgram CreateType1Font(byte[] afm, byte[] pfb, bool cached) {
             return CreateType1Font(null, null, afm, pfb, cached);
         }
 
@@ -360,8 +312,7 @@ namespace iText.IO.Font
         /// <see cref="FontProgram"/>
         /// instance
         /// </returns>
-        public static FontProgram CreateType1Font(String metricsPath, String binaryPath)
-        {
+        public static FontProgram CreateType1Font(String metricsPath, String binaryPath) {
             return CreateType1Font(metricsPath, binaryPath, DEFAULT_CACHED);
         }
 
@@ -378,8 +329,7 @@ namespace iText.IO.Font
         /// <see cref="FontProgram"/>
         /// instance
         /// </returns>
-        public static FontProgram CreateType1Font(String metricsPath, String binaryPath, bool cached)
-        {
+        public static FontProgram CreateType1Font(String metricsPath, String binaryPath, bool cached) {
             return CreateType1Font(metricsPath, binaryPath, null, null, cached);
         }
 
@@ -396,14 +346,11 @@ namespace iText.IO.Font
         /// instance. This font may come from the cache but only if cached
         /// is true, otherwise it will always be created new
         /// </returns>
-        public static FontProgram CreateFont(String ttc, int ttcIndex, bool cached)
-        {
+        public static FontProgram CreateFont(String ttc, int ttcIndex, bool cached) {
             FontCacheKey fontCacheKey = FontCacheKey.Create(ttc, ttcIndex);
-            if (cached)
-            {
+            if (cached) {
                 FontProgram fontFound = FontCache.GetFont(fontCacheKey);
-                if (fontFound != null)
-                {
+                if (fontFound != null) {
                     return fontFound;
                 }
             }
@@ -424,14 +371,11 @@ namespace iText.IO.Font
         /// instance. This font may come from the cache but only if cached
         /// is true, otherwise it will always be created new
         /// </returns>
-        public static FontProgram CreateFont(byte[] ttc, int ttcIndex, bool cached)
-        {
+        public static FontProgram CreateFont(byte[] ttc, int ttcIndex, bool cached) {
             FontCacheKey fontKey = FontCacheKey.Create(ttc, ttcIndex);
-            if (cached)
-            {
+            if (cached) {
                 FontProgram fontFound = FontCache.GetFont(fontKey);
-                if (fontFound != null)
-                {
+                if (fontFound != null) {
                     return fontFound;
                 }
             }
@@ -463,8 +407,7 @@ namespace iText.IO.Font
         /// created
         /// <see cref="FontProgram"/>
         /// </returns>
-        public static FontProgram CreateRegisteredFont(String fontName, int style, bool cached)
-        {
+        public static FontProgram CreateRegisteredFont(String fontName, int style, bool cached) {
             return fontRegisterProvider.GetFont(fontName, style, cached);
         }
 
@@ -491,8 +434,7 @@ namespace iText.IO.Font
         /// created
         /// <see cref="FontProgram"/>
         /// </returns>
-        public static FontProgram CreateRegisteredFont(String fontName, int style)
-        {
+        public static FontProgram CreateRegisteredFont(String fontName, int style) {
             return fontRegisterProvider.GetFont(fontName, style);
         }
 
@@ -505,8 +447,7 @@ namespace iText.IO.Font
         /// created
         /// <see cref="FontProgram"/>
         /// </returns>
-        public static FontProgram CreateRegisteredFont(String fontName)
-        {
+        public static FontProgram CreateRegisteredFont(String fontName) {
             return fontRegisterProvider.GetFont(fontName, FontStyles.UNDEFINED);
         }
 
@@ -514,8 +455,7 @@ namespace iText.IO.Font
         /// <param name="familyName">the font family</param>
         /// <param name="fullName">the font name</param>
         /// <param name="path">the font path</param>
-        public static void RegisterFontFamily(String familyName, String fullName, String path)
-        {
+        public static void RegisterFontFamily(String familyName, String fullName, String path) {
             fontRegisterProvider.RegisterFontFamily(familyName, fullName, path);
         }
 
@@ -526,24 +466,21 @@ namespace iText.IO.Font
         /// to be registered, e.g. "path/to/font/collection.ttc,0". The index is zero-based.
         /// </remarks>
         /// <param name="path">the path to a font file</param>
-        public static void RegisterFont(String path)
-        {
+        public static void RegisterFont(String path) {
             RegisterFont(path, null);
         }
 
         /// <summary>Register a font file and use an alias for the font contained in it.</summary>
         /// <param name="path">the path to a font file</param>
         /// <param name="alias">the alias you want to use for the font</param>
-        public static void RegisterFont(String path, String alias)
-        {
+        public static void RegisterFont(String path, String alias) {
             fontRegisterProvider.RegisterFont(path, alias);
         }
 
         /// <summary>Register all the fonts in a directory.</summary>
         /// <param name="dir">the directory</param>
         /// <returns>the number of fonts registered</returns>
-        public static int RegisterFontDirectory(String dir)
-        {
+        public static int RegisterFontDirectory(String dir) {
             return fontRegisterProvider.RegisterFontDirectory(dir);
         }
 
@@ -553,44 +490,37 @@ namespace iText.IO.Font
         /// Linux and Solaris.
         /// </remarks>
         /// <returns>the number of fonts registered</returns>
-        public static int RegisterSystemFontDirectories()
-        {
+        public static int RegisterSystemFontDirectories() {
             return fontRegisterProvider.RegisterSystemFontDirectories();
         }
 
         /// <summary>Gets a set of registered font names.</summary>
         /// <returns>a set of registered fonts</returns>
-        public static ICollection<String> GetRegisteredFonts()
-        {
+        public static ICollection<String> GetRegisteredFonts() {
             return fontRegisterProvider.GetRegisteredFonts();
         }
 
         /// <summary>Gets a set of registered font names.</summary>
         /// <returns>a set of registered font families</returns>
-        public static ICollection<String> GetRegisteredFontFamilies()
-        {
+        public static ICollection<String> GetRegisteredFontFamilies() {
             return fontRegisterProvider.GetRegisteredFontFamilies();
         }
 
         /// <summary>Checks if a certain font is registered.</summary>
         /// <param name="fontName">the name of the font that has to be checked.</param>
         /// <returns>true if the font is found</returns>
-        public static bool IsRegisteredFont(String fontName)
-        {
+        public static bool IsRegisteredFont(String fontName) {
             return fontRegisterProvider.IsRegisteredFont(fontName);
         }
 
-        private static FontProgram CreateType1Font(String metricsPath, String binaryPath, byte[] afm, byte[] pfb,
-            bool cached)
-        {
+        private static FontProgram CreateType1Font(String metricsPath, String binaryPath, byte[] afm, byte[] pfb, 
+            bool cached) {
             FontProgram fontProgram;
             FontCacheKey fontKey = null;
-            if (cached)
-            {
+            if (cached) {
                 fontKey = CreateFontCacheKey(metricsPath, afm);
                 fontProgram = FontCache.GetFont(fontKey);
-                if (fontProgram != null)
-                {
+                if (fontProgram != null) {
                     return fontProgram;
                 }
             }
@@ -598,38 +528,31 @@ namespace iText.IO.Font
             return cached ? FontCache.SaveFont(fontProgram, fontKey) : fontProgram;
         }
 
-        private static FontCacheKey CreateFontCacheKey(String name, byte[] fontProgram)
-        {
+        private static FontCacheKey CreateFontCacheKey(String name, byte[] fontProgram) {
             FontCacheKey key;
-            if (name != null)
-            {
+            if (name != null) {
                 key = FontCacheKey.Create(name);
             }
-            else
-            {
+            else {
                 key = FontCacheKey.Create(fontProgram);
             }
             return key;
         }
 
-        public static void ClearRegisteredFonts()
-        {
+        public static void ClearRegisteredFonts() {
             fontRegisterProvider.ClearRegisteredFonts();
         }
 
         /// <summary>Clears registered font cache</summary>
-        public static void ClearRegisteredFontFamilies()
-        {
+        public static void ClearRegisteredFontFamilies() {
             fontRegisterProvider.ClearRegisteredFontFamilies();
         }
 
-        internal static byte[] ReadFontBytesFromPath(String path)
-        {
+        internal static byte[] ReadFontBytesFromPath(String path) {
             RandomAccessFileOrArray raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().CreateBestSource
                 (path));
             int bufLen = (int)raf.Length();
-            if (bufLen < raf.Length())
-            {
+            if (bufLen < raf.Length()) {
                 throw new iText.IO.IOException(MessageFormatUtil.Format("Source data from \"{0}\" is bigger than byte array can hold."
                     , path));
             }

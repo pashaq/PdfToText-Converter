@@ -42,11 +42,10 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using System;
+using iText.IO;
 
-namespace iText.IO.Util
-{
-    public class GhostscriptHelper
-    {
+namespace iText.IO.Util {
+    public class GhostscriptHelper {
         /// <summary>The name of the environment variable with the command to execute Ghostscript operations.</summary>
         public const String GHOSTSCRIPT_ENVIRONMENT_VARIABLE = "ITEXT_GS_EXEC";
 
@@ -60,23 +59,18 @@ namespace iText.IO.Util
         private String gsExec;
 
         public GhostscriptHelper()
-            : this(null)
-        {
+            : this(null) {
         }
 
-        public GhostscriptHelper(String newGsExec)
-        {
+        public GhostscriptHelper(String newGsExec) {
             gsExec = newGsExec;
-            if (gsExec == null)
-            {
+            if (gsExec == null) {
                 gsExec = SystemUtil.GetEnvironmentVariable(GHOSTSCRIPT_ENVIRONMENT_VARIABLE);
-                if (gsExec == null)
-                {
+                if (gsExec == null) {
                     gsExec = SystemUtil.GetEnvironmentVariable(GHOSTSCRIPT_ENVIRONMENT_VARIABLE_LEGACY);
                 }
             }
-            if (!CliCommandUtil.IsVersionCommandExecutable(gsExec, GHOSTSCRIPT_KEYWORD))
-            {
+            if (!CliCommandUtil.IsVersionCommandExecutable(gsExec, GHOSTSCRIPT_KEYWORD)) {
                 throw new ArgumentException(IoExceptionMessage.GS_ENVIRONMENT_VARIABLE_IS_NOT_SPECIFIED);
             }
         }
@@ -88,8 +82,7 @@ namespace iText.IO.Util
         /// methods invocation.
         /// </remarks>
         /// <returns>a string command</returns>
-        public virtual String GetCliExecutionCommand()
-        {
+        public virtual String GetCliExecutionCommand() {
             return gsExec;
         }
 
@@ -97,8 +90,7 @@ namespace iText.IO.Util
         /// <param name="pdf">Path to the pdf file.</param>
         /// <param name="outDir">Path to the output directory</param>
         /// <param name="image">Path to the generated image</param>
-        public virtual void RunGhostScriptImageGeneration(String pdf, String outDir, String image)
-        {
+        public virtual void RunGhostScriptImageGeneration(String pdf, String outDir, String image) {
             RunGhostScriptImageGeneration(pdf, outDir, image, null);
         }
 
@@ -112,16 +104,13 @@ namespace iText.IO.Util
         /// all pages as images.
         /// </param>
         public virtual void RunGhostScriptImageGeneration(String pdf, String outDir, String image, String pageList
-            )
-        {
-            if (!FileUtil.DirectoryExists(outDir))
-            {
+            ) {
+            if (!FileUtil.DirectoryExists(outDir)) {
                 throw new ArgumentException(IoExceptionMessage.CANNOT_OPEN_OUTPUT_DIRECTORY.Replace("<filename>", pdf));
             }
             pageList = (pageList == null) ? "" : "-sPageList=<pagelist>".Replace("<pagelist>", pageList);
             String currGsParams = MessageFormatUtil.Format(GHOSTSCRIPT_PARAMS, pageList, outDir + image, pdf);
-            if (!SystemUtil.RunProcessAndWait(gsExec, currGsParams))
-            {
+            if (!SystemUtil.RunProcessAndWait(gsExec, currGsParams)) {
                 throw new GhostscriptHelper.GhostscriptExecutionException(IoExceptionMessage.GHOSTSCRIPT_FAILED.Replace("<filename>"
                     , pdf));
             }
@@ -131,16 +120,14 @@ namespace iText.IO.Util
         /// Exceptions thrown when errors occur during generation and comparison of images obtained on the basis of pdf
         /// files.
         /// </summary>
-        public class GhostscriptExecutionException : Exception
-        {
+        public class GhostscriptExecutionException : Exception {
             /// <summary>
             /// Creates a new
             /// <see cref="GhostscriptExecutionException"/>.
             /// </summary>
             /// <param name="msg">the detail message.</param>
             public GhostscriptExecutionException(String msg)
-                : base(msg)
-            {
+                : base(msg) {
             }
         }
     }

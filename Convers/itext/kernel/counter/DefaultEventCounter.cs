@@ -41,21 +41,20 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
 using Common.Logging;
+using iText.IO.Codec;
 using iText.IO.Util;
 using iText.Kernel.Counter.Context;
 using iText.Kernel.Counter.Event;
-using System;
 
-namespace iText.Kernel.Counter
-{
+namespace iText.Kernel.Counter {
     /// <summary>
     /// Default implementation of the
     /// <see cref="EventCounter"/>
     /// interface that essentially doesn't do anything.
     /// </summary>
-    public class DefaultEventCounter : EventCounter
-    {
+    public class DefaultEventCounter : EventCounter {
         private static readonly int[] REPEAT = new int[] { 10000, 5000, 1000 };
 
         private readonly AtomicLong count = new AtomicLong();
@@ -67,8 +66,7 @@ namespace iText.Kernel.Counter
         private ILog logger;
 
         public DefaultEventCounter()
-            : base(UnknownContext.RESTRICTIVE)
-        {
+            : base(UnknownContext.RESTRICTIVE) {
         }
 
         private static byte[] message_1 = Convert.FromBase64String("DQoNCllvdSBhcmUgdXNpbmcgaVRleHQgdW5kZXIgdGhlIEFHUEwuDQoNCklmIHR"
@@ -89,29 +87,22 @@ namespace iText.Kernel.Counter
              + "gaW50ZW50aW9uLCBwbGVhc2UgY29udGFjdCB1cyBieSBmaWxsaW5nIG91dCB0aGlz" + "IGZvcm06IGh0dHA6Ly9pdGV4dHBkZi5jb20vc2FsZXMgb3IgYnkgY29udGFjdGluZ"
              + "yBvdXIgc2FsZXMgZGVwYXJ0bWVudC4=");
 
-        protected internal override void OnEvent(IEvent @event, IMetaInfo metaInfo)
-        {
-            if (count.IncrementAndGet() > repeatLevel)
-            {
-                if (iText.Kernel.Version.IsAGPLVersion() || iText.Kernel.Version.IsExpired())
-                {
+        protected internal override void OnEvent(IEvent @event, IMetaInfo metaInfo) {
+            if (count.IncrementAndGet() > repeatLevel) {
+                if (iText.Kernel.Version.IsAGPLVersion() || iText.Kernel.Version.IsExpired()) {
                     String message = iText.IO.Util.JavaUtil.GetStringForBytes(message_1, iText.IO.Util.EncodingUtil.ISO_8859_1
                         );
-                    if (iText.Kernel.Version.IsExpired())
-                    {
+                    if (iText.Kernel.Version.IsExpired()) {
                         message = iText.IO.Util.JavaUtil.GetStringForBytes(message_2, iText.IO.Util.EncodingUtil.ISO_8859_1);
                     }
                     level++;
-                    if (level == 1)
-                    {
+                    if (level == 1) {
                         repeatLevel = REPEAT[1];
                     }
-                    else
-                    {
+                    else {
                         repeatLevel = REPEAT[2];
                     }
-                    if (logger == null)
-                    {
+                    if (logger == null) {
                         logger = LogManager.GetLogger(this.GetType());
                     }
                     logger.Info(message);

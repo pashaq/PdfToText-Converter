@@ -41,11 +41,11 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Util;
 using System.Collections.Generic;
+using iText.IO.Util;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Filters
-{
+namespace iText.Kernel.Pdf.Filters {
     /// <summary>Encapsulates filter behavior for PDF streams.</summary>
     /// <remarks>
     /// Encapsulates filter behavior for PDF streams.  Classes generally interace with this
@@ -53,8 +53,7 @@ namespace iText.Kernel.Pdf.Filters
     /// <see cref="IFilterHandler"/>
     /// via a lookup.
     /// </remarks>
-    public sealed class FilterHandlers
-    {
+    public sealed class FilterHandlers {
         // Dev note:  we eventually want to refactor PdfReader so all of the existing filter functionality is moved into this class
         // it may also be better to split the sub-classes out into a separate package
         /// <summary>
@@ -64,8 +63,7 @@ namespace iText.Kernel.Pdf.Filters
         /// </summary>
         private static readonly IDictionary<PdfName, IFilterHandler> defaults;
 
-        static FilterHandlers()
-        {
+        static FilterHandlers() {
             IDictionary<PdfName, IFilterHandler> map = new Dictionary<PdfName, IFilterHandler>();
             map.Put(PdfName.FlateDecode, new FlateDecodeFilter());
             map.Put(PdfName.Fl, new FlateDecodeFilter());
@@ -87,8 +85,7 @@ namespace iText.Kernel.Pdf.Filters
         /// <see cref="IFilterHandler"/>
         /// s used by iText
         /// </returns>
-        public static IDictionary<PdfName, IFilterHandler> GetDefaultFilterHandlers()
-        {
+        public static IDictionary<PdfName, IFilterHandler> GetDefaultFilterHandlers() {
             return defaults;
         }
     }

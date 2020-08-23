@@ -42,16 +42,14 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Annot
-{
-    public class PdfPopupAnnotation : PdfAnnotation
-    {
+namespace iText.Kernel.Pdf.Annot {
+    public class PdfPopupAnnotation : PdfAnnotation {
         protected internal PdfAnnotation parent;
 
         public PdfPopupAnnotation(Rectangle rect)
-            : base(rect)
-        {
+            : base(rect) {
         }
 
         /// <summary>
@@ -68,31 +66,25 @@ namespace iText.Kernel.Pdf.Annot
         /// </param>
         /// <seealso cref="PdfAnnotation.MakeAnnotation(iText.Kernel.Pdf.PdfObject)"/>
         protected internal PdfPopupAnnotation(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
-        public override PdfName GetSubtype()
-        {
+        public override PdfName GetSubtype() {
             return PdfName.Popup;
         }
 
-        public virtual PdfDictionary GetParentObject()
-        {
+        public virtual PdfDictionary GetParentObject() {
             return GetPdfObject().GetAsDictionary(PdfName.Parent);
         }
 
-        public virtual PdfAnnotation GetParent()
-        {
-            if (parent == null)
-            {
+        public virtual PdfAnnotation GetParent() {
+            if (parent == null) {
                 parent = MakeAnnotation(GetParentObject());
             }
             return parent;
         }
 
-        public virtual iText.Kernel.Pdf.Annot.PdfPopupAnnotation SetParent(PdfAnnotation parent)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfPopupAnnotation SetParent(PdfAnnotation parent) {
             this.parent = parent;
             return (iText.Kernel.Pdf.Annot.PdfPopupAnnotation)Put(PdfName.Parent, parent.GetPdfObject());
         }
@@ -103,8 +95,7 @@ namespace iText.Kernel.Pdf.Annot
         /// This flag has affect to not all kinds of annotations.
         /// </remarks>
         /// <returns>true if annotation is initially open, false - if closed.</returns>
-        public virtual bool GetOpen()
-        {
+        public virtual bool GetOpen() {
             return PdfBoolean.TRUE.Equals(GetPdfObject().GetAsBoolean(PdfName.Open));
         }
 
@@ -119,8 +110,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfPopupAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfPopupAnnotation SetOpen(bool open)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfPopupAnnotation SetOpen(bool open) {
             return (iText.Kernel.Pdf.Annot.PdfPopupAnnotation)Put(PdfName.Open, PdfBoolean.ValueOf(open));
         }
     }

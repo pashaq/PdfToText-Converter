@@ -43,14 +43,12 @@ address: sales@itextpdf.com
 */
 using System.IO;
 
-namespace iText.IO.Codec
-{
+namespace iText.IO.Codec {
     /// <summary>
     /// Modified from original LZWCompressor to change interface to passing a
     /// buffer of data to be compressed.
     /// </summary>
-    public class LZWCompressor
-    {
+    public class LZWCompressor {
         /// <summary>base underlying code size of data being compressed 8 for TIFF, 1 to 8 for GIF</summary>
         internal int codeSize_;
 
@@ -81,8 +79,7 @@ namespace iText.IO.Codec
         /// <param name="outputStream">destination for compressed data</param>
         /// <param name="codeSize">the initial code size for the LZW compressor</param>
         /// <param name="TIFF">flag indicating that TIFF lzw fudge needs to be applied</param>
-        public LZWCompressor(Stream outputStream, int codeSize, bool TIFF)
-        {
+        public LZWCompressor(Stream outputStream, int codeSize, bool TIFF) {
             // set flag for GIF as NOT tiff
             bf_ = new BitFile(outputStream, !TIFF);
             codeSize_ = codeSize;
@@ -91,8 +88,7 @@ namespace iText.IO.Codec
             endOfInfo_ = clearCode_ + 1;
             numBits_ = codeSize_ + 1;
             limit_ = (1 << numBits_) - 1;
-            if (tiffFudge_)
-            {
+            if (tiffFudge_) {
                 --limit_;
             }
             //0xFFFF
@@ -105,37 +101,29 @@ namespace iText.IO.Codec
         /// <param name="buf">The data to be compressed to output stream</param>
         /// <param name="offset">The offset at which the data starts</param>
         /// <param name="length">The length of the data being compressed</param>
-        public virtual void Compress(byte[] buf, int offset, int length)
-        {
+        public virtual void Compress(byte[] buf, int offset, int length) {
             int idx;
             byte c;
             short index;
             int maxOffset = offset + length;
-            for (idx = offset; idx < maxOffset; ++idx)
-            {
+            for (idx = offset; idx < maxOffset; ++idx) {
                 c = buf[idx];
-                if ((index = lzss_.FindCharString(prefix_, c)) != -1)
-                {
+                if ((index = lzss_.FindCharString(prefix_, c)) != -1) {
                     prefix_ = index;
                 }
-                else
-                {
+                else {
                     bf_.WriteBits(prefix_, numBits_);
-                    if (lzss_.AddCharString(prefix_, c) > limit_)
-                    {
-                        if (numBits_ == 12)
-                        {
+                    if (lzss_.AddCharString(prefix_, c) > limit_) {
+                        if (numBits_ == 12) {
                             bf_.WriteBits(clearCode_, numBits_);
                             lzss_.ClearTable(codeSize_);
                             numBits_ = codeSize_ + 1;
                         }
-                        else
-                        {
+                        else {
                             ++numBits_;
                         }
                         limit_ = (1 << numBits_) - 1;
-                        if (tiffFudge_)
-                        {
+                        if (tiffFudge_) {
                             --limit_;
                         }
                     }
@@ -148,10 +136,8 @@ namespace iText.IO.Codec
         /// Indicate to compressor that no more data to go so write out
         /// any remaining buffered data.
         /// </summary>
-        public virtual void Flush()
-        {
-            if (prefix_ != -1)
-            {
+        public virtual void Flush() {
+            if (prefix_ != -1) {
                 bf_.WriteBits(prefix_, numBits_);
             }
             bf_.WriteBits(endOfInfo_, numBits_);

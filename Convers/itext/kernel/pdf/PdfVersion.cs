@@ -41,15 +41,13 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Util;
 using System;
 using System.Collections.Generic;
+using iText.IO.Util;
 
-namespace iText.Kernel.Pdf
-{
+namespace iText.Kernel.Pdf {
     /// <summary>This class represents all official PDF versions.</summary>
-    public class PdfVersion : IComparable<iText.Kernel.Pdf.PdfVersion>
-    {
+    public class PdfVersion : IComparable<iText.Kernel.Pdf.PdfVersion> {
         private static readonly IList<iText.Kernel.Pdf.PdfVersion> values = new List<iText.Kernel.Pdf.PdfVersion>(
             );
 
@@ -78,19 +76,16 @@ namespace iText.Kernel.Pdf
         /// <summary>Creates a PdfVersion class.</summary>
         /// <param name="major">major version number</param>
         /// <param name="minor">minor version number</param>
-        private PdfVersion(int major, int minor)
-        {
+        private PdfVersion(int major, int minor) {
             this.major = major;
             this.minor = minor;
         }
 
-        public override String ToString()
-        {
+        public override String ToString() {
             return MessageFormatUtil.Format("PDF-{0}.{1}", major, minor);
         }
 
-        public virtual PdfName ToPdfName()
-        {
+        public virtual PdfName ToPdfName() {
             return new PdfName(MessageFormatUtil.Format("{0}.{1}", major, minor));
         }
 
@@ -100,12 +95,9 @@ namespace iText.Kernel.Pdf
         /// </summary>
         /// <param name="value">version number</param>
         /// <returns>PdfVersion of the specified version</returns>
-        public static iText.Kernel.Pdf.PdfVersion FromString(String value)
-        {
-            foreach (iText.Kernel.Pdf.PdfVersion version in values)
-            {
-                if (version.ToString().Equals(value))
-                {
+        public static iText.Kernel.Pdf.PdfVersion FromString(String value) {
+            foreach (iText.Kernel.Pdf.PdfVersion version in values) {
+                if (version.ToString().Equals(value)) {
                     return version;
                 }
             }
@@ -120,38 +112,30 @@ namespace iText.Kernel.Pdf
         /// </summary>
         /// <param name="name">version number</param>
         /// <returns>PdfVersion of the specified version</returns>
-        public static iText.Kernel.Pdf.PdfVersion FromPdfName(PdfName name)
-        {
-            foreach (iText.Kernel.Pdf.PdfVersion version in values)
-            {
-                if (version.ToPdfName().Equals(name))
-                {
+        public static iText.Kernel.Pdf.PdfVersion FromPdfName(PdfName name) {
+            foreach (iText.Kernel.Pdf.PdfVersion version in values) {
+                if (version.ToPdfName().Equals(name)) {
                     return version;
                 }
             }
             throw new ArgumentException("The provided pdf version was not found.");
         }
 
-        public virtual int CompareTo(iText.Kernel.Pdf.PdfVersion o)
-        {
+        public virtual int CompareTo(iText.Kernel.Pdf.PdfVersion o) {
             int majorResult = JavaUtil.IntegerCompare(major, o.major);
-            if (majorResult != 0)
-            {
+            if (majorResult != 0) {
                 return majorResult;
             }
-            else
-            {
+            else {
                 return JavaUtil.IntegerCompare(minor, o.minor);
             }
         }
 
-        public override bool Equals(Object obj)
-        {
+        public override bool Equals(Object obj) {
             return GetType() == obj.GetType() && CompareTo((iText.Kernel.Pdf.PdfVersion)obj) == 0;
         }
 
-        private static iText.Kernel.Pdf.PdfVersion CreatePdfVersion(int major, int minor)
-        {
+        private static iText.Kernel.Pdf.PdfVersion CreatePdfVersion(int major, int minor) {
             iText.Kernel.Pdf.PdfVersion pdfVersion = new iText.Kernel.Pdf.PdfVersion(major, minor);
             values.Add(pdfVersion);
             return pdfVersion;

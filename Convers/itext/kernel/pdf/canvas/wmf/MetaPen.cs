@@ -43,12 +43,10 @@ address: sales@itextpdf.com
 */
 using iText.Kernel.Colors;
 
-namespace iText.Kernel.Pdf.Canvas.Wmf
-{
+namespace iText.Kernel.Pdf.Canvas.Wmf {
     /// <summary>A Pen object of the WMF format.</summary>
     /// <remarks>A Pen object of the WMF format. Holds the color, style and width information of the pen.</remarks>
-    public class MetaPen : MetaObject
-    {
+    public class MetaPen : MetaObject {
         public const int PS_SOLID = 0;
 
         public const int PS_DASH = 1;
@@ -71,14 +69,12 @@ namespace iText.Kernel.Pdf.Canvas.Wmf
 
         /// <summary>Creates a MetaPen object.</summary>
         public MetaPen()
-            : base(META_PEN)
-        {
+            : base(META_PEN) {
         }
 
         /// <summary>Initializes a MetaPen object.</summary>
         /// <param name="in">the InputMeta object that holds the inputstream of the WMF image</param>
-        public virtual void Init(InputMeta @in)
-        {
+        public virtual void Init(InputMeta @in) {
             style = @in.ReadWord();
             penWidth = @in.ReadShort();
             @in.ReadWord();
@@ -87,22 +83,19 @@ namespace iText.Kernel.Pdf.Canvas.Wmf
 
         /// <summary>Get the style of the MetaPen.</summary>
         /// <returns>style of the pen</returns>
-        public virtual int GetStyle()
-        {
+        public virtual int GetStyle() {
             return style;
         }
 
         /// <summary>Get the width of the MetaPen.</summary>
         /// <returns>width of the pen</returns>
-        public virtual int GetPenWidth()
-        {
+        public virtual int GetPenWidth() {
             return penWidth;
         }
 
         /// <summary>Get the color of the MetaPen.</summary>
         /// <returns>color of the pen</returns>
-        public virtual Color GetColor()
-        {
+        public virtual Color GetColor() {
             return color;
         }
     }

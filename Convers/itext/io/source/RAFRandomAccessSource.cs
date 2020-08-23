@@ -43,16 +43,14 @@ address: sales@itextpdf.com
 */
 using System.IO;
 
-namespace iText.IO.Source
-{
+namespace iText.IO.Source {
     /// <summary>
     /// A RandomAccessSource that uses a
     /// <see cref="System.IO.FileStream"/>
     /// as it's source
     /// Note: Unlike most of the RandomAccessSource implementations, this class is not thread safe
     /// </summary>
-    internal class RAFRandomAccessSource : IRandomAccessSource
-    {
+    internal class RAFRandomAccessSource : IRandomAccessSource {
         /// <summary>The source</summary>
         private readonly FileStream raf;
 
@@ -67,37 +65,30 @@ namespace iText.IO.Source
 
         /// <summary>Creates this object</summary>
         /// <param name="raf">the source for this RandomAccessSource</param>
-        public RAFRandomAccessSource(FileStream raf)
-        {
+        public RAFRandomAccessSource(FileStream raf) {
             this.raf = raf;
             length = raf.Length;
         }
 
         /// <summary><inheritDoc/></summary>
-        public virtual int Get(long position)
-        {
-            if (position > length)
-            {
+        public virtual int Get(long position) {
+            if (position > length) {
                 return -1;
             }
             // Not thread safe!
-            if (raf.Position != position)
-            {
+            if (raf.Position != position) {
                 raf.Seek(position);
             }
             return raf.ReadByte();
         }
 
         /// <summary><inheritDoc/></summary>
-        public virtual int Get(long position, byte[] bytes, int off, int len)
-        {
-            if (position > length)
-            {
+        public virtual int Get(long position, byte[] bytes, int off, int len) {
+            if (position > length) {
                 return -1;
             }
             // Not thread safe!
-            if (raf.Position != position)
-            {
+            if (raf.Position != position) {
                 raf.Seek(position);
             }
             return raf.JRead(bytes, off, len);
@@ -116,14 +107,12 @@ namespace iText.IO.Source
         /// is constructed.  If the file length changes
         /// after construction, that change will not be reflected in this call.
         /// </remarks>
-        public virtual long Length()
-        {
+        public virtual long Length() {
             return length;
         }
 
         /// <summary>Closes the underlying RandomAccessFile</summary>
-        public virtual void Close()
-        {
+        public virtual void Close() {
             raf.Dispose();
         }
     }

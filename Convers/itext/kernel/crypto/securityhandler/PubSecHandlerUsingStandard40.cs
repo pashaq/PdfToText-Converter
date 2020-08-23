@@ -41,52 +41,44 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.Kernel.Pdf;
-using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.X509;
 using System;
 using System.IO;
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.X509;
+using iText.Kernel.Crypto;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Crypto.Securityhandler
-{
-    public class PubSecHandlerUsingStandard40 : PubKeySecurityHandler
-    {
+namespace iText.Kernel.Crypto.Securityhandler {
+    public class PubSecHandlerUsingStandard40 : PubKeySecurityHandler {
         public PubSecHandlerUsingStandard40(PdfDictionary encryptionDictionary, X509Certificate[] certs, int[] permissions
-            , bool encryptMetadata, bool embeddedFilesOnly)
-        {
+            , bool encryptMetadata, bool embeddedFilesOnly) {
             InitKeyAndFillDictionary(encryptionDictionary, certs, permissions, encryptMetadata, embeddedFilesOnly);
         }
 
-        public PubSecHandlerUsingStandard40(PdfDictionary encryptionDictionary, ICipherParameters certificateKey,
-            X509Certificate certificate, bool encryptMetadata)
-        {
+        public PubSecHandlerUsingStandard40(PdfDictionary encryptionDictionary, ICipherParameters certificateKey, 
+            X509Certificate certificate, bool encryptMetadata) {
             InitKeyAndReadDictionary(encryptionDictionary, certificateKey, certificate, encryptMetadata);
         }
 
-        public override OutputStreamEncryption GetEncryptionStream(Stream os)
-        {
+        public override OutputStreamEncryption GetEncryptionStream(Stream os) {
             return new OutputStreamStandardEncryption(os, nextObjectKey, 0, nextObjectKeySize);
         }
 
-        public override IDecryptor GetDecryptor()
-        {
+        public override IDecryptor GetDecryptor() {
             return new StandardDecryptor(nextObjectKey, 0, nextObjectKeySize);
         }
 
-        protected internal override String GetDigestAlgorithm()
-        {
+        protected internal override String GetDigestAlgorithm() {
             return "SHA-1";
         }
 
-        protected internal override void InitKey(byte[] globalKey, int keyLength)
-        {
+        protected internal override void InitKey(byte[] globalKey, int keyLength) {
             mkey = new byte[keyLength / 8];
             Array.Copy(globalKey, 0, mkey, 0, mkey.Length);
         }
 
         protected internal override void SetPubSecSpecificHandlerDicEntries(PdfDictionary encryptionDictionary, bool
-             encryptMetadata, bool embeddedFilesOnly)
-        {
+             encryptMetadata, bool embeddedFilesOnly) {
             encryptionDictionary.Put(PdfName.Filter, PdfName.Adobe_PubSec);
             encryptionDictionary.Put(PdfName.R, new PdfNumber(2));
             PdfArray recipients = CreateRecipientsArray();

@@ -42,12 +42,11 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using Common.Logging;
+using iText.Kernel;
 using iText.Kernel.Crypto;
 
-namespace iText.Kernel.Pdf
-{
-    public abstract class PdfObject
-    {
+namespace iText.Kernel.Pdf {
+    public abstract class PdfObject {
         public const byte ARRAY = 1;
 
         public const byte BOOLEAN = 2;
@@ -142,17 +141,14 @@ namespace iText.Kernel.Pdf
         public abstract byte GetObjectType();
 
         /// <summary>Flushes the object to the document.</summary>
-        public void Flush()
-        {
+        public void Flush() {
             Flush(true);
         }
 
         /// <summary>Flushes the object to the document.</summary>
         /// <param name="canBeInObjStm">indicates whether object can be placed into object stream.</param>
-        public void Flush(bool canBeInObjStm)
-        {
-            if (IsFlushed() || GetIndirectReference() == null || GetIndirectReference().IsFree())
-            {
+        public void Flush(bool canBeInObjStm) {
+            if (IsFlushed() || GetIndirectReference() == null || GetIndirectReference().IsFree()) {
                 // TODO DEVSIX-744: here we should take into account and log the case when object is MustBeIndirect, but has no indirect reference
                 //            Logger logger = LoggerFactory.getLogger(PdfObject.class);
                 //            if (isFlushed()) {
@@ -165,13 +161,10 @@ namespace iText.Kernel.Pdf
                 //            }
                 return;
             }
-            try
-            {
+            try {
                 PdfDocument document = GetIndirectReference().GetDocument();
-                if (document != null)
-                {
-                    if (document.IsAppendMode() && !IsModified())
-                    {
+                if (document != null) {
+                    if (document.IsAppendMode() && !IsModified()) {
                         ILog logger = LogManager.GetLogger(typeof(PdfObject));
                         logger.Info(iText.IO.LogMessageConstant.PDF_OBJECT_FLUSHING_NOT_PERFORMED);
                         return;
@@ -181,8 +174,7 @@ namespace iText.Kernel.Pdf
                          && GetIndirectReference().GetGenNumber() == 0);
                 }
             }
-            catch (System.IO.IOException e)
-            {
+            catch (System.IO.IOException e) {
                 throw new PdfException(PdfException.CannotFlushObject, e, this);
             }
         }
@@ -193,8 +185,7 @@ namespace iText.Kernel.Pdf
         /// The indirect reference is used when flushing object to the document.
         /// </remarks>
         /// <returns>indirect reference.</returns>
-        public virtual PdfIndirectReference GetIndirectReference()
-        {
+        public virtual PdfIndirectReference GetIndirectReference() {
             return indirectReference;
         }
 
@@ -217,31 +208,25 @@ namespace iText.Kernel.Pdf
         /// <see langword="true"/>
         /// if object is indirect or is to be indirect in the resultant document.
         /// </returns>
-        public virtual bool IsIndirect()
-        {
+        public virtual bool IsIndirect() {
             return indirectReference != null || CheckState(PdfObject.MUST_BE_INDIRECT);
         }
 
         /// <summary>Marks object to be saved as indirect.</summary>
         /// <param name="document">a document the indirect reference will belong to.</param>
         /// <returns>object itself.</returns>
-        public virtual PdfObject MakeIndirect(PdfDocument document, PdfIndirectReference reference)
-        {
-            if (document == null || indirectReference != null)
-            {
+        public virtual PdfObject MakeIndirect(PdfDocument document, PdfIndirectReference reference) {
+            if (document == null || indirectReference != null) {
                 return this;
             }
-            if (document.GetWriter() == null)
-            {
+            if (document.GetWriter() == null) {
                 throw new PdfException(PdfException.ThereIsNoAssociatePdfWriterForMakingIndirects);
             }
-            if (reference == null)
-            {
+            if (reference == null) {
                 indirectReference = document.CreateNextIndirectReference();
                 indirectReference.SetRefersTo(this);
             }
-            else
-            {
+            else {
                 reference.SetState(MODIFIED);
                 indirectReference = reference;
                 indirectReference.SetRefersTo(this);
@@ -254,15 +239,13 @@ namespace iText.Kernel.Pdf
         /// <summary>Marks object to be saved as indirect.</summary>
         /// <param name="document">a document the indirect reference will belong to.</param>
         /// <returns>object itself.</returns>
-        public virtual PdfObject MakeIndirect(PdfDocument document)
-        {
+        public virtual PdfObject MakeIndirect(PdfDocument document) {
             return MakeIndirect(document, null);
         }
 
         /// <summary>Indicates is the object has been flushed or not.</summary>
         /// <returns>true if object has been flushed, otherwise false.</returns>
-        public virtual bool IsFlushed()
-        {
+        public virtual bool IsFlushed() {
             PdfIndirectReference indirectReference = GetIndirectReference();
             return (indirectReference != null && indirectReference.CheckState(FLUSHED));
         }
@@ -271,8 +254,7 @@ namespace iText.Kernel.Pdf
         /// <remarks>Indicates is the object has been set as modified or not. Useful for incremental updates (e.g. appendMode).
         ///     </remarks>
         /// <returns>true is object has been set as modified, otherwise false.</returns>
-        public virtual bool IsModified()
-        {
+        public virtual bool IsModified() {
             PdfIndirectReference indirectReference = GetIndirectReference();
             return (indirectReference != null && indirectReference.CheckState(MODIFIED));
         }
@@ -283,11 +265,9 @@ namespace iText.Kernel.Pdf
         /// New object shall not be used in other documents.
         /// </remarks>
         /// <returns>cloned object.</returns>
-        public virtual PdfObject Clone()
-        {
+        public virtual PdfObject Clone() {
             PdfObject newObject = NewInstance();
-            if (indirectReference != null || CheckState(MUST_BE_INDIRECT))
-            {
+            if (indirectReference != null || CheckState(MUST_BE_INDIRECT)) {
                 newObject.SetState(MUST_BE_INDIRECT);
             }
             newObject.CopyContent(this, null);
@@ -302,8 +282,7 @@ namespace iText.Kernel.Pdf
         /// </remarks>
         /// <param name="document">document to copy object to.</param>
         /// <returns>copied object.</returns>
-        public virtual PdfObject CopyTo(PdfDocument document)
-        {
+        public virtual PdfObject CopyTo(PdfDocument document) {
             return CopyTo(document, true);
         }
 
@@ -320,21 +299,16 @@ namespace iText.Kernel.Pdf
         /// If allowDuplicating is true then object will be copied and new indirect reference will be assigned.
         /// </param>
         /// <returns>copied object.</returns>
-        public virtual PdfObject CopyTo(PdfDocument document, bool allowDuplicating)
-        {
-            if (document == null)
-            {
+        public virtual PdfObject CopyTo(PdfDocument document, bool allowDuplicating) {
+            if (document == null) {
                 throw new PdfException(PdfException.DocumentForCopyToCannotBeNull);
             }
-            if (indirectReference != null)
-            {
+            if (indirectReference != null) {
                 // TODO checkState(MUST_BE_INDIRECT) now is always false, because indirectReference != null. See also DEVSIX-602
-                if (indirectReference.GetWriter() != null || CheckState(MUST_BE_INDIRECT))
-                {
+                if (indirectReference.GetWriter() != null || CheckState(MUST_BE_INDIRECT)) {
                     throw new PdfException(PdfException.CannotCopyIndirectObjectFromTheDocumentThatIsBeingWritten);
                 }
-                if (!indirectReference.GetReader().IsOpenedWithFullPermission())
-                {
+                if (!indirectReference.GetReader().IsOpenedWithFullPermission()) {
                     throw new BadPasswordException(BadPasswordException.PdfReaderNotOpenedWithOwnerPassword);
                 }
             }
@@ -359,10 +333,8 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfObject"/>
         /// instance.
         /// </returns>
-        public virtual PdfObject SetModified()
-        {
-            if (indirectReference != null)
-            {
+        public virtual PdfObject SetModified() {
+            if (indirectReference != null) {
                 indirectReference.SetState(MODIFIED);
                 SetState(FORBID_RELEASE);
             }
@@ -384,24 +356,19 @@ namespace iText.Kernel.Pdf
         /// prevented from releasing by high-level entities dealing with the objects.
         /// Also it's not possible to release the objects that have been modified.
         /// </remarks>
-        public virtual bool IsReleaseForbidden()
-        {
+        public virtual bool IsReleaseForbidden() {
             return CheckState(FORBID_RELEASE);
         }
 
-        public virtual void Release()
-        {
+        public virtual void Release() {
             // In case ForbidRelease flag is set, release will not be performed.
-            if (IsReleaseForbidden())
-            {
+            if (IsReleaseForbidden()) {
                 ILog logger = LogManager.GetLogger(typeof(PdfObject));
                 logger.Warn(iText.IO.LogMessageConstant.FORBID_RELEASE_IS_SET);
             }
-            else
-            {
+            else {
                 if (indirectReference != null && indirectReference.GetReader() != null && !indirectReference.CheckState(FLUSHED
-                    ))
-                {
+                    )) {
                     indirectReference.refersTo = null;
                     indirectReference = null;
                     SetState(READ_ONLY);
@@ -415,8 +382,7 @@ namespace iText.Kernel.Pdf
         /// <c>PdfNull</c>.
         /// </summary>
         /// <returns><c>true</c> or <c>false</c></returns>
-        public virtual bool IsNull()
-        {
+        public virtual bool IsNull() {
             return GetObjectType() == NULL;
         }
 
@@ -425,8 +391,7 @@ namespace iText.Kernel.Pdf
         /// <c>PdfBoolean</c>.
         /// </summary>
         /// <returns><c>true</c> or <c>false</c></returns>
-        public virtual bool IsBoolean()
-        {
+        public virtual bool IsBoolean() {
             return GetObjectType() == BOOLEAN;
         }
 
@@ -435,8 +400,7 @@ namespace iText.Kernel.Pdf
         /// <c>PdfNumber</c>.
         /// </summary>
         /// <returns><c>true</c> or <c>false</c></returns>
-        public virtual bool IsNumber()
-        {
+        public virtual bool IsNumber() {
             return GetObjectType() == NUMBER;
         }
 
@@ -445,8 +409,7 @@ namespace iText.Kernel.Pdf
         /// <c>PdfString</c>.
         /// </summary>
         /// <returns><c>true</c> or <c>false</c></returns>
-        public virtual bool IsString()
-        {
+        public virtual bool IsString() {
             return GetObjectType() == STRING;
         }
 
@@ -455,8 +418,7 @@ namespace iText.Kernel.Pdf
         /// <c>PdfName</c>.
         /// </summary>
         /// <returns><c>true</c> or <c>false</c></returns>
-        public virtual bool IsName()
-        {
+        public virtual bool IsName() {
             return GetObjectType() == NAME;
         }
 
@@ -465,8 +427,7 @@ namespace iText.Kernel.Pdf
         /// <c>PdfArray</c>.
         /// </summary>
         /// <returns><c>true</c> or <c>false</c></returns>
-        public virtual bool IsArray()
-        {
+        public virtual bool IsArray() {
             return GetObjectType() == ARRAY;
         }
 
@@ -475,8 +436,7 @@ namespace iText.Kernel.Pdf
         /// <c>PdfDictionary</c>.
         /// </summary>
         /// <returns><c>true</c> or <c>false</c></returns>
-        public virtual bool IsDictionary()
-        {
+        public virtual bool IsDictionary() {
             return GetObjectType() == DICTIONARY;
         }
 
@@ -485,8 +445,7 @@ namespace iText.Kernel.Pdf
         /// <c>PdfStream</c>.
         /// </summary>
         /// <returns><c>true</c> or <c>false</c></returns>
-        public virtual bool IsStream()
-        {
+        public virtual bool IsStream() {
             return GetObjectType() == STREAM;
         }
 
@@ -498,8 +457,7 @@ namespace iText.Kernel.Pdf
         /// <c>true</c> if this is an indirect reference,
         /// otherwise <c>false</c>
         /// </returns>
-        public virtual bool IsIndirectReference()
-        {
+        public virtual bool IsIndirectReference() {
             return GetObjectType() == INDIRECT_REFERENCE;
         }
 
@@ -511,8 +469,7 @@ namespace iText.Kernel.Pdf
         /// <c>true</c> if this is a literal,
         /// otherwise <c>false</c>
         /// </returns>
-        public virtual bool IsLiteral()
-        {
+        public virtual bool IsLiteral() {
             return GetObjectType() == LITERAL;
         }
 
@@ -520,8 +477,7 @@ namespace iText.Kernel.Pdf
         /// <returns>new instance of object.</returns>
         protected internal abstract PdfObject NewInstance();
 
-        protected internal virtual PdfObject SetIndirectReference(PdfIndirectReference indirectReference)
-        {
+        protected internal virtual PdfObject SetIndirectReference(PdfIndirectReference indirectReference) {
             this.indirectReference = indirectReference;
             return this;
         }
@@ -529,23 +485,20 @@ namespace iText.Kernel.Pdf
         /// <summary>Checks state of the flag of current object.</summary>
         /// <param name="state">special flag to check</param>
         /// <returns>true if the state was set.</returns>
-        protected internal virtual bool CheckState(short state)
-        {
+        protected internal virtual bool CheckState(short state) {
             return (this.state & state) == state;
         }
 
         /// <summary>Sets special states of current object.</summary>
         /// <param name="state">special flag of current object</param>
-        protected internal virtual PdfObject SetState(short state)
-        {
+        protected internal virtual PdfObject SetState(short state) {
             this.state |= state;
             return this;
         }
 
         /// <summary>Clear state of the flag of current object.</summary>
         /// <param name="state">special flag state to clear</param>
-        protected internal virtual PdfObject ClearState(short state)
-        {
+        protected internal virtual PdfObject ClearState(short state) {
             this.state &= (short)~state;
             return this;
         }
@@ -553,10 +506,8 @@ namespace iText.Kernel.Pdf
         /// <summary>Copies object content from object 'from'.</summary>
         /// <param name="from">object to copy content from.</param>
         /// <param name="document">document to copy object to.</param>
-        protected internal virtual void CopyContent(PdfObject from, PdfDocument document)
-        {
-            if (IsFlushed())
-            {
+        protected internal virtual void CopyContent(PdfObject from, PdfDocument document) {
+            if (IsFlushed()) {
                 throw new PdfException(PdfException.CannotCopyFlushedObject, this);
             }
         }
@@ -595,37 +546,30 @@ namespace iText.Kernel.Pdf
         /// If allowDuplicating is true then object will be copied and new indirect reference will be assigned.
         /// </param>
         /// <returns>copied object.</returns>
-        internal virtual PdfObject ProcessCopying(PdfDocument documentTo, bool allowDuplicating)
-        {
-            if (documentTo != null)
-            {
+        internal virtual PdfObject ProcessCopying(PdfDocument documentTo, bool allowDuplicating) {
+            if (documentTo != null) {
                 //copyTo case
                 PdfWriter writer = documentTo.GetWriter();
-                if (writer == null)
-                {
+                if (writer == null) {
                     throw new PdfException(PdfException.CannotCopyToDocumentOpenedInReadingMode);
                 }
                 return writer.CopyObject(this, documentTo, allowDuplicating);
             }
-            else
-            {
+            else {
                 //clone case
                 PdfObject obj = this;
-                if (obj.IsIndirectReference())
-                {
+                if (obj.IsIndirectReference()) {
                     PdfObject refTo = ((PdfIndirectReference)obj).GetRefersTo();
                     obj = refTo != null ? refTo : obj;
                 }
-                if (obj.IsIndirect() && !allowDuplicating)
-                {
+                if (obj.IsIndirect() && !allowDuplicating) {
                     return obj;
                 }
                 return obj.Clone();
             }
         }
 
-        internal static bool EqualContent(PdfObject obj1, PdfObject obj2)
-        {
+        internal static bool EqualContent(PdfObject obj1, PdfObject obj2) {
             PdfObject direct1 = obj1 != null && obj1.IsIndirectReference() ? ((PdfIndirectReference)obj1).GetRefersTo(
                 true) : obj1;
             PdfObject direct2 = obj2 != null && obj2.IsIndirectReference() ? ((PdfIndirectReference)obj2).GetRefersTo(

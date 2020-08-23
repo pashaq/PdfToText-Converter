@@ -41,14 +41,13 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Util;
-using iText.Kernel.Counter.Event;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using iText.IO.Util;
+using iText.Kernel.Counter.Event;
 
-namespace iText.Kernel.Counter.Data
-{
+namespace iText.Kernel.Counter.Data {
     /// <summary>
     /// This class is intended for some heavy concurrent event operations
     /// (like writing to database or file).
@@ -81,8 +80,7 @@ namespace iText.Kernel.Counter.Data
     /// <typeparam name="T">data signature type</typeparam>
     /// <typeparam name="V">data type</typeparam>
     public abstract class EventDataHandler<T, V>
-        where V : EventData<T>
-    {
+        where V : EventData<T> {
         private readonly Object processLock = new Object();
 
         private readonly IEventDataCache<T, V> cache;
@@ -94,18 +92,15 @@ namespace iText.Kernel.Counter.Data
         private volatile WaitTime waitTime;
 
         public EventDataHandler(IEventDataCache<T, V> cache, IEventDataFactory<T, V> factory, long initialWaitTimeMillis
-            , long maxWaitTimeMillis)
-        {
+            , long maxWaitTimeMillis) {
             this.cache = cache;
             this.factory = factory;
             this.waitTime = new WaitTime(initialWaitTimeMillis, maxWaitTimeMillis);
         }
 
-        public virtual IList<V> Clear()
-        {
+        public virtual IList<V> Clear() {
             IList<V> all;
-            lock (cache)
-            {
+            lock (cache) {
                 all = cache.Clear();
             }
             lastProcessedTime.Set(0);
@@ -113,50 +108,38 @@ namespace iText.Kernel.Counter.Data
             return all != null ? all : JavaCollectionsUtil.EmptyList<V>();
         }
 
-        public virtual void Register(IEvent @event, IMetaInfo metaInfo)
-        {
+        public virtual void Register(IEvent @event, IMetaInfo metaInfo) {
             V data;
             //Synchronization is left here mostly in consistency with cache and process, but factories are usually not thread safe anyway.
-            lock (factory)
-            {
+            lock (factory) {
                 data = factory.Create(@event, metaInfo);
             }
-            if (data != null)
-            {
-                lock (cache)
-                {
+            if (data != null) {
+                lock (cache) {
                     cache.Put(data);
                 }
                 TryProcessNextAsync();
             }
         }
 
-        public virtual void TryProcessNext()
-        {
+        public virtual void TryProcessNext() {
             long currentTime = SystemUtil.GetRelativeTimeMillis();
-            if (currentTime - lastProcessedTime.Get() > waitTime.GetTime())
-            {
+            if (currentTime - lastProcessedTime.Get() > waitTime.GetTime()) {
                 lastProcessedTime.Set(SystemUtil.GetRelativeTimeMillis());
                 V data;
-                lock (cache)
-                {
+                lock (cache) {
                     data = cache.RetrieveNext();
                 }
-                if (data != null)
-                {
+                if (data != null) {
                     bool successful;
-                    lock (processLock)
-                    {
+                    lock (processLock) {
                         successful = TryProcess(data);
                     }
-                    if (successful)
-                    {
+                    if (successful) {
                         OnSuccess(data);
                     }
-                    else
-                    {
-                        lock (cache)
-                        {
+                    else {
+                        lock (cache) {
                             cache.Put(data);
                         }
                         OnFailure(data);
@@ -165,20 +148,16 @@ namespace iText.Kernel.Counter.Data
             }
         }
 
-        public virtual void TryProcessNextAsync()
-        {
+        public virtual void TryProcessNextAsync() {
             TryProcessNextAsync(null);
         }
 
-        public virtual void TryProcessNextAsync(bool? daemon)
-        {
+        public virtual void TryProcessNextAsync(bool? daemon) {
             long currentTime = SystemUtil.GetRelativeTimeMillis();
-            if (currentTime - lastProcessedTime.Get() > waitTime.GetTime())
-            {
+            if (currentTime - lastProcessedTime.Get() > waitTime.GetTime()) {
                 Thread thread = new Thread(() => TryProcessNext());
-                if (daemon != null)
-                {
-                    thread.IsBackground = (bool)daemon;
+                if (daemon != null) {
+                    thread.IsBackground = (bool) daemon;
                 }
                 thread.Start();
             }
@@ -186,91 +165,72 @@ namespace iText.Kernel.Counter.Data
 
         /// <summary>Method that will try to immediately process all cashed data, ignoring the usual error fallback procedures.
         ///     </summary>
-        public virtual void TryProcessRest()
-        {
+        public virtual void TryProcessRest() {
             IList<V> unprocessedEvents = Clear();
-            if (!unprocessedEvents.IsEmpty())
-            {
-                try
-                {
-                    lock (processLock)
-                    {
-                        foreach (V data in unprocessedEvents)
-                        {
+            if (!unprocessedEvents.IsEmpty()) {
+                try {
+                    lock (processLock) {
+                        foreach (V data in unprocessedEvents) {
                             Process(data);
                         }
                     }
                 }
-                catch (Exception)
-                {
+                catch (Exception) {
                 }
             }
         }
 
-        public virtual void ResetWaitTime()
-        {
+        public virtual void ResetWaitTime() {
             WaitTime local = waitTime;
             waitTime = new WaitTime(local.GetInitial(), local.GetMaximum());
         }
 
-        public virtual void IncreaseWaitTime()
-        {
+        public virtual void IncreaseWaitTime() {
             WaitTime local = waitTime;
             waitTime = new WaitTime(local.GetInitial(), local.GetMaximum(), Math.Min(local.GetTime() * 2, local.GetMaximum
                 ()));
         }
 
-        public virtual void SetNoWaitTime()
-        {
+        public virtual void SetNoWaitTime() {
             WaitTime local = waitTime;
             waitTime = new WaitTime(local.GetInitial(), local.GetMaximum(), 0);
         }
 
-        public virtual WaitTime GetWaitTime()
-        {
+        public virtual WaitTime GetWaitTime() {
             return waitTime;
         }
 
-        protected internal virtual void OnSuccess(V data)
-        {
+        protected internal virtual void OnSuccess(V data) {
             ResetWaitTime();
         }
 
-        protected internal virtual void OnFailure(V data)
-        {
+        protected internal virtual void OnFailure(V data) {
             IncreaseWaitTime();
         }
 
         /// <summary>Is called when exception is thrown in process.</summary>
         /// <param name="exception">caught exception</param>
         /// <returns>whether processing is treated as success</returns>
-        protected internal virtual bool OnProcessException(Exception exception)
-        {
+        protected internal virtual bool OnProcessException(Exception exception) {
             return false;
         }
 
         protected internal abstract bool Process(V data);
 
-        private bool TryProcess(V data)
-        {
-            try
-            {
+        private bool TryProcess(V data) {
+            try {
                 return Process(data);
             }
-            catch (Exception any)
-            {
+            catch (Exception any) {
                 return OnProcessException(any);
             }
         }
 
-        ~EventDataHandler()
-        {
-            try
-            {
+        ~EventDataHandler() {
+            try {
                 TryProcessRest();
             }
-            catch (Exception ignore)
-            {
+            catch (Exception ignore) {
                 // In finalization everything can go wrong.
                 // 
                 // From Microsoft Docs:
@@ -285,7 +245,6 @@ namespace iText.Kernel.Counter.Data
                 // > by an application that overrides the default policy, the runtime terminates the process
                 // > and no active try/finally blocks or finalizers are executed. This behavior ensures process
                 // > integrity if the finalizer cannot free or destroy resources.
-            }
-        }
+            }        }
     }
 }

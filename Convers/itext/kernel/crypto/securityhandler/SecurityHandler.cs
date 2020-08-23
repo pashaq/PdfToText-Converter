@@ -41,15 +41,15 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.Security;
 using System;
 using System.IO;
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Security;
+using iText.Kernel;
+using iText.Kernel.Crypto;
 
-namespace iText.Kernel.Crypto.Securityhandler
-{
-    public abstract class SecurityHandler
-    {
+namespace iText.Kernel.Crypto.Securityhandler {
+    public abstract class SecurityHandler {
         /// <summary>The global encryption key</summary>
         protected internal byte[] mkey = new byte[0];
 
@@ -76,8 +76,7 @@ namespace iText.Kernel.Crypto.Securityhandler
         /// <summary>Work area to prepare the object/generation bytes</summary>
         protected internal byte[] extra = new byte[5];
 
-        protected internal SecurityHandler()
-        {
+        protected internal SecurityHandler() {
             SafeInitMessageDigest();
         }
 
@@ -87,8 +86,7 @@ namespace iText.Kernel.Crypto.Securityhandler
         /// </summary>
         /// <param name="objNumber"/>
         /// <param name="objGeneration"/>
-        public virtual void SetHashKeyForNextObject(int objNumber, int objGeneration)
-        {
+        public virtual void SetHashKeyForNextObject(int objNumber, int objGeneration) {
             // added by ujihara
             md5.Reset();
             extra[0] = (byte)objNumber;
@@ -100,8 +98,7 @@ namespace iText.Kernel.Crypto.Securityhandler
             md5.Update(extra);
             nextObjectKey = md5.Digest();
             nextObjectKeySize = mkey.Length + 5;
-            if (nextObjectKeySize > 16)
-            {
+            if (nextObjectKeySize > 16) {
                 nextObjectKeySize = 16;
             }
         }
@@ -110,14 +107,11 @@ namespace iText.Kernel.Crypto.Securityhandler
 
         public abstract IDecryptor GetDecryptor();
 
-        private void SafeInitMessageDigest()
-        {
-            try
-            {
+        private void SafeInitMessageDigest() {
+            try {
                 md5 = DigestUtilities.GetDigest("MD5");
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 throw new PdfException(PdfException.PdfEncryption, e);
             }
         }

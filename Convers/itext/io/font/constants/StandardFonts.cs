@@ -43,18 +43,14 @@ address: sales@itextpdf.com
 using System;
 using System.Collections.Generic;
 
-namespace iText.IO.Font.Constants
-{
-    public sealed class StandardFonts
-    {
-        private StandardFonts()
-        {
+namespace iText.IO.Font.Constants {
+    public sealed class StandardFonts {
+        private StandardFonts() {
         }
 
         private static readonly ICollection<String> BUILTIN_FONTS = new HashSet<String>();
 
-        static StandardFonts()
-        {
+        static StandardFonts() {
             BUILTIN_FONTS.Add(iText.IO.Font.Constants.StandardFonts.COURIER);
             BUILTIN_FONTS.Add(iText.IO.Font.Constants.StandardFonts.COURIER_BOLD);
             BUILTIN_FONTS.Add(iText.IO.Font.Constants.StandardFonts.COURIER_BOLDOBLIQUE);
@@ -71,8 +67,7 @@ namespace iText.IO.Font.Constants
             BUILTIN_FONTS.Add(iText.IO.Font.Constants.StandardFonts.ZAPFDINGBATS);
         }
 
-        public static bool IsStandardFont(String fontName)
-        {
+        public static bool IsStandardFont(String fontName) {
             return BUILTIN_FONTS.Contains(fontName);
         }
 

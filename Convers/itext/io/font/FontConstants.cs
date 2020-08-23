@@ -43,16 +43,14 @@ address: sales@itextpdf.com
 */
 using System;
 
-namespace iText.IO.Font
-{
+namespace iText.IO.Font {
     /// <summary>
     /// Font constants for
     /// <see cref="FontProgramFactory"/>
     /// and PdfFontFactory.
     /// </summary>
     [System.ObsoleteAttribute(@"Use constants from com.itextpdf.io.font.constants.")]
-    public class FontConstants
-    {
+    public class FontConstants {
         //-Font styles------------------------------------------------------------------------------------------------------
         /// <summary>Undefined font style.</summary>
         [System.ObsoleteAttribute(@"use iText.IO.Font.Constants.FontStyles.UNDEFINED instead.")]

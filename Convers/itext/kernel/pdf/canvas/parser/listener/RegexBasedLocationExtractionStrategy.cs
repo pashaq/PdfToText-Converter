@@ -40,35 +40,31 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Util;
-using iText.Kernel.Geom;
-using iText.Kernel.Pdf.Canvas.Parser.Data;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using iText.IO.Util;
+using iText.Kernel.Geom;
+using iText.Kernel.Pdf.Canvas.Parser;
+using iText.Kernel.Pdf.Canvas.Parser.Data;
 
-namespace iText.Kernel.Pdf.Canvas.Parser.Listener
-{
+namespace iText.Kernel.Pdf.Canvas.Parser.Listener {
     /// <summary>This class is designed to search for the occurrences of a regular expression and return the resultant rectangles.
     ///     </summary>
-    public class RegexBasedLocationExtractionStrategy : ILocationExtractionStrategy
-    {
+    public class RegexBasedLocationExtractionStrategy : ILocationExtractionStrategy {
         private Regex pattern;
 
         private IList<CharacterRenderInfo> parseResult = new List<CharacterRenderInfo>();
 
-        public RegexBasedLocationExtractionStrategy(String regex)
-        {
+        public RegexBasedLocationExtractionStrategy(String regex) {
             this.pattern = iText.IO.Util.StringUtil.RegexCompile(regex);
         }
 
-        public RegexBasedLocationExtractionStrategy(Regex pattern)
-        {
+        public RegexBasedLocationExtractionStrategy(Regex pattern) {
             this.pattern = pattern;
         }
 
-        public virtual ICollection<IPdfTextLocation> GetResultantLocations()
-        {
+        public virtual ICollection<IPdfTextLocation> GetResultantLocations() {
             // align characters in "logical" order
             JavaCollectionsUtil.Sort(parseResult, new TextChunkLocationBasedComparator(new DefaultTextChunkLocationComparator()));
             // process parse results
@@ -95,44 +91,36 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
             * areas of interest highlighted) will not break when compared.
             */
             JavaCollectionsUtil.Sort(retval, new _IComparer_54());
-
+            
             // ligatures can produces same rectangle
             removeDuplicates(retval);
 
             return retval;
         }
 
-        private sealed class _IComparer_54 : IComparer<IPdfTextLocation>
-        {
-            public _IComparer_54()
-            {
+        private sealed class _IComparer_54 : IComparer<IPdfTextLocation> {
+            public _IComparer_54() {
             }
 
-            public int Compare(IPdfTextLocation l1, IPdfTextLocation l2)
-            {
+            public int Compare(IPdfTextLocation l1, IPdfTextLocation l2) {
                 Rectangle o1 = l1.GetRectangle();
                 Rectangle o2 = l2.GetRectangle();
-                if (o1.GetY() == o2.GetY())
-                {
+                if (o1.GetY() == o2.GetY()) {
                     return o1.GetX() == o2.GetX() ? 0 : (o1.GetX() < o2.GetX() ? -1 : 1);
                 }
-                else
-                {
+                else {
                     return o1.GetY() < o2.GetY() ? -1 : 1;
                 }
             }
         }
-
-        private void removeDuplicates(IList<IPdfTextLocation> sortedList)
-        {
+        
+        private void removeDuplicates(IList<IPdfTextLocation> sortedList) {
             IPdfTextLocation lastItem = null;
             int orgSize = sortedList.Count;
-            for (int i = orgSize - 1; i >= 0; i--)
-            {
+            for (int i = orgSize - 1; i >= 0; i--) {
                 IPdfTextLocation currItem = sortedList[i];
                 Rectangle currRect = currItem.GetRectangle();
-                if (lastItem != null && currRect.EqualsWithEpsilon(lastItem.GetRectangle()))
-                {
+                if (lastItem != null && currRect.EqualsWithEpsilon(lastItem.GetRectangle())) {
                     sortedList.Remove(currItem);
                 }
                 lastItem = currItem;
@@ -140,16 +128,13 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
         }
 
 
-        public virtual void EventOccurred(IEventData data, EventType type)
-        {
-            if (data is TextRenderInfo)
-            {
+        public virtual void EventOccurred(IEventData data, EventType type) {
+            if (data is TextRenderInfo) {
                 parseResult.AddAll(ToCRI((TextRenderInfo)data));
             }
         }
 
-        public virtual ICollection<EventType> GetSupportedEvents()
-        {
+        public virtual ICollection<EventType> GetSupportedEvents() {
             return null;
         }
 
@@ -180,11 +165,9 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
         /// which represents the passed
         /// <see cref="TextRenderInfo"/>
         /// </returns>
-        protected internal virtual IList<CharacterRenderInfo> ToCRI(TextRenderInfo tri)
-        {
+        protected internal virtual IList<CharacterRenderInfo> ToCRI(TextRenderInfo tri) {
             IList<CharacterRenderInfo> cris = new List<CharacterRenderInfo>();
-            foreach (TextRenderInfo subTri in tri.GetCharacterRenderInfos())
-            {
+            foreach (TextRenderInfo subTri in tri.GetCharacterRenderInfos()) {
                 cris.Add(new CharacterRenderInfo(subTri));
             }
             return cris;
@@ -214,24 +197,19 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
         /// <see cref="CharacterRenderInfo"/>
         /// objects</param>
         /// <returns>an array containing elements of this list</returns>
-        protected internal virtual IList<Rectangle> ToRectangles(IList<CharacterRenderInfo> cris)
-        {
+        protected internal virtual IList<Rectangle> ToRectangles(IList<CharacterRenderInfo> cris) {
             IList<Rectangle> retval = new List<Rectangle>();
-            if (cris.IsEmpty())
-            {
+            if (cris.IsEmpty()) {
                 return retval;
             }
             int prev = 0;
             int curr = 0;
-            while (curr < cris.Count)
-            {
-                while (curr < cris.Count && cris[curr].SameLine(cris[prev]))
-                {
+            while (curr < cris.Count) {
+                while (curr < cris.Count && cris[curr].SameLine(cris[prev])) {
                     curr++;
                 }
                 Rectangle resultRectangle = null;
-                foreach (CharacterRenderInfo cri in cris.SubList(prev, curr))
-                {
+                foreach (CharacterRenderInfo cri in cris.SubList(prev, curr)) {
                     // in case letters are rotated (imagine text being written with an angle of 90 degrees)
                     resultRectangle = Rectangle.GetCommonRectangle(resultRectangle, cri.GetBoundingBox());
                 }
@@ -242,20 +220,16 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
             // return
             return retval;
         }
-
-        private static int? GetStartIndex(IDictionary<int, int?> indexMap, int index, String txt)
-        {
-            while (!indexMap.ContainsKey(index) && index < txt.Length)
-            {
+        
+        private static int? GetStartIndex(IDictionary<int, int?> indexMap, int index, String txt) {
+            while (!indexMap.ContainsKey(index) && index < txt.Length) {
                 index++;
             }
             return indexMap.Get(index);
         }
 
-        private static int? GetEndIndex(IDictionary<int, int?> indexMap, int index)
-        {
-            while (!indexMap.ContainsKey(index) && index >= 0)
-            {
+        private static int? GetEndIndex(IDictionary<int, int?> indexMap, int index) {
+            while (!indexMap.ContainsKey(index) && index >= 0) {
                 index--;
             }
             return indexMap.Get(index);

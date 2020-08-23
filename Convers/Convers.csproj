@@ -52,6 +52,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Convers\Converter.cs" />
+    <Compile Include="Convers\Fb2Converter\Fb2Converter.cs" />
+    <Compile Include="Convers\Fb2Converter\Fb2ToText.cs" />
     <Compile Include="Convers\PdfConverter\PdfConverter.cs" />
     <Compile Include="Convers\PdfConverter\PdfToText.cs" />
     <Compile Include="Convers\PdfConverter\TextExtractStrategy.cs" />

@@ -41,15 +41,13 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
 using iText.Kernel.XMP;
 using iText.Kernel.XMP.Properties;
-using System;
 
-namespace iText.Kernel.Pdf
-{
+namespace iText.Kernel.Pdf {
     /// <summary>Enumeration of all the PDF/A conformance levels.</summary>
-    public class PdfAConformanceLevel
-    {
+    public class PdfAConformanceLevel {
         public static readonly iText.Kernel.Pdf.PdfAConformanceLevel PDF_A_1A = new iText.Kernel.Pdf.PdfAConformanceLevel
             ("1", "A");
 
@@ -78,98 +76,77 @@ namespace iText.Kernel.Pdf
 
         private readonly String part;
 
-        private PdfAConformanceLevel(String part, String conformance)
-        {
+        private PdfAConformanceLevel(String part, String conformance) {
             this.conformance = conformance;
             this.part = part;
         }
 
-        public virtual String GetConformance()
-        {
+        public virtual String GetConformance() {
             return conformance;
         }
 
-        public virtual String GetPart()
-        {
+        public virtual String GetPart() {
             return part;
         }
 
-        public static iText.Kernel.Pdf.PdfAConformanceLevel GetConformanceLevel(String part, String conformance)
-        {
+        public static iText.Kernel.Pdf.PdfAConformanceLevel GetConformanceLevel(String part, String conformance) {
             String lowLetter = conformance.ToUpperInvariant();
             bool aLevel = "A".Equals(lowLetter);
             bool bLevel = "B".Equals(lowLetter);
             bool uLevel = "U".Equals(lowLetter);
-            switch (part)
-            {
-                case "1":
-                    {
-                        if (aLevel)
-                        {
-                            return iText.Kernel.Pdf.PdfAConformanceLevel.PDF_A_1A;
-                        }
-                        if (bLevel)
-                        {
-                            return iText.Kernel.Pdf.PdfAConformanceLevel.PDF_A_1B;
-                        }
-                        break;
+            switch (part) {
+                case "1": {
+                    if (aLevel) {
+                        return iText.Kernel.Pdf.PdfAConformanceLevel.PDF_A_1A;
                     }
+                    if (bLevel) {
+                        return iText.Kernel.Pdf.PdfAConformanceLevel.PDF_A_1B;
+                    }
+                    break;
+                }
 
-                case "2":
-                    {
-                        if (aLevel)
-                        {
-                            return iText.Kernel.Pdf.PdfAConformanceLevel.PDF_A_2A;
-                        }
-                        if (bLevel)
-                        {
-                            return iText.Kernel.Pdf.PdfAConformanceLevel.PDF_A_2B;
-                        }
-                        if (uLevel)
-                        {
-                            return iText.Kernel.Pdf.PdfAConformanceLevel.PDF_A_2U;
-                        }
-                        break;
+                case "2": {
+                    if (aLevel) {
+                        return iText.Kernel.Pdf.PdfAConformanceLevel.PDF_A_2A;
                     }
+                    if (bLevel) {
+                        return iText.Kernel.Pdf.PdfAConformanceLevel.PDF_A_2B;
+                    }
+                    if (uLevel) {
+                        return iText.Kernel.Pdf.PdfAConformanceLevel.PDF_A_2U;
+                    }
+                    break;
+                }
 
-                case "3":
-                    {
-                        if (aLevel)
-                        {
-                            return iText.Kernel.Pdf.PdfAConformanceLevel.PDF_A_3A;
-                        }
-                        if (bLevel)
-                        {
-                            return iText.Kernel.Pdf.PdfAConformanceLevel.PDF_A_3B;
-                        }
-                        if (uLevel)
-                        {
-                            return iText.Kernel.Pdf.PdfAConformanceLevel.PDF_A_3U;
-                        }
-                        break;
+                case "3": {
+                    if (aLevel) {
+                        return iText.Kernel.Pdf.PdfAConformanceLevel.PDF_A_3A;
                     }
+                    if (bLevel) {
+                        return iText.Kernel.Pdf.PdfAConformanceLevel.PDF_A_3B;
+                    }
+                    if (uLevel) {
+                        return iText.Kernel.Pdf.PdfAConformanceLevel.PDF_A_3U;
+                    }
+                    break;
+                }
             }
             return null;
         }
 
-        public static iText.Kernel.Pdf.PdfAConformanceLevel GetConformanceLevel(XMPMeta meta)
-        {
+        public static iText.Kernel.Pdf.PdfAConformanceLevel GetConformanceLevel(XMPMeta meta) {
             XMPProperty conformanceXmpProperty = null;
             XMPProperty partXmpProperty = null;
-            try
-            {
+            try {
                 conformanceXmpProperty = meta.GetProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE);
                 partXmpProperty = meta.GetProperty(XMPConst.NS_PDFA_ID, XMPConst.PART);
             }
-            catch (XMPException)
-            {
+            catch (XMPException) {
             }
-            if (conformanceXmpProperty == null || partXmpProperty == null)
-            {
+            if (conformanceXmpProperty == null || partXmpProperty == null) {
                 return null;
             }
-            else
-            {
+            else {
                 String conformance = conformanceXmpProperty.GetValue();
                 String part = partXmpProperty.GetValue();
                 return GetConformanceLevel(part, conformance);

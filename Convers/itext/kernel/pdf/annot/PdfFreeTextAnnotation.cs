@@ -42,12 +42,11 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Annot.DA;
 
-namespace iText.Kernel.Pdf.Annot
-{
-    public class PdfFreeTextAnnotation : PdfMarkupAnnotation
-    {
+namespace iText.Kernel.Pdf.Annot {
+    public class PdfFreeTextAnnotation : PdfMarkupAnnotation {
         /// <summary>Text justification options.</summary>
         public const int LEFT_JUSTIFIED = 0;
 
@@ -59,8 +58,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <param name="rect">- rectangle that specifies annotation position and bounds on page</param>
         /// <param name="contents">- the displayed text</param>
         public PdfFreeTextAnnotation(Rectangle rect, PdfString contents)
-            : base(rect)
-        {
+            : base(rect) {
             SetContents(contents);
         }
 
@@ -78,23 +76,19 @@ namespace iText.Kernel.Pdf.Annot
         /// </param>
         /// <seealso cref="PdfAnnotation.MakeAnnotation(iText.Kernel.Pdf.PdfObject)"/>
         protected internal PdfFreeTextAnnotation(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
-        public override PdfName GetSubtype()
-        {
+        public override PdfName GetSubtype() {
             return PdfName.FreeText;
         }
 
-        public virtual PdfString GetDefaultStyleString()
-        {
+        public virtual PdfString GetDefaultStyleString() {
             return GetPdfObject().GetAsString(PdfName.DS);
         }
 
         public virtual iText.Kernel.Pdf.Annot.PdfFreeTextAnnotation SetDefaultStyleString(PdfString defaultStyleString
-            )
-        {
+            ) {
             return (iText.Kernel.Pdf.Annot.PdfFreeTextAnnotation)Put(PdfName.DS, defaultStyleString);
         }
 
@@ -106,8 +100,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfString"/>
         /// that specifies the default appearance, or null if default appereance is not specified.
         /// </returns>
-        public virtual PdfString GetDefaultAppearance()
-        {
+        public virtual PdfString GetDefaultAppearance() {
             return GetPdfObject().GetAsString(PdfName.DA);
         }
 
@@ -125,39 +118,32 @@ namespace iText.Kernel.Pdf.Annot
         /// instance.
         /// </returns>
         public virtual iText.Kernel.Pdf.Annot.PdfFreeTextAnnotation SetDefaultAppearance(PdfString appearanceString
-            )
-        {
+            ) {
             return (iText.Kernel.Pdf.Annot.PdfFreeTextAnnotation)Put(PdfName.DA, appearanceString);
         }
 
         public virtual iText.Kernel.Pdf.Annot.PdfFreeTextAnnotation SetDefaultAppearance(AnnotationDefaultAppearance
-             da)
-        {
+             da) {
             return SetDefaultAppearance(da.ToPdfString());
         }
 
-        public virtual PdfArray GetCalloutLine()
-        {
+        public virtual PdfArray GetCalloutLine() {
             return GetPdfObject().GetAsArray(PdfName.CL);
         }
 
-        public virtual iText.Kernel.Pdf.Annot.PdfFreeTextAnnotation SetCalloutLine(float[] calloutLine)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfFreeTextAnnotation SetCalloutLine(float[] calloutLine) {
             return SetCalloutLine(new PdfArray(calloutLine));
         }
 
-        public virtual iText.Kernel.Pdf.Annot.PdfFreeTextAnnotation SetCalloutLine(PdfArray calloutLine)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfFreeTextAnnotation SetCalloutLine(PdfArray calloutLine) {
             return (iText.Kernel.Pdf.Annot.PdfFreeTextAnnotation)Put(PdfName.CL, calloutLine);
         }
 
-        public virtual PdfName GetLineEndingStyle()
-        {
+        public virtual PdfName GetLineEndingStyle() {
             return GetPdfObject().GetAsName(PdfName.LE);
         }
 
-        public virtual iText.Kernel.Pdf.Annot.PdfFreeTextAnnotation SetLineEndingStyle(PdfName lineEndingStyle)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfFreeTextAnnotation SetLineEndingStyle(PdfName lineEndingStyle) {
             return (iText.Kernel.Pdf.Annot.PdfFreeTextAnnotation)Put(PdfName.LE, lineEndingStyle);
         }
 
@@ -171,8 +157,7 @@ namespace iText.Kernel.Pdf.Annot
         /// </remarks>
         /// <returns>a code specifying the form of quadding (justification), returns the default value if not explicitly specified.
         ///     </returns>
-        public virtual int GetJustification()
-        {
+        public virtual int GetJustification() {
             PdfNumber q = GetPdfObject().GetAsNumber(PdfName.Q);
             return q == null ? 0 : q.IntValue();
         }
@@ -191,8 +176,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfFreeTextAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfFreeTextAnnotation SetJustification(int justification)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfFreeTextAnnotation SetJustification(int justification) {
             return (iText.Kernel.Pdf.Annot.PdfFreeTextAnnotation)Put(PdfName.Q, new PdfNumber(justification));
         }
 
@@ -214,8 +198,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfDictionary"/>
         /// which is a border style dictionary or null if it is not specified.
         /// </returns>
-        public virtual PdfDictionary GetBorderStyle()
-        {
+        public virtual PdfDictionary GetBorderStyle() {
             return GetPdfObject().GetAsDictionary(PdfName.BS);
         }
 
@@ -241,8 +224,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfFreeTextAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfFreeTextAnnotation SetBorderStyle(PdfDictionary borderStyle)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfFreeTextAnnotation SetBorderStyle(PdfDictionary borderStyle) {
             return (iText.Kernel.Pdf.Annot.PdfFreeTextAnnotation)Put(PdfName.BS, borderStyle);
         }
 
@@ -280,8 +262,7 @@ namespace iText.Kernel.Pdf.Annot
         /// instance.
         /// </returns>
         /// <seealso cref="GetBorderStyle()"/>
-        public virtual iText.Kernel.Pdf.Annot.PdfFreeTextAnnotation SetBorderStyle(PdfName style)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfFreeTextAnnotation SetBorderStyle(PdfName style) {
             return SetBorderStyle(BorderStyleUtil.SetStyle(GetBorderStyle(), style));
         }
 
@@ -302,8 +283,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfFreeTextAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfFreeTextAnnotation SetDashPattern(PdfArray dashPattern)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfFreeTextAnnotation SetDashPattern(PdfArray dashPattern) {
             return SetBorderStyle(BorderStyleUtil.SetDashPattern(GetBorderStyle(), dashPattern));
         }
 
@@ -318,8 +298,7 @@ namespace iText.Kernel.Pdf.Annot
         /// differences in default user space between the left, top, right, and bottom coordinates of Rect and those
         /// of the inner rectangle, respectively.
         /// </returns>
-        public virtual PdfArray GetRectangleDifferences()
-        {
+        public virtual PdfArray GetRectangleDifferences() {
             return GetPdfObject().GetAsArray(PdfName.RD);
         }
 
@@ -341,8 +320,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfFreeTextAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfFreeTextAnnotation SetRectangleDifferences(PdfArray rect)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfFreeTextAnnotation SetRectangleDifferences(PdfArray rect) {
             return (iText.Kernel.Pdf.Annot.PdfFreeTextAnnotation)Put(PdfName.RD, rect);
         }
 
@@ -353,8 +331,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfDictionary"/>
         /// , which is a border effect dictionary (see ISO-320001, Table 167).
         /// </returns>
-        public virtual PdfDictionary GetBorderEffect()
-        {
+        public virtual PdfDictionary GetBorderEffect() {
             return GetPdfObject().GetAsDictionary(PdfName.BE);
         }
 
@@ -370,8 +347,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfFreeTextAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfFreeTextAnnotation SetBorderEffect(PdfDictionary borderEffect)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfFreeTextAnnotation SetBorderEffect(PdfDictionary borderEffect) {
             return (iText.Kernel.Pdf.Annot.PdfFreeTextAnnotation)Put(PdfName.BE, borderEffect);
         }
     }

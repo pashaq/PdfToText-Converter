@@ -41,13 +41,14 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using Common.Logging;
-using iText.Kernel.Pdf.Annot;
 using System;
 using System.Collections.Generic;
+using Common.Logging;
+using iText.Kernel;
+using iText.Kernel.Pdf;
+using iText.Kernel.Pdf.Annot;
 
-namespace iText.Kernel.Pdf.Action
-{
+namespace iText.Kernel.Pdf.Action {
     /// <summary>
     /// A target dictionary locates the target in relation to the source,
     /// in much the same way that a relative path describes the physical
@@ -59,11 +60,9 @@ namespace iText.Kernel.Pdf.Action
     /// relationship between two files in a file system. Target dictionaries may be
     /// nested recursively to specify one or more intermediate targets before reaching the final one.
     /// </remarks>
-    public class PdfTarget : PdfObjectWrapper<PdfDictionary>
-    {
+    public class PdfTarget : PdfObjectWrapper<PdfDictionary> {
         private PdfTarget(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
         /// <summary>
@@ -72,8 +71,7 @@ namespace iText.Kernel.Pdf.Action
         /// object by the underlying dictionary.
         /// </summary>
         /// <param name="pdfObject">the underlying dictionary object</param>
-        public static iText.Kernel.Pdf.Action.PdfTarget Create(PdfDictionary pdfObject)
-        {
+        public static iText.Kernel.Pdf.Action.PdfTarget Create(PdfDictionary pdfObject) {
             return new iText.Kernel.Pdf.Action.PdfTarget(pdfObject);
         }
 
@@ -95,8 +93,7 @@ namespace iText.Kernel.Pdf.Action
         /// according to the spec.
         /// </remarks>
         /// <param name="r">the relationship between the current document and the target</param>
-        private static iText.Kernel.Pdf.Action.PdfTarget Create(PdfName r)
-        {
+        private static iText.Kernel.Pdf.Action.PdfTarget Create(PdfName r) {
             iText.Kernel.Pdf.Action.PdfTarget pdfTarget = new iText.Kernel.Pdf.Action.PdfTarget(new PdfDictionary());
             pdfTarget.Put(PdfName.R, r);
             return pdfTarget;
@@ -107,8 +104,7 @@ namespace iText.Kernel.Pdf.Action
         /// created
         /// <see cref="PdfTarget"/>
         /// </returns>
-        public static iText.Kernel.Pdf.Action.PdfTarget CreateParentTarget()
-        {
+        public static iText.Kernel.Pdf.Action.PdfTarget CreateParentTarget() {
             return iText.Kernel.Pdf.Action.PdfTarget.Create(PdfName.P);
         }
 
@@ -117,16 +113,14 @@ namespace iText.Kernel.Pdf.Action
         /// created
         /// <see cref="PdfTarget"/>
         /// </returns>
-        public static iText.Kernel.Pdf.Action.PdfTarget CreateChildTarget()
-        {
+        public static iText.Kernel.Pdf.Action.PdfTarget CreateChildTarget() {
             return iText.Kernel.Pdf.Action.PdfTarget.Create(PdfName.C);
         }
 
         /// <summary>Creates a new target object pointing to a file in the EmbeddedFiles name tree.</summary>
         /// <param name="embeddedFileName">the name of the file in the EmbeddedFiles name tree</param>
         /// <returns>created object</returns>
-        public static iText.Kernel.Pdf.Action.PdfTarget CreateChildTarget(String embeddedFileName)
-        {
+        public static iText.Kernel.Pdf.Action.PdfTarget CreateChildTarget(String embeddedFileName) {
             return iText.Kernel.Pdf.Action.PdfTarget.Create(PdfName.C).Put(PdfName.N, new PdfString(embeddedFileName));
         }
 
@@ -142,8 +136,7 @@ namespace iText.Kernel.Pdf.Action
         /// </param>
         /// <returns>created object</returns>
         public static iText.Kernel.Pdf.Action.PdfTarget CreateChildTarget(String namedDestination, String annotationIdentifier
-            )
-        {
+            ) {
             return iText.Kernel.Pdf.Action.PdfTarget.Create(PdfName.C).Put(PdfName.P, new PdfString(namedDestination))
                 .Put(PdfName.A, new PdfString(annotationIdentifier));
         }
@@ -152,8 +145,7 @@ namespace iText.Kernel.Pdf.Action
         /// <param name="pageNumber">the number of the page in the current document, one-based</param>
         /// <param name="annotationIndex">the index of the annotation in the Annots entry of the page, zero-based</param>
         /// <returns>created object</returns>
-        public static iText.Kernel.Pdf.Action.PdfTarget CreateChildTarget(int pageNumber, int annotationIndex)
-        {
+        public static iText.Kernel.Pdf.Action.PdfTarget CreateChildTarget(int pageNumber, int annotationIndex) {
             return iText.Kernel.Pdf.Action.PdfTarget.Create(PdfName.C).Put(PdfName.P, new PdfNumber(pageNumber - 1)).Put
                 (PdfName.A, new PdfNumber(annotationIndex));
         }
@@ -164,8 +156,7 @@ namespace iText.Kernel.Pdf.Action
         /// </summary>
         /// <param name="name">the name of the file</param>
         /// <returns>this object wrapper</returns>
-        public virtual iText.Kernel.Pdf.Action.PdfTarget SetName(String name)
-        {
+        public virtual iText.Kernel.Pdf.Action.PdfTarget SetName(String name) {
             return Put(PdfName.N, new PdfString(name));
         }
 
@@ -174,8 +165,7 @@ namespace iText.Kernel.Pdf.Action
         /// in the EmbeddedFiles.
         /// </summary>
         /// <returns>the name of the child file for this target</returns>
-        public virtual String GetName()
-        {
+        public virtual String GetName() {
             return GetPdfObject().GetAsString(PdfName.N).ToString();
         }
 
@@ -184,16 +174,13 @@ namespace iText.Kernel.Pdf.Action
         /// <param name="pdfAnnotation">the annotation to be set</param>
         /// <param name="pdfDocument">the corresponding document</param>
         /// <returns>this object wrapper</returns>
-        public virtual iText.Kernel.Pdf.Action.PdfTarget SetAnnotation(PdfFileAttachmentAnnotation pdfAnnotation,
-            PdfDocument pdfDocument)
-        {
+        public virtual iText.Kernel.Pdf.Action.PdfTarget SetAnnotation(PdfFileAttachmentAnnotation pdfAnnotation, 
+            PdfDocument pdfDocument) {
             PdfPage page = pdfAnnotation.GetPage();
-            if (null == page)
-            {
+            if (null == page) {
                 throw new PdfException(PdfException.AnnotationShallHaveReferenceToPage);
             }
-            else
-            {
+            else {
                 Put(PdfName.P, new PdfNumber(pdfDocument.GetPageNumber(page)));
                 Put(PdfName.A, new PdfNumber(page.GetAnnotations().IndexOf(pdfAnnotation)));
             }
@@ -203,56 +190,42 @@ namespace iText.Kernel.Pdf.Action
         /// <summary>Gets the annotation specified by /A and /P entry values.</summary>
         /// <param name="pdfDocument">specifies the corresponding document</param>
         /// <returns>the annotation specified by /A and /P entry value.</returns>
-        public virtual PdfFileAttachmentAnnotation GetAnnotation(PdfDocument pdfDocument)
-        {
+        public virtual PdfFileAttachmentAnnotation GetAnnotation(PdfDocument pdfDocument) {
             PdfObject pValue = GetPdfObject().Get(PdfName.P);
             PdfPage page = null;
-            if (pValue is PdfNumber)
-            {
+            if (pValue is PdfNumber) {
                 // zero-based index is used
                 page = pdfDocument.GetPage(((PdfNumber)pValue).IntValue() + 1);
             }
-            else
-            {
-                if (pValue is PdfString)
-                {
+            else {
+                if (pValue is PdfString) {
                     PdfNameTree destsTree = pdfDocument.GetCatalog().GetNameTree(PdfName.Dests);
                     IDictionary<String, PdfObject> dests = destsTree.GetNames();
                     PdfArray pdfArray = (PdfArray)dests.Get(((PdfString)pValue).GetValue());
-                    if (null != pdfArray)
-                    {
-                        if (pdfArray.Get(0) is PdfNumber)
-                        {
+                    if (null != pdfArray) {
+                        if (pdfArray.Get(0) is PdfNumber) {
                             page = pdfDocument.GetPage(((PdfNumber)pdfArray.Get(0)).IntValue());
                         }
-                        else
-                        {
+                        else {
                             page = pdfDocument.GetPage((PdfDictionary)pdfArray.Get(0));
                         }
                     }
                 }
             }
             IList<PdfAnnotation> pageAnnotations = null;
-            if (null != page)
-            {
+            if (null != page) {
                 pageAnnotations = page.GetAnnotations();
             }
             PdfObject aValue = GetPdfObject().Get(PdfName.A);
             PdfFileAttachmentAnnotation resultAnnotation = null;
-            if (null != pageAnnotations)
-            {
-                if (aValue is PdfNumber)
-                {
+            if (null != pageAnnotations) {
+                if (aValue is PdfNumber) {
                     resultAnnotation = (PdfFileAttachmentAnnotation)pageAnnotations[((PdfNumber)aValue).IntValue()];
                 }
-                else
-                {
-                    if (aValue is PdfString)
-                    {
-                        foreach (PdfAnnotation annotation in pageAnnotations)
-                        {
-                            if (aValue.Equals(annotation.GetName()))
-                            {
+                else {
+                    if (aValue is PdfString) {
+                        foreach (PdfAnnotation annotation in pageAnnotations) {
+                            if (aValue.Equals(annotation.GetName())) {
                                 resultAnnotation = (PdfFileAttachmentAnnotation)annotation;
                                 break;
                             }
@@ -260,8 +233,7 @@ namespace iText.Kernel.Pdf.Action
                     }
                 }
             }
-            if (null == resultAnnotation)
-            {
+            if (null == resultAnnotation) {
                 ILog logger = LogManager.GetLogger(typeof(iText.Kernel.Pdf.Action.PdfTarget));
                 logger.Error(iText.IO.LogMessageConstant.SOME_TARGET_FIELDS_ARE_NOT_SET_OR_INCORRECT);
             }
@@ -275,8 +247,7 @@ namespace iText.Kernel.Pdf.Action
         /// </remarks>
         /// <param name="target">the additional path target dictionary</param>
         /// <returns>this object wrapper</returns>
-        public virtual iText.Kernel.Pdf.Action.PdfTarget SetTarget(iText.Kernel.Pdf.Action.PdfTarget target)
-        {
+        public virtual iText.Kernel.Pdf.Action.PdfTarget SetTarget(iText.Kernel.Pdf.Action.PdfTarget target) {
             return Put(PdfName.T, target.GetPdfObject());
         }
 
@@ -286,8 +257,7 @@ namespace iText.Kernel.Pdf.Action
         /// If the current target object is the final node in the target path, <c>null</c> is returned.
         /// </remarks>
         /// <returns>a target dictionary specifying additional path information to the target document</returns>
-        public virtual iText.Kernel.Pdf.Action.PdfTarget GetTarget()
-        {
+        public virtual iText.Kernel.Pdf.Action.PdfTarget GetTarget() {
             PdfDictionary targetDictObject = GetPdfObject().GetAsDictionary(PdfName.T);
             return targetDictObject != null ? new iText.Kernel.Pdf.Action.PdfTarget(targetDictObject) : null;
         }
@@ -303,15 +273,13 @@ namespace iText.Kernel.Pdf.Action
         /// </param>
         /// <param name="value">the value</param>
         /// <returns>this object wrapper</returns>
-        public virtual iText.Kernel.Pdf.Action.PdfTarget Put(PdfName key, PdfObject value)
-        {
+        public virtual iText.Kernel.Pdf.Action.PdfTarget Put(PdfName key, PdfObject value) {
             GetPdfObject().Put(key, value);
             return this;
         }
 
         /// <summary><inheritDoc/></summary>
-        protected internal override bool IsWrappedObjectMustBeIndirect()
-        {
+        protected internal override bool IsWrappedObjectMustBeIndirect() {
             return false;
         }
     }

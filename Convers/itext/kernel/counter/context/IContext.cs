@@ -43,16 +43,14 @@ address: sales@itextpdf.com
 */
 using iText.Kernel.Counter.Event;
 
-namespace iText.Kernel.Counter.Context
-{
+namespace iText.Kernel.Counter.Context {
     /// <summary>The class that determines weather event should be processed or not.</summary>
     /// <remarks>
     /// The class that determines weather event should be processed or not.
     /// Is calculated by the
     /// <see cref="iText.Kernel.Counter.ContextManager"/>
     /// </remarks>
-    public interface IContext
-    {
+    public interface IContext {
         bool Allow(IEvent @event);
     }
 }

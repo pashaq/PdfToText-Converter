@@ -42,20 +42,17 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Filespec;
 
-namespace iText.Kernel.Pdf.Annot
-{
-    public class PdfFileAttachmentAnnotation : PdfMarkupAnnotation
-    {
+namespace iText.Kernel.Pdf.Annot {
+    public class PdfFileAttachmentAnnotation : PdfMarkupAnnotation {
         public PdfFileAttachmentAnnotation(Rectangle rect)
-            : base(rect)
-        {
+            : base(rect) {
         }
 
         public PdfFileAttachmentAnnotation(Rectangle rect, PdfFileSpec file)
-            : this(rect)
-        {
+            : this(rect) {
             Put(PdfName.FS, file.GetPdfObject());
         }
 
@@ -73,17 +70,14 @@ namespace iText.Kernel.Pdf.Annot
         /// </param>
         /// <seealso cref="PdfAnnotation.MakeAnnotation(iText.Kernel.Pdf.PdfObject)"/>
         protected internal PdfFileAttachmentAnnotation(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
-        public override PdfName GetSubtype()
-        {
+        public override PdfName GetSubtype() {
             return PdfName.FileAttachment;
         }
 
-        public virtual PdfObject GetFileSpecObject()
-        {
+        public virtual PdfObject GetFileSpecObject() {
             return GetPdfObject().Get(PdfName.FS);
         }
 
@@ -98,8 +92,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfName"/>
         /// that specifies the icon for displaying annotation, or null if icon name is not specified.
         /// </returns>
-        public virtual PdfName GetIconName()
-        {
+        public virtual PdfName GetIconName() {
             return GetPdfObject().GetAsName(PdfName.Name);
         }
 
@@ -122,8 +115,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfFileAttachmentAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfFileAttachmentAnnotation SetIconName(PdfName name)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfFileAttachmentAnnotation SetIconName(PdfName name) {
             return (iText.Kernel.Pdf.Annot.PdfFileAttachmentAnnotation)Put(PdfName.Name, name);
         }
     }

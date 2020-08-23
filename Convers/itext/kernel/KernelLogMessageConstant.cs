@@ -42,18 +42,16 @@ address: sales@itextpdf.com
 */
 using System;
 
-namespace iText.Kernel
-{
+namespace iText.Kernel {
     /// <summary>Class that bundles all the error message templates as constants.</summary>
-    public sealed class KernelLogMessageConstant
-    {
+    public sealed class KernelLogMessageConstant {
         public const String DCTDECODE_FILTER_DECODING = "DCTDecode filter decoding into the " + "bit map is not supported. The stream data would be left in JPEG baseline format";
 
         public const String FULL_COMPRESSION_APPEND_MODE_XREF_TABLE_INCONSISTENCY = "Full compression mode requested "
-             + "in append mode but the original document has cross-reference table, not cross-reference stream. "
+             + "in append mode but the original document has cross-reference table, not cross-reference stream. " 
             + "Falling back to cross-reference table in appended document and switching full compression off";
 
-        public const String FULL_COMPRESSION_APPEND_MODE_XREF_STREAM_INCONSISTENCY = "Full compression mode was "
+        public const String FULL_COMPRESSION_APPEND_MODE_XREF_STREAM_INCONSISTENCY = "Full compression mode was " 
             + "requested to be switched off in append mode but the original document has cross-reference stream, not "
              + "cross-reference table. Falling back to cross-reference stream in appended document and switching full "
              + "compression on";
@@ -62,8 +60,7 @@ namespace iText.Kernel
 
         public const String UNABLE_TO_PARSE_COLOR_WITHIN_COLORSPACE = "Unable to parse color {0} within {1} color space";
 
-        private KernelLogMessageConstant()
-        {
+        private KernelLogMessageConstant() {
         }
         //Private constructor will prevent the instantiation of this class directly
     }

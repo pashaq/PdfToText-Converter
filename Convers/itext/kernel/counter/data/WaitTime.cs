@@ -40,10 +40,8 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-namespace iText.Kernel.Counter.Data
-{
-    public sealed class WaitTime
-    {
+namespace iText.Kernel.Counter.Data {
+    public sealed class WaitTime {
         private readonly long time;
 
         private readonly long initial;
@@ -51,29 +49,24 @@ namespace iText.Kernel.Counter.Data
         private readonly long maximum;
 
         public WaitTime(long initial, long maximum)
-            : this(initial, maximum, initial)
-        {
+            : this(initial, maximum, initial) {
         }
 
-        public WaitTime(long initial, long maximum, long time)
-        {
+        public WaitTime(long initial, long maximum, long time) {
             this.initial = initial;
             this.maximum = maximum;
             this.time = time;
         }
 
-        public long GetInitial()
-        {
+        public long GetInitial() {
             return initial;
         }
 
-        public long GetMaximum()
-        {
+        public long GetMaximum() {
             return maximum;
         }
 
-        public long GetTime()
-        {
+        public long GetTime() {
             return time;
         }
     }

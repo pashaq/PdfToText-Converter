@@ -41,15 +41,14 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Util;
-using iText.Kernel.Pdf.Colorspace;
 using System;
+using iText.IO.Util;
+using iText.Kernel;
+using iText.Kernel.Pdf.Colorspace;
 
-namespace iText.Kernel.Colors
-{
+namespace iText.Kernel.Colors {
     /// <summary>Represents a color</summary>
-    public class Color
-    {
+    public class Color {
         /// <summary>The color space of the color</summary>
         protected internal PdfColorSpace colorSpace;
 
@@ -63,15 +62,12 @@ namespace iText.Kernel.Colors
         /// </remarks>
         /// <param name="colorSpace">the color space to which the created Color object relates</param>
         /// <param name="colorValue">the color value of the created Color object</param>
-        protected internal Color(PdfColorSpace colorSpace, float[] colorValue)
-        {
+        protected internal Color(PdfColorSpace colorSpace, float[] colorValue) {
             this.colorSpace = colorSpace;
-            if (colorValue == null)
-            {
+            if (colorValue == null) {
                 this.colorValue = new float[colorSpace.GetNumberOfComponents()];
             }
-            else
-            {
+            else {
                 this.colorValue = colorValue;
             }
         }
@@ -83,8 +79,7 @@ namespace iText.Kernel.Colors
         /// </remarks>
         /// <param name="colorSpace">the color space to which the returned Color object relates</param>
         /// <returns>the created Color object.</returns>
-        public static iText.Kernel.Colors.Color MakeColor(PdfColorSpace colorSpace)
-        {
+        public static iText.Kernel.Colors.Color MakeColor(PdfColorSpace colorSpace) {
             return MakeColor(colorSpace, null);
         }
 
@@ -96,119 +91,89 @@ namespace iText.Kernel.Colors
         /// <param name="colorSpace">the color space to which the returned Color object relates</param>
         /// <param name="colorValue">the color value of the returned Color object</param>
         /// <returns>the created Color object.</returns>
-        public static iText.Kernel.Colors.Color MakeColor(PdfColorSpace colorSpace, float[] colorValue)
-        {
+        public static iText.Kernel.Colors.Color MakeColor(PdfColorSpace colorSpace, float[] colorValue) {
             iText.Kernel.Colors.Color c = null;
             bool unknownColorSpace = false;
-            if (colorSpace is PdfDeviceCs)
-            {
-                if (colorSpace is PdfDeviceCs.Gray)
-                {
+            if (colorSpace is PdfDeviceCs) {
+                if (colorSpace is PdfDeviceCs.Gray) {
                     c = colorValue != null ? new DeviceGray(colorValue[0]) : new DeviceGray();
                 }
-                else
-                {
-                    if (colorSpace is PdfDeviceCs.Rgb)
-                    {
+                else {
+                    if (colorSpace is PdfDeviceCs.Rgb) {
                         c = colorValue != null ? new DeviceRgb(colorValue[0], colorValue[1], colorValue[2]) : new DeviceRgb();
                     }
-                    else
-                    {
-                        if (colorSpace is PdfDeviceCs.Cmyk)
-                        {
-                            c = colorValue != null ? new DeviceCmyk(colorValue[0], colorValue[1], colorValue[2], colorValue[3]) : new
+                    else {
+                        if (colorSpace is PdfDeviceCs.Cmyk) {
+                            c = colorValue != null ? new DeviceCmyk(colorValue[0], colorValue[1], colorValue[2], colorValue[3]) : new 
                                 DeviceCmyk();
                         }
-                        else
-                        {
+                        else {
                             unknownColorSpace = true;
                         }
                     }
                 }
             }
-            else
-            {
-                if (colorSpace is PdfCieBasedCs)
-                {
-                    if (colorSpace is PdfCieBasedCs.CalGray)
-                    {
+            else {
+                if (colorSpace is PdfCieBasedCs) {
+                    if (colorSpace is PdfCieBasedCs.CalGray) {
                         PdfCieBasedCs.CalGray calGray = (PdfCieBasedCs.CalGray)colorSpace;
                         c = colorValue != null ? new CalGray(calGray, colorValue[0]) : new CalGray(calGray);
                     }
-                    else
-                    {
-                        if (colorSpace is PdfCieBasedCs.CalRgb)
-                        {
+                    else {
+                        if (colorSpace is PdfCieBasedCs.CalRgb) {
                             PdfCieBasedCs.CalRgb calRgb = (PdfCieBasedCs.CalRgb)colorSpace;
                             c = colorValue != null ? new CalRgb(calRgb, colorValue) : new CalRgb(calRgb);
                         }
-                        else
-                        {
-                            if (colorSpace is PdfCieBasedCs.IccBased)
-                            {
+                        else {
+                            if (colorSpace is PdfCieBasedCs.IccBased) {
                                 PdfCieBasedCs.IccBased iccBased = (PdfCieBasedCs.IccBased)colorSpace;
                                 c = colorValue != null ? new IccBased(iccBased, colorValue) : new IccBased(iccBased);
                             }
-                            else
-                            {
-                                if (colorSpace is PdfCieBasedCs.Lab)
-                                {
+                            else {
+                                if (colorSpace is PdfCieBasedCs.Lab) {
                                     PdfCieBasedCs.Lab lab = (PdfCieBasedCs.Lab)colorSpace;
                                     c = colorValue != null ? new Lab(lab, colorValue) : new Lab(lab);
                                 }
-                                else
-                                {
+                                else {
                                     unknownColorSpace = true;
                                 }
                             }
                         }
                     }
                 }
-                else
-                {
-                    if (colorSpace is PdfSpecialCs)
-                    {
-                        if (colorSpace is PdfSpecialCs.Separation)
-                        {
+                else {
+                    if (colorSpace is PdfSpecialCs) {
+                        if (colorSpace is PdfSpecialCs.Separation) {
                             PdfSpecialCs.Separation separation = (PdfSpecialCs.Separation)colorSpace;
                             c = colorValue != null ? new Separation(separation, colorValue[0]) : new Separation(separation);
                         }
-                        else
-                        {
-                            if (colorSpace is PdfSpecialCs.DeviceN)
-                            {
+                        else {
+                            if (colorSpace is PdfSpecialCs.DeviceN) {
                                 //NChannel goes here also
                                 PdfSpecialCs.DeviceN deviceN = (PdfSpecialCs.DeviceN)colorSpace;
                                 c = colorValue != null ? new DeviceN(deviceN, colorValue) : new DeviceN(deviceN);
                             }
-                            else
-                            {
-                                if (colorSpace is PdfSpecialCs.Indexed)
-                                {
+                            else {
+                                if (colorSpace is PdfSpecialCs.Indexed) {
                                     c = colorValue != null ? new Indexed(colorSpace, (int)colorValue[0]) : new Indexed(colorSpace);
                                 }
-                                else
-                                {
+                                else {
                                     unknownColorSpace = true;
                                 }
                             }
                         }
                     }
-                    else
-                    {
-                        if (colorSpace is PdfSpecialCs.Pattern)
-                        {
+                    else {
+                        if (colorSpace is PdfSpecialCs.Pattern) {
                             c = new iText.Kernel.Colors.Color(colorSpace, colorValue);
                         }
-                        else
-                        {
+                        else {
                             unknownColorSpace = true;
                         }
                     }
                 }
             }
-            if (unknownColorSpace)
-            {
+            if (unknownColorSpace) {
                 throw new PdfException("Unknown color space.");
             }
             return c;
@@ -223,8 +188,7 @@ namespace iText.Kernel.Colors
         /// </summary>
         /// <param name="cmykColor">the DeviceCmyk color which will be converted to DeviceRgb color</param>
         /// <returns>converted color</returns>
-        public static DeviceRgb ConvertCmykToRgb(DeviceCmyk cmykColor)
-        {
+        public static DeviceRgb ConvertCmykToRgb(DeviceCmyk cmykColor) {
             float cyanComp = 1 - cmykColor.GetColorValue()[0];
             float magentaComp = 1 - cmykColor.GetColorValue()[1];
             float yellowComp = 1 - cmykColor.GetColorValue()[2];
@@ -244,8 +208,7 @@ namespace iText.Kernel.Colors
         /// </summary>
         /// <param name="rgbColor">the DeviceRgb color which will be converted to DeviceCmyk color</param>
         /// <returns>converted color</returns>
-        public static DeviceCmyk ConvertRgbToCmyk(DeviceRgb rgbColor)
-        {
+        public static DeviceCmyk ConvertRgbToCmyk(DeviceRgb rgbColor) {
             float redComp = rgbColor.GetColorValue()[0];
             float greenComp = rgbColor.GetColorValue()[1];
             float blueComp = rgbColor.GetColorValue()[2];
@@ -258,8 +221,7 @@ namespace iText.Kernel.Colors
 
         /// <summary>Returns the number of color value components</summary>
         /// <returns>the number of color value components</returns>
-        public virtual int GetNumberOfComponents()
-        {
+        public virtual int GetNumberOfComponents() {
             return colorValue.Length;
         }
 
@@ -269,24 +231,20 @@ namespace iText.Kernel.Colors
         /// to which the color is related.
         /// </summary>
         /// <returns>the color space of the color</returns>
-        public virtual PdfColorSpace GetColorSpace()
-        {
+        public virtual PdfColorSpace GetColorSpace() {
             return colorSpace;
         }
 
         /// <summary>Returns the color value of the color</summary>
         /// <returns>the color value</returns>
-        public virtual float[] GetColorValue()
-        {
+        public virtual float[] GetColorValue() {
             return colorValue;
         }
 
         /// <summary>Sets the color value of the color</summary>
         /// <param name="value">new color value</param>
-        public virtual void SetColorValue(float[] value)
-        {
-            if (colorValue.Length != value.Length)
-            {
+        public virtual void SetColorValue(float[] value) {
+            if (colorValue.Length != value.Length) {
                 throw new PdfException(PdfException.IncorrectNumberOfComponents, this);
             }
             colorValue = value;
@@ -301,14 +259,11 @@ namespace iText.Kernel.Colors
         /// <see cref="colorValue">color value</see>
         /// are considered during the comparison.
         /// </remarks>
-        public override bool Equals(Object o)
-        {
-            if (this == o)
-            {
+        public override bool Equals(Object o) {
+            if (this == o) {
                 return true;
             }
-            if (o == null || GetType() != o.GetType())
-            {
+            if (o == null || GetType() != o.GetType()) {
                 return false;
             }
             iText.Kernel.Colors.Color color = (iText.Kernel.Colors.Color)o;
@@ -317,8 +272,7 @@ namespace iText.Kernel.Colors
         }
 
         /// <summary><inheritDoc/></summary>
-        public override int GetHashCode()
-        {
+        public override int GetHashCode() {
             int result = colorSpace != null ? colorSpace.GetHashCode() : 0;
             result = 31 * result + (colorValue != null ? JavaUtil.ArraysHashCode(colorValue) : 0);
             return result;

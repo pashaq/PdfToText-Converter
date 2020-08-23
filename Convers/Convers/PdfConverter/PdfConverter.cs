@@ -1,26 +1,27 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Convers
 {
-    public class PdfConverter
+    public class PdfConverter : IToTextConverter
     {
         public StringBuilder ToText(string path)
         {
-            var lines = PdfToText.Convert(path);
-            var result = new StringBuilder();
-
-            foreach (var line in lines)
-            {
-                result.Append(line);
-                result.Append("\n");
-            }
-
-            return result;
+            var conv = new PdfToText();
+            return conv.ToText(path);
         }
-        public List<string> ToStrings(string path)
+        public IEnumerable<string> ToStrings(string path)
         {
-            return PdfToText.Convert(path);
+            var conv = new PdfToText();
+            return conv.ToStrings(path);
+        }
+        public IEnumerable<string[]> ToStringsParts(string path)
+        {
+            var conv = new PdfToText();
+            return conv.ToStringsParts(path);
         }
 
     }

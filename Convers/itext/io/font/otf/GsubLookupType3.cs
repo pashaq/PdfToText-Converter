@@ -43,35 +43,28 @@ address: sales@itextpdf.com
 */
 using System.Collections.Generic;
 
-namespace iText.IO.Font.Otf
-{
+namespace iText.IO.Font.Otf {
     /// <summary>LookupType 3: Alternate Substitution Subtable</summary>
     /// <author>psoares</author>
-    public class GsubLookupType3 : OpenTableLookup
-    {
+    public class GsubLookupType3 : OpenTableLookup {
         private IDictionary<int, int[]> substMap;
 
         public GsubLookupType3(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations)
-            : base(openReader, lookupFlag, subTableLocations)
-        {
+            : base(openReader, lookupFlag, subTableLocations) {
             substMap = new Dictionary<int, int[]>();
             ReadSubTables();
         }
 
-        public override bool TransformOne(GlyphLine line)
-        {
-            if (line.idx >= line.end)
-            {
+        public override bool TransformOne(GlyphLine line) {
+            if (line.idx >= line.end) {
                 return false;
             }
             Glyph g = line.Get(line.idx);
             bool changed = false;
-            if (!openReader.IsSkip(g.GetCode(), lookupFlag))
-            {
+            if (!openReader.IsSkip(g.GetCode(), lookupFlag)) {
                 int[] substCode = substMap.Get(g.GetCode());
                 // there is no need to substitute a symbol with itself
-                if (substCode != null && substCode[0] != g.GetCode())
-                {
+                if (substCode != null && substCode[0] != g.GetCode()) {
                     line.SubstituteOneToOne(openReader, substCode[0]);
                     changed = true;
                 }
@@ -80,8 +73,7 @@ namespace iText.IO.Font.Otf
             return changed;
         }
 
-        protected internal override void ReadSubTable(int subTableLocation)
-        {
+        protected internal override void ReadSubTable(int subTableLocation) {
             openReader.rf.Seek(subTableLocation);
             int substFormat = openReader.rf.ReadShort();
             System.Diagnostics.Debug.Assert(substFormat == 1);
@@ -89,21 +81,18 @@ namespace iText.IO.Font.Otf
             int alternateSetCount = openReader.rf.ReadUnsignedShort();
             int[][] substitute = new int[alternateSetCount][];
             int[] alternateLocations = openReader.ReadUShortArray(alternateSetCount, subTableLocation);
-            for (int k = 0; k < alternateSetCount; k++)
-            {
+            for (int k = 0; k < alternateSetCount; k++) {
                 openReader.rf.Seek(alternateLocations[k]);
                 int glyphCount = openReader.rf.ReadUnsignedShort();
                 substitute[k] = openReader.ReadUShortArray(glyphCount);
             }
             IList<int> coverageGlyphIds = openReader.ReadCoverageFormat(subTableLocation + coverage);
-            for (int k = 0; k < alternateSetCount; ++k)
-            {
+            for (int k = 0; k < alternateSetCount; ++k) {
                 substMap.Put(coverageGlyphIds[k], substitute[k]);
             }
         }
 
-        public override bool HasSubstitution(int index)
-        {
+        public override bool HasSubstitution(int index) {
             return substMap.ContainsKey(index);
         }
     }

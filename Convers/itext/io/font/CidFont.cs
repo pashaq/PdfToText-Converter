@@ -41,92 +41,76 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
+using System.Collections.Generic;
 using iText.IO.Font.Cmap;
 using iText.IO.Font.Otf;
 using iText.IO.Util;
-using System;
-using System.Collections.Generic;
 
-namespace iText.IO.Font
-{
-    public class CidFont : FontProgram
-    {
+namespace iText.IO.Font {
+    public class CidFont : FontProgram {
         private String fontName;
 
         private int pdfFontFlags;
 
         private ICollection<String> compatibleCmaps;
 
-        internal CidFont(String fontName, ICollection<String> cmaps)
-        {
+        internal CidFont(String fontName, ICollection<String> cmaps) {
             this.fontName = fontName;
             compatibleCmaps = cmaps;
             fontNames = new FontNames();
             InitializeCidFontNameAndStyle(fontName);
             IDictionary<String, Object> fontDesc = CidFontProperties.GetAllFonts().Get(fontNames.GetFontName());
-            if (fontDesc == null)
-            {
+            if (fontDesc == null) {
                 throw new iText.IO.IOException("There is no such predefined font: {0}").SetMessageParams(fontName);
             }
             InitializeCidFontProperties(fontDesc);
         }
 
-        internal CidFont(String fontName, ICollection<String> cmaps, IDictionary<String, Object> fontDescription)
-        {
+        internal CidFont(String fontName, ICollection<String> cmaps, IDictionary<String, Object> fontDescription) {
             InitializeCidFontNameAndStyle(fontName);
             InitializeCidFontProperties(fontDescription);
             compatibleCmaps = cmaps;
         }
 
-        public virtual bool CompatibleWith(String cmap)
-        {
-            if (cmap.Equals(PdfEncodings.IDENTITY_H) || cmap.Equals(PdfEncodings.IDENTITY_V))
-            {
+        public virtual bool CompatibleWith(String cmap) {
+            if (cmap.Equals(PdfEncodings.IDENTITY_H) || cmap.Equals(PdfEncodings.IDENTITY_V)) {
                 return true;
             }
-            else
-            {
+            else {
                 return compatibleCmaps != null && compatibleCmaps.Contains(cmap);
             }
         }
 
-        public override int GetKerning(Glyph glyph1, Glyph glyph2)
-        {
+        public override int GetKerning(Glyph glyph1, Glyph glyph2) {
             return 0;
         }
 
-        public override int GetPdfFontFlags()
-        {
+        public override int GetPdfFontFlags() {
             return pdfFontFlags;
         }
 
-        public override bool IsFontSpecific()
-        {
+        public override bool IsFontSpecific() {
             return false;
         }
 
-        public override bool IsBuiltWith(String fontName)
-        {
+        public override bool IsBuiltWith(String fontName) {
             return Object.Equals(this.fontName, fontName);
         }
 
-        private void InitializeCidFontNameAndStyle(String fontName)
-        {
+        private void InitializeCidFontNameAndStyle(String fontName) {
             String nameBase = TrimFontStyle(fontName);
-            if (nameBase.Length < fontName.Length)
-            {
+            if (nameBase.Length < fontName.Length) {
                 fontNames.SetFontName(fontName);
                 fontNames.SetStyle(fontName.Substring(nameBase.Length));
             }
-            else
-            {
+            else {
                 fontNames.SetFontName(fontName);
             }
             fontNames.SetFullName(new String[][] { new String[] { "", "", "", fontNames.GetFontName() } });
         }
 
-        private void InitializeCidFontProperties(IDictionary<String, Object> fontDesc)
-        {
+        private void InitializeCidFontProperties(IDictionary<String, Object> fontDesc) {
             fontIdentification.SetPanose((String)fontDesc.Get("Panose"));
             fontMetrics.SetItalicAngle(Convert.ToInt32((String)fontDesc.Get("ItalicAngle"), System.Globalization.CultureInfo.InvariantCulture
                 ));
@@ -149,13 +133,11 @@ namespace iText.IO.Font
             fontMetrics.UpdateBbox(llx, lly, urx, ury);
             registry = (String)fontDesc.Get("Registry");
             String uniMap = GetCompatibleUniMap(registry);
-            if (uniMap != null)
-            {
+            if (uniMap != null) {
                 IntHashtable metrics = (IntHashtable)fontDesc.Get("W");
                 CMapCidUni cid2Uni = FontCache.GetCid2UniCmap(uniMap);
                 avgWidth = 0;
-                foreach (int cid in cid2Uni.GetCids())
-                {
+                foreach (int cid in cid2Uni.GetCids()) {
                     int uni = cid2Uni.Lookup(cid);
                     int width = metrics.ContainsKey(cid) ? metrics.Get(cid) : DEFAULT_WIDTH;
                     Glyph glyph = new Glyph(cid, width, uni);
@@ -164,21 +146,17 @@ namespace iText.IO.Font
                     unicodeToGlyph.Put(uni, glyph);
                 }
                 FixSpaceIssue();
-                if (codeToGlyph.Count != 0)
-                {
+                if (codeToGlyph.Count != 0) {
                     avgWidth /= codeToGlyph.Count;
                 }
             }
         }
 
-        private static String GetCompatibleUniMap(String registry)
-        {
+        private static String GetCompatibleUniMap(String registry) {
             String uniMap = "";
-            foreach (String name in CidFontProperties.GetRegistryNames().Get(registry + "_Uni"))
-            {
+            foreach (String name in CidFontProperties.GetRegistryNames().Get(registry + "_Uni")) {
                 uniMap = name;
-                if (name.EndsWith("H"))
-                {
+                if (name.EndsWith("H")) {
                     break;
                 }
             }

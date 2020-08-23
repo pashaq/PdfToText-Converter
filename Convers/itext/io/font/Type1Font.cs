@@ -41,18 +41,16 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
+using System.Collections.Generic;
 using Common.Logging;
 using iText.IO.Font.Constants;
 using iText.IO.Font.Otf;
 using iText.IO.Source;
 using iText.IO.Util;
-using System;
-using System.Collections.Generic;
 
-namespace iText.IO.Font
-{
-    public class Type1Font : FontProgram
-    {
+namespace iText.IO.Font {
+    public class Type1Font : FontProgram {
         private Type1Parser fontParser;
 
         private String characterSet;
@@ -73,66 +71,53 @@ namespace iText.IO.Font
 
         private int[] fontStreamLengths;
 
-        protected internal static iText.IO.Font.Type1Font CreateStandardFont(String name)
-        {
-            if (StandardFonts.IsStandardFont(name))
-            {
+        protected internal static iText.IO.Font.Type1Font CreateStandardFont(String name) {
+            if (StandardFonts.IsStandardFont(name)) {
                 return new iText.IO.Font.Type1Font(name, null, null, null);
             }
-            else
-            {
+            else {
                 throw new iText.IO.IOException("{0} is not a standard type1 font.").SetMessageParams(name);
             }
         }
 
-        protected internal Type1Font()
-        {
+        protected internal Type1Font() {
             fontNames = new FontNames();
         }
 
         protected internal Type1Font(String metricsPath, String binaryPath, byte[] afm, byte[] pfb)
-            : this()
-        {
+            : this() {
             fontParser = new Type1Parser(metricsPath, binaryPath, afm, pfb);
             Process();
         }
 
         protected internal Type1Font(String baseFont)
-            : this()
-        {
+            : this() {
             GetFontNames().SetFontName(baseFont);
         }
 
-        public virtual bool IsBuiltInFont()
-        {
+        public virtual bool IsBuiltInFont() {
             return fontParser != null && fontParser.IsBuiltInFont();
         }
 
-        public override int GetPdfFontFlags()
-        {
+        public override int GetPdfFontFlags() {
             int flags = 0;
-            if (fontMetrics.IsFixedPitch())
-            {
+            if (fontMetrics.IsFixedPitch()) {
                 flags |= 1;
             }
             flags |= IsFontSpecific() ? 4 : 32;
-            if (fontMetrics.GetItalicAngle() < 0)
-            {
+            if (fontMetrics.GetItalicAngle() < 0) {
                 flags |= 64;
             }
-            if (fontNames.GetFontName().Contains("Caps") || fontNames.GetFontName().EndsWith("SC"))
-            {
+            if (fontNames.GetFontName().Contains("Caps") || fontNames.GetFontName().EndsWith("SC")) {
                 flags |= 131072;
             }
-            if (fontNames.IsBold() || fontNames.GetFontWeight() > 500)
-            {
+            if (fontNames.IsBold() || fontNames.GetFontWeight() > 500) {
                 flags |= 262144;
             }
             return flags;
         }
 
-        public virtual String GetCharacterSet()
-        {
+        public virtual String GetCharacterSet() {
             return characterSet;
         }
 
@@ -142,22 +127,17 @@ namespace iText.IO.Font
         /// <see langword="true"/>
         /// if the font has any kerning pairs.
         /// </returns>
-        public override bool HasKernPairs()
-        {
+        public override bool HasKernPairs() {
             return kernPairs.Count > 0;
         }
 
-        public override int GetKerning(Glyph first, Glyph second)
-        {
-            if (first.HasValidUnicode() && second.HasValidUnicode())
-            {
+        public override int GetKerning(Glyph first, Glyph second) {
+            if (first.HasValidUnicode() && second.HasValidUnicode()) {
                 long record = ((long)first.GetUnicode() << 32) + second.GetUnicode();
-                if (kernPairs.ContainsKey(record))
-                {
+                if (kernPairs.ContainsKey(record)) {
                     return (int)kernPairs.Get(record);
                 }
-                else
-                {
+                else {
                     return 0;
                 }
             }
@@ -175,8 +155,7 @@ namespace iText.IO.Font
         /// <see langword="false"/>
         /// otherwise.
         /// </returns>
-        public virtual bool SetKerning(int first, int second, int kern)
-        {
+        public virtual bool SetKerning(int first, int second, int kern) {
             long record = ((long)first << 32) + second;
             kernPairs.Put(record, kern);
             return true;
@@ -185,47 +164,37 @@ namespace iText.IO.Font
         /// <summary>Find glyph by glyph name.</summary>
         /// <param name="name">Glyph name</param>
         /// <returns>Glyph instance if found, otherwise null.</returns>
-        public virtual Glyph GetGlyph(String name)
-        {
+        public virtual Glyph GetGlyph(String name) {
             int unicode = AdobeGlyphList.NameToUnicode(name);
-            if (unicode != -1)
-            {
+            if (unicode != -1) {
                 return GetGlyph((int)unicode);
             }
-            else
-            {
+            else {
                 return null;
             }
         }
 
-        public virtual byte[] GetFontStreamBytes()
-        {
-            if (fontParser.IsBuiltInFont())
-            {
+        public virtual byte[] GetFontStreamBytes() {
+            if (fontParser.IsBuiltInFont()) {
                 return null;
             }
-            if (fontStreamBytes != null)
-            {
+            if (fontStreamBytes != null) {
                 return fontStreamBytes;
             }
             RandomAccessFileOrArray raf = null;
-            try
-            {
+            try {
                 raf = fontParser.GetPostscriptBinary();
                 int fileLength = (int)raf.Length();
                 fontStreamBytes = new byte[fileLength - 18];
                 fontStreamLengths = new int[3];
                 int bytePtr = 0;
-                for (int k = 0; k < 3; ++k)
-                {
-                    if (raf.Read() != 0x80)
-                    {
+                for (int k = 0; k < 3; ++k) {
+                    if (raf.Read() != 0x80) {
                         ILog logger = LogManager.GetLogger(typeof(iText.IO.Font.Type1Font));
                         logger.Error(iText.IO.LogMessageConstant.START_MARKER_MISSING_IN_PFB_FILE);
                         return null;
                     }
-                    if (raf.Read() != PFB_TYPES[k])
-                    {
+                    if (raf.Read() != PFB_TYPES[k]) {
                         ILog logger = LogManager.GetLogger(typeof(iText.IO.Font.Type1Font));
                         logger.Error("incorrect.segment.type.in.pfb.file");
                         return null;
@@ -235,11 +204,9 @@ namespace iText.IO.Font
                     size += raf.Read() << 16;
                     size += raf.Read() << 24;
                     fontStreamLengths[k] = size;
-                    while (size != 0)
-                    {
+                    while (size != 0) {
                         int got = raf.Read(fontStreamBytes, bytePtr, size);
-                        if (got < 0)
-                        {
+                        if (got < 0) {
                             ILog logger = LogManager.GetLogger(typeof(iText.IO.Font.Type1Font));
                             logger.Error("premature.end.in.pfb.file");
                             return null;
@@ -250,198 +217,163 @@ namespace iText.IO.Font
                 }
                 return fontStreamBytes;
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 ILog logger = LogManager.GetLogger(typeof(iText.IO.Font.Type1Font));
                 logger.Error("type1.font.file.exception");
                 return null;
             }
-            finally
-            {
-                if (raf != null)
-                {
-                    try
-                    {
+            finally {
+                if (raf != null) {
+                    try {
                         raf.Close();
                     }
-                    catch (Exception)
-                    {
+                    catch (Exception) {
                     }
                 }
             }
         }
 
-        public virtual int[] GetFontStreamLengths()
-        {
+        public virtual int[] GetFontStreamLengths() {
             return fontStreamLengths;
         }
 
-        public override bool IsBuiltWith(String fontProgram)
-        {
+        public override bool IsBuiltWith(String fontProgram) {
             return Object.Equals(fontParser.GetAfmPath(), fontProgram);
         }
 
-        protected internal virtual void Process()
-        {
+        protected internal virtual void Process() {
             RandomAccessFileOrArray raf = fontParser.GetMetricsFile();
             String line;
             bool startKernPairs = false;
-            while (!startKernPairs && (line = raf.ReadLine()) != null)
-            {
+            while (!startKernPairs && (line = raf.ReadLine()) != null) {
                 StringTokenizer tok = new StringTokenizer(line, " ,\n\r\t\f");
-                if (!tok.HasMoreTokens())
-                {
+                if (!tok.HasMoreTokens()) {
                     continue;
                 }
                 String ident = tok.NextToken();
-                switch (ident)
-                {
-                    case "FontName":
-                        {
-                            fontNames.SetFontName(tok.NextToken("\u00ff").Substring(1));
-                            break;
-                        }
+                switch (ident) {
+                    case "FontName": {
+                        fontNames.SetFontName(tok.NextToken("\u00ff").Substring(1));
+                        break;
+                    }
 
-                    case "FullName":
-                        {
-                            String fullName = tok.NextToken("\u00ff").Substring(1);
-                            fontNames.SetFullName(new String[][] { new String[] { "", "", "", fullName } });
-                            break;
-                        }
+                    case "FullName": {
+                        String fullName = tok.NextToken("\u00ff").Substring(1);
+                        fontNames.SetFullName(new String[][] { new String[] { "", "", "", fullName } });
+                        break;
+                    }
 
-                    case "FamilyName":
-                        {
-                            String familyName = tok.NextToken("\u00ff").Substring(1);
-                            fontNames.SetFamilyName(new String[][] { new String[] { "", "", "", familyName } });
-                            break;
-                        }
+                    case "FamilyName": {
+                        String familyName = tok.NextToken("\u00ff").Substring(1);
+                        fontNames.SetFamilyName(new String[][] { new String[] { "", "", "", familyName } });
+                        break;
+                    }
 
-                    case "Weight":
-                        {
-                            fontNames.SetFontWeight(FontWeights.FromType1FontWeight(tok.NextToken("\u00ff").Substring(1)));
-                            break;
-                        }
+                    case "Weight": {
+                        fontNames.SetFontWeight(FontWeights.FromType1FontWeight(tok.NextToken("\u00ff").Substring(1)));
+                        break;
+                    }
 
-                    case "ItalicAngle":
-                        {
-                            fontMetrics.SetItalicAngle(float.Parse(tok.NextToken(), System.Globalization.CultureInfo.InvariantCulture)
-                                );
-                            break;
-                        }
+                    case "ItalicAngle": {
+                        fontMetrics.SetItalicAngle(float.Parse(tok.NextToken(), System.Globalization.CultureInfo.InvariantCulture)
+                            );
+                        break;
+                    }
 
-                    case "IsFixedPitch":
-                        {
-                            fontMetrics.SetIsFixedPitch(tok.NextToken().Equals("true"));
-                            break;
-                        }
+                    case "IsFixedPitch": {
+                        fontMetrics.SetIsFixedPitch(tok.NextToken().Equals("true"));
+                        break;
+                    }
 
-                    case "CharacterSet":
-                        {
-                            characterSet = tok.NextToken("\u00ff").Substring(1);
-                            break;
-                        }
+                    case "CharacterSet": {
+                        characterSet = tok.NextToken("\u00ff").Substring(1);
+                        break;
+                    }
 
-                    case "FontBBox":
-                        {
-                            int llx = (int)float.Parse(tok.NextToken(), System.Globalization.CultureInfo.InvariantCulture);
-                            int lly = (int)float.Parse(tok.NextToken(), System.Globalization.CultureInfo.InvariantCulture);
-                            int urx = (int)float.Parse(tok.NextToken(), System.Globalization.CultureInfo.InvariantCulture);
-                            int ury = (int)float.Parse(tok.NextToken(), System.Globalization.CultureInfo.InvariantCulture);
-                            fontMetrics.SetBbox(llx, lly, urx, ury);
-                            break;
-                        }
+                    case "FontBBox": {
+                        int llx = (int)float.Parse(tok.NextToken(), System.Globalization.CultureInfo.InvariantCulture);
+                        int lly = (int)float.Parse(tok.NextToken(), System.Globalization.CultureInfo.InvariantCulture);
+                        int urx = (int)float.Parse(tok.NextToken(), System.Globalization.CultureInfo.InvariantCulture);
+                        int ury = (int)float.Parse(tok.NextToken(), System.Globalization.CultureInfo.InvariantCulture);
+                        fontMetrics.SetBbox(llx, lly, urx, ury);
+                        break;
+                    }
 
-                    case "UnderlinePosition":
-                        {
-                            fontMetrics.SetUnderlinePosition((int)float.Parse(tok.NextToken(), System.Globalization.CultureInfo.InvariantCulture
-                                ));
-                            break;
-                        }
+                    case "UnderlinePosition": {
+                        fontMetrics.SetUnderlinePosition((int)float.Parse(tok.NextToken(), System.Globalization.CultureInfo.InvariantCulture
+                            ));
+                        break;
+                    }
 
-                    case "UnderlineThickness":
-                        {
-                            fontMetrics.SetUnderlineThickness((int)float.Parse(tok.NextToken(), System.Globalization.CultureInfo.InvariantCulture
-                                ));
-                            break;
-                        }
+                    case "UnderlineThickness": {
+                        fontMetrics.SetUnderlineThickness((int)float.Parse(tok.NextToken(), System.Globalization.CultureInfo.InvariantCulture
+                            ));
+                        break;
+                    }
 
-                    case "EncodingScheme":
-                        {
-                            encodingScheme = tok.NextToken("\u00ff").Substring(1).Trim();
-                            break;
-                        }
+                    case "EncodingScheme": {
+                        encodingScheme = tok.NextToken("\u00ff").Substring(1).Trim();
+                        break;
+                    }
 
-                    case "CapHeight":
-                        {
-                            fontMetrics.SetCapHeight((int)float.Parse(tok.NextToken(), System.Globalization.CultureInfo.InvariantCulture
-                                ));
-                            break;
-                        }
+                    case "CapHeight": {
+                        fontMetrics.SetCapHeight((int)float.Parse(tok.NextToken(), System.Globalization.CultureInfo.InvariantCulture
+                            ));
+                        break;
+                    }
 
-                    case "XHeight":
-                        {
-                            fontMetrics.SetXHeight((int)float.Parse(tok.NextToken(), System.Globalization.CultureInfo.InvariantCulture
-                                ));
-                            break;
-                        }
+                    case "XHeight": {
+                        fontMetrics.SetXHeight((int)float.Parse(tok.NextToken(), System.Globalization.CultureInfo.InvariantCulture
+                            ));
+                        break;
+                    }
 
-                    case "Ascender":
-                        {
-                            fontMetrics.SetTypoAscender((int)float.Parse(tok.NextToken(), System.Globalization.CultureInfo.InvariantCulture
-                                ));
-                            break;
-                        }
+                    case "Ascender": {
+                        fontMetrics.SetTypoAscender((int)float.Parse(tok.NextToken(), System.Globalization.CultureInfo.InvariantCulture
+                            ));
+                        break;
+                    }
 
-                    case "Descender":
-                        {
-                            fontMetrics.SetTypoDescender((int)float.Parse(tok.NextToken(), System.Globalization.CultureInfo.InvariantCulture
-                                ));
-                            break;
-                        }
+                    case "Descender": {
+                        fontMetrics.SetTypoDescender((int)float.Parse(tok.NextToken(), System.Globalization.CultureInfo.InvariantCulture
+                            ));
+                        break;
+                    }
 
-                    case "StdHW":
-                        {
-                            fontMetrics.SetStemH((int)float.Parse(tok.NextToken(), System.Globalization.CultureInfo.InvariantCulture));
-                            break;
-                        }
+                    case "StdHW": {
+                        fontMetrics.SetStemH((int)float.Parse(tok.NextToken(), System.Globalization.CultureInfo.InvariantCulture));
+                        break;
+                    }
 
-                    case "StdVW":
-                        {
-                            fontMetrics.SetStemV((int)float.Parse(tok.NextToken(), System.Globalization.CultureInfo.InvariantCulture));
-                            break;
-                        }
+                    case "StdVW": {
+                        fontMetrics.SetStemV((int)float.Parse(tok.NextToken(), System.Globalization.CultureInfo.InvariantCulture));
+                        break;
+                    }
 
-                    case "StartCharMetrics":
-                        {
-                            startKernPairs = true;
-                            break;
-                        }
+                    case "StartCharMetrics": {
+                        startKernPairs = true;
+                        break;
+                    }
                 }
             }
-            if (!startKernPairs)
-            {
+            if (!startKernPairs) {
                 String metricsPath = fontParser.GetAfmPath();
-                if (metricsPath != null)
-                {
+                if (metricsPath != null) {
                     throw new iText.IO.IOException("startcharmetrics is missing in {0}.").SetMessageParams(metricsPath);
                 }
-                else
-                {
+                else {
                     throw new iText.IO.IOException("startcharmetrics is missing in the metrics file.");
                 }
             }
             avgWidth = 0;
             int widthCount = 0;
-            while ((line = raf.ReadLine()) != null)
-            {
+            while ((line = raf.ReadLine()) != null) {
                 StringTokenizer tok = new StringTokenizer(line);
-                if (!tok.HasMoreTokens())
-                {
+                if (!tok.HasMoreTokens()) {
                     continue;
                 }
                 String ident = tok.NextToken();
-                if (ident.Equals("EndCharMetrics"))
-                {
+                if (ident.Equals("EndCharMetrics")) {
                     startKernPairs = false;
                     break;
                 }
@@ -450,164 +382,130 @@ namespace iText.IO.Font
                 String N = "";
                 int[] B = null;
                 tok = new StringTokenizer(line, ";");
-                while (tok.HasMoreTokens())
-                {
+                while (tok.HasMoreTokens()) {
                     StringTokenizer tokc = new StringTokenizer(tok.NextToken());
-                    if (!tokc.HasMoreTokens())
-                    {
+                    if (!tokc.HasMoreTokens()) {
                         continue;
                     }
                     ident = tokc.NextToken();
-                    switch (ident)
-                    {
-                        case "C":
-                            {
-                                C = Convert.ToInt32(tokc.NextToken(), System.Globalization.CultureInfo.InvariantCulture);
-                                break;
-                            }
+                    switch (ident) {
+                        case "C": {
+                            C = Convert.ToInt32(tokc.NextToken(), System.Globalization.CultureInfo.InvariantCulture);
+                            break;
+                        }
 
-                        case "WX":
-                            {
-                                WX = (int)float.Parse(tokc.NextToken(), System.Globalization.CultureInfo.InvariantCulture);
-                                break;
-                            }
+                        case "WX": {
+                            WX = (int)float.Parse(tokc.NextToken(), System.Globalization.CultureInfo.InvariantCulture);
+                            break;
+                        }
 
-                        case "N":
-                            {
-                                N = tokc.NextToken();
-                                break;
-                            }
+                        case "N": {
+                            N = tokc.NextToken();
+                            break;
+                        }
 
-                        case "B":
-                            {
-                                B = new int[] { Convert.ToInt32(tokc.NextToken(), System.Globalization.CultureInfo.InvariantCulture), Convert.ToInt32
+                        case "B": {
+                            B = new int[] { Convert.ToInt32(tokc.NextToken(), System.Globalization.CultureInfo.InvariantCulture), Convert.ToInt32
                                 (tokc.NextToken(), System.Globalization.CultureInfo.InvariantCulture), Convert.ToInt32(tokc.NextToken(
                                 ), System.Globalization.CultureInfo.InvariantCulture), Convert.ToInt32(tokc.NextToken(), System.Globalization.CultureInfo.InvariantCulture
                                 ) };
-                                break;
-                            }
+                            break;
+                        }
                     }
                 }
                 int unicode = AdobeGlyphList.NameToUnicode(N);
                 Glyph glyph = new Glyph(C, WX, unicode, B);
-                if (C >= 0)
-                {
+                if (C >= 0) {
                     codeToGlyph.Put(C, glyph);
                 }
-                if (unicode != -1)
-                {
+                if (unicode != -1) {
                     unicodeToGlyph.Put(unicode, glyph);
                 }
                 avgWidth += WX;
                 widthCount++;
             }
-            if (widthCount != 0)
-            {
+            if (widthCount != 0) {
                 avgWidth /= widthCount;
             }
-            if (startKernPairs)
-            {
+            if (startKernPairs) {
                 String metricsPath = fontParser.GetAfmPath();
-                if (metricsPath != null)
-                {
+                if (metricsPath != null) {
                     throw new iText.IO.IOException("endcharmetrics is missing in {0}.").SetMessageParams(metricsPath);
                 }
-                else
-                {
+                else {
                     throw new iText.IO.IOException("endcharmetrics is missing in the metrics file.");
                 }
             }
             // From AdobeGlyphList:
             // nonbreakingspace;00A0
             // space;0020
-            if (!unicodeToGlyph.ContainsKey(0x00A0))
-            {
+            if (!unicodeToGlyph.ContainsKey(0x00A0)) {
                 Glyph space = unicodeToGlyph.Get(0x0020);
-                if (space != null)
-                {
+                if (space != null) {
                     unicodeToGlyph.Put(0x00A0, new Glyph(space.GetCode(), space.GetWidth(), 0x00A0, space.GetBbox()));
                 }
             }
             bool endOfMetrics = false;
-            while ((line = raf.ReadLine()) != null)
-            {
+            while ((line = raf.ReadLine()) != null) {
                 StringTokenizer tok = new StringTokenizer(line);
-                if (!tok.HasMoreTokens())
-                {
+                if (!tok.HasMoreTokens()) {
                     continue;
                 }
                 String ident = tok.NextToken();
-                if (ident.Equals("EndFontMetrics"))
-                {
+                if (ident.Equals("EndFontMetrics")) {
                     endOfMetrics = true;
                     break;
                 }
-                else
-                {
-                    if (ident.Equals("StartKernPairs"))
-                    {
+                else {
+                    if (ident.Equals("StartKernPairs")) {
                         startKernPairs = true;
                         break;
                     }
                 }
             }
-            if (startKernPairs)
-            {
-                while ((line = raf.ReadLine()) != null)
-                {
+            if (startKernPairs) {
+                while ((line = raf.ReadLine()) != null) {
                     StringTokenizer tok = new StringTokenizer(line);
-                    if (!tok.HasMoreTokens())
-                    {
+                    if (!tok.HasMoreTokens()) {
                         continue;
                     }
                     String ident = tok.NextToken();
-                    if (ident.Equals("KPX"))
-                    {
+                    if (ident.Equals("KPX")) {
                         String first = tok.NextToken();
                         String second = tok.NextToken();
                         int? width = (int)float.Parse(tok.NextToken(), System.Globalization.CultureInfo.InvariantCulture);
                         int firstUni = AdobeGlyphList.NameToUnicode(first);
                         int secondUni = AdobeGlyphList.NameToUnicode(second);
-                        if (firstUni != -1 && secondUni != -1)
-                        {
+                        if (firstUni != -1 && secondUni != -1) {
                             long record = ((long)firstUni << 32) + secondUni;
                             kernPairs.Put(record, width);
                         }
                     }
-                    else
-                    {
-                        if (ident.Equals("EndKernPairs"))
-                        {
+                    else {
+                        if (ident.Equals("EndKernPairs")) {
                             startKernPairs = false;
                             break;
                         }
                     }
                 }
             }
-            else
-            {
-                if (!endOfMetrics)
-                {
+            else {
+                if (!endOfMetrics) {
                     String metricsPath = fontParser.GetAfmPath();
-                    if (metricsPath != null)
-                    {
+                    if (metricsPath != null) {
                         throw new iText.IO.IOException("endfontmetrics is missing in {0}.").SetMessageParams(metricsPath);
                     }
-                    else
-                    {
+                    else {
                         throw new iText.IO.IOException("endfontmetrics is missing in the metrics file.");
                     }
                 }
             }
-            if (startKernPairs)
-            {
+            if (startKernPairs) {
                 String metricsPath = fontParser.GetAfmPath();
-                if (metricsPath != null)
-                {
+                if (metricsPath != null) {
                     throw new iText.IO.IOException("endkernpairs is missing in {0}.").SetMessageParams(metricsPath);
                 }
-                else
-                {
+                else {
                     throw new iText.IO.IOException("endkernpairs is missing in the metrics file.");
                 }
             }

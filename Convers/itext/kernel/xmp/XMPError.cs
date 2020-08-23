@@ -27,11 +27,9 @@
 //        SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //        http://www.adobe.com/devnet/xmp/library/eula-xmp-library-java.html
-namespace iText.Kernel.XMP
-{
+namespace iText.Kernel.XMP {
     /// <since>21.09.2006</since>
-    public abstract class XMPError
-    {
+    public abstract class XMPError {
         public const int UNKNOWN = 0;
 
         public const int BADPARAM = 4;
@@ -60,7 +58,6 @@ namespace iText.Kernel.XMP
         public const int BADSTREAM = 204;
     }
 
-    public static class XMPErrorConstants
-    {
+    public static class XMPErrorConstants {
     }
 }

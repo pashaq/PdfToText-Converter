@@ -43,8 +43,7 @@ address: sales@itextpdf.com
 */
 using System.Collections.Generic;
 
-namespace iText.Kernel.Counter.Data
-{
+namespace iText.Kernel.Counter.Data {
     /// <summary>
     /// Queue-based implementation of
     /// <see cref="IEventDataCache{T, V}"/>.
@@ -59,39 +58,31 @@ namespace iText.Kernel.Counter.Data
     /// <typeparam name="T">the data signature type</typeparam>
     /// <typeparam name="V">the data type</typeparam>
     public class EventDataCacheQueueBased<T, V> : IEventDataCache<T, V>
-        where V : EventData<T>
-    {
+        where V : EventData<T> {
         private IDictionary<T, V> map = new Dictionary<T, V>();
 
         private LinkedList<T> signatureQueue = new LinkedList<T>();
 
-        public virtual void Put(V data)
-        {
-            if (data != null)
-            {
+        public virtual void Put(V data) {
+            if (data != null) {
                 V old = map.Put(data.GetSignature(), data);
-                if (old != null)
-                {
+                if (old != null) {
                     data.MergeWith(old);
                 }
-                else
-                {
+                else {
                     signatureQueue.AddLast(data.GetSignature());
                 }
             }
         }
 
-        public virtual V RetrieveNext()
-        {
-            if (!signatureQueue.IsEmpty())
-            {
+        public virtual V RetrieveNext() {
+            if (!signatureQueue.IsEmpty()) {
                 return map.JRemove(signatureQueue.PollFirst());
             }
             return null;
         }
 
-        public virtual IList<V> Clear()
-        {
+        public virtual IList<V> Clear() {
             List<V> result = new List<V>(map.Values);
             map.Clear();
             signatureQueue.Clear();

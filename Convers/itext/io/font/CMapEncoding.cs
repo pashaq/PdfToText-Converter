@@ -41,17 +41,15 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
+using System.Collections.Generic;
 using Common.Logging;
 using iText.IO.Font.Cmap;
 using iText.IO.Source;
 using iText.IO.Util;
-using System;
-using System.Collections.Generic;
 
-namespace iText.IO.Font
-{
-    public class CMapEncoding
-    {
+namespace iText.IO.Font {
+    public class CMapEncoding {
         private static readonly IList<byte[]> IDENTITY_H_V_CODESPACE_RANGES = JavaUtil.ArraysAsList(new byte[] { 0
             , 0 }, new byte[] { (byte)0xff, (byte)0xff });
 
@@ -71,11 +69,9 @@ namespace iText.IO.Font
         private IList<byte[]> codeSpaceRanges;
 
         /// <param name="cmap">CMap name.</param>
-        public CMapEncoding(String cmap)
-        {
+        public CMapEncoding(String cmap) {
             this.cmap = cmap;
-            if (cmap.Equals(PdfEncodings.IDENTITY_H) || cmap.Equals(PdfEncodings.IDENTITY_V))
-            {
+            if (cmap.Equals(PdfEncodings.IDENTITY_H) || cmap.Equals(PdfEncodings.IDENTITY_V)) {
                 isDirect = true;
             }
             // Actually this constructor is only called for Identity-H/V cmaps currently.
@@ -85,93 +81,74 @@ namespace iText.IO.Font
 
         /// <param name="cmap">CMap name.</param>
         /// <param name="uniMap">CMap to convert Unicode value to CID.</param>
-        public CMapEncoding(String cmap, String uniMap)
-        {
+        public CMapEncoding(String cmap, String uniMap) {
             this.cmap = cmap;
             this.uniMap = uniMap;
-            if (cmap.Equals(PdfEncodings.IDENTITY_H) || cmap.Equals(PdfEncodings.IDENTITY_V))
-            {
+            if (cmap.Equals(PdfEncodings.IDENTITY_H) || cmap.Equals(PdfEncodings.IDENTITY_V)) {
                 cid2Uni = FontCache.GetCid2UniCmap(uniMap);
                 isDirect = true;
                 this.codeSpaceRanges = IDENTITY_H_V_CODESPACE_RANGES;
             }
-            else
-            {
+            else {
                 cid2Code = FontCache.GetCid2Byte(cmap);
                 code2Cid = cid2Code.GetReversMap();
                 this.codeSpaceRanges = cid2Code.GetCodeSpaceRanges();
             }
         }
 
-        public CMapEncoding(String cmap, byte[] cmapBytes)
-        {
+        public CMapEncoding(String cmap, byte[] cmapBytes) {
             this.cmap = cmap;
             cid2Code = new CMapCidByte();
-            try
-            {
+            try {
                 CMapParser.ParseCid(cmap, cid2Code, new CMapLocationFromBytes(cmapBytes));
                 code2Cid = cid2Code.GetReversMap();
                 this.codeSpaceRanges = cid2Code.GetCodeSpaceRanges();
             }
-            catch (System.IO.IOException)
-            {
+            catch (System.IO.IOException) {
                 LogManager.GetLogger(GetType()).Error(iText.IO.LogMessageConstant.FAILED_TO_PARSE_ENCODING_STREAM);
             }
         }
 
-        public virtual bool IsDirect()
-        {
+        public virtual bool IsDirect() {
             return isDirect;
         }
 
-        public virtual bool HasUniMap()
-        {
+        public virtual bool HasUniMap() {
             return uniMap != null && uniMap.Length > 0;
         }
 
-        public virtual String GetRegistry()
-        {
-            if (IsDirect())
-            {
+        public virtual String GetRegistry() {
+            if (IsDirect()) {
                 return "Adobe";
             }
-            else
-            {
+            else {
                 return cid2Code.GetRegistry();
             }
         }
 
-        public virtual String GetOrdering()
-        {
-            if (IsDirect())
-            {
+        public virtual String GetOrdering() {
+            if (IsDirect()) {
                 return "Identity";
             }
-            else
-            {
+            else {
                 return cid2Code.GetOrdering();
             }
         }
 
-        public virtual int GetSupplement()
-        {
-            if (IsDirect())
-            {
+        public virtual int GetSupplement() {
+            if (IsDirect()) {
                 return 0;
             }
-            else
-            {
+            else {
                 return cid2Code.GetSupplement();
             }
         }
 
-        public virtual String GetUniMapName()
-        {
+        public virtual String GetUniMapName() {
             return uniMap;
         }
 
-        public virtual String GetCmapName()
-        {
+        public virtual String GetCmapName() {
             return cmap;
         }
 
@@ -182,111 +159,87 @@ namespace iText.IO.Font
         /// </summary>
         /// <param name="cmap">a CMAP</param>
         /// <returns>true, if the CMapEncoding was built with the cmap. Otherwise false.</returns>
-        public virtual bool IsBuiltWith(String cmap)
-        {
+        public virtual bool IsBuiltWith(String cmap) {
             return Object.Equals(cmap, this.cmap);
         }
 
         /// <param name="cid">a CID</param>
         /// <returns>CMAP code as an int</returns>
         [System.ObsoleteAttribute(@"Will be removed in 7.2. Use GetCmapBytes(int) instead.")]
-        public virtual int GetCmapCode(int cid)
-        {
-            if (isDirect)
-            {
+        public virtual int GetCmapCode(int cid) {
+            if (isDirect) {
                 return cid;
             }
-            else
-            {
+            else {
                 return ToInteger(cid2Code.Lookup(cid));
             }
         }
 
-        public virtual byte[] GetCmapBytes(int cid)
-        {
+        public virtual byte[] GetCmapBytes(int cid) {
             int length = GetCmapBytesLength(cid);
             byte[] result = new byte[length];
             FillCmapBytes(cid, result, 0);
             return result;
         }
 
-        public virtual int FillCmapBytes(int cid, byte[] array, int offset)
-        {
-            if (isDirect)
-            {
+        public virtual int FillCmapBytes(int cid, byte[] array, int offset) {
+            if (isDirect) {
                 array[offset++] = (byte)((cid & 0xff00) >> 8);
                 array[offset++] = (byte)(cid & 0xff);
             }
-            else
-            {
+            else {
                 byte[] bytes = cid2Code.Lookup(cid);
-                for (int i = 0; i < bytes.Length; i++)
-                {
+                for (int i = 0; i < bytes.Length; i++) {
                     array[offset++] = bytes[i];
                 }
             }
             return offset;
         }
 
-        public virtual void FillCmapBytes(int cid, ByteBuffer buffer)
-        {
-            if (isDirect)
-            {
+        public virtual void FillCmapBytes(int cid, ByteBuffer buffer) {
+            if (isDirect) {
                 buffer.Append((byte)((cid & 0xff00) >> 8));
                 buffer.Append((byte)(cid & 0xff));
             }
-            else
-            {
+            else {
                 byte[] bytes = cid2Code.Lookup(cid);
                 buffer.Append(bytes);
             }
         }
 
-        public virtual int GetCmapBytesLength(int cid)
-        {
-            if (isDirect)
-            {
+        public virtual int GetCmapBytesLength(int cid) {
+            if (isDirect) {
                 return 2;
             }
-            else
-            {
+            else {
                 return cid2Code.Lookup(cid).Length;
             }
         }
 
-        public virtual int GetCidCode(int cmapCode)
-        {
-            if (isDirect)
-            {
+        public virtual int GetCidCode(int cmapCode) {
+            if (isDirect) {
                 return cmapCode;
             }
-            else
-            {
+            else {
                 return code2Cid.Get(cmapCode);
             }
         }
 
-        public virtual bool ContainsCodeInCodeSpaceRange(int code, int length)
-        {
-            for (int i = 0; i < codeSpaceRanges.Count; i += 2)
-            {
-                if (length == codeSpaceRanges[i].Length)
-                {
+        public virtual bool ContainsCodeInCodeSpaceRange(int code, int length) {
+            for (int i = 0; i < codeSpaceRanges.Count; i += 2) {
+                if (length == codeSpaceRanges[i].Length) {
                     int mask = 0xff;
                     int totalShift = 0;
                     byte[] low = codeSpaceRanges[i];
                     byte[] high = codeSpaceRanges[i + 1];
                     bool fitsIntoRange = true;
-                    for (int ind = length - 1; ind >= 0; ind--, totalShift += 8, mask <<= 8)
-                    {
+                    for (int ind = length - 1; ind >= 0; ind--, totalShift += 8, mask <<= 8) {
                         int actualByteValue = (code & mask) >> totalShift;
-                        if (!(actualByteValue >= (0xff & low[ind]) && actualByteValue <= (0xff & high[ind])))
-                        {
+                        if (!(actualByteValue >= (0xff & low[ind]) && actualByteValue <= (0xff & high[ind]))) {
                             fitsIntoRange = false;
                         }
                     }
-                    if (fitsIntoRange)
-                    {
+                    if (fitsIntoRange) {
                         return true;
                     }
                 }
@@ -294,11 +247,9 @@ namespace iText.IO.Font
             return false;
         }
 
-        private static int ToInteger(byte[] bytes)
-        {
+        private static int ToInteger(byte[] bytes) {
             int result = 0;
-            foreach (byte b in bytes)
-            {
+            foreach (byte b in bytes) {
                 result <<= 8;
                 result += b & 0xff;
             }

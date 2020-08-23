@@ -40,26 +40,24 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Font.Constants;
-using iText.IO.Util;
-using iText.Kernel.Colors;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using iText.IO.Font.Constants;
+using iText.IO.Util;
+using iText.Kernel.Colors;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Annot.DA
-{
+namespace iText.Kernel.Pdf.Annot.DA {
     /// <summary>Helper class for setting</summary>
-    public class AnnotationDefaultAppearance
-    {
+    public class AnnotationDefaultAppearance {
         private static readonly IDictionary<StandardAnnotationFont, String> stdAnnotFontNames = new Dictionary<StandardAnnotationFont
             , String>();
 
         private static readonly IDictionary<ExtendedAnnotationFont, String> extAnnotFontNames = new Dictionary<ExtendedAnnotationFont
             , String>();
 
-        static AnnotationDefaultAppearance()
-        {
+        static AnnotationDefaultAppearance() {
             stdAnnotFontNames.Put(StandardAnnotationFont.CourierBoldOblique, "/" + StandardFonts.COURIER_BOLDOBLIQUE);
             stdAnnotFontNames.Put(StandardAnnotationFont.CourierBold, "/" + StandardFonts.COURIER_BOLD);
             stdAnnotFontNames.Put(StandardAnnotationFont.CourierOblique, "/" + StandardFonts.COURIER_OBLIQUE);
@@ -94,68 +92,56 @@ namespace iText.Kernel.Pdf.Annot.DA
 
         private float fontSize = 0;
 
-        public AnnotationDefaultAppearance()
-        {
+        public AnnotationDefaultAppearance() {
             SetFont(StandardAnnotationFont.Helvetica);
             SetFontSize(12);
         }
 
-        public virtual iText.Kernel.Pdf.Annot.DA.AnnotationDefaultAppearance SetFont(StandardAnnotationFont font)
-        {
+        public virtual iText.Kernel.Pdf.Annot.DA.AnnotationDefaultAppearance SetFont(StandardAnnotationFont font) {
             SetRawFontName(stdAnnotFontNames.Get(font));
             return this;
         }
 
-        public virtual iText.Kernel.Pdf.Annot.DA.AnnotationDefaultAppearance SetFont(ExtendedAnnotationFont font)
-        {
+        public virtual iText.Kernel.Pdf.Annot.DA.AnnotationDefaultAppearance SetFont(ExtendedAnnotationFont font) {
             SetRawFontName(extAnnotFontNames.Get(font));
             return this;
         }
 
-        public virtual iText.Kernel.Pdf.Annot.DA.AnnotationDefaultAppearance SetFontSize(float fontSize)
-        {
+        public virtual iText.Kernel.Pdf.Annot.DA.AnnotationDefaultAppearance SetFontSize(float fontSize) {
             this.fontSize = fontSize;
             return this;
         }
 
-        public virtual iText.Kernel.Pdf.Annot.DA.AnnotationDefaultAppearance SetColor(DeviceRgb rgbColor)
-        {
+        public virtual iText.Kernel.Pdf.Annot.DA.AnnotationDefaultAppearance SetColor(DeviceRgb rgbColor) {
             SetColorOperand(rgbColor.GetColorValue(), "rg");
             return this;
         }
 
-        public virtual iText.Kernel.Pdf.Annot.DA.AnnotationDefaultAppearance SetColor(DeviceCmyk cmykColor)
-        {
+        public virtual iText.Kernel.Pdf.Annot.DA.AnnotationDefaultAppearance SetColor(DeviceCmyk cmykColor) {
             SetColorOperand(cmykColor.GetColorValue(), "k");
             return this;
         }
 
-        public virtual iText.Kernel.Pdf.Annot.DA.AnnotationDefaultAppearance SetColor(DeviceGray grayColor)
-        {
+        public virtual iText.Kernel.Pdf.Annot.DA.AnnotationDefaultAppearance SetColor(DeviceGray grayColor) {
             SetColorOperand(grayColor.GetColorValue(), "g");
             return this;
         }
 
-        public virtual PdfString ToPdfString()
-        {
+        public virtual PdfString ToPdfString() {
             return new PdfString(MessageFormatUtil.Format("{0} {1} Tf {2}", rawFontName, fontSize, colorOperand));
         }
 
-        private void SetColorOperand(float[] colorValues, String operand)
-        {
+        private void SetColorOperand(float[] colorValues, String operand) {
             StringBuilder builder = new StringBuilder();
-            foreach (float value in colorValues)
-            {
+            foreach (float value in colorValues) {
                 builder.Append(MessageFormatUtil.Format("{0} ", value));
             }
             builder.Append(operand);
             this.colorOperand = builder.ToString();
         }
 
-        private void SetRawFontName(String rawFontName)
-        {
-            if (rawFontName == null)
-            {
+        private void SetRawFontName(String rawFontName) {
+            if (rawFontName == null) {
                 throw new ArgumentException("Passed raw font name can not be null");
             }
             this.rawFontName = rawFontName;

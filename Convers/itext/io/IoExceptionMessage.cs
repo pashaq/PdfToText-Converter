@@ -41,14 +41,12 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Util;
 using System;
+using iText.IO.Util;
 
-namespace iText.IO
-{
+namespace iText.IO {
     /// <summary>Class containing constants to be used in exceptions in the IO module.</summary>
-    public sealed class IoExceptionMessage
-    {
+    public sealed class IoExceptionMessage {
         public const String COMPARE_COMMAND_IS_NOT_SPECIFIED = "ImageMagick comparison command is not specified. Set the "
              + ImageMagickHelper.MAGICK_COMPARE_ENVIRONMENT_VARIABLE + " environment variable with the CLI command which can run the ImageMagic comparison. See BUILDING.MD in the root of the repository for more details.";
 

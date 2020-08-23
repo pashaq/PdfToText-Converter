@@ -43,10 +43,8 @@ address: sales@itextpdf.com
 */
 using System;
 
-namespace iText.IO.Source
-{
-    public class GetBufferedRandomAccessSource : IRandomAccessSource
-    {
+namespace iText.IO.Source {
+    public class GetBufferedRandomAccessSource : IRandomAccessSource {
         private readonly IRandomAccessSource source;
 
         private readonly byte[] getBuffer;
@@ -57,8 +55,7 @@ namespace iText.IO.Source
 
         /// <summary>Constructs a new OffsetRandomAccessSource</summary>
         /// <param name="source">the source</param>
-        public GetBufferedRandomAccessSource(IRandomAccessSource source)
-        {
+        public GetBufferedRandomAccessSource(IRandomAccessSource source) {
             this.source = source;
             this.getBuffer = new byte[(int)Math.Min(Math.Max(source.Length() / 4, 1), 4096)];
             this.getBufferStart = -1;
@@ -66,13 +63,10 @@ namespace iText.IO.Source
         }
 
         /// <summary><inheritDoc/></summary>
-        public virtual int Get(long position)
-        {
-            if (position < getBufferStart || position > getBufferEnd)
-            {
+        public virtual int Get(long position) {
+            if (position < getBufferStart || position > getBufferEnd) {
                 int count = source.Get(position, getBuffer, 0, getBuffer.Length);
-                if (count == -1)
-                {
+                if (count == -1) {
                     return -1;
                 }
                 getBufferStart = position;
@@ -83,20 +77,17 @@ namespace iText.IO.Source
         }
 
         /// <summary><inheritDoc/></summary>
-        public virtual int Get(long position, byte[] bytes, int off, int len)
-        {
+        public virtual int Get(long position, byte[] bytes, int off, int len) {
             return source.Get(position, bytes, off, len);
         }
 
         /// <summary><inheritDoc/></summary>
-        public virtual long Length()
-        {
+        public virtual long Length() {
             return source.Length();
         }
 
         /// <summary>Does nothing - the underlying source is not closed</summary>
-        public virtual void Close()
-        {
+        public virtual void Close() {
             source.Close();
             getBufferStart = -1;
             getBufferEnd = -1;

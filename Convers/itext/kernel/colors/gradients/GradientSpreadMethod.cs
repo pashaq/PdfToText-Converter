@@ -20,11 +20,9 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-namespace iText.Kernel.Colors.Gradients
-{
+namespace iText.Kernel.Colors.Gradients {
     /// <summary>Represents possible spreading methods for gradient color outside of the coordinates vector</summary>
-    public enum GradientSpreadMethod
-    {
+    public enum GradientSpreadMethod {
         /// <summary>Pad the corner colors to fill the necessary area</summary>
         PAD,
         /// <summary>Reflect the coloring to fill the necessary area</summary>

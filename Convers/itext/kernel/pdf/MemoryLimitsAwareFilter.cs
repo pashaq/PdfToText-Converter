@@ -40,15 +40,13 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.Kernel.Pdf.Filters;
 using System.IO;
+using iText.Kernel.Pdf.Filters;
 
-namespace iText.Kernel.Pdf
-{
+namespace iText.Kernel.Pdf {
     /// <summary>Handles memory limits aware processing.</summary>
     /// <seealso cref="MemoryLimitsAwareHandler"/>
-    public abstract class MemoryLimitsAwareFilter : IFilterHandler
-    {
+    public abstract class MemoryLimitsAwareFilter : IFilterHandler {
         /// <summary>
         /// Creates a
         /// <see cref="MemoryLimitsAwareOutputStream"/>
@@ -60,21 +58,17 @@ namespace iText.Kernel.Pdf
         /// <see cref="System.IO.MemoryStream"/>
         /// which will be used for decompression of the passed pdf stream
         /// </returns>
-        public virtual MemoryStream EnableMemoryLimitsAwareHandler(PdfDictionary streamDictionary)
-        {
+        public virtual MemoryStream EnableMemoryLimitsAwareHandler(PdfDictionary streamDictionary) {
             MemoryLimitsAwareOutputStream outputStream = new MemoryLimitsAwareOutputStream();
             MemoryLimitsAwareHandler memoryLimitsAwareHandler = null;
-            if (null != streamDictionary.GetIndirectReference())
-            {
+            if (null != streamDictionary.GetIndirectReference()) {
                 memoryLimitsAwareHandler = streamDictionary.GetIndirectReference().GetDocument().memoryLimitsAwareHandler;
             }
-            else
-            {
+            else {
                 // We do not reuse some static instance because one can process pdfs in different threads.
                 memoryLimitsAwareHandler = new MemoryLimitsAwareHandler();
             }
-            if (null != memoryLimitsAwareHandler && memoryLimitsAwareHandler.considerCurrentPdfStream)
-            {
+            if (null != memoryLimitsAwareHandler && memoryLimitsAwareHandler.considerCurrentPdfStream) {
                 outputStream.SetMaxStreamSize(memoryLimitsAwareHandler.GetMaxSizeOfSingleDecompressedPdfStream());
             }
             return outputStream;

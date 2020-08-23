@@ -41,35 +41,29 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Font.Otf.Lookuptype6;
 using System.Collections.Generic;
+using iText.IO.Font.Otf.Lookuptype6;
 
-namespace iText.IO.Font.Otf
-{
+namespace iText.IO.Font.Otf {
     /// <summary>LookupType 6: Chaining Contextual Substitution Subtable</summary>
-    public class GsubLookupType6 : GsubLookupType5
-    {
+    public class GsubLookupType6 : GsubLookupType5 {
         protected internal GsubLookupType6(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations
             )
-            : base(openReader, lookupFlag, subTableLocations)
-        {
+            : base(openReader, lookupFlag, subTableLocations) {
         }
 
-        protected internal override void ReadSubTableFormat1(int subTableLocation)
-        {
+        protected internal override void ReadSubTableFormat1(int subTableLocation) {
             IDictionary<int, IList<ContextualSubstRule>> substMap = new Dictionary<int, IList<ContextualSubstRule>>();
             int coverageOffset = openReader.rf.ReadUnsignedShort();
             int chainSubRuleSetCount = openReader.rf.ReadUnsignedShort();
             int[] chainSubRuleSetOffsets = openReader.ReadUShortArray(chainSubRuleSetCount, subTableLocation);
             IList<int> coverageGlyphIds = openReader.ReadCoverageFormat(subTableLocation + coverageOffset);
-            for (int i = 0; i < chainSubRuleSetCount; ++i)
-            {
+            for (int i = 0; i < chainSubRuleSetCount; ++i) {
                 openReader.rf.Seek(chainSubRuleSetOffsets[i]);
                 int chainSubRuleCount = openReader.rf.ReadUnsignedShort();
                 int[] chainSubRuleOffsets = openReader.ReadUShortArray(chainSubRuleCount, chainSubRuleSetOffsets[i]);
                 IList<ContextualSubstRule> chainSubRuleSet = new List<ContextualSubstRule>(chainSubRuleCount);
-                for (int j = 0; j < chainSubRuleCount; ++j)
-                {
+                for (int j = 0; j < chainSubRuleCount; ++j) {
                     openReader.rf.Seek(chainSubRuleOffsets[j]);
                     int backtrackGlyphCount = openReader.rf.ReadUnsignedShort();
                     int[] backtrackGlyphIds = openReader.ReadUShortArray(backtrackGlyphCount);
@@ -87,8 +81,7 @@ namespace iText.IO.Font.Otf
             subTables.Add(new SubTableLookup6Format1(openReader, lookupFlag, substMap));
         }
 
-        protected internal override void ReadSubTableFormat2(int subTableLocation)
-        {
+        protected internal override void ReadSubTableFormat2(int subTableLocation) {
             int coverageOffset = openReader.rf.ReadUnsignedShort();
             int backtrackClassDefOffset = openReader.rf.ReadUnsignedShort();
             int inputClassDefOffset = openReader.rf.ReadUnsignedShort();
@@ -106,18 +99,15 @@ namespace iText.IO.Font.Otf
                 , inputClassDefinition, lookaheadClassDefinition);
             IList<IList<ContextualSubstRule>> subClassSets = new List<IList<ContextualSubstRule>>(chainSubClassSetCount
                 );
-            for (int i = 0; i < chainSubClassSetCount; ++i)
-            {
+            for (int i = 0; i < chainSubClassSetCount; ++i) {
                 IList<ContextualSubstRule> subClassSet = null;
-                if (chainSubClassSetOffsets[i] != 0)
-                {
+                if (chainSubClassSetOffsets[i] != 0) {
                     openReader.rf.Seek(chainSubClassSetOffsets[i]);
                     int chainSubClassRuleCount = openReader.rf.ReadUnsignedShort();
                     int[] chainSubClassRuleOffsets = openReader.ReadUShortArray(chainSubClassRuleCount, chainSubClassSetOffsets
                         [i]);
                     subClassSet = new List<ContextualSubstRule>(chainSubClassRuleCount);
-                    for (int j = 0; j < chainSubClassRuleCount; ++j)
-                    {
+                    for (int j = 0; j < chainSubClassRuleCount; ++j) {
                         SubTableLookup6Format2.SubstRuleFormat2 rule;
                         openReader.rf.Seek(chainSubClassRuleOffsets[j]);
                         int backtrackClassCount = openReader.rf.ReadUnsignedShort();
@@ -128,7 +118,7 @@ namespace iText.IO.Font.Otf
                         int[] lookAheadClassIds = openReader.ReadUShortArray(lookAheadClassCount);
                         int substCount = openReader.rf.ReadUnsignedShort();
                         SubstLookupRecord[] substLookupRecords = openReader.ReadSubstLookupRecords(substCount);
-                        rule = new SubTableLookup6Format2.SubstRuleFormat2(t, backtrackClassIds, inputClassIds, lookAheadClassIds,
+                        rule = new SubTableLookup6Format2.SubstRuleFormat2(t, backtrackClassIds, inputClassIds, lookAheadClassIds, 
                             substLookupRecords);
                         subClassSet.Add(rule);
                     }
@@ -139,8 +129,7 @@ namespace iText.IO.Font.Otf
             subTables.Add(t);
         }
 
-        protected internal override void ReadSubTableFormat3(int subTableLocation)
-        {
+        protected internal override void ReadSubTableFormat3(int subTableLocation) {
             int backtrackGlyphCount = openReader.rf.ReadUnsignedShort();
             int[] backtrackCoverageOffsets = openReader.ReadUShortArray(backtrackGlyphCount, subTableLocation);
             int inputGlyphCount = openReader.rf.ReadUnsignedShort();

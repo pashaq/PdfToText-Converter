@@ -20,19 +20,16 @@
 */
 using System;
 
-namespace iText.Kernel.Geom
-{
+namespace iText.Kernel.Geom {
     /// <summary>NoninvertibleTransformException</summary>
     /// <author>Denis M. Kishenko</author>
-    public class NoninvertibleTransformException : Exception
-    {
+    public class NoninvertibleTransformException : Exception {
         public const String DETERMINANT_IS_ZERO_CANNOT_INVERT_TRANSFORMATION = "Determinant is zero. Cannot invert transformation.";
 
         /// <summary>Creates a new NoninvertibleTransformException.</summary>
         /// <param name="message">the detail message.</param>
         public NoninvertibleTransformException(String message)
-            : base(message)
-        {
+            : base(message) {
         }
     }
 }

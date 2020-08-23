@@ -41,13 +41,12 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using Common.Logging;
-using iText.IO.Util;
 using System;
 using System.Collections.Generic;
+using Common.Logging;
+using iText.IO.Util;
 
-namespace iText.Kernel.Colors
-{
+namespace iText.Kernel.Colors {
     /// <summary>
     /// This class is a HashMap that contains the names of colors as a key and the
     /// corresponding RGB color as value.
@@ -57,15 +56,13 @@ namespace iText.Kernel.Colors
     /// corresponding RGB color as value. (Source: Wikipedia
     /// http://en.wikipedia.org/wiki/Web_colors )
     /// </remarks>
-    public class WebColors : Dictionary<String, int[]>
-    {
+    public class WebColors : Dictionary<String, int[]> {
         /// <summary>HashMap containing all the names and corresponding color values.</summary>
         public static readonly WebColors NAMES = new WebColors();
 
         private const double RGB_MAX_VAL = 255.0;
 
-        static WebColors()
-        {
+        static WebColors() {
             NAMES.Put("aliceblue", new int[] { 0xf0, 0xf8, 0xff, 0xff });
             NAMES.Put("antiquewhite", new int[] { 0xfa, 0xeb, 0xd7, 0xff });
             NAMES.Put("aqua", new int[] { 0x00, 0xff, 0xff, 0xff });
@@ -222,15 +219,12 @@ namespace iText.Kernel.Colors
         /// #RRGGBB or RGB or RRGGBB or rgb(R,G,B)
         /// </param>
         /// <returns>the corresponding DeviceRgb object. Never returns null.</returns>
-        public static DeviceRgb GetRGBColor(String name)
-        {
+        public static DeviceRgb GetRGBColor(String name) {
             float[] rgbaColor = GetRGBAColor(name);
-            if (rgbaColor == null)
-            {
+            if (rgbaColor == null) {
                 return new DeviceRgb(0, 0, 0);
             }
-            else
-            {
+            else {
                 return new DeviceRgb(rgbaColor[0], rgbaColor[1], rgbaColor[2]);
             }
         }
@@ -241,22 +235,17 @@ namespace iText.Kernel.Colors
         /// #RRGGBB or RGB or RRGGBB or rgb(R,G,B) or rgb(R,G,B,A)
         /// </param>
         /// <returns>the corresponding array of four floats, or <c>null</c> if parsing failed.</returns>
-        public static float[] GetRGBAColor(String name)
-        {
+        public static float[] GetRGBAColor(String name) {
             float[] color = null;
-            try
-            {
+            try {
                 String colorName = name.ToLowerInvariant();
                 bool colorStrWithoutHash = MissingHashColorFormat(colorName);
-                if (colorName.StartsWith("#") || colorStrWithoutHash)
-                {
-                    if (!colorStrWithoutHash)
-                    {
+                if (colorName.StartsWith("#") || colorStrWithoutHash) {
+                    if (!colorStrWithoutHash) {
                         // lop off the # to unify hex parsing.
                         colorName = colorName.Substring(1);
                     }
-                    if (colorName.Length == 3)
-                    {
+                    if (colorName.Length == 3) {
                         String red = colorName.JSubstring(0, 1);
                         color = new float[] { 0, 0, 0, 1 };
                         color[0] = (float)(Convert.ToInt32(red + red, 16) / RGB_MAX_VAL);
@@ -265,48 +254,38 @@ namespace iText.Kernel.Colors
                         String blue = colorName.Substring(2);
                         color[2] = (float)(Convert.ToInt32(blue + blue, 16) / RGB_MAX_VAL);
                     }
-                    else
-                    {
-                        if (colorName.Length == 6)
-                        {
+                    else {
+                        if (colorName.Length == 6) {
                             color = new float[] { 0, 0, 0, 1 };
                             color[0] = (float)(Convert.ToInt32(colorName.JSubstring(0, 2), 16) / RGB_MAX_VAL);
                             color[1] = (float)(Convert.ToInt32(colorName.JSubstring(2, 4), 16) / RGB_MAX_VAL);
                             color[2] = (float)(Convert.ToInt32(colorName.Substring(4), 16) / RGB_MAX_VAL);
                         }
-                        else
-                        {
+                        else {
                             ILog logger = LogManager.GetLogger(typeof(WebColors));
                             logger.Error(iText.IO.LogMessageConstant.UNKNOWN_COLOR_FORMAT_MUST_BE_RGB_OR_RRGGBB);
                         }
                     }
                 }
-                else
-                {
-                    if (colorName.StartsWith("rgb("))
-                    {
+                else {
+                    if (colorName.StartsWith("rgb(")) {
                         String delim = "rgb(), \t\r\n\f";
                         StringTokenizer tok = new StringTokenizer(colorName, delim);
                         color = new float[] { 0, 0, 0, 1 };
                         ParseRGBColors(color, tok);
                     }
-                    else
-                    {
-                        if (colorName.StartsWith("rgba("))
-                        {
+                    else {
+                        if (colorName.StartsWith("rgba(")) {
                             String delim = "rgba(), \t\r\n\f";
                             StringTokenizer tok = new StringTokenizer(colorName, delim);
                             color = new float[] { 0, 0, 0, 1 };
                             ParseRGBColors(color, tok);
-                            if (tok.HasMoreTokens())
-                            {
+                            if (tok.HasMoreTokens()) {
                                 color[3] = GetAlphaChannelValue(tok.NextToken());
                             }
                         }
-                        else
-                        {
-                            if (NAMES.Contains(colorName))
-                            {
+                        else {
+                            if (NAMES.Contains(colorName)) {
                                 int[] intColor = NAMES.Get(colorName);
                                 color = new float[] { 0, 0, 0, 1 };
                                 color[0] = (float)(intColor[0] / RGB_MAX_VAL);
@@ -317,20 +296,16 @@ namespace iText.Kernel.Colors
                     }
                 }
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 // Will just return null in this case
                 color = null;
             }
             return color;
         }
 
-        private static void ParseRGBColors(float[] color, StringTokenizer tok)
-        {
-            for (int k = 0; k < 3; ++k)
-            {
-                if (tok.HasMoreTokens())
-                {
+        private static void ParseRGBColors(float[] color, StringTokenizer tok) {
+            for (int k = 0; k < 3; ++k) {
+                if (tok.HasMoreTokens()) {
                     color[k] = GetRGBChannelValue(tok.NextToken());
                     color[k] = Math.Max(0, color[k]);
                     color[k] = Math.Min(1f, color[k]);
@@ -352,11 +327,9 @@ namespace iText.Kernel.Colors
         /// in hex.
         /// </param>
         /// <returns>Is this a web color hex string without the leading #?</returns>
-        private static bool MissingHashColorFormat(String colStr)
-        {
+        private static bool MissingHashColorFormat(String colStr) {
             int len = colStr.Length;
-            if (len == 3 || len == 6)
-            {
+            if (len == 3 || len == 6) {
                 // and it just contains hex chars 0-9, a-f, A-F
                 String match = "[0-9a-f]{" + len + "}";
                 return colStr.Matches(match);
@@ -364,28 +337,22 @@ namespace iText.Kernel.Colors
             return false;
         }
 
-        private static float GetRGBChannelValue(String rgbChannel)
-        {
-            if (rgbChannel.EndsWith("%"))
-            {
+        private static float GetRGBChannelValue(String rgbChannel) {
+            if (rgbChannel.EndsWith("%")) {
                 return ParsePercentValue(rgbChannel);
             }
-            else
-            {
+            else {
                 return (float)(Convert.ToInt32(rgbChannel, System.Globalization.CultureInfo.InvariantCulture) / RGB_MAX_VAL
                     );
             }
         }
 
-        private static float GetAlphaChannelValue(String rgbChannel)
-        {
+        private static float GetAlphaChannelValue(String rgbChannel) {
             float alpha;
-            if (rgbChannel.EndsWith("%"))
-            {
+            if (rgbChannel.EndsWith("%")) {
                 alpha = ParsePercentValue(rgbChannel);
             }
-            else
-            {
+            else {
                 alpha = float.Parse(rgbChannel, System.Globalization.CultureInfo.InvariantCulture);
             }
             alpha = Math.Max(0, alpha);
@@ -393,8 +360,7 @@ namespace iText.Kernel.Colors
             return alpha;
         }
 
-        private static float ParsePercentValue(String rgbChannel)
-        {
+        private static float ParsePercentValue(String rgbChannel) {
             return (float)(float.Parse(rgbChannel.JSubstring(0, rgbChannel.Length - 1), System.Globalization.CultureInfo.InvariantCulture
                 ) / 100.0);
         }

@@ -42,15 +42,13 @@ address: sales@itextpdf.com
 */
 using System.Collections.Generic;
 
-namespace iText.Kernel.Pdf.Canvas.Parser.Listener
-{
+namespace iText.Kernel.Pdf.Canvas.Parser.Listener {
     /// <summary>
     /// This is a special interface for
     /// <see cref="iText.Kernel.Pdf.Canvas.Parser.Filter.IEventFilter"/>
     /// that returns a collection of rectangles as result of its work.
     /// </summary>
-    public interface ILocationExtractionStrategy : IEventListener
-    {
+    public interface ILocationExtractionStrategy : IEventListener {
         /// <summary>
         /// Returns the
         /// <see cref="iText.Kernel.Geom.Rectangle"/>

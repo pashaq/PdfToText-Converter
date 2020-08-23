@@ -41,15 +41,15 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Source;
 using System.Collections.Generic;
+using iText.IO.Source;
+using iText.Kernel;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Canvas.Parser.Util
-{
+namespace iText.Kernel.Pdf.Canvas.Parser.Util {
     /// <summary>Parses the page or form XObject content.</summary>
     /// <author>Paulo Soares</author>
-    public class PdfCanvasParser
-    {
+    public class PdfCanvasParser {
         /// <summary>Holds value of property tokeniser.</summary>
         private PdfTokenizer tokeniser;
 
@@ -57,8 +57,7 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Util
 
         /// <summary>Creates a new instance of PdfContentParser</summary>
         /// <param name="tokeniser">the tokeniser with the content</param>
-        public PdfCanvasParser(PdfTokenizer tokeniser)
-        {
+        public PdfCanvasParser(PdfTokenizer tokeniser) {
             this.tokeniser = tokeniser;
         }
 
@@ -69,8 +68,7 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Util
         /// It is optional parameter, which is used for performance improvements of specific cases of
         /// inline images parsing.
         /// </param>
-        public PdfCanvasParser(PdfTokenizer tokeniser, PdfResources currentResources)
-        {
+        public PdfCanvasParser(PdfTokenizer tokeniser, PdfResources currentResources) {
             this.tokeniser = tokeniser;
             this.currentResources = currentResources;
         }
@@ -91,24 +89,18 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Util
         /// <c>null</c> will create a new <c>ArrayList</c>
         /// </param>
         /// <returns>the same <c>ArrayList</c> given as argument or a new one</returns>
-        public virtual IList<PdfObject> Parse(IList<PdfObject> ls)
-        {
-            if (ls == null)
-            {
+        public virtual IList<PdfObject> Parse(IList<PdfObject> ls) {
+            if (ls == null) {
                 ls = new List<PdfObject>();
             }
-            else
-            {
+            else {
                 ls.Clear();
             }
             PdfObject ob = null;
-            while ((ob = ReadObject()) != null)
-            {
+            while ((ob = ReadObject()) != null) {
                 ls.Add(ob);
-                if (tokeniser.GetTokenType() == PdfTokenizer.TokenType.Other)
-                {
-                    if ("BI".Equals(ob.ToString()))
-                    {
+                if (tokeniser.GetTokenType() == PdfTokenizer.TokenType.Other) {
+                    if ("BI".Equals(ob.ToString())) {
                         PdfStream inlineImageAsStream = InlineImageParsingUtils.Parse(this, currentResources.GetResource(PdfName.ColorSpace
                             ));
                         ls.Clear();
@@ -123,36 +115,29 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Util
 
         /// <summary>Gets the tokeniser.</summary>
         /// <returns>the tokeniser.</returns>
-        public virtual PdfTokenizer GetTokeniser()
-        {
+        public virtual PdfTokenizer GetTokeniser() {
             return this.tokeniser;
         }
 
         /// <summary>Sets the tokeniser.</summary>
         /// <param name="tokeniser">the tokeniser</param>
-        public virtual void SetTokeniser(PdfTokenizer tokeniser)
-        {
+        public virtual void SetTokeniser(PdfTokenizer tokeniser) {
             this.tokeniser = tokeniser;
         }
 
         /// <summary>Reads a dictionary.</summary>
         /// <remarks>Reads a dictionary. The tokeniser must be positioned past the "&lt;&lt;" token.</remarks>
         /// <returns>the dictionary</returns>
-        public virtual PdfDictionary ReadDictionary()
-        {
+        public virtual PdfDictionary ReadDictionary() {
             PdfDictionary dic = new PdfDictionary();
-            while (true)
-            {
-                if (!NextValidToken())
-                {
+            while (true) {
+                if (!NextValidToken()) {
                     throw new PdfException(PdfException.UnexpectedEndOfFile);
                 }
-                if (tokeniser.GetTokenType() == PdfTokenizer.TokenType.EndDic)
-                {
+                if (tokeniser.GetTokenType() == PdfTokenizer.TokenType.EndDic) {
                     break;
                 }
-                if (tokeniser.GetTokenType() != PdfTokenizer.TokenType.Name)
-                {
+                if (tokeniser.GetTokenType() != PdfTokenizer.TokenType.Name) {
                     tokeniser.ThrowError(PdfException.DictionaryKey1IsNotAName, tokeniser.GetStringValue());
                 }
                 PdfName name = new PdfName(tokeniser.GetStringValue());
@@ -165,19 +150,15 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Util
         /// <summary>Reads an array.</summary>
         /// <remarks>Reads an array. The tokeniser must be positioned past the "[" token.</remarks>
         /// <returns>an array</returns>
-        public virtual PdfArray ReadArray()
-        {
+        public virtual PdfArray ReadArray() {
             PdfArray array = new PdfArray();
-            while (true)
-            {
+            while (true) {
                 PdfObject obj = ReadObject();
-                if (!obj.IsArray() && tokeniser.GetTokenType() == PdfTokenizer.TokenType.EndArray)
-                {
+                if (!obj.IsArray() && tokeniser.GetTokenType() == PdfTokenizer.TokenType.EndArray) {
                     break;
                 }
                 if (tokeniser.GetTokenType() == PdfTokenizer.TokenType.EndDic && obj.GetObjectType() != PdfObject.DICTIONARY
-                    )
-                {
+                    ) {
                     tokeniser.ThrowError(PdfException.UnexpectedGtGt);
                 }
                 array.Add(obj);
@@ -187,58 +168,46 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Util
 
         /// <summary>Reads a pdf object.</summary>
         /// <returns>the pdf object</returns>
-        public virtual PdfObject ReadObject()
-        {
-            if (!NextValidToken())
-            {
+        public virtual PdfObject ReadObject() {
+            if (!NextValidToken()) {
                 return null;
             }
             PdfTokenizer.TokenType type = tokeniser.GetTokenType();
-            switch (type)
-            {
-                case PdfTokenizer.TokenType.StartDic:
-                    {
-                        PdfDictionary dic = ReadDictionary();
-                        return dic;
-                    }
+            switch (type) {
+                case PdfTokenizer.TokenType.StartDic: {
+                    PdfDictionary dic = ReadDictionary();
+                    return dic;
+                }
 
-                case PdfTokenizer.TokenType.StartArray:
-                    {
-                        return ReadArray();
-                    }
+                case PdfTokenizer.TokenType.StartArray: {
+                    return ReadArray();
+                }
 
-                case PdfTokenizer.TokenType.String:
-                    {
-                        PdfString str = new PdfString(tokeniser.GetDecodedStringContent()).SetHexWriting(tokeniser.IsHexString());
-                        return str;
-                    }
+                case PdfTokenizer.TokenType.String: {
+                    PdfString str = new PdfString(tokeniser.GetDecodedStringContent()).SetHexWriting(tokeniser.IsHexString());
+                    return str;
+                }
 
-                case PdfTokenizer.TokenType.Name:
-                    {
-                        return new PdfName(tokeniser.GetByteContent());
-                    }
+                case PdfTokenizer.TokenType.Name: {
+                    return new PdfName(tokeniser.GetByteContent());
+                }
 
-                case PdfTokenizer.TokenType.Number:
-                    {
-                        //use PdfNumber(byte[]) here, as in this case number parsing won't happen until it's needed.
-                        return new PdfNumber(tokeniser.GetByteContent());
-                    }
+                case PdfTokenizer.TokenType.Number: {
+                    //use PdfNumber(byte[]) here, as in this case number parsing won't happen until it's needed.
+                    return new PdfNumber(tokeniser.GetByteContent());
+                }
 
-                default:
-                    {
-                        return new PdfLiteral(tokeniser.GetByteContent());
-                    }
+                default: {
+                    return new PdfLiteral(tokeniser.GetByteContent());
+                }
             }
         }
 
         /// <summary>Reads the next token skipping over the comments.</summary>
         /// <returns><c>true</c> if a token was read, <c>false</c> if the end of content was reached</returns>
-        public virtual bool NextValidToken()
-        {
-            while (tokeniser.NextToken())
-            {
-                if (tokeniser.GetTokenType() == PdfTokenizer.TokenType.Comment)
-                {
+        public virtual bool NextValidToken() {
+            while (tokeniser.NextToken()) {
+                if (tokeniser.GetTokenType() == PdfTokenizer.TokenType.Comment) {
                     continue;
                 }
                 return true;

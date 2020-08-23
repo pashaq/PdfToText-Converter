@@ -42,21 +42,18 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 
-using iText.IO.Font;
 using System;
 using System.Text;
+using iText.IO.Font;
 
-namespace iText.IO.Util
-{
+namespace iText.IO.Util {
     /// <summary>
     /// This file is a helper class for internal usage only.
     /// Be aware that its API and functionality may be changed in future.
     /// </summary>
-    public static class EncodingUtil
-    {
+    public static class EncodingUtil {
 
-        static EncodingUtil()
-        {
+        static EncodingUtil() {
 #if NETSTANDARD1_6
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 #endif
@@ -64,16 +61,12 @@ namespace iText.IO.Util
 
         public static Encoding ISO_8859_1 = EncodingUtil.GetEncoding("ISO-8859-1");
 
-        public static byte[] ConvertToBytes(char[] chars, String encoding)
-        {
+        public static byte[] ConvertToBytes(char[] chars, String encoding) {
             Encoding encw = IanaEncodings.GetEncodingEncoding(encoding);
             byte[] preamble = encw.GetPreamble();
-            if (preamble.Length == 0)
-            {
+            if (preamble.Length == 0) {
                 return encw.GetBytes(chars);
-            }
-            else
-            {
+            } else {
                 byte[] encoded = encw.GetBytes(chars);
                 byte[] total = new byte[encoded.Length + preamble.Length];
                 Array.Copy(preamble, 0, total, 0, preamble.Length);
@@ -82,8 +75,7 @@ namespace iText.IO.Util
             }
         }
 
-        public static String ConvertToString(byte[] bytes, String encoding)
-        {
+        public static String ConvertToString(byte[] bytes, String encoding) {
             if (encoding.Equals(PdfEncodings.UTF8) &&
                 bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF)
                 return IanaEncodings.GetEncodingEncoding(encoding).GetString(bytes, 3, bytes.Length - 3);
@@ -98,16 +90,12 @@ namespace iText.IO.Util
             bool marker = false;
             bool big = false;
             int offset = 0;
-            if (bytes.Length >= 2)
-            {
-                if (bytes[0] == 0xFE && bytes[1] == 0xFF)
-                {
+            if (bytes.Length >= 2) {
+                if (bytes[0] == 0xFE && bytes[1] == 0xFF) {
                     marker = true;
                     big = true;
                     offset = 2;
-                }
-                else if (bytes[0] == 0xFF && bytes[1] == 0xFE)
-                {
+                } else if (bytes[0] == 0xFF && bytes[1] == 0xFE) {
                     marker = true;
                     offset = 2;
                 }
@@ -121,23 +109,19 @@ namespace iText.IO.Util
             return IanaEncodings.GetEncodingEncoding(encoding).GetString(bytes);
         }
 
-        public static Encoding GetEncoding(String encodingName)
-        {
+        public static Encoding GetEncoding(String encodingName) {
             return Encoding.GetEncoding(encodingName);
         }
 
-        public static Encoding GetEncoding(int encodingName)
-        {
+        public static Encoding GetEncoding(int encodingName) {
             return Encoding.GetEncoding(encodingName);
         }
 
-        public static Encoding GetEncoding(String encodingName, EncoderFallback encoderFallback, DecoderFallback decoderFallback)
-        {
+        public static Encoding GetEncoding(String encodingName, EncoderFallback encoderFallback, DecoderFallback decoderFallback) {
             return Encoding.GetEncoding(encodingName, encoderFallback, decoderFallback);
         }
 
-        public static Encoding GetEncoding(int encodingName, EncoderFallback encoderFallback, DecoderFallback decoderFallback)
-        {
+        public static Encoding GetEncoding(int encodingName, EncoderFallback encoderFallback, DecoderFallback decoderFallback) {
             return Encoding.GetEncoding(encodingName, encoderFallback, decoderFallback);
         }
     }

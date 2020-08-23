@@ -41,20 +41,18 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using iText.Kernel;
+using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Annot;
 
-namespace iText.Kernel.Pdf.Tagging
-{
-    public class PdfObjRef : PdfMcr
-    {
+namespace iText.Kernel.Pdf.Tagging {
+    public class PdfObjRef : PdfMcr {
         public PdfObjRef(PdfDictionary pdfObject, PdfStructElem parent)
-            : base(pdfObject, parent)
-        {
+            : base(pdfObject, parent) {
         }
 
         public PdfObjRef(PdfAnnotation annot, PdfStructElem parent, int nextStructParentIndex)
-            : base(new PdfDictionary(), parent)
-        {
+            : base(new PdfDictionary(), parent) {
             annot.GetPdfObject().Put(PdfName.StructParent, new PdfNumber(nextStructParentIndex));
             annot.SetModified();
             PdfDictionary dict = (PdfDictionary)GetPdfObject();
@@ -62,26 +60,21 @@ namespace iText.Kernel.Pdf.Tagging
             dict.Put(PdfName.Obj, annot.GetPdfObject());
         }
 
-        public override int GetMcid()
-        {
+        public override int GetMcid() {
             return -1;
         }
 
-        public override PdfDictionary GetPageObject()
-        {
+        public override PdfDictionary GetPageObject() {
             return base.GetPageObject();
         }
 
-        public virtual PdfDictionary GetReferencedObject()
-        {
+        public virtual PdfDictionary GetReferencedObject() {
             return ((PdfDictionary)GetPdfObject()).GetAsDictionary(PdfName.Obj);
         }
 
-        private static PdfDocument GetDocEnsureIndirect(PdfStructElem structElem)
-        {
+        private static PdfDocument GetDocEnsureIndirect(PdfStructElem structElem) {
             PdfIndirectReference indRef = structElem.GetPdfObject().GetIndirectReference();
-            if (indRef == null)
-            {
+            if (indRef == null) {
                 throw new PdfException(PdfException.StructureElementDictionaryShallBeAnIndirectObjectInOrderToHaveChildren
                     );
             }

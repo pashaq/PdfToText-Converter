@@ -41,26 +41,23 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
 using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Annot
-{
+namespace iText.Kernel.Pdf.Annot {
     [System.ObsoleteAttribute(@"Remove this class in 7.2. The deprecation relates to the fact that the prototype hasn't been implemented in a full yet and we do not expect the situation to change."
         )]
-    public class PdfRichMediaAnnotation : PdfAnnotation
-    {
+    public class PdfRichMediaAnnotation : PdfAnnotation {
         public PdfRichMediaAnnotation(Rectangle rect)
-            : base(rect)
-        {
+            : base(rect) {
         }
 
         public PdfRichMediaAnnotation(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
-        public override PdfName GetSubtype()
-        {
+        public override PdfName GetSubtype() {
             return PdfName.RichMedia;
         }
     }

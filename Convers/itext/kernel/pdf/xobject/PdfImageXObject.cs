@@ -41,23 +41,23 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
+using System.Collections.Generic;
 using Common.Logging;
 using iText.IO.Colors;
 using iText.IO.Font;
 using iText.IO.Image;
 using iText.IO.Util;
+using iText.Kernel;
+using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas.Wmf;
 using iText.Kernel.Pdf.Colorspace;
 using iText.Kernel.Pdf.Filters;
-using System;
-using System.Collections.Generic;
 
-namespace iText.Kernel.Pdf.Xobject
-{
+namespace iText.Kernel.Pdf.Xobject {
     /// <summary>A wrapper for Image XObject.</summary>
     /// <remarks>A wrapper for Image XObject. ISO 32000-1, 8.9 Images.</remarks>
-    public class PdfImageXObject : PdfXObject
-    {
+    public class PdfImageXObject : PdfXObject {
         private float width;
 
         private float height;
@@ -73,8 +73,7 @@ namespace iText.Kernel.Pdf.Xobject
         /// with actual image data.
         /// </param>
         public PdfImageXObject(ImageData image)
-            : this(image, null)
-        {
+            : this(image, null) {
         }
 
         /// <summary>Creates Image XObject by image.</summary>
@@ -89,8 +88,7 @@ namespace iText.Kernel.Pdf.Xobject
         /// with image mask.
         /// </param>
         public PdfImageXObject(ImageData image, iText.Kernel.Pdf.Xobject.PdfImageXObject imageMask)
-            : this(CreatePdfStream(CheckImageType(image), imageMask))
-        {
+            : this(CreatePdfStream(CheckImageType(image), imageMask)) {
             mask = image.IsMask();
             softMask = image.IsSoftMask();
         }
@@ -115,10 +113,8 @@ namespace iText.Kernel.Pdf.Xobject
         /// </param>
         /// <seealso cref="PdfXObject.MakeXObject(iText.Kernel.Pdf.PdfStream)"/>
         public PdfImageXObject(PdfStream pdfStream)
-            : base(pdfStream)
-        {
-            if (!pdfStream.IsFlushed())
-            {
+            : base(pdfStream) {
+            if (!pdfStream.IsFlushed()) {
                 InitWidthField();
                 InitHeightField();
             }
@@ -130,8 +126,7 @@ namespace iText.Kernel.Pdf.Xobject
         /// key.
         /// </summary>
         /// <returns>float value.</returns>
-        public override float GetWidth()
-        {
+        public override float GetWidth() {
             return width;
         }
 
@@ -141,8 +136,7 @@ namespace iText.Kernel.Pdf.Xobject
         /// key.
         /// </summary>
         /// <returns>float value.</returns>
-        public override float GetHeight()
-        {
+        public override float GetHeight() {
             return height;
         }
 
@@ -162,8 +156,7 @@ namespace iText.Kernel.Pdf.Xobject
         /// For example: wrapperInstance.makeIndirect(document).flush();
         /// Note, that not every wrapper require this, only those that have such warning in documentation.
         /// </remarks>
-        public override void Flush()
-        {
+        public override void Flush() {
             base.Flush();
         }
 
@@ -173,8 +166,7 @@ namespace iText.Kernel.Pdf.Xobject
         /// just created instance of
         /// <see cref="PdfImageXObject"/>.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Xobject.PdfImageXObject CopyTo(PdfDocument document)
-        {
+        public virtual iText.Kernel.Pdf.Xobject.PdfImageXObject CopyTo(PdfDocument document) {
             iText.Kernel.Pdf.Xobject.PdfImageXObject image = new iText.Kernel.Pdf.Xobject.PdfImageXObject((PdfStream)GetPdfObject
                 ().CopyTo(document));
             image.mask = mask;
@@ -184,8 +176,7 @@ namespace iText.Kernel.Pdf.Xobject
 
         /// <summary>Gets decoded image bytes.</summary>
         /// <returns>byte array.</returns>
-        public virtual byte[] GetImageBytes()
-        {
+        public virtual byte[] GetImageBytes() {
             return GetImageBytes(true);
         }
 
@@ -206,25 +197,20 @@ namespace iText.Kernel.Pdf.Xobject
         /// , decodes stream bytes.
         /// </param>
         /// <returns>byte array.</returns>
-        public virtual byte[] GetImageBytes(bool decoded)
-        {
+        public virtual byte[] GetImageBytes(bool decoded) {
             // TODO: DEVSIX-1792 replace `.getBytes(false)` with `getBytes(true) and remove manual decoding
             byte[] bytes = GetPdfObject().GetBytes(false);
-            if (decoded)
-            {
+            if (decoded) {
                 IDictionary<PdfName, IFilterHandler> filters = new Dictionary<PdfName, IFilterHandler>(FilterHandlers.GetDefaultFilterHandlers
                     ());
                 filters.Put(PdfName.JBIG2Decode, new DoNothingFilter());
                 bytes = PdfReader.DecodeBytes(bytes, GetPdfObject(), filters);
                 ImageType imageType = IdentifyImageType();
-                if (imageType == ImageType.TIFF || imageType == ImageType.PNG)
-                {
-                    try
-                    {
+                if (imageType == ImageType.TIFF || imageType == ImageType.PNG) {
+                    try {
                         bytes = new ImagePdfBytesInfo(this).DecodeTiffAndPngBytes(bytes);
                     }
-                    catch (System.IO.IOException e)
-                    {
+                    catch (System.IO.IOException e) {
                         throw new Exception("IO exception in PdfImageXObject", e);
                     }
                 }
@@ -256,41 +242,30 @@ namespace iText.Kernel.Pdf.Xobject
         /// <see cref="iText.IO.Image.ImageType.PNG"/>
         /// </remarks>
         /// <returns>the identified type of image</returns>
-        public virtual ImageType IdentifyImageType()
-        {
+        public virtual ImageType IdentifyImageType() {
             PdfObject filter = GetPdfObject().Get(PdfName.Filter);
             PdfArray filters = new PdfArray();
-            if (filter != null)
-            {
-                if (filter.GetObjectType() == PdfObject.NAME)
-                {
+            if (filter != null) {
+                if (filter.GetObjectType() == PdfObject.NAME) {
                     filters.Add(filter);
                 }
-                else
-                {
-                    if (filter.GetObjectType() == PdfObject.ARRAY)
-                    {
+                else {
+                    if (filter.GetObjectType() == PdfObject.ARRAY) {
                         filters = ((PdfArray)filter);
                     }
                 }
             }
-            for (int i = filters.Size() - 1; i >= 0; i--)
-            {
+            for (int i = filters.Size() - 1; i >= 0; i--) {
                 PdfName filterName = (PdfName)filters.Get(i);
-                if (PdfName.DCTDecode.Equals(filterName))
-                {
+                if (PdfName.DCTDecode.Equals(filterName)) {
                     return ImageType.JPEG;
                 }
-                else
-                {
-                    if (PdfName.JBIG2Decode.Equals(filterName))
-                    {
+                else {
+                    if (PdfName.JBIG2Decode.Equals(filterName)) {
                         return ImageType.JBIG2;
                     }
-                    else
-                    {
-                        if (PdfName.JPXDecode.Equals(filterName))
-                        {
+                    else {
+                        if (PdfName.JPXDecode.Equals(filterName)) {
                             return ImageType.JPEG2000;
                         }
                     }
@@ -298,12 +273,10 @@ namespace iText.Kernel.Pdf.Xobject
             }
             // None of the previous types match
             ImagePdfBytesInfo imageInfo = new ImagePdfBytesInfo(this);
-            if (imageInfo.GetPngColorType() < 0)
-            {
+            if (imageInfo.GetPngColorType() < 0) {
                 return ImageType.TIFF;
             }
-            else
-            {
+            else {
                 return ImageType.PNG;
             }
         }
@@ -325,41 +298,33 @@ namespace iText.Kernel.Pdf.Xobject
         /// with recommended file extension
         /// </returns>
         /// <seealso cref="IdentifyImageType()"/>
-        public virtual String IdentifyImageFileExtension()
-        {
+        public virtual String IdentifyImageFileExtension() {
             ImageType bytesType = IdentifyImageType();
-            switch (bytesType)
-            {
-                case ImageType.PNG:
-                    {
-                        return "png";
-                    }
+            switch (bytesType) {
+                case ImageType.PNG: {
+                    return "png";
+                }
 
-                case ImageType.JPEG:
-                    {
-                        return "jpg";
-                    }
+                case ImageType.JPEG: {
+                    return "jpg";
+                }
 
-                case ImageType.JPEG2000:
-                    {
-                        return "jp2";
-                    }
+                case ImageType.JPEG2000: {
+                    return "jp2";
+                }
 
-                case ImageType.TIFF:
-                    {
-                        return "tif";
-                    }
+                case ImageType.TIFF: {
+                    return "tif";
+                }
 
-                case ImageType.JBIG2:
-                    {
-                        return "jbig2";
-                    }
+                case ImageType.JBIG2: {
+                    return "jbig2";
+                }
 
-                default:
-                    {
-                        throw new InvalidOperationException("Should have never happened. This type of image is not allowed for ImageXObject"
-                            );
-                    }
+                default: {
+                    throw new InvalidOperationException("Should have never happened. This type of image is not allowed for ImageXObject"
+                        );
+                }
             }
         }
 
@@ -371,245 +336,194 @@ namespace iText.Kernel.Pdf.Xobject
         /// <param name="key">key to insert or to override</param>
         /// <param name="value">the value to associate with the specified key</param>
         /// <returns>object itself.</returns>
-        public virtual iText.Kernel.Pdf.Xobject.PdfImageXObject Put(PdfName key, PdfObject value)
-        {
+        public virtual iText.Kernel.Pdf.Xobject.PdfImageXObject Put(PdfName key, PdfObject value) {
             GetPdfObject().Put(key, value);
             return this;
         }
 
-        private float InitWidthField()
-        {
+        private float InitWidthField() {
             PdfNumber wNum = GetPdfObject().GetAsNumber(PdfName.Width);
-            if (wNum != null)
-            {
+            if (wNum != null) {
                 width = wNum.FloatValue();
             }
             return width;
         }
 
-        private float InitHeightField()
-        {
+        private float InitHeightField() {
             PdfNumber hNum = GetPdfObject().GetAsNumber(PdfName.Height);
-            if (hNum != null)
-            {
+            if (hNum != null) {
                 height = hNum.FloatValue();
             }
             return height;
         }
 
         private static PdfStream CreatePdfStream(ImageData image, iText.Kernel.Pdf.Xobject.PdfImageXObject imageMask
-            )
-        {
+            ) {
             PdfStream stream;
-            if (image.GetOriginalType() == ImageType.RAW)
-            {
+            if (image.GetOriginalType() == ImageType.RAW) {
                 RawImageHelper.UpdateImageAttributes((RawImageData)image, null);
             }
             stream = new PdfStream(image.GetData());
             String filter = image.GetFilter();
-            if (filter != null && "JPXDecode".Equals(filter) && image.GetColorSpace() <= 0)
-            {
+            if (filter != null && "JPXDecode".Equals(filter) && image.GetColorSpace() <= 0) {
                 stream.SetCompressionLevel(CompressionConstants.NO_COMPRESSION);
                 image.SetBpc(0);
             }
             stream.Put(PdfName.Type, PdfName.XObject);
             stream.Put(PdfName.Subtype, PdfName.Image);
             PdfDictionary decodeParms = CreateDictionaryFromMap(stream, image.GetDecodeParms());
-            if (decodeParms != null)
-            {
+            if (decodeParms != null) {
                 stream.Put(PdfName.DecodeParms, decodeParms);
             }
-            if (!(image is PngImageData))
-            {
+            if (!(image is PngImageData)) {
                 PdfName colorSpace;
-                switch (image.GetColorSpace())
-                {
-                    case 1:
-                        {
-                            colorSpace = PdfName.DeviceGray;
-                            break;
-                        }
+                switch (image.GetColorSpace()) {
+                    case 1: {
+                        colorSpace = PdfName.DeviceGray;
+                        break;
+                    }
 
-                    case 3:
-                        {
-                            colorSpace = PdfName.DeviceRGB;
-                            break;
-                        }
+                    case 3: {
+                        colorSpace = PdfName.DeviceRGB;
+                        break;
+                    }
 
-                    default:
-                        {
-                            colorSpace = PdfName.DeviceCMYK;
-                            break;
-                        }
+                    default: {
+                        colorSpace = PdfName.DeviceCMYK;
+                        break;
+                    }
                 }
                 stream.Put(PdfName.ColorSpace, colorSpace);
             }
-            if (image.GetBpc() != 0)
-            {
+            if (image.GetBpc() != 0) {
                 stream.Put(PdfName.BitsPerComponent, new PdfNumber(image.GetBpc()));
             }
-            if (image.GetFilter() != null)
-            {
+            if (image.GetFilter() != null) {
                 stream.Put(PdfName.Filter, new PdfName(image.GetFilter()));
             }
             //TODO: return to this later
             //        if (image.getLayer() != null)
             //            put(PdfName.OC, image.getLayer().getRef());
-            if (image.GetColorSpace() == -1)
-            {
+            if (image.GetColorSpace() == -1) {
                 stream.Remove(PdfName.ColorSpace);
             }
             PdfDictionary additional = null;
-            if (image is PngImageData)
-            {
+            if (image is PngImageData) {
                 PngImageData pngImage = (PngImageData)image;
-                if (pngImage.IsIndexed())
-                {
+                if (pngImage.IsIndexed()) {
                     PdfArray colorspace = new PdfArray();
                     colorspace.Add(PdfName.Indexed);
                     colorspace.Add(GetColorSpaceInfo(pngImage));
-                    if ((pngImage.GetColorPalette() != null) && (pngImage.GetColorPalette().Length > 0))
-                    {
+                    if ((pngImage.GetColorPalette() != null) && (pngImage.GetColorPalette().Length > 0)) {
                         //Each palette entry is a three-byte series, so the number of entries is calculated as the length
                         //of the stream divided by 3. The number below specifies the maximum valid index value (starting from 0 up)
                         colorspace.Add(new PdfNumber(pngImage.GetColorPalette().Length / 3 - 1));
                     }
-                    if (pngImage.GetColorPalette() != null)
-                    {
+                    if (pngImage.GetColorPalette() != null) {
                         colorspace.Add(new PdfString(PdfEncodings.ConvertToString(pngImage.GetColorPalette(), null)));
                     }
                     stream.Put(PdfName.ColorSpace, colorspace);
                 }
-                else
-                {
+                else {
                     stream.Put(PdfName.ColorSpace, GetColorSpaceInfo(pngImage));
                 }
             }
             additional = CreateDictionaryFromMap(stream, image.GetImageAttributes());
-            if (additional != null)
-            {
+            if (additional != null) {
                 stream.PutAll(additional);
             }
             IccProfile iccProfile = image.GetProfile();
-            if (iccProfile != null)
-            {
+            if (iccProfile != null) {
                 PdfStream iccProfileStream = PdfCieBasedCs.IccBased.GetIccProfileStream(iccProfile);
                 PdfArray iccBasedColorSpace = new PdfArray();
                 iccBasedColorSpace.Add(PdfName.ICCBased);
                 iccBasedColorSpace.Add(iccProfileStream);
                 PdfObject colorSpaceObject = stream.Get(PdfName.ColorSpace);
                 bool iccProfileShouldBeApplied = true;
-                if (colorSpaceObject != null)
-                {
+                if (colorSpaceObject != null) {
                     PdfColorSpace cs = PdfColorSpace.MakeColorSpace(colorSpaceObject);
-                    if (cs == null)
-                    {
+                    if (cs == null) {
                         LogManager.GetLogger(typeof(iText.Kernel.Pdf.Xobject.PdfImageXObject)).Error(iText.IO.LogMessageConstant.IMAGE_HAS_INCORRECT_OR_UNSUPPORTED_COLOR_SPACE_OVERRIDDEN_BY_ICC_PROFILE
                             );
                     }
-                    else
-                    {
-                        if (cs is PdfSpecialCs.Indexed)
-                        {
+                    else {
+                        if (cs is PdfSpecialCs.Indexed) {
                             PdfColorSpace baseCs = ((PdfSpecialCs.Indexed)cs).GetBaseCs();
-                            if (baseCs == null)
-                            {
+                            if (baseCs == null) {
                                 LogManager.GetLogger(typeof(iText.Kernel.Pdf.Xobject.PdfImageXObject)).Error(iText.IO.LogMessageConstant.IMAGE_HAS_INCORRECT_OR_UNSUPPORTED_BASE_COLOR_SPACE_IN_INDEXED_COLOR_SPACE_OVERRIDDEN_BY_ICC_PROFILE
                                     );
                             }
-                            else
-                            {
-                                if (baseCs.GetNumberOfComponents() != iccProfile.GetNumComponents())
-                                {
+                            else {
+                                if (baseCs.GetNumberOfComponents() != iccProfile.GetNumComponents()) {
                                     LogManager.GetLogger(typeof(iText.Kernel.Pdf.Xobject.PdfImageXObject)).Error(iText.IO.LogMessageConstant.IMAGE_HAS_ICC_PROFILE_WITH_INCOMPATIBLE_NUMBER_OF_COLOR_COMPONENTS_COMPARED_TO_BASE_COLOR_SPACE_IN_INDEXED_COLOR_SPACE
                                         );
                                     iccProfileShouldBeApplied = false;
                                 }
-                                else
-                                {
+                                else {
                                     iccProfileStream.Put(PdfName.Alternate, baseCs.GetPdfObject());
                                 }
                             }
-                            if (iccProfileShouldBeApplied)
-                            {
+                            if (iccProfileShouldBeApplied) {
                                 ((PdfArray)colorSpaceObject).Set(1, iccBasedColorSpace);
                                 iccProfileShouldBeApplied = false;
                             }
                         }
-                        else
-                        {
-                            if (cs.GetNumberOfComponents() != iccProfile.GetNumComponents())
-                            {
+                        else {
+                            if (cs.GetNumberOfComponents() != iccProfile.GetNumComponents()) {
                                 LogManager.GetLogger(typeof(iText.Kernel.Pdf.Xobject.PdfImageXObject)).Error(iText.IO.LogMessageConstant.IMAGE_HAS_ICC_PROFILE_WITH_INCOMPATIBLE_NUMBER_OF_COLOR_COMPONENTS_COMPARED_TO_COLOR_SPACE
                                     );
                                 iccProfileShouldBeApplied = false;
                             }
-                            else
-                            {
+                            else {
                                 iccProfileStream.Put(PdfName.Alternate, colorSpaceObject);
                             }
                         }
                     }
                 }
-                if (iccProfileShouldBeApplied)
-                {
+                if (iccProfileShouldBeApplied) {
                     stream.Put(PdfName.ColorSpace, iccBasedColorSpace);
                 }
             }
-            if (image.IsMask() && (image.GetBpc() == 1 || image.GetBpc() > 0xff))
-            {
+            if (image.IsMask() && (image.GetBpc() == 1 || image.GetBpc() > 0xff)) {
                 stream.Put(PdfName.ImageMask, PdfBoolean.TRUE);
             }
-            if (imageMask != null)
-            {
-                if (imageMask.softMask)
-                {
+            if (imageMask != null) {
+                if (imageMask.softMask) {
                     stream.Put(PdfName.SMask, imageMask.GetPdfObject());
                 }
-                else
-                {
-                    if (imageMask.mask)
-                    {
+                else {
+                    if (imageMask.mask) {
                         stream.Put(PdfName.Mask, imageMask.GetPdfObject());
                     }
                 }
             }
             ImageData mask = image.GetImageMask();
-            if (mask != null)
-            {
-                if (mask.IsSoftMask())
-                {
+            if (mask != null) {
+                if (mask.IsSoftMask()) {
                     stream.Put(PdfName.SMask, new iText.Kernel.Pdf.Xobject.PdfImageXObject(image.GetImageMask()).GetPdfObject(
                         ));
                 }
-                else
-                {
-                    if (mask.IsMask())
-                    {
+                else {
+                    if (mask.IsMask()) {
                         stream.Put(PdfName.Mask, new iText.Kernel.Pdf.Xobject.PdfImageXObject(image.GetImageMask()).GetPdfObject()
                             );
                     }
                 }
             }
-            if (image.GetDecode() != null)
-            {
+            if (image.GetDecode() != null) {
                 stream.Put(PdfName.Decode, new PdfArray(image.GetDecode()));
             }
-            if (image.IsMask() && image.IsInverted())
-            {
+            if (image.IsMask() && image.IsInverted()) {
                 stream.Put(PdfName.Decode, new PdfArray(new float[] { 1, 0 }));
             }
-            if (image.IsInterpolation())
-            {
+            if (image.IsInterpolation()) {
                 stream.Put(PdfName.Interpolate, PdfBoolean.TRUE);
             }
             // deal with transparency
             int[] transparency = image.GetTransparency();
-            if (transparency != null && !image.IsMask() && imageMask == null)
-            {
+            if (transparency != null && !image.IsMask() && imageMask == null) {
                 PdfArray t = new PdfArray();
-                foreach (int transparencyItem in transparency)
-                {
+                foreach (int transparencyItem in transparency) {
                     t.Add(new PdfNumber(transparencyItem));
                 }
                 stream.Put(PdfName.Mask, t);
@@ -619,77 +533,55 @@ namespace iText.Kernel.Pdf.Xobject
             return stream;
         }
 
-        private static PdfDictionary CreateDictionaryFromMap(PdfStream stream, IDictionary<String, Object> parms)
-        {
-            if (parms != null)
-            {
+        private static PdfDictionary CreateDictionaryFromMap(PdfStream stream, IDictionary<String, Object> parms) {
+            if (parms != null) {
                 PdfDictionary dictionary = new PdfDictionary();
-                foreach (KeyValuePair<String, Object> entry in parms)
-                {
+                foreach (KeyValuePair<String, Object> entry in parms) {
                     Object value = entry.Value;
                     String key = entry.Key;
-                    if (value is int?)
-                    {
+                    if (value is int?) {
                         dictionary.Put(new PdfName(key), new PdfNumber((int)value));
                     }
-                    else
-                    {
-                        if (value is float?)
-                        {
+                    else {
+                        if (value is float?) {
                             dictionary.Put(new PdfName(key), new PdfNumber((float)value));
                         }
-                        else
-                        {
-                            if (value is String)
-                            {
-                                if (value.Equals(PngImageHelperConstants.MASK))
-                                {
+                        else {
+                            if (value is String) {
+                                if (value.Equals(PngImageHelperConstants.MASK)) {
                                     dictionary.Put(PdfName.Mask, new PdfLiteral((String)value));
                                 }
-                                else
-                                {
+                                else {
                                     String str = (String)value;
-                                    if (str.IndexOf('/') == 0)
-                                    {
+                                    if (str.IndexOf('/') == 0) {
                                         dictionary.Put(new PdfName(key), new PdfName(str.Substring(1)));
                                     }
-                                    else
-                                    {
+                                    else {
                                         dictionary.Put(new PdfName(key), new PdfString(str));
                                     }
                                 }
                             }
-                            else
-                            {
-                                if (value is byte[])
-                                {
+                            else {
+                                if (value is byte[]) {
                                     //TODO Check inline images
                                     PdfStream globalsStream = new PdfStream();
                                     globalsStream.GetOutputStream().WriteBytes((byte[])value);
                                     dictionary.Put(PdfName.JBIG2Globals, globalsStream);
                                 }
-                                else
-                                {
-                                    if (value is bool?)
-                                    {
+                                else {
+                                    if (value is bool?) {
                                         dictionary.Put(new PdfName(key), PdfBoolean.ValueOf((bool)value));
                                     }
-                                    else
-                                    {
-                                        if (value is Object[])
-                                        {
+                                    else {
+                                        if (value is Object[]) {
                                             dictionary.Put(new PdfName(key), CreateArray(stream, (Object[])value));
                                         }
-                                        else
-                                        {
-                                            if (value is float[])
-                                            {
+                                        else {
+                                            if (value is float[]) {
                                                 dictionary.Put(new PdfName(key), new PdfArray((float[])value));
                                             }
-                                            else
-                                            {
-                                                if (value is int[])
-                                                {
+                                            else {
+                                                if (value is int[]) {
                                                     dictionary.Put(new PdfName(key), new PdfArray((int[])value));
                                                 }
                                             }
@@ -705,43 +597,31 @@ namespace iText.Kernel.Pdf.Xobject
             return null;
         }
 
-        private static PdfArray CreateArray(PdfStream stream, Object[] objects)
-        {
+        private static PdfArray CreateArray(PdfStream stream, Object[] objects) {
             PdfArray array = new PdfArray();
-            foreach (Object obj in objects)
-            {
-                if (obj is String)
-                {
+            foreach (Object obj in objects) {
+                if (obj is String) {
                     String str = (String)obj;
-                    if (str.IndexOf('/') == 0)
-                    {
+                    if (str.IndexOf('/') == 0) {
                         array.Add(new PdfName(str.Substring(1)));
                     }
-                    else
-                    {
+                    else {
                         array.Add(new PdfString(str));
                     }
                 }
-                else
-                {
-                    if (obj is int?)
-                    {
+                else {
+                    if (obj is int?) {
                         array.Add(new PdfNumber((int)obj));
                     }
-                    else
-                    {
-                        if (obj is float?)
-                        {
+                    else {
+                        if (obj is float?) {
                             array.Add(new PdfNumber((float)obj));
                         }
-                        else
-                        {
-                            if (obj is Object[])
-                            {
+                        else {
+                            if (obj is Object[]) {
                                 array.Add(CreateArray(stream, (Object[])obj));
                             }
-                            else
-                            {
+                            else {
                                 //TODO instance of was removed due to autoport
                                 array.Add(CreateDictionaryFromMap(stream, (IDictionary<String, Object>)obj));
                             }
@@ -752,68 +632,53 @@ namespace iText.Kernel.Pdf.Xobject
             return array;
         }
 
-        private static ImageData CheckImageType(ImageData image)
-        {
-            if (image is WmfImageData)
-            {
+        private static ImageData CheckImageType(ImageData image) {
+            if (image is WmfImageData) {
                 throw new PdfException(PdfException.CannotCreatePdfImageXObjectByWmfImage);
             }
             return image;
         }
 
-        private static PdfObject GetColorSpaceInfo(PngImageData pngImageData)
-        {
-            if (pngImageData.GetProfile() != null)
-            {
-                if (pngImageData.IsGrayscaleImage())
-                {
+        private static PdfObject GetColorSpaceInfo(PngImageData pngImageData) {
+            if (pngImageData.GetProfile() != null) {
+                if (pngImageData.IsGrayscaleImage()) {
                     return PdfName.DeviceGray;
                 }
-                else
-                {
+                else {
                     return PdfName.DeviceRGB;
                 }
             }
-            if (pngImageData.GetGamma() == 1f && !pngImageData.IsHasCHRM())
-            {
-                if (pngImageData.IsGrayscaleImage())
-                {
+            if (pngImageData.GetGamma() == 1f && !pngImageData.IsHasCHRM()) {
+                if (pngImageData.IsGrayscaleImage()) {
                     return PdfName.DeviceGray;
                 }
-                else
-                {
+                else {
                     return PdfName.DeviceRGB;
                 }
             }
-            else
-            {
+            else {
                 PdfArray array = new PdfArray();
                 PdfDictionary map = new PdfDictionary();
-                if (pngImageData.IsGrayscaleImage())
-                {
-                    if (pngImageData.GetGamma() == 1f)
-                    {
+                if (pngImageData.IsGrayscaleImage()) {
+                    if (pngImageData.GetGamma() == 1f) {
                         return PdfName.DeviceGray;
                     }
                     array.Add(PdfName.CalGray);
                     map.Put(PdfName.Gamma, new PdfNumber(pngImageData.GetGamma()));
                     map.Put(PdfName.WhitePoint, new PdfArray(new int[] { 1, 1, 1 }));
                 }
-                else
-                {
+                else {
                     float[] wp = new float[] { 1, 1, 1 };
                     array.Add(PdfName.CalRGB);
                     float gamma = pngImageData.GetGamma();
-                    if (gamma != 1f)
-                    {
+                    if (gamma != 1f) {
                         float[] gm = new float[3];
                         gm[0] = gamma;
                         gm[1] = gamma;
                         gm[2] = gamma;
                         map.Put(PdfName.Gamma, new PdfArray(gm));
                     }
-                    if (pngImageData.IsHasCHRM())
-                    {
+                    if (pngImageData.IsHasCHRM()) {
                         PdfImageXObject.PngChromaticitiesHelper helper = new PdfImageXObject.PngChromaticitiesHelper();
                         helper.ConstructMatrix(pngImageData);
                         wp = helper.wp;
@@ -826,14 +691,12 @@ namespace iText.Kernel.Pdf.Xobject
             }
         }
 
-        private class PngChromaticitiesHelper
-        {
+        private class PngChromaticitiesHelper {
             internal float[] matrix = new float[9];
 
             internal float[] wp = new float[3];
 
-            public virtual void ConstructMatrix(PngImageData pngImageData)
-            {
+            public virtual void ConstructMatrix(PngImageData pngImageData) {
                 PngChromaticities pngChromaticities = pngImageData.GetPngChromaticities();
                 float z = pngChromaticities.GetYW() * ((pngChromaticities.GetXG() - pngChromaticities.GetXB()) * pngChromaticities
                     .GetYR() - (pngChromaticities.GetXR() - pngChromaticities.GetXB()) * pngChromaticities.GetYG() + (pngChromaticities

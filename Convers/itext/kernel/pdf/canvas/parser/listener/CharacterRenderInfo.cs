@@ -40,17 +40,15 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.Kernel.Geom;
-using iText.Kernel.Pdf.Canvas.Parser.Data;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using iText.Kernel.Geom;
+using iText.Kernel.Pdf.Canvas.Parser.Data;
 
-namespace iText.Kernel.Pdf.Canvas.Parser.Listener
-{
+namespace iText.Kernel.Pdf.Canvas.Parser.Listener {
     /// <summary>This class represents a single character and its bounding box</summary>
-    public class CharacterRenderInfo : TextChunk
-    {
+    public class CharacterRenderInfo : TextChunk {
         private Rectangle boundingBox;
 
         /// <summary>
@@ -71,32 +69,25 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
         /// the indices to differ by at least 1.
         /// </remarks>
         internal static CharacterRenderInfo.StringConversionInfo MapString(IList<iText.Kernel.Pdf.Canvas.Parser.Listener.CharacterRenderInfo
-            > cris)
-        {
+            > cris) {
             IDictionary<int, int?> indexMap = new Dictionary<int, int?>();
             StringBuilder sb = new StringBuilder();
             iText.Kernel.Pdf.Canvas.Parser.Listener.CharacterRenderInfo lastChunk = null;
-            for (int i = 0; i < cris.Count; i++)
-            {
+            for (int i = 0; i < cris.Count; i++) {
                 iText.Kernel.Pdf.Canvas.Parser.Listener.CharacterRenderInfo chunk = cris[i];
-                if (lastChunk == null)
-                {
+                if (lastChunk == null) {
                     PutCharsWithIndex(chunk.GetText(), i, indexMap, sb);
                 }
-                else
-                {
-                    if (chunk.SameLine(lastChunk))
-                    {
+                else {
+                    if (chunk.SameLine(lastChunk)) {
                         // we only insert a blank space if the trailing character of the previous string wasn't a space, and the leading character of the current string isn't a space
                         if (chunk.GetLocation().IsAtWordBoundary(lastChunk.GetLocation()) && !chunk.GetText().StartsWith(" ") && !
-                            chunk.GetText().EndsWith(" "))
-                        {
+                            chunk.GetText().EndsWith(" ")) {
                             sb.Append(' ');
                         }
                         PutCharsWithIndex(chunk.GetText(), i, indexMap, sb);
                     }
-                    else
-                    {
+                    else {
                         // we insert a newline character in the resulting string if the chunks are placed on different lines
                         sb.Append('\n');
                         PutCharsWithIndex(chunk.GetText(), i, indexMap, sb);
@@ -111,21 +102,17 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
         }
 
         private static void PutCharsWithIndex(String seq, int index, IDictionary<int, int?> indexMap, StringBuilder
-             sb)
-        {
+             sb) {
             int charCount = seq.Length;
-            for (int i = 0; i < charCount; i++)
-            {
+            for (int i = 0; i < charCount; i++) {
                 indexMap.Put(sb.Length, index);
                 sb.Append(seq[i]);
             }
         }
 
         public CharacterRenderInfo(TextRenderInfo tri)
-            : base(tri == null ? "" : tri.GetText(), tri == null ? null : GetLocation(tri))
-        {
-            if (tri == null)
-            {
+            : base(tri == null ? "" : tri.GetText(), tri == null ? null : GetLocation(tri)) {
+            if (tri == null) {
                 throw new ArgumentException("TextRenderInfo argument is not nullable.");
             }
             // determine bounding box
@@ -140,20 +127,17 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
             this.boundingBox = Rectangle.CalculateBBox(points);
         }
 
-        public virtual Rectangle GetBoundingBox()
-        {
+        public virtual Rectangle GetBoundingBox() {
             return boundingBox;
         }
 
-        private static ITextChunkLocation GetLocation(TextRenderInfo tri)
-        {
+        private static ITextChunkLocation GetLocation(TextRenderInfo tri) {
             LineSegment baseline = tri.GetBaseline();
             return new TextChunkLocationDefaultImp(baseline.GetStartPoint(), baseline.GetEndPoint(), tri.GetSingleSpaceWidth
                 ());
         }
 
-        internal class StringConversionInfo
-        {
+        internal class StringConversionInfo {
             internal IDictionary<int, int?> indexMap;
 
             internal String text;

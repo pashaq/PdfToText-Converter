@@ -42,15 +42,13 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Xobject;
 
-namespace iText.Kernel.Pdf.Annot
-{
-    public class PdfPrinterMarkAnnotation : PdfAnnotation
-    {
+namespace iText.Kernel.Pdf.Annot {
+    public class PdfPrinterMarkAnnotation : PdfAnnotation {
         public PdfPrinterMarkAnnotation(Rectangle rect, PdfFormXObject appearanceStream)
-            : base(rect)
-        {
+            : base(rect) {
             SetNormalAppearance(appearanceStream.GetPdfObject());
             SetFlags(PdfAnnotation.PRINT | PdfAnnotation.READ_ONLY);
         }
@@ -69,22 +67,18 @@ namespace iText.Kernel.Pdf.Annot
         /// </param>
         /// <seealso cref="PdfAnnotation.MakeAnnotation(iText.Kernel.Pdf.PdfObject)"/>
         protected internal PdfPrinterMarkAnnotation(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
-        public override PdfName GetSubtype()
-        {
+        public override PdfName GetSubtype() {
             return PdfName.PrinterMark;
         }
 
-        public virtual PdfMarkupAnnotation SetArbitraryTypeName(PdfName arbitraryTypeName)
-        {
+        public virtual PdfMarkupAnnotation SetArbitraryTypeName(PdfName arbitraryTypeName) {
             return (PdfMarkupAnnotation)Put(PdfName.MN, arbitraryTypeName);
         }
 
-        public virtual PdfName GetArbitraryTypeName()
-        {
+        public virtual PdfName GetArbitraryTypeName() {
             return GetPdfObject().GetAsName(PdfName.MN);
         }
     }

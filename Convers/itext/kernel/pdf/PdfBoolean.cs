@@ -41,13 +41,11 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Source;
 using System;
+using iText.IO.Source;
 
-namespace iText.Kernel.Pdf
-{
-    public class PdfBoolean : PdfPrimitiveObject
-    {
+namespace iText.Kernel.Pdf {
+    public class PdfBoolean : PdfPrimitiveObject {
         public static readonly iText.Kernel.Pdf.PdfBoolean TRUE = new iText.Kernel.Pdf.PdfBoolean(true, true);
 
         public static readonly iText.Kernel.Pdf.PdfBoolean FALSE = new iText.Kernel.Pdf.PdfBoolean(false, true);
@@ -61,61 +59,50 @@ namespace iText.Kernel.Pdf
         /// <summary>Store a boolean value</summary>
         /// <param name="value">value to store</param>
         public PdfBoolean(bool value)
-            : this(value, false)
-        {
+            : this(value, false) {
         }
 
         private PdfBoolean(bool value, bool directOnly)
-            : base(directOnly)
-        {
+            : base(directOnly) {
             this.value = value;
         }
 
         private PdfBoolean()
-            : base()
-        {
+            : base() {
         }
 
-        public virtual bool GetValue()
-        {
+        public virtual bool GetValue() {
             return value;
         }
 
-        public override byte GetObjectType()
-        {
+        public override byte GetObjectType() {
             return BOOLEAN;
         }
 
-        public override String ToString()
-        {
+        public override String ToString() {
             return value ? "true" : "false";
         }
 
-        protected internal override void GenerateContent()
-        {
+        protected internal override void GenerateContent() {
             content = value ? True : False;
         }
 
-        protected internal override PdfObject NewInstance()
-        {
+        protected internal override PdfObject NewInstance() {
             return new iText.Kernel.Pdf.PdfBoolean();
         }
 
-        protected internal override void CopyContent(PdfObject from, PdfDocument document)
-        {
+        protected internal override void CopyContent(PdfObject from, PdfDocument document) {
             base.CopyContent(from, document);
             iText.Kernel.Pdf.PdfBoolean @bool = (iText.Kernel.Pdf.PdfBoolean)from;
             value = @bool.value;
         }
 
-        public override bool Equals(Object obj)
-        {
+        public override bool Equals(Object obj) {
             return this == obj || obj != null && GetType() == obj.GetType() && value == ((iText.Kernel.Pdf.PdfBoolean)
                 obj).value;
         }
 
-        public override int GetHashCode()
-        {
+        public override int GetHashCode() {
             return (value ? 1 : 0);
         }
 
@@ -130,8 +117,7 @@ namespace iText.Kernel.Pdf
         /// </remarks>
         /// <param name="value">boolean variable defining value of PdfBoolean to return.</param>
         /// <returns>existing static PdfBoolean class variable.</returns>
-        public static iText.Kernel.Pdf.PdfBoolean ValueOf(bool value)
-        {
+        public static iText.Kernel.Pdf.PdfBoolean ValueOf(bool value) {
             return value ? TRUE : FALSE;
         }
     }

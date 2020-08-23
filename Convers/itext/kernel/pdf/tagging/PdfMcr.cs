@@ -42,74 +42,60 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using System.Collections.Generic;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Tagging
-{
+namespace iText.Kernel.Pdf.Tagging {
     /// <summary>Represents Marked Content Reference (MCR) object wrapper.</summary>
-    public abstract class PdfMcr : PdfObjectWrapper<PdfObject>, IStructureNode
-    {
+    public abstract class PdfMcr : PdfObjectWrapper<PdfObject>, IStructureNode {
         protected internal PdfStructElem parent;
 
         protected internal PdfMcr(PdfObject pdfObject, PdfStructElem parent)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
             this.parent = parent;
         }
 
         public abstract int GetMcid();
 
-        public virtual PdfDictionary GetPageObject()
-        {
+        public virtual PdfDictionary GetPageObject() {
             PdfObject pageObject = GetPageIndirectReference().GetRefersTo();
-            if (pageObject is PdfDictionary)
-            {
+            if (pageObject is PdfDictionary) {
                 return (PdfDictionary)pageObject;
             }
             return null;
         }
 
-        public virtual PdfIndirectReference GetPageIndirectReference()
-        {
+        public virtual PdfIndirectReference GetPageIndirectReference() {
             PdfObject page = null;
-            if (GetPdfObject() is PdfDictionary)
-            {
+            if (GetPdfObject() is PdfDictionary) {
                 page = ((PdfDictionary)GetPdfObject()).Get(PdfName.Pg, false);
             }
-            if (page == null)
-            {
+            if (page == null) {
                 page = parent.GetPdfObject().Get(PdfName.Pg, false);
             }
-            if (page is PdfIndirectReference)
-            {
+            if (page is PdfIndirectReference) {
                 return (PdfIndirectReference)page;
             }
-            else
-            {
-                if (page is PdfDictionary)
-                {
+            else {
+                if (page is PdfDictionary) {
                     return page.GetIndirectReference();
                 }
             }
             return null;
         }
 
-        public virtual PdfName GetRole()
-        {
+        public virtual PdfName GetRole() {
             return parent.GetRole();
         }
 
-        public virtual IStructureNode GetParent()
-        {
+        public virtual IStructureNode GetParent() {
             return parent;
         }
 
-        public virtual IList<IStructureNode> GetKids()
-        {
+        public virtual IList<IStructureNode> GetKids() {
             return null;
         }
 
-        protected internal override bool IsWrappedObjectMustBeIndirect()
-        {
+        protected internal override bool IsWrappedObjectMustBeIndirect() {
             return false;
         }
     }

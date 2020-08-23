@@ -20,14 +20,13 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-using iText.IO.Util;
 using System.Collections.Generic;
+using iText.IO.Util;
+using iText.Kernel;
 
-namespace iText.Kernel.Geom
-{
+namespace iText.Kernel.Geom {
     /// <summary>Public helper class for transforming segments and paths.</summary>
-    public sealed class ShapeTransformUtil
-    {
+    public sealed class ShapeTransformUtil {
         /// <summary>Method for transforming a bezier curve.</summary>
         /// <remarks>
         /// Method for transforming a bezier curve.
@@ -36,8 +35,7 @@ namespace iText.Kernel.Geom
         /// <param name="bezierCurve">the source bezier curve for transformation</param>
         /// <param name="ctm">the transformation matrix</param>
         /// <returns>the new transformed bezier curve</returns>
-        public static BezierCurve TransformBezierCurve(BezierCurve bezierCurve, Matrix ctm)
-        {
+        public static BezierCurve TransformBezierCurve(BezierCurve bezierCurve, Matrix ctm) {
             return (BezierCurve)TransformSegment(bezierCurve, ctm);
         }
 
@@ -49,8 +47,7 @@ namespace iText.Kernel.Geom
         /// <param name="line">the source line for transformation</param>
         /// <param name="ctm">the transformation matrix</param>
         /// <returns>the new transformed line</returns>
-        public static Line TransformLine(Line line, Matrix ctm)
-        {
+        public static Line TransformLine(Line line, Matrix ctm) {
             return (Line)TransformSegment(line, ctm);
         }
 
@@ -62,49 +59,40 @@ namespace iText.Kernel.Geom
         /// <param name="path">the source path for transformation</param>
         /// <param name="ctm">the transformation matrix</param>
         /// <returns>the new transformed path</returns>
-        public static Path TransformPath(Path path, Matrix ctm)
-        {
+        public static Path TransformPath(Path path, Matrix ctm) {
             Path newPath = new Path();
-            foreach (Subpath subpath in path.GetSubpaths())
-            {
+            foreach (Subpath subpath in path.GetSubpaths()) {
                 Subpath transformedSubpath = TransformSubpath(subpath, ctm);
                 newPath.AddSubpath(transformedSubpath);
             }
             return newPath;
         }
 
-        private static Subpath TransformSubpath(Subpath subpath, Matrix ctm)
-        {
+        private static Subpath TransformSubpath(Subpath subpath, Matrix ctm) {
             Subpath newSubpath = new Subpath();
             newSubpath.SetClosed(subpath.IsClosed());
-            foreach (IShape segment in subpath.GetSegments())
-            {
+            foreach (IShape segment in subpath.GetSegments()) {
                 IShape transformedSegment = TransformSegment(segment, ctm);
                 newSubpath.AddSegment(transformedSegment);
             }
             return newSubpath;
         }
 
-        private static IShape TransformSegment(IShape segment, Matrix ctm)
-        {
+        private static IShape TransformSegment(IShape segment, Matrix ctm) {
             IList<Point> basePoints = segment.GetBasePoints();
             Point[] newBasePoints = TransformPoints(ctm, basePoints.ToArray(new Point[basePoints.Count]));
             IShape newSegment;
-            if (segment is BezierCurve)
-            {
+            if (segment is BezierCurve) {
                 newSegment = new BezierCurve(JavaUtil.ArraysAsList(newBasePoints));
             }
-            else
-            {
+            else {
                 newSegment = new Line(newBasePoints[0], newBasePoints[1]);
             }
             return newSegment;
         }
 
-        private static Point[] TransformPoints(Matrix ctm, params Point[] points)
-        {
-            try
-            {
+        private static Point[] TransformPoints(Matrix ctm, params Point[] points) {
+            try {
                 AffineTransform t = new AffineTransform(ctm.Get(Matrix.I11), ctm.Get(Matrix.I12), ctm.Get(Matrix.I21), ctm
                     .Get(Matrix.I22), ctm.Get(Matrix.I31), ctm.Get(Matrix.I32));
                 t = t.CreateInverse();
@@ -112,8 +100,7 @@ namespace iText.Kernel.Geom
                 t.Transform(points, 0, newPoints, 0, points.Length);
                 return newPoints;
             }
-            catch (NoninvertibleTransformException e)
-            {
+            catch (NoninvertibleTransformException e) {
                 throw new PdfException(PdfException.NoninvertibleMatrixCannotBeProcessed, e);
             }
         }

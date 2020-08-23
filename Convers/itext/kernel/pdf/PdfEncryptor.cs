@@ -41,14 +41,13 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.Kernel.Counter.Event;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using iText.Kernel.Counter.Event;
 
-namespace iText.Kernel.Pdf
-{
+namespace iText.Kernel.Pdf {
     /// <summary>
     /// This class takes any PDF and returns exactly the same but
     /// encrypted.
@@ -58,14 +57,12 @@ namespace iText.Kernel.Pdf
     /// encrypted. All the content, links, outlines, etc, are kept.
     /// It is also possible to change the info dictionary.
     /// </remarks>
-    public sealed class PdfEncryptor
-    {
+    public sealed class PdfEncryptor {
         private IMetaInfo metaInfo;
 
         private EncryptionProperties properties;
 
-        public PdfEncryptor()
-        {
+        public PdfEncryptor() {
         }
 
         /// <summary>Entry point to encrypt a PDF document.</summary>
@@ -84,8 +81,7 @@ namespace iText.Kernel.Pdf
         /// values delete the key in the original info dictionary
         /// </param>
         public static void Encrypt(PdfReader reader, Stream os, EncryptionProperties properties, IDictionary<String
-            , String> newInfo)
-        {
+            , String> newInfo) {
             new iText.Kernel.Pdf.PdfEncryptor().SetEncryptionProperties(properties).Encrypt(reader, os, newInfo);
         }
 
@@ -96,50 +92,40 @@ namespace iText.Kernel.Pdf
         /// encryption properties. See
         /// <see cref="EncryptionProperties"/>.
         /// </param>
-        public static void Encrypt(PdfReader reader, Stream os, EncryptionProperties properties)
-        {
+        public static void Encrypt(PdfReader reader, Stream os, EncryptionProperties properties) {
             Encrypt(reader, os, properties, null);
         }
 
         /// <summary>Give you a verbose analysis of the permissions.</summary>
         /// <param name="permissions">the permissions value of a PDF file</param>
         /// <returns>a String that explains the meaning of the permissions value</returns>
-        public static String GetPermissionsVerbose(int permissions)
-        {
+        public static String GetPermissionsVerbose(int permissions) {
             StringBuilder buf = new StringBuilder("Allowed:");
-            if ((EncryptionConstants.ALLOW_PRINTING & permissions) == EncryptionConstants.ALLOW_PRINTING)
-            {
+            if ((EncryptionConstants.ALLOW_PRINTING & permissions) == EncryptionConstants.ALLOW_PRINTING) {
                 buf.Append(" Printing");
             }
             if ((EncryptionConstants.ALLOW_MODIFY_CONTENTS & permissions) == EncryptionConstants.ALLOW_MODIFY_CONTENTS
-                )
-            {
+                ) {
                 buf.Append(" Modify contents");
             }
-            if ((EncryptionConstants.ALLOW_COPY & permissions) == EncryptionConstants.ALLOW_COPY)
-            {
+            if ((EncryptionConstants.ALLOW_COPY & permissions) == EncryptionConstants.ALLOW_COPY) {
                 buf.Append(" Copy");
             }
             if ((EncryptionConstants.ALLOW_MODIFY_ANNOTATIONS & permissions) == EncryptionConstants.ALLOW_MODIFY_ANNOTATIONS
-                )
-            {
+                ) {
                 buf.Append(" Modify annotations");
             }
-            if ((EncryptionConstants.ALLOW_FILL_IN & permissions) == EncryptionConstants.ALLOW_FILL_IN)
-            {
+            if ((EncryptionConstants.ALLOW_FILL_IN & permissions) == EncryptionConstants.ALLOW_FILL_IN) {
                 buf.Append(" Fill in");
             }
-            if ((EncryptionConstants.ALLOW_SCREENREADERS & permissions) == EncryptionConstants.ALLOW_SCREENREADERS)
-            {
+            if ((EncryptionConstants.ALLOW_SCREENREADERS & permissions) == EncryptionConstants.ALLOW_SCREENREADERS) {
                 buf.Append(" Screen readers");
             }
-            if ((EncryptionConstants.ALLOW_ASSEMBLY & permissions) == EncryptionConstants.ALLOW_ASSEMBLY)
-            {
+            if ((EncryptionConstants.ALLOW_ASSEMBLY & permissions) == EncryptionConstants.ALLOW_ASSEMBLY) {
                 buf.Append(" Assembly");
             }
             if ((EncryptionConstants.ALLOW_DEGRADED_PRINTING & permissions) == EncryptionConstants.ALLOW_DEGRADED_PRINTING
-                )
-            {
+                ) {
                 buf.Append(" Degraded printing");
             }
             return buf.ToString();
@@ -148,64 +134,56 @@ namespace iText.Kernel.Pdf
         /// <summary>Tells you if printing is allowed.</summary>
         /// <param name="permissions">the permissions value of a PDF file</param>
         /// <returns>true if printing is allowed</returns>
-        public static bool IsPrintingAllowed(int permissions)
-        {
+        public static bool IsPrintingAllowed(int permissions) {
             return (EncryptionConstants.ALLOW_PRINTING & permissions) == EncryptionConstants.ALLOW_PRINTING;
         }
 
         /// <summary>Tells you if modifying content is allowed.</summary>
         /// <param name="permissions">the permissions value of a PDF file</param>
         /// <returns>true if modifying content is allowed</returns>
-        public static bool IsModifyContentsAllowed(int permissions)
-        {
+        public static bool IsModifyContentsAllowed(int permissions) {
             return (EncryptionConstants.ALLOW_MODIFY_CONTENTS & permissions) == EncryptionConstants.ALLOW_MODIFY_CONTENTS;
         }
 
         /// <summary>Tells you if copying is allowed.</summary>
         /// <param name="permissions">the permissions value of a PDF file</param>
         /// <returns>true if copying is allowed</returns>
-        public static bool IsCopyAllowed(int permissions)
-        {
+        public static bool IsCopyAllowed(int permissions) {
             return (EncryptionConstants.ALLOW_COPY & permissions) == EncryptionConstants.ALLOW_COPY;
         }
 
         /// <summary>Tells you if modifying annotations is allowed.</summary>
         /// <param name="permissions">the permissions value of a PDF file</param>
         /// <returns>true if modifying annotations is allowed</returns>
-        public static bool IsModifyAnnotationsAllowed(int permissions)
-        {
+        public static bool IsModifyAnnotationsAllowed(int permissions) {
             return (EncryptionConstants.ALLOW_MODIFY_ANNOTATIONS & permissions) == EncryptionConstants.ALLOW_MODIFY_ANNOTATIONS;
         }
 
         /// <summary>Tells you if filling in fields is allowed.</summary>
         /// <param name="permissions">the permissions value of a PDF file</param>
         /// <returns>true if filling in fields is allowed</returns>
-        public static bool IsFillInAllowed(int permissions)
-        {
+        public static bool IsFillInAllowed(int permissions) {
             return (EncryptionConstants.ALLOW_FILL_IN & permissions) == EncryptionConstants.ALLOW_FILL_IN;
         }
 
         /// <summary>Tells you if repurposing for screenreaders is allowed.</summary>
         /// <param name="permissions">the permissions value of a PDF file</param>
         /// <returns>true if repurposing for screenreaders is allowed</returns>
-        public static bool IsScreenReadersAllowed(int permissions)
-        {
+        public static bool IsScreenReadersAllowed(int permissions) {
             return (EncryptionConstants.ALLOW_SCREENREADERS & permissions) == EncryptionConstants.ALLOW_SCREENREADERS;
         }
 
         /// <summary>Tells you if document assembly is allowed.</summary>
         /// <param name="permissions">the permissions value of a PDF file</param>
         /// <returns>true if document assembly is allowed</returns>
-        public static bool IsAssemblyAllowed(int permissions)
-        {
+        public static bool IsAssemblyAllowed(int permissions) {
             return (EncryptionConstants.ALLOW_ASSEMBLY & permissions) == EncryptionConstants.ALLOW_ASSEMBLY;
         }
 
         /// <summary>Tells you if degraded printing is allowed.</summary>
         /// <param name="permissions">the permissions value of a PDF file</param>
         /// <returns>true if degraded printing is allowed</returns>
-        public static bool IsDegradedPrintingAllowed(int permissions)
-        {
+        public static bool IsDegradedPrintingAllowed(int permissions) {
             return (EncryptionConstants.ALLOW_DEGRADED_PRINTING & permissions) == EncryptionConstants.ALLOW_DEGRADED_PRINTING;
         }
 
@@ -222,8 +200,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfEncryptor"/>
         /// instance
         /// </returns>
-        public iText.Kernel.Pdf.PdfEncryptor SetEventCountingMetaInfo(IMetaInfo metaInfo)
-        {
+        public iText.Kernel.Pdf.PdfEncryptor SetEventCountingMetaInfo(IMetaInfo metaInfo) {
             this.metaInfo = metaInfo;
             return this;
         }
@@ -238,8 +215,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfEncryptor"/>
         /// instance
         /// </returns>
-        public iText.Kernel.Pdf.PdfEncryptor SetEncryptionProperties(EncryptionProperties properties)
-        {
+        public iText.Kernel.Pdf.PdfEncryptor SetEncryptionProperties(EncryptionProperties properties) {
             this.properties = properties;
             return this;
         }
@@ -255,8 +231,7 @@ namespace iText.Kernel.Pdf
         /// <see langword="null"/>
         /// values delete the key in the original info dictionary
         /// </param>
-        public void Encrypt(PdfReader reader, Stream os, IDictionary<String, String> newInfo)
-        {
+        public void Encrypt(PdfReader reader, Stream os, IDictionary<String, String> newInfo) {
             WriterProperties writerProperties = new WriterProperties();
             writerProperties.encryptionProperties = properties;
             PdfWriter writer = new PdfWriter(os, writerProperties);
@@ -270,8 +245,7 @@ namespace iText.Kernel.Pdf
         /// <summary>Entry point to encrypt a PDF document.</summary>
         /// <param name="reader">the read PDF</param>
         /// <param name="os">the output destination</param>
-        public void Encrypt(PdfReader reader, Stream os)
-        {
+        public void Encrypt(PdfReader reader, Stream os) {
             Encrypt(reader, os, (IDictionary<String, String>)null);
         }
     }

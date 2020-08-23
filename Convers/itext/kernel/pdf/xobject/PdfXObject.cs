@@ -41,21 +41,20 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
 using Common.Logging;
+using iText.Kernel;
+using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Filespec;
 using iText.Kernel.Pdf.Layer;
-using System;
 
-namespace iText.Kernel.Pdf.Xobject
-{
+namespace iText.Kernel.Pdf.Xobject {
     /// <summary>An abstract wrapper for supported types of XObject.</summary>
     /// <seealso cref="PdfFormXObject"/>
     /// <seealso cref="PdfImageXObject"/>
-    public abstract class PdfXObject : PdfObjectWrapper<PdfStream>
-    {
+    public abstract class PdfXObject : PdfObjectWrapper<PdfStream> {
         protected internal PdfXObject(PdfStream pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
         /// <summary>
@@ -82,20 +81,15 @@ namespace iText.Kernel.Pdf.Xobject
         /// or
         /// <see cref="PdfImageXObject"/>.
         /// </returns>
-        public static iText.Kernel.Pdf.Xobject.PdfXObject MakeXObject(PdfStream stream)
-        {
-            if (PdfName.Form.Equals(stream.GetAsName(PdfName.Subtype)))
-            {
+        public static iText.Kernel.Pdf.Xobject.PdfXObject MakeXObject(PdfStream stream) {
+            if (PdfName.Form.Equals(stream.GetAsName(PdfName.Subtype))) {
                 return new PdfFormXObject(stream);
             }
-            else
-            {
-                if (PdfName.Image.Equals(stream.GetAsName(PdfName.Subtype)))
-                {
+            else {
+                if (PdfName.Image.Equals(stream.GetAsName(PdfName.Subtype))) {
                     return new PdfImageXObject(stream);
                 }
-                else
-                {
+                else {
                     throw new NotSupportedException(PdfException.UnsupportedXObjectType);
                 }
             }
@@ -103,22 +97,19 @@ namespace iText.Kernel.Pdf.Xobject
 
         /// <summary>Sets the layer this XObject belongs to.</summary>
         /// <param name="layer">the layer this XObject belongs to.</param>
-        public virtual void SetLayer(IPdfOCG layer)
-        {
+        public virtual void SetLayer(IPdfOCG layer) {
             GetPdfObject().Put(PdfName.OC, layer.GetIndirectReference());
         }
 
         /// <summary>Gets width of XObject.</summary>
         /// <returns>float value.</returns>
-        public virtual float GetWidth()
-        {
+        public virtual float GetWidth() {
             throw new NotSupportedException();
         }
 
         /// <summary>Gets height of XObject.</summary>
         /// <returns>float value.</returns>
-        public virtual float GetHeight()
-        {
+        public virtual float GetHeight() {
             throw new NotSupportedException();
         }
 
@@ -131,16 +122,13 @@ namespace iText.Kernel.Pdf.Xobject
         /// For associated files their associated file specification dictionaries shall include the AFRelationship key
         /// </remarks>
         /// <param name="fs">file specification dictionary of associated file</param>
-        public virtual void AddAssociatedFile(PdfFileSpec fs)
-        {
-            if (null == ((PdfDictionary)fs.GetPdfObject()).Get(PdfName.AFRelationship))
-            {
+        public virtual void AddAssociatedFile(PdfFileSpec fs) {
+            if (null == ((PdfDictionary)fs.GetPdfObject()).Get(PdfName.AFRelationship)) {
                 ILog logger = LogManager.GetLogger(typeof(iText.Kernel.Pdf.Xobject.PdfXObject));
                 logger.Error(iText.IO.LogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
             }
             PdfArray afArray = GetPdfObject().GetAsArray(PdfName.AF);
-            if (afArray == null)
-            {
+            if (afArray == null) {
                 afArray = new PdfArray();
                 GetPdfObject().Put(PdfName.AF, afArray);
             }
@@ -150,11 +138,9 @@ namespace iText.Kernel.Pdf.Xobject
         /// <summary>Returns files associated with XObject.</summary>
         /// <param name="create">defines whether AF arrays will be created if it doesn't exist</param>
         /// <returns>associated files array</returns>
-        public virtual PdfArray GetAssociatedFiles(bool create)
-        {
+        public virtual PdfArray GetAssociatedFiles(bool create) {
             PdfArray afArray = GetPdfObject().GetAsArray(PdfName.AF);
-            if (afArray == null && create)
-            {
+            if (afArray == null && create) {
                 afArray = new PdfArray();
                 GetPdfObject().Put(PdfName.AF, afArray);
             }
@@ -162,8 +148,7 @@ namespace iText.Kernel.Pdf.Xobject
         }
 
         /// <summary><inheritDoc/></summary>
-        protected internal override bool IsWrappedObjectMustBeIndirect()
-        {
+        protected internal override bool IsWrappedObjectMustBeIndirect() {
             return true;
         }
     }

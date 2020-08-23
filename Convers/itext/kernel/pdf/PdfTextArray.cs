@@ -41,13 +41,12 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.Kernel.Font;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using iText.Kernel.Font;
 
-namespace iText.Kernel.Pdf
-{
+namespace iText.Kernel.Pdf {
     /// <summary>
     /// <see cref="PdfTextArray"/>
     /// defines an array with displacements and
@@ -73,22 +72,17 @@ namespace iText.Kernel.Pdf
     /// To emit a more efficient array, we consolidate repeated numbers or strings into single array entries.
     /// For example: "add( 50 ); add( -50 );" will REMOVE the combined zero from the array.
     /// </remarks>
-    public class PdfTextArray : PdfArray
-    {
+    public class PdfTextArray : PdfArray {
         private float lastNumber = float.NaN;
 
         private StringBuilder lastString;
 
-        public override void Add(PdfObject pdfObject)
-        {
-            if (pdfObject.IsNumber())
-            {
+        public override void Add(PdfObject pdfObject) {
+            if (pdfObject.IsNumber()) {
                 Add(((PdfNumber)pdfObject).FloatValue());
             }
-            else
-            {
-                if (pdfObject is PdfString)
-                {
+            else {
+                if (pdfObject is PdfString) {
                     Add(((PdfString)pdfObject).GetValueBytes());
                 }
             }
@@ -104,10 +98,8 @@ namespace iText.Kernel.Pdf
         /// to be added
         /// </param>
         /// <seealso cref="System.Collections.IList{E}.AddAll(System.Collections.ICollection{E})"/>
-        public override void AddAll(PdfArray a)
-        {
-            if (a != null)
-            {
+        public override void AddAll(PdfArray a) {
+            if (a != null) {
                 AddAll(a.list);
             }
         }
@@ -115,33 +107,25 @@ namespace iText.Kernel.Pdf
         /// <summary>Adds the Collection of PdfObjects.</summary>
         /// <param name="c">the Collection of PdfObjects to be added</param>
         /// <seealso cref="System.Collections.IList{E}.AddAll(System.Collections.ICollection{E})"/>
-        public override void AddAll(ICollection<PdfObject> c)
-        {
-            foreach (PdfObject obj in c)
-            {
+        public override void AddAll(ICollection<PdfObject> c) {
+            foreach (PdfObject obj in c) {
                 Add(obj);
             }
         }
 
-        public virtual bool Add(float number)
-        {
+        public virtual bool Add(float number) {
             // adding zero doesn't modify the TextArray at all
-            if (number != 0)
-            {
-                if (!float.IsNaN(lastNumber))
-                {
+            if (number != 0) {
+                if (!float.IsNaN(lastNumber)) {
                     lastNumber = number + lastNumber;
-                    if (lastNumber != 0)
-                    {
+                    if (lastNumber != 0) {
                         Set(Size() - 1, new PdfNumber(lastNumber));
                     }
-                    else
-                    {
+                    else {
                         Remove(Size() - 1);
                     }
                 }
-                else
-                {
+                else {
                     lastNumber = number;
                     base.Add(new PdfNumber(lastNumber));
                 }
@@ -151,28 +135,22 @@ namespace iText.Kernel.Pdf
             return false;
         }
 
-        public virtual bool Add(String text, PdfFont font)
-        {
+        public virtual bool Add(String text, PdfFont font) {
             // adding an empty string doesn't modify the TextArray at all
             return Add(font.ConvertToBytes(text));
         }
 
-        public virtual bool Add(byte[] text)
-        {
+        public virtual bool Add(byte[] text) {
             return Add(new PdfString(text).GetValue());
         }
 
-        protected internal virtual bool Add(String text)
-        {
-            if (text.Length > 0)
-            {
-                if (lastString != null)
-                {
+        protected internal virtual bool Add(String text) {
+            if (text.Length > 0) {
+                if (lastString != null) {
                     lastString.Append(text);
                     Set(Size() - 1, new PdfString(lastString.ToString()));
                 }
-                else
-                {
+                else {
                     lastString = new StringBuilder(text);
                     base.Add(new PdfString(lastString.ToString()));
                 }

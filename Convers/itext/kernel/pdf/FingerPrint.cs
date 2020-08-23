@@ -42,31 +42,28 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using System.Collections.Generic;
+using iText.Kernel;
 
-namespace iText.Kernel.Pdf
-{
+namespace iText.Kernel.Pdf {
     /// <summary>Data container for debugging information.</summary>
     /// <remarks>
     /// Data container for debugging information. This class keeps a record of every registered product that
     /// was involved in the creation of a certain PDF file. This information can then be used to log to the
     /// logger or to the file.
     /// </remarks>
-    public class FingerPrint
-    {
+    public class FingerPrint {
         private ICollection<ProductInfo> productInfoSet;
 
         /// <summary>Default constructor.</summary>
         /// <remarks>Default constructor. Initializes the productInfoSet.</remarks>
-        public FingerPrint()
-        {
+        public FingerPrint() {
             this.productInfoSet = new HashSet<ProductInfo>();
         }
 
         /// <summary>Registers a product to be added to the fingerprint or other debugging info.</summary>
         /// <param name="productInfo">ProductInfo to be added</param>
         /// <returns>true if the fingerprint did not already contain the specified element</returns>
-        public virtual bool RegisterProduct(ProductInfo productInfo)
-        {
+        public virtual bool RegisterProduct(ProductInfo productInfo) {
             int initialSize = productInfoSet.Count;
             productInfoSet.Add(productInfo);
             return initialSize != productInfoSet.Count;
@@ -74,8 +71,7 @@ namespace iText.Kernel.Pdf
 
         /// <summary>Returns the registered products.</summary>
         /// <returns>registered products.</returns>
-        public virtual ICollection<ProductInfo> GetProducts()
-        {
+        public virtual ICollection<ProductInfo> GetProducts() {
             return this.productInfoSet;
         }
     }

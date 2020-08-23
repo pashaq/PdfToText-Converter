@@ -43,8 +43,7 @@ address: sales@itextpdf.com
 */
 using System;
 
-namespace iText.Kernel.Counter.Event
-{
+namespace iText.Kernel.Counter.Event {
     /// <summary>
     /// Generic
     /// <see cref="IEvent"/>
@@ -56,8 +55,7 @@ namespace iText.Kernel.Counter.Event
     /// that has additional id, that should help during events filtering.
     /// The common practice is to return the namespace as id.
     /// </remarks>
-    public interface IGenericEvent : IEvent
-    {
+    public interface IGenericEvent : IEvent {
         /// <summary>The id that uniquely identifies event origin.</summary>
         /// <remarks>
         /// The id that uniquely identifies event origin.

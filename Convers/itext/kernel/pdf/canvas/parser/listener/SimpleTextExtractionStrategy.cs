@@ -41,17 +41,16 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Util;
-using iText.Kernel.Geom;
-using iText.Kernel.Pdf.Canvas.Parser.Data;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using iText.IO.Util;
+using iText.Kernel.Geom;
+using iText.Kernel.Pdf.Canvas.Parser;
+using iText.Kernel.Pdf.Canvas.Parser.Data;
 
-namespace iText.Kernel.Pdf.Canvas.Parser.Listener
-{
-    public class SimpleTextExtractionStrategy : ITextExtractionStrategy
-    {
+namespace iText.Kernel.Pdf.Canvas.Parser.Listener {
+    public class SimpleTextExtractionStrategy : ITextExtractionStrategy {
         private Vector lastStart;
 
         private Vector lastEnd;
@@ -59,47 +58,38 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
         /// <summary>used to store the resulting String.</summary>
         private readonly StringBuilder result = new StringBuilder();
 
-        public virtual void EventOccurred(IEventData data, EventType type)
-        {
-            if (type.Equals(EventType.RENDER_TEXT))
-            {
+        public virtual void EventOccurred(IEventData data, EventType type) {
+            if (type.Equals(EventType.RENDER_TEXT)) {
                 TextRenderInfo renderInfo = (TextRenderInfo)data;
                 bool firstRender = result.Length == 0;
                 bool hardReturn = false;
                 LineSegment segment = renderInfo.GetBaseline();
                 Vector start = segment.GetStartPoint();
                 Vector end = segment.GetEndPoint();
-                if (!firstRender)
-                {
+                if (!firstRender) {
                     Vector x1 = lastStart;
                     Vector x2 = lastEnd;
                     // see http://mathworld.wolfram.com/Point-LineDistance2-Dimensional.html
-                    float dist = (x2.Subtract(x1)).Cross((x1.Subtract(start))).LengthSquared() /
+                    float dist = (x2.Subtract(x1)).Cross((x1.Subtract(start))).LengthSquared() / 
                         x2.Subtract(x1).LengthSquared();
                     // we should probably base this on the current font metrics, but 1 pt seems to be sufficient for the time being
                     float sameLineThreshold = 1f;
-                    if (dist > sameLineThreshold)
-                    {
+                    if (dist > sameLineThreshold) {
                         hardReturn = true;
                     }
                 }
                 // Note:  Technically, we should check both the start and end positions, in case the angle of the text changed without any displacement
                 // but this sort of thing probably doesn't happen much in reality, so we'll leave it alone for now
-                if (hardReturn)
-                {
+                if (hardReturn) {
                     //System.out.println("<< Hard Return >>");
                     AppendTextChunk("\n");
                 }
-                else
-                {
-                    if (!firstRender)
-                    {
+                else {
+                    if (!firstRender) {
                         // we only insert a blank space if the trailing character of the previous string wasn't a space, and the leading character of the current string isn't a space
-                        if (result[result.Length - 1] != ' ' && renderInfo.GetText().Length > 0 && renderInfo.GetText()[0] != ' ')
-                        {
+                        if (result[result.Length - 1] != ' ' && renderInfo.GetText().Length > 0 && renderInfo.GetText()[0] != ' ') {
                             float spacing = lastEnd.Subtract(start).Length();
-                            if (spacing > renderInfo.GetSingleSpaceWidth() / 2f)
-                            {
+                            if (spacing > renderInfo.GetSingleSpaceWidth() / 2f) {
                                 AppendTextChunk(" ");
                             }
                         }
@@ -114,8 +104,7 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
             }
         }
 
-        public virtual ICollection<EventType> GetSupportedEvents()
-        {
+        public virtual ICollection<EventType> GetSupportedEvents() {
             return JavaCollectionsUtil.UnmodifiableSet
                 (new LinkedHashSet<EventType>(JavaCollectionsUtil.SingletonList(
                 EventType.RENDER_TEXT)));
@@ -123,8 +112,7 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
 
         /// <summary>Returns the result so far.</summary>
         /// <returns>a String with the resulting text.</returns>
-        public virtual String GetResultantText()
-        {
+        public virtual String GetResultantText() {
             return result.ToString();
         }
 
@@ -135,8 +123,7 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
         /// image content)
         /// </remarks>
         /// <param name="text">the text to append to the text results accumulated so far</param>
-        protected internal void AppendTextChunk(String text)
-        {
+        protected internal void AppendTextChunk(String text) {
             result.Append(text);
         }
     }

@@ -45,10 +45,8 @@ using Common.Logging;
 using iText.IO.Source;
 using iText.IO.Util;
 
-namespace iText.IO.Font.Otf
-{
-    public class OtfClass
-    {
+namespace iText.IO.Font.Otf {
+    public class OtfClass {
         public const int GLYPH_BASE = 1;
 
         public const int GLYPH_LIGATURE = 2;
@@ -58,53 +56,42 @@ namespace iText.IO.Font.Otf
         //key is glyph, value is class inside all 2
         private IntHashtable mapClass = new IntHashtable();
 
-        private OtfClass(RandomAccessFileOrArray rf, int classLocation)
-        {
+        private OtfClass(RandomAccessFileOrArray rf, int classLocation) {
             rf.Seek(classLocation);
             int classFormat = rf.ReadUnsignedShort();
-            if (classFormat == 1)
-            {
+            if (classFormat == 1) {
                 int startGlyph = rf.ReadUnsignedShort();
                 int glyphCount = rf.ReadUnsignedShort();
                 int endGlyph = startGlyph + glyphCount;
-                for (int k = startGlyph; k < endGlyph; ++k)
-                {
+                for (int k = startGlyph; k < endGlyph; ++k) {
                     int cl = rf.ReadUnsignedShort();
                     mapClass.Put(k, cl);
                 }
             }
-            else
-            {
-                if (classFormat == 2)
-                {
+            else {
+                if (classFormat == 2) {
                     int classRangeCount = rf.ReadUnsignedShort();
-                    for (int k = 0; k < classRangeCount; ++k)
-                    {
+                    for (int k = 0; k < classRangeCount; ++k) {
                         int glyphStart = rf.ReadUnsignedShort();
                         int glyphEnd = rf.ReadUnsignedShort();
                         int cl = rf.ReadUnsignedShort();
-                        for (; glyphStart <= glyphEnd; ++glyphStart)
-                        {
+                        for (; glyphStart <= glyphEnd; ++glyphStart) {
                             mapClass.Put(glyphStart, cl);
                         }
                     }
                 }
-                else
-                {
+                else {
                     throw new System.IO.IOException("Invalid class format " + classFormat);
                 }
             }
         }
 
-        public static iText.IO.Font.Otf.OtfClass Create(RandomAccessFileOrArray rf, int classLocation)
-        {
+        public static iText.IO.Font.Otf.OtfClass Create(RandomAccessFileOrArray rf, int classLocation) {
             iText.IO.Font.Otf.OtfClass otfClass;
-            try
-            {
+            try {
                 otfClass = new iText.IO.Font.Otf.OtfClass(rf, classLocation);
             }
-            catch (System.IO.IOException e)
-            {
+            catch (System.IO.IOException e) {
                 ILog logger = LogManager.GetLogger(typeof(iText.IO.Font.Otf.OtfClass));
                 logger.Error(MessageFormatUtil.Format(iText.IO.LogMessageConstant.OPENTYPE_GDEF_TABLE_ERROR, e.Message));
                 otfClass = null;
@@ -112,36 +99,28 @@ namespace iText.IO.Font.Otf
             return otfClass;
         }
 
-        public virtual int GetOtfClass(int glyph)
-        {
+        public virtual int GetOtfClass(int glyph) {
             return mapClass.Get(glyph);
         }
 
-        public virtual bool IsMarkOtfClass(int glyph)
-        {
+        public virtual bool IsMarkOtfClass(int glyph) {
             return HasClass(glyph) && GetOtfClass(glyph) == GLYPH_MARK;
         }
 
-        public virtual bool HasClass(int glyph)
-        {
+        public virtual bool HasClass(int glyph) {
             return mapClass.ContainsKey(glyph);
         }
 
-        public virtual int GetOtfClass(int glyph, bool strict)
-        {
-            if (strict)
-            {
-                if (mapClass.ContainsKey(glyph))
-                {
+        public virtual int GetOtfClass(int glyph, bool strict) {
+            if (strict) {
+                if (mapClass.ContainsKey(glyph)) {
                     return mapClass.Get(glyph);
                 }
-                else
-                {
+                else {
                     return -1;
                 }
             }
-            else
-            {
+            else {
                 return mapClass.Get(glyph);
             }
         }

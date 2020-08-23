@@ -41,17 +41,16 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.Kernel.Pdf.Function;
 using System;
+using iText.Kernel;
+using iText.Kernel.Pdf;
+using iText.Kernel.Pdf.Function;
 
-namespace iText.Kernel.Pdf.Colorspace
-{
+namespace iText.Kernel.Pdf.Colorspace {
     /// <summary>The abstract PdfShading class that represents the Shading Dictionary PDF object.</summary>
-    public abstract class PdfShading : PdfObjectWrapper<PdfDictionary>
-    {
+    public abstract class PdfShading : PdfObjectWrapper<PdfDictionary> {
         /// <summary>constants of shading type (see ISO-320001 Table 78)</summary>
-        internal sealed class ShadingType
-        {
+        internal sealed class ShadingType {
             /// <summary>The int value of function-based shading type</summary>
             public const int FUNCTION_BASED = 1;
 
@@ -73,8 +72,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <summary>The int value of tensor-product patch meshes shading type</summary>
             public const int TENSOR_PRODUCT_PATCH_MESH = 7;
 
-            private ShadingType()
-            {
+            private ShadingType() {
             }
         }
 
@@ -97,96 +95,77 @@ namespace iText.Kernel.Pdf.Colorspace
         /// <see cref="PdfShading"/>
         /// object.
         /// </returns>
-        public static PdfShading MakeShading(PdfDictionary shadingDictionary)
-        {
-            if (!shadingDictionary.ContainsKey(PdfName.ShadingType))
-            {
+        public static PdfShading MakeShading(PdfDictionary shadingDictionary) {
+            if (!shadingDictionary.ContainsKey(PdfName.ShadingType)) {
                 throw new PdfException(PdfException.ShadingTypeNotFound);
             }
-            if (!shadingDictionary.ContainsKey(PdfName.ColorSpace))
-            {
+            if (!shadingDictionary.ContainsKey(PdfName.ColorSpace)) {
                 throw new PdfException(PdfException.ColorSpaceNotFound);
             }
             PdfShading shading;
-            switch (shadingDictionary.GetAsNumber(PdfName.ShadingType).IntValue())
-            {
-                case PdfShading.ShadingType.FUNCTION_BASED:
-                    {
-                        shading = new PdfShading.FunctionBased(shadingDictionary);
-                        break;
-                    }
+            switch (shadingDictionary.GetAsNumber(PdfName.ShadingType).IntValue()) {
+                case PdfShading.ShadingType.FUNCTION_BASED: {
+                    shading = new PdfShading.FunctionBased(shadingDictionary);
+                    break;
+                }
 
-                case PdfShading.ShadingType.AXIAL:
-                    {
-                        shading = new PdfShading.Axial(shadingDictionary);
-                        break;
-                    }
+                case PdfShading.ShadingType.AXIAL: {
+                    shading = new PdfShading.Axial(shadingDictionary);
+                    break;
+                }
 
-                case PdfShading.ShadingType.RADIAL:
-                    {
-                        shading = new PdfShading.Radial(shadingDictionary);
-                        break;
-                    }
+                case PdfShading.ShadingType.RADIAL: {
+                    shading = new PdfShading.Radial(shadingDictionary);
+                    break;
+                }
 
-                case PdfShading.ShadingType.FREE_FORM_GOURAUD_SHADED_TRIANGLE_MESH:
-                    {
-                        if (!shadingDictionary.IsStream())
-                        {
-                            throw new PdfException(PdfException.UnexpectedShadingType);
-                        }
-                        shading = new PdfShading.FreeFormGouraudShadedTriangleMesh((PdfStream)shadingDictionary);
-                        break;
-                    }
-
-                case PdfShading.ShadingType.LATTICE_FORM_GOURAUD_SHADED_TRIANGLE_MESH:
-                    {
-                        if (!shadingDictionary.IsStream())
-                        {
-                            throw new PdfException(PdfException.UnexpectedShadingType);
-                        }
-                        shading = new PdfShading.LatticeFormGouraudShadedTriangleMesh((PdfStream)shadingDictionary);
-                        break;
-                    }
-
-                case PdfShading.ShadingType.COONS_PATCH_MESH:
-                    {
-                        if (!shadingDictionary.IsStream())
-                        {
-                            throw new PdfException(PdfException.UnexpectedShadingType);
-                        }
-                        shading = new PdfShading.CoonsPatchMesh((PdfStream)shadingDictionary);
-                        break;
-                    }
-
-                case PdfShading.ShadingType.TENSOR_PRODUCT_PATCH_MESH:
-                    {
-                        if (!shadingDictionary.IsStream())
-                        {
-                            throw new PdfException(PdfException.UnexpectedShadingType);
-                        }
-                        shading = new PdfShading.TensorProductPatchMesh((PdfStream)shadingDictionary);
-                        break;
-                    }
-
-                default:
-                    {
+                case PdfShading.ShadingType.FREE_FORM_GOURAUD_SHADED_TRIANGLE_MESH: {
+                    if (!shadingDictionary.IsStream()) {
                         throw new PdfException(PdfException.UnexpectedShadingType);
                     }
+                    shading = new PdfShading.FreeFormGouraudShadedTriangleMesh((PdfStream)shadingDictionary);
+                    break;
+                }
+
+                case PdfShading.ShadingType.LATTICE_FORM_GOURAUD_SHADED_TRIANGLE_MESH: {
+                    if (!shadingDictionary.IsStream()) {
+                        throw new PdfException(PdfException.UnexpectedShadingType);
+                    }
+                    shading = new PdfShading.LatticeFormGouraudShadedTriangleMesh((PdfStream)shadingDictionary);
+                    break;
+                }
+
+                case PdfShading.ShadingType.COONS_PATCH_MESH: {
+                    if (!shadingDictionary.IsStream()) {
+                        throw new PdfException(PdfException.UnexpectedShadingType);
+                    }
+                    shading = new PdfShading.CoonsPatchMesh((PdfStream)shadingDictionary);
+                    break;
+                }
+
+                case PdfShading.ShadingType.TENSOR_PRODUCT_PATCH_MESH: {
+                    if (!shadingDictionary.IsStream()) {
+                        throw new PdfException(PdfException.UnexpectedShadingType);
+                    }
+                    shading = new PdfShading.TensorProductPatchMesh((PdfStream)shadingDictionary);
+                    break;
+                }
+
+                default: {
+                    throw new PdfException(PdfException.UnexpectedShadingType);
+                }
             }
             return shading;
         }
 
         protected internal PdfShading(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
         protected internal PdfShading(PdfDictionary pdfObject, int type, PdfColorSpace colorSpace)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
             GetPdfObject().Put(PdfName.ShadingType, new PdfNumber(type));
-            if (colorSpace is PdfSpecialCs.Pattern)
-            {
+            if (colorSpace is PdfSpecialCs.Pattern) {
                 throw new ArgumentException("colorSpace");
             }
             GetPdfObject().Put(PdfName.ColorSpace, colorSpace.GetPdfObject());
@@ -197,8 +176,7 @@ namespace iText.Kernel.Pdf.Colorspace
         /// int value of
         /// <see cref="iText.Kernel.Pdf.PdfName.ShadingType"/>.
         /// </returns>
-        public virtual int GetShadingType()
-        {
+        public virtual int GetShadingType() {
             return (int)GetPdfObject().GetAsInt(PdfName.ShadingType);
         }
 
@@ -208,8 +186,7 @@ namespace iText.Kernel.Pdf.Colorspace
         /// <see cref="iText.Kernel.Pdf.PdfObject"/>
         /// Color space
         /// </returns>
-        public virtual PdfObject GetColorSpace()
-        {
+        public virtual PdfObject GetColorSpace() {
             return GetPdfObject().Get(PdfName.ColorSpace);
         }
 
@@ -222,8 +199,7 @@ namespace iText.Kernel.Pdf.Colorspace
         /// <see cref="iText.Kernel.Pdf.PdfObject"/>
         /// Function
         /// </returns>
-        public virtual PdfObject GetFunction()
-        {
+        public virtual PdfObject GetFunction() {
             return GetPdfObject().Get(PdfName.Function);
         }
 
@@ -236,8 +212,7 @@ namespace iText.Kernel.Pdf.Colorspace
         /// <see cref="iText.Kernel.Pdf.Function.PdfFunction"/>
         /// to set.
         /// </param>
-        public virtual void SetFunction(PdfFunction function)
-        {
+        public virtual void SetFunction(PdfFunction function) {
             GetPdfObject().Put(PdfName.Function, function.GetPdfObject());
             SetModified();
         }
@@ -251,11 +226,9 @@ namespace iText.Kernel.Pdf.Colorspace
         /// <see cref="iText.Kernel.Pdf.Function.PdfFunction"/>
         /// to be set.
         /// </param>
-        public virtual void SetFunction(PdfFunction[] functions)
-        {
+        public virtual void SetFunction(PdfFunction[] functions) {
             PdfArray arr = new PdfArray();
-            foreach (PdfFunction func in functions)
-            {
+            foreach (PdfFunction func in functions) {
                 arr.Add(func.GetPdfObject());
             }
             GetPdfObject().Put(PdfName.Function, arr);
@@ -278,13 +251,11 @@ namespace iText.Kernel.Pdf.Colorspace
         /// For example: wrapperInstance.makeIndirect(document).flush();
         /// Note that not every wrapper require this, only those that have such warning in documentation.
         /// </remarks>
-        public override void Flush()
-        {
+        public override void Flush() {
             base.Flush();
         }
 
-        protected internal override bool IsWrappedObjectMustBeIndirect()
-        {
+        protected internal override bool IsWrappedObjectMustBeIndirect() {
             return true;
         }
 
@@ -294,11 +265,9 @@ namespace iText.Kernel.Pdf.Colorspace
         /// class and is in charge of Shading Dictionary with function-based type,
         /// that defines color at every point in the domain by a specified mathematical function.
         /// </summary>
-        public class FunctionBased : PdfShading
-        {
+        public class FunctionBased : PdfShading {
             protected internal FunctionBased(PdfDictionary pdfDictionary)
-                : base(pdfDictionary)
-            {
+                : base(pdfDictionary) {
             }
 
             /// <summary>Creates the new instance of the class.</summary>
@@ -313,8 +282,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// , that is used to calculate color transitions.
             /// </param>
             public FunctionBased(PdfColorSpace colorSpace, PdfFunction function)
-                : this(colorSpace.GetPdfObject(), function)
-            {
+                : this(colorSpace.GetPdfObject(), function) {
             }
 
             /// <summary>Creates the new instance of the class.</summary>
@@ -330,8 +298,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// </param>
             public FunctionBased(PdfObject colorSpace, PdfFunction function)
                 : base(new PdfDictionary(), PdfShading.ShadingType.FUNCTION_BASED, PdfColorSpace.MakeColorSpace(colorSpace
-                    ))
-            {
+                    )) {
                 SetFunction(function);
             }
 
@@ -346,8 +313,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <see cref="iText.Kernel.Pdf.PdfArray"/>
             /// domain rectangle.
             /// </returns>
-            public virtual PdfArray GetDomain()
-            {
+            public virtual PdfArray GetDomain() {
                 return GetPdfObject().GetAsArray(PdfName.Domain);
             }
 
@@ -361,8 +327,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <param name="xmax">the Xmax coordinate of rectangle.</param>
             /// <param name="ymin">the Ymin coordinate of rectangle.</param>
             /// <param name="ymax">the Ymax coordinate of rectangle.</param>
-            public virtual void SetDomain(float xmin, float xmax, float ymin, float ymax)
-            {
+            public virtual void SetDomain(float xmin, float xmax, float ymin, float ymax) {
                 SetDomain(new PdfArray(new float[] { xmin, xmax, ymin, ymax }));
             }
 
@@ -377,8 +342,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <see cref="iText.Kernel.Pdf.PdfArray"/>
             /// domain rectangle object to be set.
             /// </param>
-            public virtual void SetDomain(PdfArray domain)
-            {
+            public virtual void SetDomain(PdfArray domain) {
                 GetPdfObject().Put(PdfName.Domain, domain);
                 SetModified();
             }
@@ -394,11 +358,9 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <see cref="iText.Kernel.Pdf.PdfArray"/>
             /// of transformation matrix (identical matrix by default).
             /// </returns>
-            public virtual PdfArray GetMatrix()
-            {
+            public virtual PdfArray GetMatrix() {
                 PdfArray matrix = GetPdfObject().GetAsArray(PdfName.Matrix);
-                if (matrix == null)
-                {
+                if (matrix == null) {
                     matrix = new PdfArray(new float[] { 1, 0, 0, 1, 0, 0 });
                     SetMatrix(matrix);
                 }
@@ -414,8 +376,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <c>float[]</c>
             /// of transformation matrix to be set.
             /// </param>
-            public virtual void SetMatrix(float[] matrix)
-            {
+            public virtual void SetMatrix(float[] matrix) {
                 SetMatrix(new PdfArray(matrix));
             }
 
@@ -428,8 +389,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <see cref="iText.Kernel.Pdf.PdfArray"/>
             /// transformation matrix object to be set.
             /// </param>
-            public virtual void SetMatrix(PdfArray matrix)
-            {
+            public virtual void SetMatrix(PdfArray matrix) {
                 GetPdfObject().Put(PdfName.Matrix, matrix);
                 SetModified();
             }
@@ -442,11 +402,9 @@ namespace iText.Kernel.Pdf.Colorspace
         /// that define a colour blend that varies along a linear axis between two endpoints
         /// and extends indefinitely perpendicular to that axis.
         /// </summary>
-        public class Axial : PdfShading
-        {
+        public class Axial : PdfShading {
             protected internal Axial(PdfDictionary pdfDictionary)
-                : base(pdfDictionary)
-            {
+                : base(pdfDictionary) {
             }
 
             /// <summary>Creates the new instance of the class.</summary>
@@ -471,10 +429,9 @@ namespace iText.Kernel.Pdf.Colorspace
             /// that represents the color in the end point.
             /// </param>
             public Axial(PdfColorSpace cs, float x0, float y0, float[] color0, float x1, float y1, float[] color1)
-                : base(new PdfDictionary(), PdfShading.ShadingType.AXIAL, cs)
-            {
+                : base(new PdfDictionary(), PdfShading.ShadingType.AXIAL, cs) {
                 SetCoords(x0, y0, x1, y1);
-                PdfFunction func = new PdfFunction.Type2(new PdfArray(new float[] { 0, 1 }), null, new PdfArray(color0), new
+                PdfFunction func = new PdfFunction.Type2(new PdfArray(new float[] { 0, 1 }), null, new PdfArray(color0), new 
                     PdfArray(color1), new PdfNumber(1));
                 SetFunction(func);
             }
@@ -506,10 +463,8 @@ namespace iText.Kernel.Pdf.Colorspace
             /// </param>
             public Axial(PdfColorSpace cs, float x0, float y0, float[] color0, float x1, float y1, float[] color1, bool
                 [] extend)
-                : this(cs, x0, y0, color0, x1, y1, color1)
-            {
-                if (extend == null || extend.Length != 2)
-                {
+                : this(cs, x0, y0, color0, x1, y1, color1) {
+                if (extend == null || extend.Length != 2) {
                     throw new ArgumentException("extend");
                 }
                 SetExtend(extend[0], extend[1]);
@@ -534,8 +489,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// object, that is used to calculate color transitions.
             /// </param>
             public Axial(PdfColorSpace cs, PdfArray coords, PdfFunction function)
-                : this(cs, coords, null, function)
-            {
+                : this(cs, coords, null, function) {
             }
 
             /// <summary>Creates the new instance of the class.</summary>
@@ -565,11 +519,9 @@ namespace iText.Kernel.Pdf.Colorspace
             /// object, that is used to calculate color transitions.
             /// </param>
             public Axial(PdfColorSpace cs, PdfArray coords, PdfArray domain, PdfFunction function)
-                : base(new PdfDictionary(), PdfShading.ShadingType.AXIAL, cs)
-            {
+                : base(new PdfDictionary(), PdfShading.ShadingType.AXIAL, cs) {
                 SetCoords(coords);
-                if (domain != null)
-                {
+                if (domain != null) {
                     SetDomain(domain);
                 }
                 SetFunction(function);
@@ -586,8 +538,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <see cref="iText.Kernel.Pdf.PdfArray"/>
             /// Coords object.
             /// </returns>
-            public virtual PdfArray GetCoords()
-            {
+            public virtual PdfArray GetCoords() {
                 return GetPdfObject().GetAsArray(PdfName.Coords);
             }
 
@@ -596,8 +547,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <param name="y0">the start coordinate of Y axis to be set.</param>
             /// <param name="x1">the end coordinate of X axis to be set.</param>
             /// <param name="y1">the end coordinate of Y axis to be set.</param>
-            public virtual void SetCoords(float x0, float y0, float x1, float y1)
-            {
+            public virtual void SetCoords(float x0, float y0, float x1, float y1) {
                 SetCoords(new PdfArray(new float[] { x0, y0, x1, y1 }));
             }
 
@@ -613,8 +563,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <see cref="iText.Kernel.Pdf.PdfArray"/>
             /// to be set.
             /// </param>
-            public virtual void SetCoords(PdfArray coords)
-            {
+            public virtual void SetCoords(PdfArray coords) {
                 GetPdfObject().Put(PdfName.Coords, coords);
                 SetModified();
             }
@@ -632,11 +581,9 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <see cref="iText.Kernel.Pdf.PdfArray"/>
             /// of Domain object ([0.0 1.0] by default)
             /// </returns>
-            public virtual PdfArray GetDomain()
-            {
+            public virtual PdfArray GetDomain() {
                 PdfArray domain = GetPdfObject().GetAsArray(PdfName.Domain);
-                if (domain == null)
-                {
+                if (domain == null) {
                     domain = new PdfArray(new float[] { 0, 1 });
                     SetDomain(domain);
                 }
@@ -651,8 +598,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// </summary>
             /// <param name="t0">first limit of variable t</param>
             /// <param name="t1">second limit of variable t</param>
-            public virtual void SetDomain(float t0, float t1)
-            {
+            public virtual void SetDomain(float t0, float t1) {
                 SetDomain(new PdfArray(new float[] { t0, t1 }));
             }
 
@@ -669,8 +615,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <see cref="iText.Kernel.Pdf.PdfArray"/>
             /// that represents domain
             /// </param>
-            public virtual void SetDomain(PdfArray domain)
-            {
+            public virtual void SetDomain(PdfArray domain) {
                 GetPdfObject().Put(PdfName.Domain, domain);
                 SetModified();
             }
@@ -688,11 +633,9 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <see cref="iText.Kernel.Pdf.PdfArray"/>
             /// of Extended object ([false false] by default)
             /// </returns>
-            public virtual PdfArray GetExtend()
-            {
+            public virtual PdfArray GetExtend() {
                 PdfArray extend = GetPdfObject().GetAsArray(PdfName.Extend);
-                if (extend == null)
-                {
+                if (extend == null) {
                     extend = new PdfArray(new bool[] { false, false });
                     SetExtend(extend);
                 }
@@ -706,8 +649,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// </summary>
             /// <param name="extendStart">if true will extend shading beyond the starting point of Coords</param>
             /// <param name="extendEnd">if true will extend shading beyond the ending point of Coords</param>
-            public virtual void SetExtend(bool extendStart, bool extendEnd)
-            {
+            public virtual void SetExtend(bool extendStart, bool extendEnd) {
                 SetExtend(new PdfArray(new bool[] { extendStart, extendEnd }));
             }
 
@@ -730,8 +672,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <see cref="iText.Kernel.Pdf.PdfArray"/>
             /// representing Extend object
             /// </param>
-            public virtual void SetExtend(PdfArray extend)
-            {
+            public virtual void SetExtend(PdfArray extend) {
                 GetPdfObject().Put(PdfName.Extend, extend);
                 SetModified();
             }
@@ -750,11 +691,9 @@ namespace iText.Kernel.Pdf.Colorspace
         /// that define a colour blend that varies between two circles.
         /// This type of shading shall not be used with an Indexed colour space
         /// </remarks>
-        public class Radial : PdfShading
-        {
+        public class Radial : PdfShading {
             protected internal Radial(PdfDictionary pdfDictionary)
-                : base(pdfDictionary)
-            {
+                : base(pdfDictionary) {
             }
 
             /// <summary>Creates the new instance of the class.</summary>
@@ -794,10 +733,9 @@ namespace iText.Kernel.Pdf.Colorspace
             /// </param>
             public Radial(PdfColorSpace cs, float x0, float y0, float r0, float[] color0, float x1, float y1, float r1
                 , float[] color1)
-                : base(new PdfDictionary(), PdfShading.ShadingType.RADIAL, cs)
-            {
+                : base(new PdfDictionary(), PdfShading.ShadingType.RADIAL, cs) {
                 SetCoords(x0, y0, r0, x1, y1, r1);
-                PdfFunction func = new PdfFunction.Type2(new PdfArray(new float[] { 0, 1 }), null, new PdfArray(color0), new
+                PdfFunction func = new PdfFunction.Type2(new PdfArray(new float[] { 0, 1 }), null, new PdfArray(color0), new 
                     PdfArray(color1), new PdfNumber(1));
                 SetFunction(func);
             }
@@ -845,10 +783,8 @@ namespace iText.Kernel.Pdf.Colorspace
             /// </param>
             public Radial(PdfColorSpace cs, float x0, float y0, float r0, float[] color0, float x1, float y1, float r1
                 , float[] color1, bool[] extend)
-                : this(cs, x0, y0, r0, color0, x1, y1, r1, color1)
-            {
-                if (extend == null || extend.Length != 2)
-                {
+                : this(cs, x0, y0, r0, color0, x1, y1, r1, color1) {
+                if (extend == null || extend.Length != 2) {
                     throw new ArgumentException("extend");
                 }
                 SetExtend(extend[0], extend[1]);
@@ -877,8 +813,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// object, that is used to calculate color transitions.
             /// </param>
             public Radial(PdfColorSpace cs, PdfArray coords, PdfFunction function)
-                : base(new PdfDictionary(), PdfShading.ShadingType.RADIAL, cs)
-            {
+                : base(new PdfDictionary(), PdfShading.ShadingType.RADIAL, cs) {
                 SetCoords(coords);
                 SetFunction(function);
             }
@@ -905,8 +840,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <see cref="iText.Kernel.Pdf.PdfArray"/>
             /// coords object.
             /// </returns>
-            public virtual PdfArray GetCoords()
-            {
+            public virtual PdfArray GetCoords() {
                 return GetPdfObject().GetAsArray(PdfName.Coords);
             }
 
@@ -929,8 +863,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// If 0 then ending circle is treated as point.
             /// If both radii are 0, nothing shall be painted.
             /// </param>
-            public virtual void SetCoords(float x0, float y0, float r0, float x1, float y1, float r1)
-            {
+            public virtual void SetCoords(float x0, float y0, float r0, float x1, float y1, float r1) {
                 SetCoords(new PdfArray(new float[] { x0, y0, r0, x1, y1, r1 }));
             }
 
@@ -956,8 +889,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <see cref="iText.Kernel.Pdf.PdfArray"/>
             /// choords object to be set.
             /// </param>
-            public virtual void SetCoords(PdfArray coords)
-            {
+            public virtual void SetCoords(PdfArray coords) {
                 GetPdfObject().Put(PdfName.Coords, coords);
                 SetModified();
             }
@@ -975,11 +907,9 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <see cref="iText.Kernel.Pdf.PdfArray"/>
             /// of Domain object ([0.0 1.0] by default)
             /// </returns>
-            public virtual PdfArray GetDomain()
-            {
+            public virtual PdfArray GetDomain() {
                 PdfArray domain = GetPdfObject().GetAsArray(PdfName.Domain);
-                if (domain == null)
-                {
+                if (domain == null) {
                     domain = new PdfArray(new float[] { 0, 1 });
                     SetDomain(domain);
                 }
@@ -994,8 +924,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// </summary>
             /// <param name="t0">first limit of variable t</param>
             /// <param name="t1">second limit of variable t</param>
-            public virtual void SetDomain(float t0, float t1)
-            {
+            public virtual void SetDomain(float t0, float t1) {
                 SetDomain(new PdfArray(new float[] { t0, t1 }));
             }
 
@@ -1012,8 +941,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <see cref="iText.Kernel.Pdf.PdfArray"/>
             /// that represents domain
             /// </param>
-            public virtual void SetDomain(PdfArray domain)
-            {
+            public virtual void SetDomain(PdfArray domain) {
                 GetPdfObject().Put(PdfName.Domain, domain);
                 SetModified();
             }
@@ -1031,11 +959,9 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <see cref="iText.Kernel.Pdf.PdfArray"/>
             /// of Extended object ([false false] by default)
             /// </returns>
-            public virtual PdfArray GetExtend()
-            {
+            public virtual PdfArray GetExtend() {
                 PdfArray extend = GetPdfObject().GetAsArray(PdfName.Extend);
-                if (extend == null)
-                {
+                if (extend == null) {
                     extend = new PdfArray(new bool[] { false, false });
                     SetExtend(extend);
                 }
@@ -1049,8 +975,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// </summary>
             /// <param name="extendStart">if true will extend shading beyond the starting circle of Coords.</param>
             /// <param name="extendEnd">if true will extend shading beyond the ending circle of Coords.</param>
-            public virtual void SetExtend(bool extendStart, bool extendEnd)
-            {
+            public virtual void SetExtend(bool extendStart, bool extendEnd) {
                 SetExtend(new PdfArray(new bool[] { extendStart, extendEnd }));
             }
 
@@ -1073,8 +998,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <see cref="iText.Kernel.Pdf.PdfArray"/>
             /// representing Extend object
             /// </param>
-            public virtual void SetExtend(PdfArray extend)
-            {
+            public virtual void SetExtend(PdfArray extend) {
                 GetPdfObject().Put(PdfName.Extend, extend);
                 SetModified();
             }
@@ -1104,11 +1028,9 @@ namespace iText.Kernel.Pdf.Colorspace
         /// If the shading dictionary includes a Function entry, only a single parametric value, t,
         /// shall be specified for each vertex in place of the colour components c1...cn.
         /// </remarks>
-        public class FreeFormGouraudShadedTriangleMesh : PdfShading
-        {
+        public class FreeFormGouraudShadedTriangleMesh : PdfShading {
             protected internal FreeFormGouraudShadedTriangleMesh(PdfStream pdfStream)
-                : base(pdfStream)
-            {
+                : base(pdfStream) {
             }
 
             /// <summary>Creates the new instance of the class.</summary>
@@ -1142,8 +1064,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// </param>
             public FreeFormGouraudShadedTriangleMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int
                  bitsPerFlag, float[] decode)
-                : this(cs, bitsPerCoordinate, bitsPerComponent, bitsPerFlag, new PdfArray(decode))
-            {
+                : this(cs, bitsPerCoordinate, bitsPerComponent, bitsPerFlag, new PdfArray(decode)) {
             }
 
             /// <summary>Creates the new instance of the class.</summary>
@@ -1177,8 +1098,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// </param>
             public FreeFormGouraudShadedTriangleMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int
                  bitsPerFlag, PdfArray decode)
-                : base(new PdfStream(), PdfShading.ShadingType.FREE_FORM_GOURAUD_SHADED_TRIANGLE_MESH, cs)
-            {
+                : base(new PdfStream(), PdfShading.ShadingType.FREE_FORM_GOURAUD_SHADED_TRIANGLE_MESH, cs) {
                 SetBitsPerCoordinate(bitsPerCoordinate);
                 SetBitsPerComponent(bitsPerComponent);
                 SetBitsPerFlag(bitsPerFlag);
@@ -1187,30 +1107,26 @@ namespace iText.Kernel.Pdf.Colorspace
 
             /// <summary>Gets the number of bits used to represent each vertex coordinate.</summary>
             /// <returns>the number of bits. Can be 1, 2, 4, 8, 12, 16, 24, or 32.</returns>
-            public virtual int GetBitsPerCoordinate()
-            {
+            public virtual int GetBitsPerCoordinate() {
                 return (int)GetPdfObject().GetAsInt(PdfName.BitsPerCoordinate);
             }
 
             /// <summary>Sets the number of bits used to represent each vertex coordinate.</summary>
             /// <param name="bitsPerCoordinate">the number of bits to be set. Shall be 1, 2, 4, 8, 12, 16, 24, or 32.</param>
-            public virtual void SetBitsPerCoordinate(int bitsPerCoordinate)
-            {
+            public virtual void SetBitsPerCoordinate(int bitsPerCoordinate) {
                 GetPdfObject().Put(PdfName.BitsPerCoordinate, new PdfNumber(bitsPerCoordinate));
                 SetModified();
             }
 
             /// <summary>Gets the number of bits used to represent each colour component.</summary>
             /// <returns>the number of bits. Can be 1, 2, 4, 8, 12, or 16.</returns>
-            public virtual int GetBitsPerComponent()
-            {
+            public virtual int GetBitsPerComponent() {
                 return (int)GetPdfObject().GetAsInt(PdfName.BitsPerComponent);
             }
 
             /// <summary>Sets the number of bits used to represent each colour component.</summary>
             /// <param name="bitsPerComponent">the number of bits to be set. Shall be 1, 2, 4, 8, 12, or 16.</param>
-            public virtual void SetBitsPerComponent(int bitsPerComponent)
-            {
+            public virtual void SetBitsPerComponent(int bitsPerComponent) {
                 GetPdfObject().Put(PdfName.BitsPerComponent, new PdfNumber(bitsPerComponent));
                 SetModified();
             }
@@ -1222,8 +1138,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// The valid flag values are 0, 1 or 2.
             /// </remarks>
             /// <returns>the number of bits. Can be 2, 4 or 8.</returns>
-            public virtual int GetBitsPerFlag()
-            {
+            public virtual int GetBitsPerFlag() {
                 return (int)GetPdfObject().GetAsInt(PdfName.BitsPerFlag);
             }
 
@@ -1234,8 +1149,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// The valid flag values are 0, 1 or 2.
             /// </remarks>
             /// <param name="bitsPerFlag">the number of bits to be set. Shall be 2, 4 or 8.</param>
-            public virtual void SetBitsPerFlag(int bitsPerFlag)
-            {
+            public virtual void SetBitsPerFlag(int bitsPerFlag) {
                 GetPdfObject().Put(PdfName.BitsPerFlag, new PdfNumber(bitsPerFlag));
                 SetModified();
             }
@@ -1259,8 +1173,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <see cref="iText.Kernel.Pdf.PdfArray"/>
             /// Decode object.
             /// </returns>
-            public virtual PdfArray GetDecode()
-            {
+            public virtual PdfArray GetDecode() {
                 return GetPdfObject().GetAsArray(PdfName.Decode);
             }
 
@@ -1283,8 +1196,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <c>float[]</c>
             /// of Decode object to set.
             /// </param>
-            public virtual void SetDecode(float[] decode)
-            {
+            public virtual void SetDecode(float[] decode) {
                 SetDecode(new PdfArray(decode));
             }
 
@@ -1307,8 +1219,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <see cref="iText.Kernel.Pdf.PdfArray"/>
             /// Decode object to set.
             /// </param>
-            public virtual void SetDecode(PdfArray decode)
-            {
+            public virtual void SetDecode(PdfArray decode) {
                 GetPdfObject().Put(PdfName.Decode, decode);
                 SetModified();
             }
@@ -1336,11 +1247,9 @@ namespace iText.Kernel.Pdf.Colorspace
         /// ,
         /// except there is no edge flag.
         /// </remarks>
-        public class LatticeFormGouraudShadedTriangleMesh : PdfShading
-        {
+        public class LatticeFormGouraudShadedTriangleMesh : PdfShading {
             protected internal LatticeFormGouraudShadedTriangleMesh(PdfStream pdfStream)
-                : base(pdfStream)
-            {
+                : base(pdfStream) {
             }
 
             /// <summary>Creates the new instance of the class.</summary>
@@ -1370,10 +1279,9 @@ namespace iText.Kernel.Pdf.Colorspace
             /// [x_min x_max y_min y_max c1_min c1_max … cn_min cn_max].
             /// Only one pair of color values shall be specified if a Function entry is present.
             /// </param>
-            public LatticeFormGouraudShadedTriangleMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent,
+            public LatticeFormGouraudShadedTriangleMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, 
                 int verticesPerRow, float[] decode)
-                : this(cs, bitsPerCoordinate, bitsPerComponent, verticesPerRow, new PdfArray(decode))
-            {
+                : this(cs, bitsPerCoordinate, bitsPerComponent, verticesPerRow, new PdfArray(decode)) {
             }
 
             /// <summary>Creates the new instance of the class.</summary>
@@ -1403,10 +1311,9 @@ namespace iText.Kernel.Pdf.Colorspace
             /// [x_min x_max y_min y_max c1_min c1_max … cn_min cn_max].
             /// Only one pair of color values shall be specified if a Function entry is present.
             /// </param>
-            public LatticeFormGouraudShadedTriangleMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent,
+            public LatticeFormGouraudShadedTriangleMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, 
                 int verticesPerRow, PdfArray decode)
-                : base(new PdfStream(), PdfShading.ShadingType.LATTICE_FORM_GOURAUD_SHADED_TRIANGLE_MESH, cs)
-            {
+                : base(new PdfStream(), PdfShading.ShadingType.LATTICE_FORM_GOURAUD_SHADED_TRIANGLE_MESH, cs) {
                 SetBitsPerCoordinate(bitsPerCoordinate);
                 SetBitsPerComponent(bitsPerComponent);
                 SetVerticesPerRow(verticesPerRow);
@@ -1415,38 +1322,33 @@ namespace iText.Kernel.Pdf.Colorspace
 
             /// <summary>Gets the number of bits used to represent each vertex coordinate.</summary>
             /// <returns>the number of bits. Can be 1, 2, 4, 8, 12, 16, 24, or 32.</returns>
-            public virtual int GetBitsPerCoordinate()
-            {
+            public virtual int GetBitsPerCoordinate() {
                 return (int)GetPdfObject().GetAsInt(PdfName.BitsPerCoordinate);
             }
 
             /// <summary>Sets the number of bits used to represent each vertex coordinate.</summary>
             /// <param name="bitsPerCoordinate">the number of bits to be set. Shall be 1, 2, 4, 8, 12, 16, 24, or 32.</param>
-            public virtual void SetBitsPerCoordinate(int bitsPerCoordinate)
-            {
+            public virtual void SetBitsPerCoordinate(int bitsPerCoordinate) {
                 GetPdfObject().Put(PdfName.BitsPerCoordinate, new PdfNumber(bitsPerCoordinate));
                 SetModified();
             }
 
             /// <summary>Gets the number of bits used to represent each colour component.</summary>
             /// <returns>the number of bits. Can be 1, 2, 4, 8, 12, or 16.</returns>
-            public virtual int GetBitsPerComponent()
-            {
+            public virtual int GetBitsPerComponent() {
                 return (int)GetPdfObject().GetAsInt(PdfName.BitsPerComponent);
             }
 
             /// <summary>Sets the number of bits used to represent each colour component.</summary>
             /// <param name="bitsPerComponent">the number of bits to be set. Shall be 1, 2, 4, 8, 12, or 16.</param>
-            public virtual void SetBitsPerComponent(int bitsPerComponent)
-            {
+            public virtual void SetBitsPerComponent(int bitsPerComponent) {
                 GetPdfObject().Put(PdfName.BitsPerComponent, new PdfNumber(bitsPerComponent));
                 SetModified();
             }
 
             /// <summary>Gets the number of vertices in each row of the lattice.</summary>
             /// <returns>the number of vertices. Can only be greater than 1.</returns>
-            public virtual int GetVerticesPerRow()
-            {
+            public virtual int GetVerticesPerRow() {
                 return (int)GetPdfObject().GetAsInt(PdfName.VerticesPerRow);
             }
 
@@ -1456,8 +1358,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// The number of rows need not be specified.
             /// </remarks>
             /// <param name="verticesPerRow">the number of vertices to be set. Shall be greater than 1.</param>
-            public virtual void SetVerticesPerRow(int verticesPerRow)
-            {
+            public virtual void SetVerticesPerRow(int verticesPerRow) {
                 GetPdfObject().Put(PdfName.VerticesPerRow, new PdfNumber(verticesPerRow));
                 SetModified();
             }
@@ -1481,8 +1382,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <see cref="iText.Kernel.Pdf.PdfArray"/>
             /// Decode object.
             /// </returns>
-            public virtual PdfArray GetDecode()
-            {
+            public virtual PdfArray GetDecode() {
                 return GetPdfObject().GetAsArray(PdfName.Decode);
             }
 
@@ -1505,8 +1405,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <c>float[]</c>
             /// of Decode object to set.
             /// </param>
-            public virtual void SetDecode(float[] decode)
-            {
+            public virtual void SetDecode(float[] decode) {
                 SetDecode(new PdfArray(decode));
             }
 
@@ -1529,8 +1428,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <see cref="iText.Kernel.Pdf.PdfArray"/>
             /// Decode object to set.
             /// </param>
-            public virtual void SetDecode(PdfArray decode)
-            {
+            public virtual void SetDecode(PdfArray decode) {
                 GetPdfObject().Put(PdfName.Decode, decode);
                 SetModified();
             }
@@ -1560,11 +1458,9 @@ namespace iText.Kernel.Pdf.Colorspace
         /// If the shading dictionary contains a Function entry, the colour data for each corner of a patch
         /// shall be specified by a single parametric value t rather than by n separate colour components c1...cn.
         /// </remarks>
-        public class CoonsPatchMesh : PdfShading
-        {
+        public class CoonsPatchMesh : PdfShading {
             protected internal CoonsPatchMesh(PdfStream pdfStream)
-                : base(pdfStream)
-            {
+                : base(pdfStream) {
             }
 
             /// <summary>Creates the new instance of the class.</summary>
@@ -1598,8 +1494,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// </param>
             public CoonsPatchMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int bitsPerFlag, float
                 [] decode)
-                : this(cs, bitsPerCoordinate, bitsPerComponent, bitsPerFlag, new PdfArray(decode))
-            {
+                : this(cs, bitsPerCoordinate, bitsPerComponent, bitsPerFlag, new PdfArray(decode)) {
             }
 
             /// <summary>Creates the new instance of the class.</summary>
@@ -1633,8 +1528,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// </param>
             public CoonsPatchMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int bitsPerFlag, PdfArray
                  decode)
-                : base(new PdfStream(), PdfShading.ShadingType.COONS_PATCH_MESH, cs)
-            {
+                : base(new PdfStream(), PdfShading.ShadingType.COONS_PATCH_MESH, cs) {
                 SetBitsPerCoordinate(bitsPerCoordinate);
                 SetBitsPerComponent(bitsPerComponent);
                 SetBitsPerFlag(bitsPerFlag);
@@ -1643,30 +1537,26 @@ namespace iText.Kernel.Pdf.Colorspace
 
             /// <summary>Gets the number of bits used to represent each vertex coordinate.</summary>
             /// <returns>the number of bits. Can be 1, 2, 4, 8, 12, 16, 24, or 32.</returns>
-            public virtual int GetBitsPerCoordinate()
-            {
+            public virtual int GetBitsPerCoordinate() {
                 return (int)GetPdfObject().GetAsInt(PdfName.BitsPerCoordinate);
             }
 
             /// <summary>Sets the number of bits used to represent each vertex coordinate.</summary>
             /// <param name="bitsPerCoordinate">the number of bits to be set. Shall be 1, 2, 4, 8, 12, 16, 24, or 32.</param>
-            public virtual void SetBitsPerCoordinate(int bitsPerCoordinate)
-            {
+            public virtual void SetBitsPerCoordinate(int bitsPerCoordinate) {
                 GetPdfObject().Put(PdfName.BitsPerCoordinate, new PdfNumber(bitsPerCoordinate));
                 SetModified();
             }
 
             /// <summary>Gets the number of bits used to represent each colour component.</summary>
             /// <returns>the number of bits. Can be 1, 2, 4, 8, 12, or 16.</returns>
-            public virtual int GetBitsPerComponent()
-            {
+            public virtual int GetBitsPerComponent() {
                 return (int)GetPdfObject().GetAsInt(PdfName.BitsPerComponent);
             }
 
             /// <summary>Sets the number of bits used to represent each colour component.</summary>
             /// <param name="bitsPerComponent">the number of bits to be set. Shall be 1, 2, 4, 8, 12, or 16.</param>
-            public virtual void SetBitsPerComponent(int bitsPerComponent)
-            {
+            public virtual void SetBitsPerComponent(int bitsPerComponent) {
                 GetPdfObject().Put(PdfName.BitsPerComponent, new PdfNumber(bitsPerComponent));
                 SetModified();
             }
@@ -1678,8 +1568,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// The valid flag values are 0, 1, 2 or 3.
             /// </remarks>
             /// <returns>the number of bits. Can be 2, 4 or 8.</returns>
-            public virtual int GetBitsPerFlag()
-            {
+            public virtual int GetBitsPerFlag() {
                 return (int)GetPdfObject().GetAsInt(PdfName.BitsPerFlag);
             }
 
@@ -1690,8 +1579,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// The valid flag values are 0, 1, 2 or 3.
             /// </remarks>
             /// <param name="bitsPerFlag">the number of bits to be set. Shall be 2, 4 or 8.</param>
-            public virtual void SetBitsPerFlag(int bitsPerFlag)
-            {
+            public virtual void SetBitsPerFlag(int bitsPerFlag) {
                 GetPdfObject().Put(PdfName.BitsPerFlag, new PdfNumber(bitsPerFlag));
                 SetModified();
             }
@@ -1715,8 +1603,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <see cref="iText.Kernel.Pdf.PdfArray"/>
             /// Decode object.
             /// </returns>
-            public virtual PdfArray GetDecode()
-            {
+            public virtual PdfArray GetDecode() {
                 return GetPdfObject().GetAsArray(PdfName.Decode);
             }
 
@@ -1739,8 +1626,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <c>float[]</c>
             /// of Decode object to set.
             /// </param>
-            public virtual void SetDecode(float[] decode)
-            {
+            public virtual void SetDecode(float[] decode) {
                 SetDecode(new PdfArray(decode));
             }
 
@@ -1763,8 +1649,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <see cref="iText.Kernel.Pdf.PdfArray"/>
             /// Decode object to set.
             /// </param>
-            public virtual void SetDecode(PdfArray decode)
-            {
+            public virtual void SetDecode(PdfArray decode) {
                 GetPdfObject().Put(PdfName.Decode, decode);
                 SetModified();
             }
@@ -1787,11 +1672,9 @@ namespace iText.Kernel.Pdf.Colorspace
         /// bicubic tensor-product patch defined by 16 control points.
         /// For the format of data stream, that defines patches, see ISO-320001 Table 86.
         /// </remarks>
-        public class TensorProductPatchMesh : PdfShading
-        {
+        public class TensorProductPatchMesh : PdfShading {
             protected internal TensorProductPatchMesh(PdfStream pdfStream)
-                : base(pdfStream)
-            {
+                : base(pdfStream) {
             }
 
             /// <summary>Creates the new instance of the class.</summary>
@@ -1825,8 +1708,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// </param>
             public TensorProductPatchMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int bitsPerFlag
                 , float[] decode)
-                : this(cs, bitsPerCoordinate, bitsPerComponent, bitsPerFlag, new PdfArray(decode))
-            {
+                : this(cs, bitsPerCoordinate, bitsPerComponent, bitsPerFlag, new PdfArray(decode)) {
             }
 
             /// <summary>Creates the new instance of the class.</summary>
@@ -1860,8 +1742,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// </param>
             public TensorProductPatchMesh(PdfColorSpace cs, int bitsPerCoordinate, int bitsPerComponent, int bitsPerFlag
                 , PdfArray decode)
-                : base(new PdfStream(), PdfShading.ShadingType.TENSOR_PRODUCT_PATCH_MESH, cs)
-            {
+                : base(new PdfStream(), PdfShading.ShadingType.TENSOR_PRODUCT_PATCH_MESH, cs) {
                 SetBitsPerCoordinate(bitsPerCoordinate);
                 SetBitsPerComponent(bitsPerComponent);
                 SetBitsPerFlag(bitsPerFlag);
@@ -1870,30 +1751,26 @@ namespace iText.Kernel.Pdf.Colorspace
 
             /// <summary>Gets the number of bits used to represent each vertex coordinate.</summary>
             /// <returns>the number of bits. Can be 1, 2, 4, 8, 12, 16, 24, or 32.</returns>
-            public virtual int GetBitsPerCoordinate()
-            {
+            public virtual int GetBitsPerCoordinate() {
                 return (int)GetPdfObject().GetAsInt(PdfName.BitsPerCoordinate);
             }
 
             /// <summary>Sets the number of bits used to represent each vertex coordinate.</summary>
             /// <param name="bitsPerCoordinate">the number of bits to be set. Shall be 1, 2, 4, 8, 12, 16, 24, or 32.</param>
-            public virtual void SetBitsPerCoordinate(int bitsPerCoordinate)
-            {
+            public virtual void SetBitsPerCoordinate(int bitsPerCoordinate) {
                 GetPdfObject().Put(PdfName.BitsPerCoordinate, new PdfNumber(bitsPerCoordinate));
                 SetModified();
             }
 
             /// <summary>Gets the number of bits used to represent each colour component.</summary>
             /// <returns>the number of bits. Can be 1, 2, 4, 8, 12, or 16.</returns>
-            public virtual int GetBitsPerComponent()
-            {
+            public virtual int GetBitsPerComponent() {
                 return (int)GetPdfObject().GetAsInt(PdfName.BitsPerComponent);
             }
 
             /// <summary>Sets the number of bits used to represent each colour component.</summary>
             /// <param name="bitsPerComponent">the number of bits to be set. Shall be 1, 2, 4, 8, 12, or 16.</param>
-            public virtual void SetBitsPerComponent(int bitsPerComponent)
-            {
+            public virtual void SetBitsPerComponent(int bitsPerComponent) {
                 GetPdfObject().Put(PdfName.BitsPerComponent, new PdfNumber(bitsPerComponent));
                 SetModified();
             }
@@ -1905,8 +1782,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// The valid flag values are 0, 1, 2 or 3.
             /// </remarks>
             /// <returns>the number of bits. Can be 2, 4 or 8.</returns>
-            public virtual int GetBitsPerFlag()
-            {
+            public virtual int GetBitsPerFlag() {
                 return (int)GetPdfObject().GetAsInt(PdfName.BitsPerFlag);
             }
 
@@ -1917,8 +1793,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// The valid flag values are 0, 1, 2 or 3.
             /// </remarks>
             /// <param name="bitsPerFlag">the number of bits to be set. Shall be 2, 4 or 8.</param>
-            public virtual void SetBitsPerFlag(int bitsPerFlag)
-            {
+            public virtual void SetBitsPerFlag(int bitsPerFlag) {
                 GetPdfObject().Put(PdfName.BitsPerFlag, new PdfNumber(bitsPerFlag));
                 SetModified();
             }
@@ -1942,8 +1817,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <see cref="iText.Kernel.Pdf.PdfArray"/>
             /// Decode object.
             /// </returns>
-            public virtual PdfArray GetDecode()
-            {
+            public virtual PdfArray GetDecode() {
                 return GetPdfObject().GetAsArray(PdfName.Decode);
             }
 
@@ -1966,8 +1840,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <c>float[]</c>
             /// of Decode object to set.
             /// </param>
-            public virtual void SetDecode(float[] decode)
-            {
+            public virtual void SetDecode(float[] decode) {
                 SetDecode(new PdfArray(decode));
             }
 
@@ -1990,8 +1863,7 @@ namespace iText.Kernel.Pdf.Colorspace
             /// <see cref="iText.Kernel.Pdf.PdfArray"/>
             /// Decode object to set.
             /// </param>
-            public virtual void SetDecode(PdfArray decode)
-            {
+            public virtual void SetDecode(PdfArray decode) {
                 GetPdfObject().Put(PdfName.Decode, decode);
                 SetModified();
             }

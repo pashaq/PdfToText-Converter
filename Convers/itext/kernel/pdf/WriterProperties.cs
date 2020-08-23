@@ -43,10 +43,8 @@ address: sales@itextpdf.com
 */
 using Org.BouncyCastle.X509;
 
-namespace iText.Kernel.Pdf
-{
-    public class WriterProperties
-    {
+namespace iText.Kernel.Pdf {
+    public class WriterProperties {
         protected internal int compressionLevel;
 
         /// <summary>Indicates if to use full compression (using object streams).</summary>
@@ -75,8 +73,7 @@ namespace iText.Kernel.Pdf
         /// <summary>The ID entry that represents a change in a document.</summary>
         protected internal PdfString modifiedDocumentId;
 
-        public WriterProperties()
-        {
+        public WriterProperties() {
             smartMode = false;
             debugMode = false;
             addUAXmpMetadata = false;
@@ -93,8 +90,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="WriterProperties"/>
         /// instance
         /// </returns>
-        public virtual iText.Kernel.Pdf.WriterProperties SetPdfVersion(PdfVersion version)
-        {
+        public virtual iText.Kernel.Pdf.WriterProperties SetPdfVersion(PdfVersion version) {
             this.pdfVersion = version;
             return this;
         }
@@ -114,8 +110,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="WriterProperties"/>
         /// instance
         /// </returns>
-        public virtual iText.Kernel.Pdf.WriterProperties UseSmartMode()
-        {
+        public virtual iText.Kernel.Pdf.WriterProperties UseSmartMode() {
             this.smartMode = true;
             return this;
         }
@@ -136,8 +131,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="WriterProperties"/>
         /// instance
         /// </returns>
-        public virtual iText.Kernel.Pdf.WriterProperties AddXmpMetadata()
-        {
+        public virtual iText.Kernel.Pdf.WriterProperties AddXmpMetadata() {
             this.addXmpMetadata = true;
             return this;
         }
@@ -158,8 +152,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="WriterProperties"/>
         /// instance
         /// </returns>
-        public virtual iText.Kernel.Pdf.WriterProperties SetCompressionLevel(int compressionLevel)
-        {
+        public virtual iText.Kernel.Pdf.WriterProperties SetCompressionLevel(int compressionLevel) {
             this.compressionLevel = compressionLevel;
             return this;
         }
@@ -175,8 +168,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="WriterProperties"/>
         /// instance
         /// </returns>
-        public virtual iText.Kernel.Pdf.WriterProperties SetFullCompressionMode(bool fullCompressionMode)
-        {
+        public virtual iText.Kernel.Pdf.WriterProperties SetFullCompressionMode(bool fullCompressionMode) {
             this.isFullCompression = fullCompressionMode;
             return this;
         }
@@ -243,8 +235,7 @@ namespace iText.Kernel.Pdf
         /// instance
         /// </returns>
         public virtual iText.Kernel.Pdf.WriterProperties SetStandardEncryption(byte[] userPassword, byte[] ownerPassword
-            , int permissions, int encryptionAlgorithm)
-        {
+            , int permissions, int encryptionAlgorithm) {
             encryptionProperties.SetStandardEncryption(userPassword, ownerPassword, permissions, encryptionAlgorithm);
             return this;
         }
@@ -308,8 +299,7 @@ namespace iText.Kernel.Pdf
         /// instance
         /// </returns>
         public virtual iText.Kernel.Pdf.WriterProperties SetPublicKeyEncryption(X509Certificate[] certs, int[] permissions
-            , int encryptionAlgorithm)
-        {
+            , int encryptionAlgorithm) {
             encryptionProperties.SetPublicKeyEncryption(certs, permissions, encryptionAlgorithm);
             return this;
         }
@@ -328,8 +318,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="WriterProperties"/>
         /// instance
         /// </returns>
-        public virtual iText.Kernel.Pdf.WriterProperties SetInitialDocumentId(PdfString initialDocumentId)
-        {
+        public virtual iText.Kernel.Pdf.WriterProperties SetInitialDocumentId(PdfString initialDocumentId) {
             this.initialDocumentId = initialDocumentId;
             return this;
         }
@@ -346,8 +335,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="WriterProperties"/>
         /// instance
         /// </returns>
-        public virtual iText.Kernel.Pdf.WriterProperties SetModifiedDocumentId(PdfString modifiedDocumentId)
-        {
+        public virtual iText.Kernel.Pdf.WriterProperties SetModifiedDocumentId(PdfString modifiedDocumentId) {
             this.modifiedDocumentId = modifiedDocumentId;
             return this;
         }
@@ -363,8 +351,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="WriterProperties"/>
         /// instance
         /// </returns>
-        public virtual iText.Kernel.Pdf.WriterProperties UseDebugMode()
-        {
+        public virtual iText.Kernel.Pdf.WriterProperties UseDebugMode() {
             this.debugMode = true;
             return this;
         }
@@ -383,19 +370,16 @@ namespace iText.Kernel.Pdf
         /// <see cref="WriterProperties"/>
         /// instance
         /// </returns>
-        public virtual iText.Kernel.Pdf.WriterProperties AddUAXmpMetadata()
-        {
+        public virtual iText.Kernel.Pdf.WriterProperties AddUAXmpMetadata() {
             this.addUAXmpMetadata = true;
             return AddXmpMetadata();
         }
 
-        internal virtual bool IsStandardEncryptionUsed()
-        {
+        internal virtual bool IsStandardEncryptionUsed() {
             return encryptionProperties.IsStandardEncryptionUsed();
         }
 
-        internal virtual bool IsPublicKeyEncryptionUsed()
-        {
+        internal virtual bool IsPublicKeyEncryptionUsed() {
             return encryptionProperties.IsPublicKeyEncryptionUsed();
         }
     }

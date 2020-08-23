@@ -41,49 +41,41 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.Kernel.Pdf.Xobject;
 using System.Collections.Generic;
+using iText.Kernel.Pdf;
+using iText.Kernel.Pdf.Xobject;
 
-namespace iText.Kernel.Pdf.Annot
-{
-    public class PdfAnnotationAppearance : PdfObjectWrapper<PdfDictionary>
-    {
+namespace iText.Kernel.Pdf.Annot {
+    public class PdfAnnotationAppearance : PdfObjectWrapper<PdfDictionary> {
         public PdfAnnotationAppearance(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
         public PdfAnnotationAppearance()
-            : this(new PdfDictionary())
-        {
+            : this(new PdfDictionary()) {
         }
 
         public virtual iText.Kernel.Pdf.Annot.PdfAnnotationAppearance SetState(PdfName stateName, PdfFormXObject state
-            )
-        {
+            ) {
             GetPdfObject().Put(stateName, state.GetPdfObject());
             return this;
         }
 
-        public virtual iText.Kernel.Pdf.Annot.PdfAnnotationAppearance SetStateObject(PdfName stateName, PdfStream
-            state)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfAnnotationAppearance SetStateObject(PdfName stateName, PdfStream 
+            state) {
             GetPdfObject().Put(stateName, state);
             return this;
         }
 
-        public virtual PdfStream GetStateObject(PdfName stateName)
-        {
+        public virtual PdfStream GetStateObject(PdfName stateName) {
             return GetPdfObject().GetAsStream(stateName);
         }
 
-        public virtual ICollection<PdfName> GetStates()
-        {
+        public virtual ICollection<PdfName> GetStates() {
             return GetPdfObject().KeySet();
         }
 
-        protected internal override bool IsWrappedObjectMustBeIndirect()
-        {
+        protected internal override bool IsWrappedObjectMustBeIndirect() {
             return false;
         }
     }

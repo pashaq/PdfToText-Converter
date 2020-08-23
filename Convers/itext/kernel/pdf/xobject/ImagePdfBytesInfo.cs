@@ -40,13 +40,12 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Codec;
 using System.IO;
+using iText.IO.Codec;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Xobject
-{
-    internal class ImagePdfBytesInfo
-    {
+namespace iText.Kernel.Pdf.Xobject {
+    internal class ImagePdfBytesInfo {
         private int pngColorType;
 
         private int pngBitDepth;
@@ -67,8 +66,7 @@ namespace iText.Kernel.Pdf.Xobject
 
         private PdfArray decode;
 
-        public ImagePdfBytesInfo(PdfImageXObject imageXObject)
-        {
+        public ImagePdfBytesInfo(PdfImageXObject imageXObject) {
             pngColorType = -1;
             bpc = imageXObject.GetPdfObject().GetAsNumber(PdfName.BitsPerComponent).IntValue();
             pngBitDepth = bpc;
@@ -82,41 +80,32 @@ namespace iText.Kernel.Pdf.Xobject
             FindColorspace(colorspace, true);
         }
 
-        public virtual int GetPngColorType()
-        {
+        public virtual int GetPngColorType() {
             return pngColorType;
         }
 
-        public virtual byte[] DecodeTiffAndPngBytes(byte[] imageBytes)
-        {
+        public virtual byte[] DecodeTiffAndPngBytes(byte[] imageBytes) {
             MemoryStream ms = new MemoryStream();
-            if (pngColorType < 0)
-            {
-                if (bpc != 8)
-                {
+            if (pngColorType < 0) {
+                if (bpc != 8) {
                     throw new iText.IO.IOException(iText.IO.IOException.ColorDepthIsNotSupported).SetMessageParams(bpc);
                 }
-                if (colorspace is PdfArray)
-                {
+                if (colorspace is PdfArray) {
                     PdfArray ca = (PdfArray)colorspace;
                     PdfObject tyca = ca.Get(0);
-                    if (!PdfName.ICCBased.Equals(tyca))
-                    {
+                    if (!PdfName.ICCBased.Equals(tyca)) {
                         throw new iText.IO.IOException(iText.IO.IOException.ColorSpaceIsNotSupported).SetMessageParams(tyca.ToString
                             ());
                     }
                     PdfStream pr = (PdfStream)ca.Get(1);
                     int n = pr.GetAsNumber(PdfName.N).IntValue();
-                    if (n != 4)
-                    {
+                    if (n != 4) {
                         throw new iText.IO.IOException(iText.IO.IOException.NValueIsNotSupported).SetMessageParams(n);
                     }
                     icc = pr.GetBytes();
                 }
-                else
-                {
-                    if (!PdfName.DeviceCMYK.Equals(colorspace))
-                    {
+                else {
+                    if (!PdfName.DeviceCMYK.Equals(colorspace)) {
                         throw new iText.IO.IOException(iText.IO.IOException.ColorSpaceIsNotSupported).SetMessageParams(colorspace.
                             ToString());
                     }
@@ -143,27 +132,21 @@ namespace iText.Kernel.Pdf.Xobject
                 byte[] buf = comp.ToArray();
                 wr.AddField(new TiffWriter.FieldImage(buf));
                 wr.AddField(new TiffWriter.FieldLong(TIFFConstants.TIFFTAG_STRIPBYTECOUNTS, buf.Length));
-                if (icc != null)
-                {
+                if (icc != null) {
                     wr.AddField(new TiffWriter.FieldUndefined(TIFFConstants.TIFFTAG_ICCPROFILE, icc));
                 }
                 wr.WriteFile(ms);
                 imageBytes = ms.ToArray();
                 return imageBytes;
             }
-            else
-            {
+            else {
                 PngWriter png = new PngWriter(ms);
-                if (decode != null)
-                {
-                    if (pngBitDepth == 1)
-                    {
+                if (decode != null) {
+                    if (pngBitDepth == 1) {
                         // if the decode array is 1,0, then we need to invert the image
-                        if (decode.GetAsNumber(0).IntValue() == 1 && decode.GetAsNumber(1).IntValue() == 0)
-                        {
+                        if (decode.GetAsNumber(0).IntValue() == 1 && decode.GetAsNumber(1).IntValue() == 0) {
                             int len = imageBytes.Length;
-                            for (int t = 0; t < len; ++t)
-                            {
+                            for (int t = 0; t < len; ++t) {
                                 imageBytes[t] ^= 0xff;
                             }
                         }
@@ -172,12 +155,10 @@ namespace iText.Kernel.Pdf.Xobject
                 // if the decode array is 0,1, do nothing.  It's possible that the array could be 0,0 or 1,1 - but that would be silly, so we'll just ignore that case
                 // todo: add decode transformation for other depths
                 png.WriteHeader(width, height, pngBitDepth, pngColorType);
-                if (icc != null)
-                {
+                if (icc != null) {
                     png.WriteIccProfile(icc);
                 }
-                if (palette != null)
-                {
+                if (palette != null) {
                     png.WritePalette(palette);
                 }
                 png.WriteData(imageBytes, stride);
@@ -190,83 +171,61 @@ namespace iText.Kernel.Pdf.Xobject
         /// <summary>Sets state of this object according to the color space</summary>
         /// <param name="csObj">the colorspace to use</param>
         /// <param name="allowIndexed">whether indexed color spaces will be resolved (used for recursive call)</param>
-        private void FindColorspace(PdfObject csObj, bool allowIndexed)
-        {
-            if (PdfName.DeviceGray.Equals(csObj) || (csObj == null && bpc == 1))
-            {
+        private void FindColorspace(PdfObject csObj, bool allowIndexed) {
+            if (PdfName.DeviceGray.Equals(csObj) || (csObj == null && bpc == 1)) {
                 // handle imagemasks
                 stride = (width * bpc + 7) / 8;
                 pngColorType = 0;
             }
-            else
-            {
-                if (PdfName.DeviceRGB.Equals(csObj))
-                {
-                    if (bpc == 8 || bpc == 16)
-                    {
+            else {
+                if (PdfName.DeviceRGB.Equals(csObj)) {
+                    if (bpc == 8 || bpc == 16) {
                         stride = (width * bpc * 3 + 7) / 8;
                         pngColorType = 2;
                     }
                 }
-                else
-                {
-                    if (csObj is PdfArray)
-                    {
+                else {
+                    if (csObj is PdfArray) {
                         PdfArray ca = (PdfArray)csObj;
                         PdfObject tyca = ca.Get(0);
-                        if (PdfName.CalGray.Equals(tyca))
-                        {
+                        if (PdfName.CalGray.Equals(tyca)) {
                             stride = (width * bpc + 7) / 8;
                             pngColorType = 0;
                         }
-                        else
-                        {
-                            if (PdfName.CalRGB.Equals(tyca))
-                            {
-                                if (bpc == 8 || bpc == 16)
-                                {
+                        else {
+                            if (PdfName.CalRGB.Equals(tyca)) {
+                                if (bpc == 8 || bpc == 16) {
                                     stride = (width * bpc * 3 + 7) / 8;
                                     pngColorType = 2;
                                 }
                             }
-                            else
-                            {
-                                if (PdfName.ICCBased.Equals(tyca))
-                                {
+                            else {
+                                if (PdfName.ICCBased.Equals(tyca)) {
                                     PdfStream pr = (PdfStream)ca.Get(1);
                                     int n = pr.GetAsNumber(PdfName.N).IntValue();
-                                    if (n == 1)
-                                    {
+                                    if (n == 1) {
                                         stride = (width * bpc + 7) / 8;
                                         pngColorType = 0;
                                         icc = pr.GetBytes();
                                     }
-                                    else
-                                    {
-                                        if (n == 3)
-                                        {
+                                    else {
+                                        if (n == 3) {
                                             stride = (width * bpc * 3 + 7) / 8;
                                             pngColorType = 2;
                                             icc = pr.GetBytes();
                                         }
                                     }
                                 }
-                                else
-                                {
-                                    if (allowIndexed && PdfName.Indexed.Equals(tyca))
-                                    {
+                                else {
+                                    if (allowIndexed && PdfName.Indexed.Equals(tyca)) {
                                         FindColorspace(ca.Get(1), false);
-                                        if (pngColorType == 2)
-                                        {
+                                        if (pngColorType == 2) {
                                             PdfObject id2 = ca.Get(3);
-                                            if (id2 is PdfString)
-                                            {
+                                            if (id2 is PdfString) {
                                                 palette = ((PdfString)id2).GetValueBytes();
                                             }
-                                            else
-                                            {
-                                                if (id2 is PdfStream)
-                                                {
+                                            else {
+                                                if (id2 is PdfStream) {
                                                     palette = ((PdfStream)id2).GetBytes();
                                                 }
                                             }

@@ -41,6 +41,9 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace iText.IO.Util
 {

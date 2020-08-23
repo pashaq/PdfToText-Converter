@@ -43,13 +43,12 @@
 * use in the design, construction, operation or maintenance of any
 * nuclear facility.
 */
-using iText.IO.Source;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using iText.IO.Source;
 
-namespace iText.IO.Codec
-{
+namespace iText.IO.Codec {
     /// <summary>
     /// A class representing an Image File Directory (IFD) from a TIFF 6.0
     /// stream.
@@ -74,8 +73,7 @@ namespace iText.IO.Codec
     /// be removed or changed in future releases of JAI.</b>
     /// </remarks>
     /// <seealso cref="TIFFField"/>
-    public class TIFFDirectory
-    {
+    public class TIFFDirectory {
         /// <summary>A boolean storing the endianness of the stream.</summary>
         internal bool isBigEndian;
 
@@ -95,12 +93,10 @@ namespace iText.IO.Codec
         internal long nextIFDOffset = 0;
 
         /// <summary>The default constructor.</summary>
-        internal TIFFDirectory()
-        {
+        internal TIFFDirectory() {
         }
 
-        private static bool IsValidEndianTag(int endian)
-        {
+        private static bool IsValidEndianTag(int endian) {
             return endian == 0x4949 || endian == 0x4d4d;
         }
 
@@ -114,29 +110,24 @@ namespace iText.IO.Codec
         /// </remarks>
         /// <param name="stream">a SeekableStream to read from.</param>
         /// <param name="directory">the index of the directory to read.</param>
-        public TIFFDirectory(RandomAccessFileOrArray stream, int directory)
-        {
+        public TIFFDirectory(RandomAccessFileOrArray stream, int directory) {
             long global_save_offset = stream.GetPosition();
             long ifd_offset;
             // Read the TIFF header
             stream.Seek(0L);
             int endian = stream.ReadUnsignedShort();
-            if (!IsValidEndianTag(endian))
-            {
+            if (!IsValidEndianTag(endian)) {
                 throw new iText.IO.IOException(iText.IO.IOException.BadEndiannessTag0x4949Or0x4d4d);
             }
             isBigEndian = endian == 0x4d4d;
             int magic = ReadUnsignedShort(stream);
-            if (magic != 42)
-            {
+            if (magic != 42) {
                 throw new iText.IO.IOException(iText.IO.IOException.BadMagicNumberShouldBe42);
             }
             // Get the initial ifd offset as an unsigned int (using a long)
             ifd_offset = ReadUnsignedInt(stream);
-            for (int i = 0; i < directory; i++)
-            {
-                if (ifd_offset == 0L)
-                {
+            for (int i = 0; i < directory; i++) {
+                if (ifd_offset == 0L) {
                     throw new iText.IO.IOException(iText.IO.IOException.DirectoryNumberIsTooLarge);
                 }
                 stream.Seek(ifd_offset);
@@ -164,13 +155,11 @@ namespace iText.IO.Codec
         /// one at the current stream offset; zero indicates the IFD
         /// at the current offset.
         /// </param>
-        public TIFFDirectory(RandomAccessFileOrArray stream, long ifd_offset, int directory)
-        {
+        public TIFFDirectory(RandomAccessFileOrArray stream, long ifd_offset, int directory) {
             long global_save_offset = stream.GetPosition();
             stream.Seek(0L);
             int endian = stream.ReadUnsignedShort();
-            if (!IsValidEndianTag(endian))
-            {
+            if (!IsValidEndianTag(endian)) {
                 throw new iText.IO.IOException(iText.IO.IOException.BadEndiannessTag0x4949Or0x4d4d);
             }
             isBigEndian = endian == 0x4d4d;
@@ -178,8 +167,7 @@ namespace iText.IO.Codec
             stream.Seek(ifd_offset);
             // Seek to desired IFD if necessary.
             int dirNum = 0;
-            while (dirNum < directory)
-            {
+            while (dirNum < directory) {
                 // Get the number of fields in the current IFD.
                 int numEntries = ReadUnsignedShort(stream);
                 // Skip to the next IFD offset value field.
@@ -223,8 +211,7 @@ namespace iText.IO.Codec
                 // 12 = double
                 8 };
 
-        private void Initialize(RandomAccessFileOrArray stream)
-        {
+        private void Initialize(RandomAccessFileOrArray stream) {
             long nextTagOffset = 0L;
             long maxOffset = stream.Length();
             int i;
@@ -232,189 +219,156 @@ namespace iText.IO.Codec
             IFDOffset = stream.GetPosition();
             numEntries = ReadUnsignedShort(stream);
             fields = new TIFFField[numEntries];
-            for (i = 0; i < numEntries && nextTagOffset < maxOffset; i++)
-            {
+            for (i = 0; i < numEntries && nextTagOffset < maxOffset; i++) {
                 int tag = ReadUnsignedShort(stream);
                 int type = ReadUnsignedShort(stream);
                 int count = (int)ReadUnsignedInt(stream);
                 bool processTag = true;
                 // The place to return to to read the next tag
                 nextTagOffset = stream.GetPosition() + 4;
-                try
-                {
+                try {
                     // If the tag data can't fit in 4 bytes, the next 4 bytes
                     // contain the starting offset of the data
-                    if (count * sizeOfType[type] > 4)
-                    {
+                    if (count * sizeOfType[type] > 4) {
                         long valueOffset = ReadUnsignedInt(stream);
                         // bounds check offset for EOF
-                        if (valueOffset < maxOffset)
-                        {
+                        if (valueOffset < maxOffset) {
                             stream.Seek(valueOffset);
                         }
-                        else
-                        {
+                        else {
                             // bad offset pointer .. skip tag
                             processTag = false;
                         }
                     }
                 }
-                catch (IndexOutOfRangeException)
-                {
+                catch (IndexOutOfRangeException) {
                     // if the data type is unknown we should skip this TIFF Field
                     processTag = false;
                 }
-                if (processTag)
-                {
+                if (processTag) {
                     fieldIndex.Put(tag, i);
                     Object obj = null;
-                    switch (type)
-                    {
+                    switch (type) {
                         case TIFFField.TIFF_BYTE:
                         case TIFFField.TIFF_SBYTE:
                         case TIFFField.TIFF_UNDEFINED:
-                        case TIFFField.TIFF_ASCII:
-                            {
-                                byte[] bvalues = new byte[count];
-                                stream.ReadFully(bvalues, 0, count);
-                                if (type == TIFFField.TIFF_ASCII)
-                                {
-                                    // Can be multiple strings
-                                    int index = 0;
-                                    int prevIndex = 0;
-                                    IList<String> v = new List<String>();
-                                    while (index < count)
-                                    {
-                                        while (index < count && bvalues[index++] != 0)
-                                        {
-                                        }
-                                        // When we encountered zero, means one string has ended
-                                        v.Add(iText.IO.Util.JavaUtil.GetStringForBytes(bvalues, prevIndex, (index - prevIndex)));
-                                        prevIndex = index;
+                        case TIFFField.TIFF_ASCII: {
+                            byte[] bvalues = new byte[count];
+                            stream.ReadFully(bvalues, 0, count);
+                            if (type == TIFFField.TIFF_ASCII) {
+                                // Can be multiple strings
+                                int index = 0;
+                                int prevIndex = 0;
+                                IList<String> v = new List<String>();
+                                while (index < count) {
+                                    while (index < count && bvalues[index++] != 0) {
                                     }
-                                    count = v.Count;
-                                    String[] strings = new String[count];
-                                    for (int c = 0; c < count; c++)
-                                    {
-                                        strings[c] = v[c];
-                                    }
-                                    obj = strings;
+                                    // When we encountered zero, means one string has ended
+                                    v.Add(iText.IO.Util.JavaUtil.GetStringForBytes(bvalues, prevIndex, (index - prevIndex)));
+                                    prevIndex = index;
                                 }
-                                else
-                                {
-                                    obj = bvalues;
+                                count = v.Count;
+                                String[] strings = new String[count];
+                                for (int c = 0; c < count; c++) {
+                                    strings[c] = v[c];
                                 }
-                                break;
+                                obj = strings;
                             }
+                            else {
+                                obj = bvalues;
+                            }
+                            break;
+                        }
 
-                        case TIFFField.TIFF_SHORT:
-                            {
-                                char[] cvalues = new char[count];
-                                for (j = 0; j < count; j++)
-                                {
-                                    cvalues[j] = (char)ReadUnsignedShort(stream);
-                                }
-                                obj = cvalues;
-                                break;
+                        case TIFFField.TIFF_SHORT: {
+                            char[] cvalues = new char[count];
+                            for (j = 0; j < count; j++) {
+                                cvalues[j] = (char)ReadUnsignedShort(stream);
                             }
+                            obj = cvalues;
+                            break;
+                        }
 
-                        case TIFFField.TIFF_LONG:
-                            {
-                                long[] lvalues = new long[count];
-                                for (j = 0; j < count; j++)
-                                {
-                                    lvalues[j] = ReadUnsignedInt(stream);
-                                }
-                                obj = lvalues;
-                                break;
+                        case TIFFField.TIFF_LONG: {
+                            long[] lvalues = new long[count];
+                            for (j = 0; j < count; j++) {
+                                lvalues[j] = ReadUnsignedInt(stream);
                             }
+                            obj = lvalues;
+                            break;
+                        }
 
-                        case TIFFField.TIFF_RATIONAL:
-                            {
-                                long[][] llvalues = new long[count][];
-                                for (j = 0; j < count; j++)
-                                {
-                                    llvalues[j] = new long[2];
-                                    llvalues[j][0] = ReadUnsignedInt(stream);
-                                    llvalues[j][1] = ReadUnsignedInt(stream);
-                                }
-                                obj = llvalues;
-                                break;
+                        case TIFFField.TIFF_RATIONAL: {
+                            long[][] llvalues = new long[count][];
+                            for (j = 0; j < count; j++) {
+                                llvalues[j] = new long[2];
+                                llvalues[j][0] = ReadUnsignedInt(stream);
+                                llvalues[j][1] = ReadUnsignedInt(stream);
                             }
+                            obj = llvalues;
+                            break;
+                        }
 
-                        case TIFFField.TIFF_SSHORT:
-                            {
-                                short[] svalues = new short[count];
-                                for (j = 0; j < count; j++)
-                                {
-                                    svalues[j] = ReadShort(stream);
-                                }
-                                obj = svalues;
-                                break;
+                        case TIFFField.TIFF_SSHORT: {
+                            short[] svalues = new short[count];
+                            for (j = 0; j < count; j++) {
+                                svalues[j] = ReadShort(stream);
                             }
+                            obj = svalues;
+                            break;
+                        }
 
-                        case TIFFField.TIFF_SLONG:
-                            {
-                                int[] ivalues = new int[count];
-                                for (j = 0; j < count; j++)
-                                {
-                                    ivalues[j] = ReadInt(stream);
-                                }
-                                obj = ivalues;
-                                break;
+                        case TIFFField.TIFF_SLONG: {
+                            int[] ivalues = new int[count];
+                            for (j = 0; j < count; j++) {
+                                ivalues[j] = ReadInt(stream);
                             }
+                            obj = ivalues;
+                            break;
+                        }
 
-                        case TIFFField.TIFF_SRATIONAL:
-                            {
-                                int[][] iivalues = new int[count][];
-                                for (j = 0; j < count; j++)
-                                {
-                                    iivalues[j] = new int[2];
-                                    iivalues[j][0] = ReadInt(stream);
-                                    iivalues[j][1] = ReadInt(stream);
-                                }
-                                obj = iivalues;
-                                break;
+                        case TIFFField.TIFF_SRATIONAL: {
+                            int[][] iivalues = new int[count][];
+                            for (j = 0; j < count; j++) {
+                                iivalues[j] = new int[2];
+                                iivalues[j][0] = ReadInt(stream);
+                                iivalues[j][1] = ReadInt(stream);
                             }
+                            obj = iivalues;
+                            break;
+                        }
 
-                        case TIFFField.TIFF_FLOAT:
-                            {
-                                float[] fvalues = new float[count];
-                                for (j = 0; j < count; j++)
-                                {
-                                    fvalues[j] = ReadFloat(stream);
-                                }
-                                obj = fvalues;
-                                break;
+                        case TIFFField.TIFF_FLOAT: {
+                            float[] fvalues = new float[count];
+                            for (j = 0; j < count; j++) {
+                                fvalues[j] = ReadFloat(stream);
                             }
+                            obj = fvalues;
+                            break;
+                        }
 
-                        case TIFFField.TIFF_DOUBLE:
-                            {
-                                double[] dvalues = new double[count];
-                                for (j = 0; j < count; j++)
-                                {
-                                    dvalues[j] = ReadDouble(stream);
-                                }
-                                obj = dvalues;
-                                break;
+                        case TIFFField.TIFF_DOUBLE: {
+                            double[] dvalues = new double[count];
+                            for (j = 0; j < count; j++) {
+                                dvalues[j] = ReadDouble(stream);
                             }
+                            obj = dvalues;
+                            break;
+                        }
 
-                        default:
-                            {
-                                break;
-                            }
+                        default: {
+                            break;
+                        }
                     }
                     fields[i] = new TIFFField(tag, type, count, obj);
                 }
                 stream.Seek(nextTagOffset);
             }
             // Read the offset of the next IFD.
-            try
-            {
+            try {
                 nextIFDOffset = ReadUnsignedInt(stream);
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 // broken tiffs may not have this pointer
                 nextIFDOffset = 0;
             }
@@ -422,8 +376,7 @@ namespace iText.IO.Codec
 
         /// <summary>Returns the number of directory entries.</summary>
         /// <returns>The number of directory entries</returns>
-        public virtual int GetNumEntries()
-        {
+        public virtual int GetNumEntries() {
             return numEntries;
         }
 
@@ -433,15 +386,12 @@ namespace iText.IO.Codec
         /// </summary>
         /// <param name="tag">The tag</param>
         /// <returns>The value of the given tag as a TIFFField or null</returns>
-        public virtual TIFFField GetField(int tag)
-        {
+        public virtual TIFFField GetField(int tag) {
             int? i = fieldIndex.Get(tag);
-            if (i == null)
-            {
+            if (i == null) {
                 return null;
             }
-            else
-            {
+            else {
                 return fields[(int)i];
             }
         }
@@ -449,8 +399,7 @@ namespace iText.IO.Codec
         /// <summary>Returns true if a tag appears in the directory.</summary>
         /// <param name="tag">The tag</param>
         /// <returns>True if the tag appears in the directory, false otherwise</returns>
-        public virtual bool IsTagPresent(int tag)
-        {
+        public virtual bool IsTagPresent(int tag) {
             return fieldIndex.ContainsKey(tag);
         }
 
@@ -459,12 +408,10 @@ namespace iText.IO.Codec
         /// values.
         /// </summary>
         /// <returns>an ordered array of integers indicating the tags</returns>
-        public virtual int[] GetTags()
-        {
+        public virtual int[] GetTags() {
             int[] tags = new int[fieldIndex.Count];
             int i = 0;
-            foreach (int? integer in fieldIndex.Keys)
-            {
+            foreach (int? integer in fieldIndex.Keys) {
                 tags[i++] = (int)integer;
             }
             return tags;
@@ -475,8 +422,7 @@ namespace iText.IO.Codec
         /// in this directory.
         /// </summary>
         /// <returns>an array of TIFFFields containing all the fields in this directory</returns>
-        public virtual TIFFField[] GetFields()
-        {
+        public virtual TIFFField[] GetFields() {
             return fields;
         }
 
@@ -493,8 +439,7 @@ namespace iText.IO.Codec
         /// <param name="tag">The tag</param>
         /// <param name="index">The index</param>
         /// <returns>the value of a particular index of a given tag as a byte</returns>
-        public virtual byte GetFieldAsByte(int tag, int index)
-        {
+        public virtual byte GetFieldAsByte(int tag, int index) {
             int? i = fieldIndex.Get(tag);
             byte[] b = fields[(int)i].GetAsBytes();
             return b[index];
@@ -512,8 +457,7 @@ namespace iText.IO.Codec
         /// </remarks>
         /// <param name="tag">The tag</param>
         /// <returns>The value of index 0 of the given tag as a byte</returns>
-        public virtual byte GetFieldAsByte(int tag)
-        {
+        public virtual byte GetFieldAsByte(int tag) {
             return GetFieldAsByte(tag, 0);
         }
 
@@ -530,8 +474,7 @@ namespace iText.IO.Codec
         /// <param name="tag">The tag</param>
         /// <param name="index">The index</param>
         /// <returns>The value of the given index of the given tag as a long</returns>
-        public virtual long GetFieldAsLong(int tag, int index)
-        {
+        public virtual long GetFieldAsLong(int tag, int index) {
             int? i = fieldIndex.Get(tag);
             return fields[(int)i].GetAsLong(index);
         }
@@ -548,8 +491,7 @@ namespace iText.IO.Codec
         /// </remarks>
         /// <param name="tag">The tag</param>
         /// <returns>The value of index 0 of the given tag as a long</returns>
-        public virtual long GetFieldAsLong(int tag)
-        {
+        public virtual long GetFieldAsLong(int tag) {
             return GetFieldAsLong(tag, 0);
         }
 
@@ -566,8 +508,7 @@ namespace iText.IO.Codec
         /// <param name="tag">The tag</param>
         /// <param name="index">The index</param>
         /// <returns>The value of the given index of the given tag as a float</returns>
-        public virtual float GetFieldAsFloat(int tag, int index)
-        {
+        public virtual float GetFieldAsFloat(int tag, int index) {
             int? i = fieldIndex.Get(tag);
             return fields[(int)i].GetAsFloat(index);
         }
@@ -580,8 +521,7 @@ namespace iText.IO.Codec
         /// </remarks>
         /// <param name="tag">The tag</param>
         /// <returns>The value of index 0 of the given tag as a float</returns>
-        public virtual float GetFieldAsFloat(int tag)
-        {
+        public virtual float GetFieldAsFloat(int tag) {
             return GetFieldAsFloat(tag, 0);
         }
 
@@ -598,8 +538,7 @@ namespace iText.IO.Codec
         /// <param name="tag">The tag</param>
         /// <param name="index">The index</param>
         /// <returns>The value of the given index of the given tag as a double</returns>
-        public virtual double GetFieldAsDouble(int tag, int index)
-        {
+        public virtual double GetFieldAsDouble(int tag, int index) {
             int? i = fieldIndex.Get(tag);
             return fields[(int)i].GetAsDouble(index);
         }
@@ -612,116 +551,88 @@ namespace iText.IO.Codec
         /// </remarks>
         /// <param name="tag">The tag</param>
         /// <returns>The value of index 0 of the given tag as a double</returns>
-        public virtual double GetFieldAsDouble(int tag)
-        {
+        public virtual double GetFieldAsDouble(int tag) {
             return GetFieldAsDouble(tag, 0);
         }
 
         // Methods to read primitive data types from the stream
-        private short ReadShort(RandomAccessFileOrArray stream)
-        {
-            if (isBigEndian)
-            {
+        private short ReadShort(RandomAccessFileOrArray stream) {
+            if (isBigEndian) {
                 return stream.ReadShort();
             }
-            else
-            {
+            else {
                 return stream.ReadShortLE();
             }
         }
 
-        private int ReadUnsignedShort(RandomAccessFileOrArray stream)
-        {
-            if (isBigEndian)
-            {
+        private int ReadUnsignedShort(RandomAccessFileOrArray stream) {
+            if (isBigEndian) {
                 return stream.ReadUnsignedShort();
             }
-            else
-            {
+            else {
                 return stream.ReadUnsignedShortLE();
             }
         }
 
-        private int ReadInt(RandomAccessFileOrArray stream)
-        {
-            if (isBigEndian)
-            {
+        private int ReadInt(RandomAccessFileOrArray stream) {
+            if (isBigEndian) {
                 return stream.ReadInt();
             }
-            else
-            {
+            else {
                 return stream.ReadIntLE();
             }
         }
 
-        private long ReadUnsignedInt(RandomAccessFileOrArray stream)
-        {
-            if (isBigEndian)
-            {
+        private long ReadUnsignedInt(RandomAccessFileOrArray stream) {
+            if (isBigEndian) {
                 return stream.ReadUnsignedInt();
             }
-            else
-            {
+            else {
                 return stream.ReadUnsignedIntLE();
             }
         }
 
-        private long ReadLong(RandomAccessFileOrArray stream)
-        {
-            if (isBigEndian)
-            {
+        private long ReadLong(RandomAccessFileOrArray stream) {
+            if (isBigEndian) {
                 return stream.ReadLong();
             }
-            else
-            {
+            else {
                 return stream.ReadLongLE();
             }
         }
 
-        private float ReadFloat(RandomAccessFileOrArray stream)
-        {
-            if (isBigEndian)
-            {
+        private float ReadFloat(RandomAccessFileOrArray stream) {
+            if (isBigEndian) {
                 return stream.ReadFloat();
             }
-            else
-            {
+            else {
                 return stream.ReadFloatLE();
             }
         }
 
-        private double ReadDouble(RandomAccessFileOrArray stream)
-        {
-            if (isBigEndian)
-            {
+        private double ReadDouble(RandomAccessFileOrArray stream) {
+            if (isBigEndian) {
                 return stream.ReadDouble();
             }
-            else
-            {
+            else {
                 return stream.ReadDoubleLE();
             }
         }
 
-        private static int ReadUnsignedShort(RandomAccessFileOrArray stream, bool isBigEndian)
-        {
-            if (isBigEndian)
-            {
+        private static int ReadUnsignedShort(RandomAccessFileOrArray stream, bool isBigEndian) {
+            if (isBigEndian) {
                 return stream.ReadUnsignedShort();
             }
-            else
-            {
+            else {
                 return stream.ReadUnsignedShortLE();
             }
         }
 
-        private static long ReadUnsignedInt(RandomAccessFileOrArray stream, bool isBigEndian)
-        {
-            if (isBigEndian)
-            {
+        private static long ReadUnsignedInt(RandomAccessFileOrArray stream, bool isBigEndian) {
+            if (isBigEndian) {
                 return stream.ReadUnsignedInt();
             }
-            else
-            {
+            else {
                 return stream.ReadUnsignedIntLE();
             }
         }
@@ -736,38 +647,32 @@ namespace iText.IO.Codec
         /// The number of image directories (subimages) stored
         /// in a given TIFF file
         /// </returns>
-        public static int GetNumDirectories(RandomAccessFileOrArray stream)
-        {
+        public static int GetNumDirectories(RandomAccessFileOrArray stream) {
             // Save stream pointer
             long pointer = stream.GetPosition();
             stream.Seek(0L);
             int endian = stream.ReadUnsignedShort();
-            if (!IsValidEndianTag(endian))
-            {
+            if (!IsValidEndianTag(endian)) {
                 throw new iText.IO.IOException(iText.IO.IOException.BadEndiannessTag0x4949Or0x4d4d);
             }
             bool isBigEndian = endian == 0x4d4d;
             int magic = ReadUnsignedShort(stream, isBigEndian);
-            if (magic != 42)
-            {
+            if (magic != 42) {
                 throw new iText.IO.IOException(iText.IO.IOException.BadMagicNumberShouldBe42);
             }
             stream.Seek(4L);
             long offset = ReadUnsignedInt(stream, isBigEndian);
             int numDirectories = 0;
-            while (offset != 0L)
-            {
+            while (offset != 0L) {
                 ++numDirectories;
                 // EOFException means IFD was probably not properly terminated.
-                try
-                {
+                try {
                     stream.Seek(offset);
                     int entries = ReadUnsignedShort(stream, isBigEndian);
                     stream.Skip(12 * entries);
                     offset = ReadUnsignedInt(stream, isBigEndian);
                 }
-                catch (EndOfStreamException)
-                {
+                catch (EndOfStreamException) {
                     numDirectories--;
                     break;
                 }
@@ -787,15 +692,13 @@ namespace iText.IO.Codec
         /// <see langword="true"/>
         /// if the byte order used in the TIFF file is big-endian
         /// </returns>
-        public virtual bool IsBigEndian()
-        {
+        public virtual bool IsBigEndian() {
             return isBigEndian;
         }
 
         /// <summary>Returns the offset of the IFD corresponding to this <c>TIFFDirectory</c>.</summary>
         /// <returns>the offset of the IFD corresponding to this <c>TIFFDirectory</c>.</returns>
-        public virtual long GetIFDOffset()
-        {
+        public virtual long GetIFDOffset() {
             return IFDOffset;
         }
 
@@ -807,8 +710,7 @@ namespace iText.IO.Codec
         /// the offset of the next IFD after the IFD corresponding to this
         /// <c>TIFFDirectory</c>.
         /// </returns>
-        public virtual long GetNextIFDOffset()
-        {
+        public virtual long GetNextIFDOffset() {
             return nextIFDOffset;
         }
     }

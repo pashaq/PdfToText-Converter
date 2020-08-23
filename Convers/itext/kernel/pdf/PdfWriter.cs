@@ -41,17 +41,15 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using Common.Logging;
-using iText.IO.Source;
-using iText.IO.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Common.Logging;
+using iText.IO.Source;
+using iText.IO.Util;
 
-namespace iText.Kernel.Pdf
-{
-    public class PdfWriter : PdfOutputStream
-    {
+namespace iText.Kernel.Pdf {
+    public class PdfWriter : PdfOutputStream {
         private static readonly byte[] obj = ByteUtils.GetIsoBytes(" obj\n");
 
         private static readonly byte[] endobj = ByteUtils.GetIsoBytes("\nendobj\n");
@@ -86,45 +84,38 @@ namespace iText.Kernel.Pdf
         /// <summary>Create a PdfWriter writing to the passed File and with default writer properties.</summary>
         /// <param name="file">File to write to.</param>
         public PdfWriter(FileInfo file)
-            : this(file.FullName)
-        {
+            : this(file.FullName) {
         }
 
         /// <summary>Create a PdfWriter writing to the passed outputstream and with default writer properties.</summary>
         /// <param name="os">Outputstream to write to.</param>
         public PdfWriter(Stream os)
-            : this(os, new WriterProperties())
-        {
+            : this(os, new WriterProperties()) {
         }
 
         public PdfWriter(Stream os, WriterProperties properties)
-            : base(FileUtil.WrapWithBufferedOutputStream(os))
-        {
+            : base(FileUtil.WrapWithBufferedOutputStream(os)) {
             this.properties = properties;
-            if (properties.debugMode)
-            {
+            if (properties.debugMode) {
             }
         }
 
         /// <summary>Create a PdfWriter writing to the passed filename and with default writer properties.</summary>
         /// <param name="filename">filename of the resulting pdf.</param>
         public PdfWriter(String filename)
-            : this(filename, new WriterProperties())
-        {
+            : this(filename, new WriterProperties()) {
         }
 
         /// <summary>Create a PdfWriter writing to the passed filename and using the passed writer properties.</summary>
         /// <param name="filename">filename of the resulting pdf.</param>
         /// <param name="properties">writerproperties to use.</param>
         public PdfWriter(String filename, WriterProperties properties)
-            : this(FileUtil.GetBufferedOutputStream(filename), properties)
-        {
+            : this(FileUtil.GetBufferedOutputStream(filename), properties) {
         }
 
         /// <summary>Indicates if to use full compression mode.</summary>
         /// <returns>true if to use full compression, false otherwise.</returns>
-        public virtual bool IsFullCompression()
-        {
+        public virtual bool IsFullCompression() {
             return properties.isFullCompression != null ? (bool)properties.isFullCompression : false;
         }
 
@@ -135,8 +126,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="iText.IO.Source.DeflaterOutputStream"/>.
         /// </remarks>
         /// <returns>compression level.</returns>
-        public virtual int GetCompressionLevel()
-        {
+        public virtual int GetCompressionLevel() {
             return properties.compressionLevel;
         }
 
@@ -152,8 +142,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfWriter"/>
         /// instance
         /// </returns>
-        public virtual iText.Kernel.Pdf.PdfWriter SetCompressionLevel(int compressionLevel)
-        {
+        public virtual iText.Kernel.Pdf.PdfWriter SetCompressionLevel(int compressionLevel) {
             this.properties.SetCompressionLevel(compressionLevel);
             return this;
         }
@@ -174,28 +163,22 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfWriter"/>
         /// instance
         /// </returns>
-        public virtual iText.Kernel.Pdf.PdfWriter SetSmartMode(bool smartMode)
-        {
+        public virtual iText.Kernel.Pdf.PdfWriter SetSmartMode(bool smartMode) {
             this.properties.smartMode = smartMode;
             return this;
         }
 
         /// <summary>Gets the current object stream.</summary>
         /// <returns>object stream.</returns>
-        internal virtual PdfObjectStream GetObjectStream()
-        {
-            if (!IsFullCompression())
-            {
+        internal virtual PdfObjectStream GetObjectStream() {
+            if (!IsFullCompression()) {
                 return null;
             }
-            if (objectStream == null)
-            {
+            if (objectStream == null) {
                 objectStream = new PdfObjectStream(document);
             }
-            else
-            {
-                if (objectStream.GetSize() == PdfObjectStream.MAX_OBJ_STREAM_SIZE)
-                {
+            else {
+                if (objectStream.GetSize() == PdfObjectStream.MAX_OBJ_STREAM_SIZE) {
                     objectStream.Flush();
                     objectStream = new PdfObjectStream(objectStream);
                 }
@@ -203,19 +186,15 @@ namespace iText.Kernel.Pdf
             return objectStream;
         }
 
-        protected internal virtual void InitCryptoIfSpecified(PdfVersion version)
-        {
+        protected internal virtual void InitCryptoIfSpecified(PdfVersion version) {
             EncryptionProperties encryptProps = properties.encryptionProperties;
-            if (properties.IsStandardEncryptionUsed())
-            {
+            if (properties.IsStandardEncryptionUsed()) {
                 crypto = new PdfEncryption(encryptProps.userPassword, encryptProps.ownerPassword, encryptProps.standardEncryptPermissions
                     , encryptProps.encryptionAlgorithm, ByteUtils.GetIsoBytes(this.document.GetOriginalDocumentId().GetValue
                     ()), version);
             }
-            else
-            {
-                if (properties.IsPublicKeyEncryptionUsed())
-                {
+            else {
+                if (properties.IsPublicKeyEncryptionUsed()) {
                     crypto = new PdfEncryption(encryptProps.publicCertificates, encryptProps.publicKeyEncryptPermissions, encryptProps
                         .encryptionAlgorithm, version);
                 }
@@ -227,70 +206,58 @@ namespace iText.Kernel.Pdf
         ///     </remarks>
         /// <param name="pdfObject">object to flush.</param>
         /// <param name="canBeInObjStm">indicates whether object can be placed into object stream.</param>
-        protected internal virtual void FlushObject(PdfObject pdfObject, bool canBeInObjStm)
-        {
+        protected internal virtual void FlushObject(PdfObject pdfObject, bool canBeInObjStm) {
             PdfIndirectReference indirectReference = pdfObject.GetIndirectReference();
-            if (IsFullCompression() && canBeInObjStm)
-            {
+            if (IsFullCompression() && canBeInObjStm) {
                 PdfObjectStream objectStream = GetObjectStream();
                 objectStream.AddObject(pdfObject);
             }
-            else
-            {
+            else {
                 indirectReference.SetOffset(GetCurrentPos());
                 WriteToBody(pdfObject);
             }
             indirectReference.SetState(PdfObject.FLUSHED).ClearState(PdfObject.MUST_BE_FLUSHED);
-            switch (pdfObject.GetObjectType())
-            {
+            switch (pdfObject.GetObjectType()) {
                 case PdfObject.BOOLEAN:
                 case PdfObject.NAME:
                 case PdfObject.NULL:
                 case PdfObject.NUMBER:
-                case PdfObject.STRING:
-                    {
-                        ((PdfPrimitiveObject)pdfObject).content = null;
-                        break;
-                    }
+                case PdfObject.STRING: {
+                    ((PdfPrimitiveObject)pdfObject).content = null;
+                    break;
+                }
 
-                case PdfObject.ARRAY:
-                    {
-                        PdfArray array = ((PdfArray)pdfObject);
-                        MarkArrayContentToFlush(array);
-                        array.ReleaseContent();
-                        break;
-                    }
+                case PdfObject.ARRAY: {
+                    PdfArray array = ((PdfArray)pdfObject);
+                    MarkArrayContentToFlush(array);
+                    array.ReleaseContent();
+                    break;
+                }
 
                 case PdfObject.STREAM:
-                case PdfObject.DICTIONARY:
-                    {
-                        PdfDictionary dictionary = ((PdfDictionary)pdfObject);
-                        MarkDictionaryContentToFlush(dictionary);
-                        dictionary.ReleaseContent();
-                        break;
-                    }
+                case PdfObject.DICTIONARY: {
+                    PdfDictionary dictionary = ((PdfDictionary)pdfObject);
+                    MarkDictionaryContentToFlush(dictionary);
+                    dictionary.ReleaseContent();
+                    break;
+                }
 
-                case PdfObject.INDIRECT_REFERENCE:
-                    {
-                        MarkObjectToFlush(((PdfIndirectReference)pdfObject).GetRefersTo(false));
-                        break;
-                    }
+                case PdfObject.INDIRECT_REFERENCE: {
+                    MarkObjectToFlush(((PdfIndirectReference)pdfObject).GetRefersTo(false));
+                    break;
+                }
             }
         }
 
         protected internal virtual PdfObject CopyObject(PdfObject obj, PdfDocument documentTo, bool allowDuplicating
-            )
-        {
-            if (obj is PdfIndirectReference)
-            {
+            ) {
+            if (obj is PdfIndirectReference) {
                 obj = ((PdfIndirectReference)obj).GetRefersTo();
             }
-            if (obj == null)
-            {
+            if (obj == null) {
                 obj = PdfNull.PDF_NULL;
             }
-            if (CheckTypeOfPdfDictionary(obj, PdfName.Catalog))
-            {
+            if (CheckTypeOfPdfDictionary(obj, PdfName.Catalog)) {
                 ILog logger = LogManager.GetLogger(typeof(PdfReader));
                 logger.Warn(iText.IO.LogMessageConstant.MAKE_COPY_OF_CATALOG_DICTIONARY_IS_FORBIDDEN);
                 obj = PdfNull.PDF_NULL;
@@ -298,36 +265,29 @@ namespace iText.Kernel.Pdf
             PdfIndirectReference indirectReference = obj.GetIndirectReference();
             PdfDocument.IndirectRefDescription copiedObjectKey = null;
             bool tryToFindDuplicate = !allowDuplicating && indirectReference != null;
-            if (tryToFindDuplicate)
-            {
+            if (tryToFindDuplicate) {
                 copiedObjectKey = new PdfDocument.IndirectRefDescription(indirectReference);
                 PdfIndirectReference copiedIndirectReference = copiedObjects.Get(copiedObjectKey);
-                if (copiedIndirectReference != null)
-                {
+                if (copiedIndirectReference != null) {
                     return copiedIndirectReference.GetRefersTo();
                 }
             }
             SerializedObjectContent serializedContent = null;
-            if (properties.smartMode && tryToFindDuplicate && !CheckTypeOfPdfDictionary(obj, PdfName.Page))
-            {
+            if (properties.smartMode && tryToFindDuplicate && !CheckTypeOfPdfDictionary(obj, PdfName.Page)) {
                 serializedContent = smartModeSerializer.SerializeObject(obj);
                 PdfIndirectReference objectRef = smartModeSerializer.GetSavedSerializedObject(serializedContent);
-                if (objectRef != null)
-                {
+                if (objectRef != null) {
                     copiedObjects.Put(copiedObjectKey, objectRef);
                     return objectRef.refersTo;
                 }
             }
             PdfObject newObject = obj.NewInstance();
-            if (indirectReference != null)
-            {
-                if (copiedObjectKey == null)
-                {
+            if (indirectReference != null) {
+                if (copiedObjectKey == null) {
                     copiedObjectKey = new PdfDocument.IndirectRefDescription(indirectReference);
                 }
                 PdfIndirectReference indRef = newObject.MakeIndirect(documentTo).GetIndirectReference();
-                if (serializedContent != null)
-                {
+                if (serializedContent != null) {
                     smartModeSerializer.SaveSerializedObject(serializedContent, indRef);
                 }
                 copiedObjects.Put(copiedObjectKey, indRef);
@@ -338,10 +298,8 @@ namespace iText.Kernel.Pdf
 
         /// <summary>Writes object to body of PDF document.</summary>
         /// <param name="pdfObj">object to write.</param>
-        protected internal virtual void WriteToBody(PdfObject pdfObj)
-        {
-            if (crypto != null)
-            {
+        protected internal virtual void WriteToBody(PdfObject pdfObj) {
+            if (crypto != null) {
                 crypto.SetHashKeyForNextObject(pdfObj.GetIndirectReference().GetObjNumber(), pdfObj.GetIndirectReference()
                     .GetGenNumber());
             }
@@ -352,8 +310,7 @@ namespace iText.Kernel.Pdf
         }
 
         /// <summary>Writes PDF header.</summary>
-        protected internal virtual void WriteHeader()
-        {
+        protected internal virtual void WriteHeader() {
             WriteByte('%').WriteString(document.GetPdfVersion().ToString()).WriteString("\n%\u00e2\u00e3\u00cf\u00d3\n"
                 );
         }
@@ -367,30 +324,24 @@ namespace iText.Kernel.Pdf
         /// that are forbidden to be flushed
         /// automatically.
         /// </param>
-        protected internal virtual void FlushWaitingObjects(ICollection<PdfIndirectReference> forbiddenToFlush)
-        {
+        protected internal virtual void FlushWaitingObjects(ICollection<PdfIndirectReference> forbiddenToFlush) {
             PdfXrefTable xref = document.GetXref();
             bool needFlush = true;
-            while (needFlush)
-            {
+            while (needFlush) {
                 needFlush = false;
-                for (int i = 1; i < xref.Size(); i++)
-                {
+                for (int i = 1; i < xref.Size(); i++) {
                     PdfIndirectReference indirectReference = xref.Get(i);
                     if (indirectReference != null && !indirectReference.IsFree() && indirectReference.CheckState(PdfObject.MUST_BE_FLUSHED
-                        ) && !forbiddenToFlush.Contains(indirectReference))
-                    {
+                        ) && !forbiddenToFlush.Contains(indirectReference)) {
                         PdfObject obj = indirectReference.GetRefersTo(false);
-                        if (obj != null)
-                        {
+                        if (obj != null) {
                             obj.Flush();
                             needFlush = true;
                         }
                     }
                 }
             }
-            if (objectStream != null && objectStream.GetSize() > 0)
-            {
+            if (objectStream != null && objectStream.GetSize() > 0) {
                 objectStream.Flush();
                 objectStream = null;
             }
@@ -407,31 +358,24 @@ namespace iText.Kernel.Pdf
         /// automatically.
         /// </param>
         protected internal virtual void FlushModifiedWaitingObjects(ICollection<PdfIndirectReference> forbiddenToFlush
-            )
-        {
+            ) {
             PdfXrefTable xref = document.GetXref();
-            for (int i = 1; i < xref.Size(); i++)
-            {
+            for (int i = 1; i < xref.Size(); i++) {
                 PdfIndirectReference indirectReference = xref.Get(i);
                 if (null != indirectReference && !indirectReference.IsFree() && !forbiddenToFlush.Contains(indirectReference
-                    ))
-                {
+                    )) {
                     bool isModified = indirectReference.CheckState(PdfObject.MODIFIED);
-                    if (isModified)
-                    {
+                    if (isModified) {
                         PdfObject obj = indirectReference.GetRefersTo(false);
-                        if (obj != null)
-                        {
-                            if (!obj.Equals(objectStream))
-                            {
+                        if (obj != null) {
+                            if (!obj.Equals(objectStream)) {
                                 obj.Flush();
                             }
                         }
                     }
                 }
             }
-            if (objectStream != null && objectStream.GetSize() > 0)
-            {
+            if (objectStream != null && objectStream.GetSize() > 0) {
                 objectStream.Flush();
                 objectStream = null;
             }
@@ -439,74 +383,54 @@ namespace iText.Kernel.Pdf
 
         /// <summary>Flush all copied objects.</summary>
         /// <param name="docId">id of the source document</param>
-        internal virtual void FlushCopiedObjects(long docId)
-        {
+        internal virtual void FlushCopiedObjects(long docId) {
             IList<PdfDocument.IndirectRefDescription> remove = new List<PdfDocument.IndirectRefDescription>();
             foreach (KeyValuePair<PdfDocument.IndirectRefDescription, PdfIndirectReference> copiedObject in copiedObjects
-                )
-            {
-                if (copiedObject.Key.docId == docId)
-                {
-                    if (copiedObject.Value.refersTo != null)
-                    {
+                ) {
+                if (copiedObject.Key.docId == docId) {
+                    if (copiedObject.Value.refersTo != null) {
                         copiedObject.Value.refersTo.Flush();
                         remove.Add(copiedObject.Key);
                     }
                 }
             }
-            foreach (PdfDocument.IndirectRefDescription ird in remove)
-            {
+            foreach (PdfDocument.IndirectRefDescription ird in remove) {
                 copiedObjects.JRemove(ird);
             }
         }
 
-        private void MarkArrayContentToFlush(PdfArray array)
-        {
-            for (int i = 0; i < array.Size(); i++)
-            {
+        private void MarkArrayContentToFlush(PdfArray array) {
+            for (int i = 0; i < array.Size(); i++) {
                 MarkObjectToFlush(array.Get(i, false));
             }
         }
 
-        private void MarkDictionaryContentToFlush(PdfDictionary dictionary)
-        {
-            foreach (PdfObject item in dictionary.Values(false))
-            {
+        private void MarkDictionaryContentToFlush(PdfDictionary dictionary) {
+            foreach (PdfObject item in dictionary.Values(false)) {
                 MarkObjectToFlush(item);
             }
         }
 
-        private void MarkObjectToFlush(PdfObject pdfObject)
-        {
-            if (pdfObject != null)
-            {
+        private void MarkObjectToFlush(PdfObject pdfObject) {
+            if (pdfObject != null) {
                 PdfIndirectReference indirectReference = pdfObject.GetIndirectReference();
-                if (indirectReference != null)
-                {
-                    if (!indirectReference.CheckState(PdfObject.FLUSHED))
-                    {
+                if (indirectReference != null) {
+                    if (!indirectReference.CheckState(PdfObject.FLUSHED)) {
                         indirectReference.SetState(PdfObject.MUST_BE_FLUSHED);
                     }
                 }
-                else
-                {
-                    if (pdfObject.GetObjectType() == PdfObject.INDIRECT_REFERENCE)
-                    {
-                        if (!pdfObject.CheckState(PdfObject.FLUSHED))
-                        {
+                else {
+                    if (pdfObject.GetObjectType() == PdfObject.INDIRECT_REFERENCE) {
+                        if (!pdfObject.CheckState(PdfObject.FLUSHED)) {
                             pdfObject.SetState(PdfObject.MUST_BE_FLUSHED);
                         }
                     }
-                    else
-                    {
-                        if (pdfObject.GetObjectType() == PdfObject.ARRAY)
-                        {
+                    else {
+                        if (pdfObject.GetObjectType() == PdfObject.ARRAY) {
                             MarkArrayContentToFlush((PdfArray)pdfObject);
                         }
-                        else
-                        {
-                            if (pdfObject.GetObjectType() == PdfObject.DICTIONARY)
-                            {
+                        else {
+                            if (pdfObject.GetObjectType() == PdfObject.DICTIONARY) {
                                 MarkDictionaryContentToFlush((PdfDictionary)pdfObject);
                             }
                         }
@@ -515,8 +439,7 @@ namespace iText.Kernel.Pdf
             }
         }
 
-        private static bool CheckTypeOfPdfDictionary(PdfObject dictionary, PdfName expectedType)
-        {
+        private static bool CheckTypeOfPdfDictionary(PdfObject dictionary, PdfName expectedType) {
             return dictionary.IsDictionary() && expectedType.Equals(((PdfDictionary)dictionary).GetAsName(PdfName.Type
                 ));
         }

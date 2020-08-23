@@ -46,99 +46,79 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace iText.IO.Util.Collections
-{
-    internal class SingletonSet<T> : ISet<T>
-    {
+namespace iText.IO.Util.Collections {
+    internal class SingletonSet<T> : ISet<T> {
         private T element;
 
-        public SingletonSet(T element)
-        {
+        public SingletonSet(T element) {
             this.element = element;
         }
 
-        public IEnumerator<T> GetEnumerator()
-        {
+        public IEnumerator<T> GetEnumerator() {
             yield return element;
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
+        IEnumerator IEnumerable.GetEnumerator() {
             return GetEnumerator();
         }
 
-        public void Add(T item)
-        {
+        public void Add(T item) {
             throw new NotSupportedException("Collection is read-only.");
         }
 
-        public void UnionWith(IEnumerable<T> other)
-        {
+        public void UnionWith(IEnumerable<T> other) {
             throw new NotSupportedException("Collection is read-only.");
         }
 
-        public void IntersectWith(IEnumerable<T> other)
-        {
+        public void IntersectWith(IEnumerable<T> other) {
             throw new NotSupportedException("Collection is read-only.");
         }
 
-        public void ExceptWith(IEnumerable<T> other)
-        {
+        public void ExceptWith(IEnumerable<T> other) {
             throw new NotSupportedException("Collection is read-only.");
         }
 
-        public void SymmetricExceptWith(IEnumerable<T> other)
-        {
+        public void SymmetricExceptWith(IEnumerable<T> other) {
             throw new NotSupportedException("Collection is read-only.");
         }
 
-        public bool IsSubsetOf(IEnumerable<T> other)
-        {
+        public bool IsSubsetOf(IEnumerable<T> other) {
             return other.Contains(element);
         }
 
-        public bool IsSupersetOf(IEnumerable<T> other)
-        {
+        public bool IsSupersetOf(IEnumerable<T> other) {
             return SetEquals(other) || !other.Any();
         }
 
-        public bool IsProperSubsetOf(IEnumerable<T> other)
-        {
+        public bool IsProperSubsetOf(IEnumerable<T> other) {
             bool equalFound = false;
             bool notEqualFound = false;
-            foreach (T e in other)
-            {
+            foreach (T e in other) {
                 bool elemEq = elementsEqual(element, e);
                 equalFound = equalFound || elemEq;
                 notEqualFound = notEqualFound || !elemEq;
-
-                if (equalFound && notEqualFound)
-                {
+                
+                if (equalFound && notEqualFound) {
                     return true;
                 }
             }
             return false;
         }
 
-        public bool IsProperSupersetOf(IEnumerable<T> other)
-        {
+        public bool IsProperSupersetOf(IEnumerable<T> other) {
             return !other.Any();
         }
 
-        public bool Overlaps(IEnumerable<T> other)
-        {
+        public bool Overlaps(IEnumerable<T> other) {
             return other.Contains(element);
         }
 
-        public bool SetEquals(IEnumerable<T> other)
-        {
+        public bool SetEquals(IEnumerable<T> other) {
             bool first = true;
             bool equals = false;
-            foreach (T e in other)
-            {
+            foreach (T e in other) {
                 equals = first && elementsEqual(element, e);
-                if (!first)
-                {
+                if (!first) {
                     break;
                 }
 
@@ -148,43 +128,35 @@ namespace iText.IO.Util.Collections
             return equals;
         }
 
-        bool ISet<T>.Add(T item)
-        {
+        bool ISet<T>.Add(T item) {
             throw new NotSupportedException("Collection is read-only.");
         }
 
-        public void Clear()
-        {
+        public void Clear() {
             throw new NotSupportedException("Collection is read-only.");
         }
 
-        public bool Contains(T item)
-        {
+        public bool Contains(T item) {
             return elementsEqual(element, item);
         }
 
-        public void CopyTo(T[] array, int arrayIndex)
-        {
+        public void CopyTo(T[] array, int arrayIndex) {
             array[arrayIndex] = element;
         }
 
-        public bool Remove(T item)
-        {
+        public bool Remove(T item) {
             throw new NotSupportedException("Collection is read-only.");
         }
 
-        public int Count
-        {
+        public int Count {
             get { return 1; }
         }
 
-        public bool IsReadOnly
-        {
+        public bool IsReadOnly {
             get { return true; }
         }
 
-        private bool elementsEqual(T one, T another)
-        {
+        private bool elementsEqual(T one, T another) {
             return one == null && another == null || one != null && one.Equals(another);
         }
     }

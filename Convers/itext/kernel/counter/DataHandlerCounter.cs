@@ -45,8 +45,7 @@ using iText.Kernel.Counter.Context;
 using iText.Kernel.Counter.Data;
 using iText.Kernel.Counter.Event;
 
-namespace iText.Kernel.Counter
-{
+namespace iText.Kernel.Counter {
     /// <summary>
     /// Counter based on
     /// <see cref="iText.Kernel.Counter.Data.EventDataHandler{T, V}"/>.
@@ -59,25 +58,21 @@ namespace iText.Kernel.Counter
     /// <typeparam name="T">The data signature class</typeparam>
     /// <typeparam name="V">The event data class</typeparam>
     public class DataHandlerCounter<T, V> : EventCounter
-        where V : EventData<T>
-    {
+        where V : EventData<T> {
         private readonly EventDataHandler<T, V> dataHandler;
 
         public DataHandlerCounter(EventDataHandler<T, V> dataHandler)
-            : this(dataHandler, UnknownContext.PERMISSIVE)
-        {
+            : this(dataHandler, UnknownContext.PERMISSIVE) {
         }
 
         public DataHandlerCounter(EventDataHandler<T, V> dataHandler, IContext fallback)
-            : base(fallback)
-        {
+            : base(fallback) {
             this.dataHandler = dataHandler;
             EventDataHandlerUtil.RegisterProcessAllShutdownHook<T, V>(dataHandler);
             EventDataHandlerUtil.RegisterTimedProcessing<T, V>(dataHandler);
         }
 
-        protected internal override void OnEvent(IEvent @event, IMetaInfo metaInfo)
-        {
+        protected internal override void OnEvent(IEvent @event, IMetaInfo metaInfo) {
             dataHandler.Register(@event, metaInfo);
         }
     }

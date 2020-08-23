@@ -44,150 +44,118 @@ address: sales@itextpdf.com
 
 using System.Text;
 
-namespace iText.Kernel.XMP
-{
+namespace iText.Kernel.XMP {
 
     /// <summary>
     /// A wrapper for an Encoding to suppress the preamble.
     /// </summary>
-    public class EncodingNoPreamble : Encoding
-    {
+    public class EncodingNoPreamble : Encoding {
 
         private Encoding encoding;
         private static byte[] emptyPreamble = new byte[0];
 
-        public EncodingNoPreamble(Encoding encoding)
-        {
+        public EncodingNoPreamble(Encoding encoding) {
             this.encoding = encoding;
         }
-
-        public override int GetByteCount(char[] chars, int index, int count)
-        {
+    
+        public override int GetByteCount(char[] chars, int index, int count) {
             return encoding.GetByteCount(chars, index, count);
         }
-
-        public override int GetBytes(char[] chars, int charIndex, int charCount, byte[] bytes, int byteIndex)
-        {
+    
+        public override int GetBytes(char[] chars, int charIndex, int charCount, byte[] bytes, int byteIndex) {
             return encoding.GetBytes(chars, charIndex, charCount, bytes, byteIndex);
         }
-
-        public override int GetCharCount(byte[] bytes, int index, int count)
-        {
+    
+        public override int GetCharCount(byte[] bytes, int index, int count) {
             return encoding.GetCharCount(bytes, index, count);
         }
-
-        public override int GetChars(byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex)
-        {
+    
+        public override int GetChars(byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex) {
             return encoding.GetChars(bytes, byteIndex, byteCount, chars, charIndex);
         }
-
-        public override int GetMaxByteCount(int charCount)
-        {
+    
+        public override int GetMaxByteCount(int charCount) {
             return encoding.GetMaxByteCount(charCount);
         }
-
-        public override int GetMaxCharCount(int byteCount)
-        {
+    
+        public override int GetMaxCharCount(int byteCount) {
             return encoding.GetMaxCharCount(byteCount);
         }
 
 #if !NETSTANDARD1_6
-        public override string BodyName
-        {
-            get
-            {
+        public override string BodyName {
+            get {
                 return encoding.BodyName;
             }
         }
 
-        public override string HeaderName
-        {
-            get
-            {
+        public override string HeaderName {
+            get {
                 return encoding.HeaderName;
             }
         }
-
-        public override bool IsBrowserDisplay
-        {
-            get
-            {
+    
+        public override bool IsBrowserDisplay {
+            get {
                 return encoding.IsBrowserDisplay;
             }
         }
-
-        public override bool IsBrowserSave
-        {
-            get
-            {
+    
+        public override bool IsBrowserSave {
+            get {
                 return encoding.IsBrowserSave;
             }
         }
-
-        public override bool IsMailNewsDisplay
-        {
-            get
-            {
+    
+        public override bool IsMailNewsDisplay {
+            get {
                 return encoding.IsMailNewsDisplay;
             }
         }
-
-        public override bool IsMailNewsSave
-        {
-            get
-            {
+    
+        public override bool IsMailNewsSave {
+            get {
                 return encoding.IsMailNewsSave;
             }
         }
 
-        public override int WindowsCodePage
-        {
-            get
-            {
+        public override int WindowsCodePage {
+            get {
                 return encoding.WindowsCodePage;
             }
         }
-
+    
 #endif
 
-        public override int CodePage
-        {
-            get
-            {
+        public override int CodePage {
+            get {
                 return encoding.CodePage;
             }
         }
-
-        public override string EncodingName
-        {
-            get
-            {
+    
+        public override string EncodingName {
+            get {
                 return encoding.EncodingName;
             }
         }
+    
 
-
-        public override string WebName
-        {
-            get
-            {
+        public override string WebName {
+            get {
                 return encoding.WebName;
             }
         }
-
-
-        public override Decoder GetDecoder()
-        {
-            return encoding.GetDecoder();
+    
+        
+        public override Decoder GetDecoder() {
+            return encoding.GetDecoder ();
         }
-
-        public override Encoder GetEncoder()
-        {
-            return encoding.GetEncoder();
+    
+        public override Encoder GetEncoder() {
+            return encoding.GetEncoder ();
         }
-
-        public override byte[] GetPreamble()
-        {
+    
+        public override byte[] GetPreamble() {
             return emptyPreamble;
         }
     }

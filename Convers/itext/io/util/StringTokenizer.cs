@@ -43,12 +43,10 @@ address: sales@itextpdf.com
 */
 using System;
 
-namespace iText.IO.Util
-{
+namespace iText.IO.Util {
 
     // a replacement for the StringTokenizer java class
-    public class StringTokenizer
-    {
+    public class StringTokenizer {
 
         private int pos;
         private String str;
@@ -56,16 +54,13 @@ namespace iText.IO.Util
         private String delim;
         private bool retDelims;
 
-        public StringTokenizer(String str) : this(str, " \t\n\r\f", false)
-        {
+        public StringTokenizer(String str) : this(str, " \t\n\r\f", false) {
         }
 
-        public StringTokenizer(String str, String delim) : this(str, delim, false)
-        {
+        public StringTokenizer(String str, String delim) : this(str, delim, false) {
         }
 
-        public StringTokenizer(String str, String delim, bool retDelims)
-        {
+        public StringTokenizer(String str, String delim, bool retDelims) {
             len = str.Length;
             this.str = str;
             this.delim = delim;
@@ -73,60 +68,49 @@ namespace iText.IO.Util
             this.pos = 0;
         }
 
-        public virtual bool HasMoreTokens()
-        {
-            if (!retDelims)
-            {
+        public virtual bool HasMoreTokens() {
+            if (! retDelims) {
                 while (pos < len && delim.IndexOf(str[pos]) >= 0)
                     pos++;
             }
             return pos < len;
         }
 
-        public virtual String NextToken(String delim)
-        {
+        public virtual String NextToken(String delim) {
             this.delim = delim;
             return NextToken();
         }
 
-        public virtual String NextToken()
-        {
-            if (pos < len && delim.IndexOf(str[pos]) >= 0)
-            {
+        public virtual String NextToken() {
+            if (pos < len && delim.IndexOf(str[pos]) >= 0) {
                 if (retDelims)
                     return str.Substring(pos++, 1);
-                while (++pos < len && delim.IndexOf(str[pos]) >= 0) ;
+                while (++pos < len && delim.IndexOf(str[pos]) >= 0);
             }
-            if (pos < len)
-            {
+            if (pos < len) {
                 int start = pos;
-                while (++pos < len && delim.IndexOf(str[pos]) < 0) ;
+                while (++pos < len && delim.IndexOf(str[pos]) < 0);
 
                 return str.Substring(start, pos - start);
             }
             throw new IndexOutOfRangeException();
         }
 
-        public virtual int CountTokens()
-        {
+        public virtual int CountTokens() {
             int count = 0;
             int delimiterCount = 0;
             bool tokenFound = false;
             int tmpPos = pos;
 
-            while (tmpPos < len)
-            {
-                if (delim.IndexOf(str[tmpPos++]) >= 0)
-                {
-                    if (tokenFound)
-                    {
+            while (tmpPos < len) {
+                if (delim.IndexOf(str[tmpPos++]) >= 0) {
+                    if (tokenFound) {
                         count++;
                         tokenFound = false;
                     }
                     delimiterCount++;
                 }
-                else
-                {
+                else {
                     tokenFound = true;
                     while (tmpPos < len
                         && delim.IndexOf(str[tmpPos]) < 0)

@@ -42,10 +42,8 @@ address: sales@itextpdf.com
 */
 using System;
 
-namespace iText.Kernel.Pdf.Tagging
-{
-    public sealed class StandardRoles
-    {
+namespace iText.Kernel.Pdf.Tagging {
+    public sealed class StandardRoles {
         public const String ANNOT = "Annot";
 
         public const String ART = "Art";

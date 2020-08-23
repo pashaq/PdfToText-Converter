@@ -18,8 +18,7 @@
 // This is part of java port of project hosted at https://github.com/google/woff2
 using System;
 
-namespace iText.IO.Font.Woff2
-{
+namespace iText.IO.Font.Woff2 {
     // -----------------------------------------------------------------------------
     // Buffer helper class
     //
@@ -27,8 +26,7 @@ namespace iText.IO.Font.Woff2
     // out-of-bounds errors. As a family they throw exception if anything is amiss,
     // updating the current offset otherwise.
     // -----------------------------------------------------------------------------
-    internal class Buffer
-    {
+    internal class Buffer {
         private byte[] data;
 
         private int offset;
@@ -37,52 +35,42 @@ namespace iText.IO.Font.Woff2
 
         private int length;
 
-        public Buffer(byte[] data, int data_offset, int length)
-        {
+        public Buffer(byte[] data, int data_offset, int length) {
             this.offset = 0;
             this.initial_offset = data_offset;
             this.length = length;
             this.data = data;
         }
 
-        public Buffer(iText.IO.Font.Woff2.Buffer other)
-        {
+        public Buffer(iText.IO.Font.Woff2.Buffer other) {
             this.offset = other.offset;
             this.initial_offset = other.initial_offset;
             this.length = other.length;
             this.data = other.data;
         }
 
-        public virtual int ReadInt()
-        {
+        public virtual int ReadInt() {
             return ReadAsNumber(4);
         }
 
-        public virtual short ReadShort()
-        {
+        public virtual short ReadShort() {
             return JavaUnsignedUtil.ToU16(ReadAsNumber(2));
         }
 
-        public virtual byte ReadByte()
-        {
+        public virtual byte ReadByte() {
             return JavaUnsignedUtil.ToU8(ReadAsNumber(1));
         }
 
-        public virtual void Skip(int n_bytes)
-        {
+        public virtual void Skip(int n_bytes) {
             Read(null, 0, n_bytes);
         }
 
-        public virtual void Read(byte[] data, int data_offset, int n_bytes)
-        {
-            if (offset + n_bytes > length || offset > length - n_bytes)
-            {
+        public virtual void Read(byte[] data, int data_offset, int n_bytes) {
+            if (offset + n_bytes > length || offset > length - n_bytes) {
                 throw new FontCompressionException(FontCompressionException.BUFFER_READ_FAILED);
             }
-            if (data != null)
-            {
-                if (data_offset + n_bytes > data.Length || data_offset > data.Length - n_bytes)
-                {
+            if (data != null) {
+                if (data_offset + n_bytes > data.Length || data_offset > data.Length - n_bytes) {
                     throw new FontCompressionException(FontCompressionException.BUFFER_READ_FAILED);
                 }
                 Array.Copy(this.data, initial_offset + offset, data, data_offset, n_bytes);
@@ -90,28 +78,23 @@ namespace iText.IO.Font.Woff2
             this.offset += n_bytes;
         }
 
-        public virtual int GetOffset()
-        {
+        public virtual int GetOffset() {
             return offset;
         }
 
-        public virtual int GetInitialOffset()
-        {
+        public virtual int GetInitialOffset() {
             return initial_offset;
         }
 
-        public virtual int GetLength()
-        {
+        public virtual int GetLength() {
             return length;
         }
 
-        private int ReadAsNumber(int n_bytes)
-        {
+        private int ReadAsNumber(int n_bytes) {
             byte[] buffer = new byte[n_bytes];
             Read(buffer, 0, n_bytes);
             int result = 0;
-            for (int i = 0; i < n_bytes; ++i)
-            {
+            for (int i = 0; i < n_bytes; ++i) {
                 result = (result << 8) | JavaUnsignedUtil.AsU8(buffer[i]);
             }
             return result;

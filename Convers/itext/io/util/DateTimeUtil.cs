@@ -44,35 +44,28 @@ address: sales@itextpdf.com
 
 using System;
 
-namespace iText.IO.Util
-{
+namespace iText.IO.Util {
     /// <summary>
     /// This file is a helper class for internal usage only.
     /// Be aware that its API and functionality may be changed in future.
     /// </summary>
-    public static class DateTimeUtil
-    {
-        public static double GetUtcMillisFromEpoch(DateTime? dateTime)
-        {
-            if (dateTime == null)
-            {
+    public static class DateTimeUtil {
+        public static double GetUtcMillisFromEpoch(DateTime? dateTime) {
+            if (dateTime == null) {
                 dateTime = DateTime.Now;
             }
-            return ((DateTime)dateTime - new DateTime(1970, 1, 1)).TotalMilliseconds;
+            return ((DateTime) dateTime - new DateTime(1970, 1, 1)).TotalMilliseconds;
         }
 
-        public static DateTime GetCurrentTime()
-        {
+        public static DateTime GetCurrentTime() {
             return DateTime.Now;
         }
 
-        public static DateTime GetCurrentUtcTime()
-        {
+        public static DateTime GetCurrentUtcTime() {
             return DateTime.UtcNow;
         }
 
-        public static DateTime ParseSimpleFormat(String date, String format)
-        {
+        public static DateTime ParseSimpleFormat(String date, String format) {
             return DateTime.ParseExact(date, format, null);
         }
     }

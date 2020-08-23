@@ -41,27 +41,25 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.Kernel.Geom;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using iText.Kernel;
+using iText.Kernel.Geom;
 
-namespace iText.Kernel.Pdf
-{
+namespace iText.Kernel.Pdf {
     /// <summary>A representation of an array as described in the PDF specification.</summary>
     /// <remarks>
     /// A representation of an array as described in the PDF specification. A PdfArray can contain any
     /// subclass of
     /// <see cref="PdfObject"/>.
     /// </remarks>
-    public class PdfArray : PdfObject, IEnumerable<PdfObject>
-    {
+    public class PdfArray : PdfObject, IEnumerable<PdfObject> {
         protected internal IList<PdfObject> list;
 
         /// <summary>Create a new, empty PdfArray.</summary>
         public PdfArray()
-            : base()
-        {
+            : base() {
             list = new List<PdfObject>();
         }
 
@@ -71,8 +69,7 @@ namespace iText.Kernel.Pdf
         /// </summary>
         /// <param name="obj">first item in the array</param>
         public PdfArray(PdfObject obj)
-            : this()
-        {
+            : this() {
             list.Add(obj);
         }
 
@@ -80,8 +77,7 @@ namespace iText.Kernel.Pdf
         /// <remarks>Create a new PdfArray. The array is filled with the items of the provided PdfArray.</remarks>
         /// <param name="arr">PdfArray containing items that will added to this PdfArray</param>
         public PdfArray(iText.Kernel.Pdf.PdfArray arr)
-            : this()
-        {
+            : this() {
             list.AddAll(arr.list);
         }
 
@@ -91,8 +87,7 @@ namespace iText.Kernel.Pdf
         /// following order: left, bottom, right, top.
         /// </remarks>
         /// <param name="rectangle">Rectangle whose 4 values will be added to the PdfArray</param>
-        public PdfArray(Rectangle rectangle)
-        {
+        public PdfArray(Rectangle rectangle) {
             list = new List<PdfObject>(4);
             Add(new PdfNumber(rectangle.GetLeft()));
             Add(new PdfNumber(rectangle.GetBottom()));
@@ -103,11 +98,9 @@ namespace iText.Kernel.Pdf
         /// <summary>Create a new PdfArray.</summary>
         /// <remarks>Create a new PdfArray. The PdfObjects in the list will be added to the PdfArray.</remarks>
         /// <param name="objects">List of PdfObjects to be added to this PdfArray</param>
-        public PdfArray(IList<PdfObject> objects)
-        {
+        public PdfArray(IList<PdfObject> objects) {
             list = new List<PdfObject>(objects.Count);
-            foreach (PdfObject element in objects)
-            {
+            foreach (PdfObject element in objects) {
                 Add(element);
             }
         }
@@ -117,11 +110,9 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfNumber"/>.
         /// </summary>
         /// <param name="numbers">values to be added to this PdfArray</param>
-        public PdfArray(float[] numbers)
-        {
+        public PdfArray(float[] numbers) {
             list = new List<PdfObject>(numbers.Length);
-            foreach (float f in numbers)
-            {
+            foreach (float f in numbers) {
                 list.Add(new PdfNumber(f));
             }
         }
@@ -131,11 +122,9 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfNumber"/>.
         /// </summary>
         /// <param name="numbers">values to be added to this PdfArray</param>
-        public PdfArray(double[] numbers)
-        {
+        public PdfArray(double[] numbers) {
             list = new List<PdfObject>(numbers.Length);
-            foreach (double f in numbers)
-            {
+            foreach (double f in numbers) {
                 list.Add(new PdfNumber(f));
             }
         }
@@ -145,11 +134,9 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfNumber"/>.
         /// </summary>
         /// <param name="numbers">values to be added to this PdfArray</param>
-        public PdfArray(int[] numbers)
-        {
+        public PdfArray(int[] numbers) {
             list = new List<PdfObject>(numbers.Length);
-            foreach (float i in numbers)
-            {
+            foreach (float i in numbers) {
                 list.Add(new PdfNumber(i));
             }
         }
@@ -159,11 +146,9 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfBoolean"/>.
         /// </summary>
         /// <param name="values">values to be added to this PdfArray</param>
-        public PdfArray(bool[] values)
-        {
+        public PdfArray(bool[] values) {
             list = new List<PdfObject>(values.Length);
-            foreach (bool b in values)
-            {
+            foreach (bool b in values) {
                 list.Add(PdfBoolean.ValueOf(b));
             }
         }
@@ -180,11 +165,9 @@ namespace iText.Kernel.Pdf
         /// <param name="strings">list of strings to be added to the list</param>
         /// <param name="asNames">indicates whether the strings should be added as PdfName (true) or as PdfString (false)
         ///     </param>
-        public PdfArray(IList<String> strings, bool asNames)
-        {
+        public PdfArray(IList<String> strings, bool asNames) {
             list = new List<PdfObject>(strings.Count);
-            foreach (String s in strings)
-            {
+            foreach (String s in strings) {
                 list.Add(asNames ? (PdfObject)new PdfName(s) : new PdfString(s));
             }
         }
@@ -193,39 +176,30 @@ namespace iText.Kernel.Pdf
         /// <remarks>Create a new PdfArray. The PdfObjects in the iterable object will be added to the PdfArray.</remarks>
         /// <param name="objects">List of PdfObjects to be added to this PdfArray</param>
         /// <param name="initialCapacity">Initial capacity of this PdfArray</param>
-        public PdfArray(IEnumerable<PdfObject> objects, int initialCapacity)
-        {
+        public PdfArray(IEnumerable<PdfObject> objects, int initialCapacity) {
             list = new List<PdfObject>(initialCapacity);
-            foreach (PdfObject element in objects)
-            {
+            foreach (PdfObject element in objects) {
                 Add(element);
             }
         }
 
-        public virtual int Size()
-        {
+        public virtual int Size() {
             return list.Count;
         }
 
-        public virtual bool IsEmpty()
-        {
+        public virtual bool IsEmpty() {
             return list.Count == 0;
         }
 
-        public virtual bool Contains(PdfObject o)
-        {
-            if (list.Contains(o))
-            {
+        public virtual bool Contains(PdfObject o) {
+            if (list.Contains(o)) {
                 return true;
             }
-            if (o == null)
-            {
+            if (o == null) {
                 return false;
             }
-            foreach (PdfObject pdfObject in this)
-            {
-                if (PdfObject.EqualContent(o, pdfObject))
-                {
+            foreach (PdfObject pdfObject in this) {
+                if (PdfObject.EqualContent(o, pdfObject)) {
                     return true;
                 }
             }
@@ -245,13 +219,11 @@ namespace iText.Kernel.Pdf
         /// method.
         /// </remarks>
         /// <returns>an Iterator.</returns>
-        public virtual IEnumerator<PdfObject> GetEnumerator()
-        {
+        public virtual IEnumerator<PdfObject> GetEnumerator() {
             return new PdfArrayDirectIterator(list);
         }
 
-        public virtual void Add(PdfObject pdfObject)
-        {
+        public virtual void Add(PdfObject pdfObject) {
             list.Add(pdfObject);
         }
 
@@ -261,8 +233,7 @@ namespace iText.Kernel.Pdf
         /// <param name="index">position to insert the PdfObject</param>
         /// <param name="element">PdfObject to be added</param>
         /// <seealso cref="System.Collections.IList{E}.Add(int, System.Object)"/>
-        public virtual void Add(int index, PdfObject element)
-        {
+        public virtual void Add(int index, PdfObject element) {
             list.Add(index, element);
         }
 
@@ -271,16 +242,14 @@ namespace iText.Kernel.Pdf
         /// <param name="element">PdfObject to be added</param>
         /// <returns>true if the operation changed the PdfArray</returns>
         /// <seealso cref="System.Collections.IList{E}.Set(int, System.Object)"/>
-        public virtual PdfObject Set(int index, PdfObject element)
-        {
+        public virtual PdfObject Set(int index, PdfObject element) {
             return list[index] = element;
         }
 
         /// <summary>Adds the Collection of PdfObjects.</summary>
         /// <param name="c">the Collection of PdfObjects to be added</param>
         /// <seealso cref="System.Collections.IList{E}.AddAll(System.Collections.ICollection{E})"/>
-        public virtual void AddAll(ICollection<PdfObject> c)
-        {
+        public virtual void AddAll(ICollection<PdfObject> c) {
             list.AddAll(c);
         }
 
@@ -294,10 +263,8 @@ namespace iText.Kernel.Pdf
         /// to be added
         /// </param>
         /// <seealso cref="System.Collections.IList{E}.AddAll(System.Collections.ICollection{E})"/>
-        public virtual void AddAll(iText.Kernel.Pdf.PdfArray a)
-        {
-            if (a != null)
-            {
+        public virtual void AddAll(iText.Kernel.Pdf.PdfArray a) {
+            if (a != null) {
                 AddAll(a.list);
             }
         }
@@ -305,44 +272,36 @@ namespace iText.Kernel.Pdf
         /// <summary>Gets the (direct) PdfObject at the specified index.</summary>
         /// <param name="index">index of the PdfObject in the PdfArray</param>
         /// <returns>the PdfObject at the position in the PdfArray</returns>
-        public virtual PdfObject Get(int index)
-        {
+        public virtual PdfObject Get(int index) {
             return Get(index, true);
         }
 
         /// <summary>Removes the PdfObject at the specified index.</summary>
         /// <param name="index">position of the PdfObject to be removed</param>
         /// <seealso cref="System.Collections.IList{E}.JRemoveAt(int)"/>
-        public virtual void Remove(int index)
-        {
+        public virtual void Remove(int index) {
             list.JRemoveAt(index);
         }
 
         /// <summary>Removes the first occurrence of the specified PdfObject, if it is present.</summary>
         /// <param name="o">a PdfObject to be removed</param>
         /// <seealso cref="System.Collections.IList{E}.Remove(System.Object)"/>
-        public virtual void Remove(PdfObject o)
-        {
-            if (list.Remove(o))
-            {
+        public virtual void Remove(PdfObject o) {
+            if (list.Remove(o)) {
                 return;
             }
-            if (o == null)
-            {
+            if (o == null) {
                 return;
             }
-            foreach (PdfObject pdfObject in list)
-            {
-                if (PdfObject.EqualContent(o, pdfObject))
-                {
+            foreach (PdfObject pdfObject in list) {
+                if (PdfObject.EqualContent(o, pdfObject)) {
                     list.Remove(pdfObject);
                     break;
                 }
             }
         }
 
-        public virtual void Clear()
-        {
+        public virtual void Clear() {
             list.Clear();
         }
 
@@ -350,17 +309,13 @@ namespace iText.Kernel.Pdf
         /// <param name="o">PdfObject to find the index of</param>
         /// <returns>index of the PdfObject</returns>
         /// <seealso cref="System.Collections.IList{E}.IndexOf(System.Object)"/>
-        public virtual int IndexOf(PdfObject o)
-        {
-            if (o == null)
-            {
+        public virtual int IndexOf(PdfObject o) {
+            if (o == null) {
                 return list.IndexOf(null);
             }
             int index = 0;
-            foreach (PdfObject pdfObject in this)
-            {
-                if (PdfObject.EqualContent(o, pdfObject))
-                {
+            foreach (PdfObject pdfObject in this) {
+                if (PdfObject.EqualContent(o, pdfObject)) {
                     return index;
                 }
                 index++;
@@ -374,21 +329,17 @@ namespace iText.Kernel.Pdf
         /// <param name="toIndex">the position of the last element in the sublist (exclusive)</param>
         /// <returns>List of PdfObjects</returns>
         /// <seealso cref="System.Collections.IList{E}.SubList(int, int)"/>
-        public virtual IList<PdfObject> SubList(int fromIndex, int toIndex)
-        {
+        public virtual IList<PdfObject> SubList(int fromIndex, int toIndex) {
             return list.SubList(fromIndex, toIndex);
         }
 
-        public override byte GetObjectType()
-        {
+        public override byte GetObjectType() {
             return ARRAY;
         }
 
-        public override String ToString()
-        {
+        public override String ToString() {
             String @string = "[";
-            foreach (PdfObject entry in list)
-            {
+            foreach (PdfObject entry in list) {
                 PdfIndirectReference indirectReference = entry.GetIndirectReference();
                 @string = @string + (indirectReference == null ? entry.ToString() : indirectReference.ToString()) + " ";
             }
@@ -397,21 +348,16 @@ namespace iText.Kernel.Pdf
         }
 
         /// <param name="asDirect">true is to extract direct object always.</param>
-        public virtual PdfObject Get(int index, bool asDirect)
-        {
-            if (!asDirect)
-            {
+        public virtual PdfObject Get(int index, bool asDirect) {
+            if (!asDirect) {
                 return list[index];
             }
-            else
-            {
+            else {
                 PdfObject obj = list[index];
-                if (obj.GetObjectType() == INDIRECT_REFERENCE)
-                {
+                if (obj.GetObjectType() == INDIRECT_REFERENCE) {
                     return ((PdfIndirectReference)obj).GetRefersTo(true);
                 }
-                else
-                {
+                else {
                     return obj;
                 }
             }
@@ -422,11 +368,9 @@ namespace iText.Kernel.Pdf
         ///     </remarks>
         /// <param name="index">position of the element to be returned</param>
         /// <returns>the element at the index as a PdfArray</returns>
-        public virtual iText.Kernel.Pdf.PdfArray GetAsArray(int index)
-        {
+        public virtual iText.Kernel.Pdf.PdfArray GetAsArray(int index) {
             PdfObject direct = Get(index, true);
-            if (direct != null && direct.GetObjectType() == PdfObject.ARRAY)
-            {
+            if (direct != null && direct.GetObjectType() == PdfObject.ARRAY) {
                 return (iText.Kernel.Pdf.PdfArray)direct;
             }
             return null;
@@ -437,11 +381,9 @@ namespace iText.Kernel.Pdf
         ///     </remarks>
         /// <param name="index">position of the element to be returned</param>
         /// <returns>the element at the index as a PdfDictionary</returns>
-        public virtual PdfDictionary GetAsDictionary(int index)
-        {
+        public virtual PdfDictionary GetAsDictionary(int index) {
             PdfObject direct = Get(index, true);
-            if (direct != null && direct.GetObjectType() == PdfObject.DICTIONARY)
-            {
+            if (direct != null && direct.GetObjectType() == PdfObject.DICTIONARY) {
                 return (PdfDictionary)direct;
             }
             return null;
@@ -452,11 +394,9 @@ namespace iText.Kernel.Pdf
         ///     </remarks>
         /// <param name="index">position of the element to be returned</param>
         /// <returns>the element at the index as a PdfStream</returns>
-        public virtual PdfStream GetAsStream(int index)
-        {
+        public virtual PdfStream GetAsStream(int index) {
             PdfObject direct = Get(index, true);
-            if (direct != null && direct.GetObjectType() == PdfObject.STREAM)
-            {
+            if (direct != null && direct.GetObjectType() == PdfObject.STREAM) {
                 return (PdfStream)direct;
             }
             return null;
@@ -467,11 +407,9 @@ namespace iText.Kernel.Pdf
         ///     </remarks>
         /// <param name="index">position of the element to be returned</param>
         /// <returns>the element at the index as a PdfNumber</returns>
-        public virtual PdfNumber GetAsNumber(int index)
-        {
+        public virtual PdfNumber GetAsNumber(int index) {
             PdfObject direct = Get(index, true);
-            if (direct != null && direct.GetObjectType() == PdfObject.NUMBER)
-            {
+            if (direct != null && direct.GetObjectType() == PdfObject.NUMBER) {
                 return (PdfNumber)direct;
             }
             return null;
@@ -482,11 +420,9 @@ namespace iText.Kernel.Pdf
         ///     </remarks>
         /// <param name="index">position of the element to be returned</param>
         /// <returns>the element at the index as a PdfName</returns>
-        public virtual PdfName GetAsName(int index)
-        {
+        public virtual PdfName GetAsName(int index) {
             PdfObject direct = Get(index, true);
-            if (direct != null && direct.GetObjectType() == PdfObject.NAME)
-            {
+            if (direct != null && direct.GetObjectType() == PdfObject.NAME) {
                 return (PdfName)direct;
             }
             return null;
@@ -497,11 +433,9 @@ namespace iText.Kernel.Pdf
         ///     </remarks>
         /// <param name="index">position of the element to be returned</param>
         /// <returns>the element at the index as a PdfString</returns>
-        public virtual PdfString GetAsString(int index)
-        {
+        public virtual PdfString GetAsString(int index) {
             PdfObject direct = Get(index, true);
-            if (direct != null && direct.GetObjectType() == PdfObject.STRING)
-            {
+            if (direct != null && direct.GetObjectType() == PdfObject.STRING) {
                 return (PdfString)direct;
             }
             return null;
@@ -512,11 +446,9 @@ namespace iText.Kernel.Pdf
         ///     </remarks>
         /// <param name="index">position of the element to be returned</param>
         /// <returns>the element at the index as a PdfBoolean</returns>
-        public virtual PdfBoolean GetAsBoolean(int index)
-        {
+        public virtual PdfBoolean GetAsBoolean(int index) {
             PdfObject direct = Get(index, true);
-            if (direct != null && direct.GetObjectType() == PdfObject.BOOLEAN)
-            {
+            if (direct != null && direct.GetObjectType() == PdfObject.BOOLEAN) {
                 return (PdfBoolean)direct;
             }
             return null;
@@ -528,10 +460,8 @@ namespace iText.Kernel.Pdf
         /// PdfNumbers, if not a PdfException will be thrown.
         /// </remarks>
         /// <returns>Rectangle of the first four values</returns>
-        public virtual Rectangle ToRectangle()
-        {
-            try
-            {
+        public virtual Rectangle ToRectangle() {
+            try {
                 float x1 = GetAsNumber(0).FloatValue();
                 float y1 = GetAsNumber(1).FloatValue();
                 float x2 = GetAsNumber(2).FloatValue();
@@ -547,8 +477,7 @@ namespace iText.Kernel.Pdf
                 ury = Math.Max(y1, y2);
                 return new Rectangle(llx, lly, urx - llx, ury - lly);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 throw new PdfException(PdfException.CannotConvertPdfArrayToRectanle, e, this);
             }
         }
@@ -556,19 +485,15 @@ namespace iText.Kernel.Pdf
         /// <summary>Returns this array as an array of floats.</summary>
         /// <remarks>Returns this array as an array of floats. Will throw a PdfException when it encounters an issue.</remarks>
         /// <returns>this array as an array of floats</returns>
-        public virtual float[] ToFloatArray()
-        {
-            try
-            {
+        public virtual float[] ToFloatArray() {
+            try {
                 float[] rslt = new float[Size()];
-                for (int k = 0; k < rslt.Length; ++k)
-                {
+                for (int k = 0; k < rslt.Length; ++k) {
                     rslt[k] = GetAsNumber(k).FloatValue();
                 }
                 return rslt;
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 throw new PdfException(PdfException.CannotConvertPdfArrayToFloatArray, e, this);
             }
         }
@@ -577,19 +502,15 @@ namespace iText.Kernel.Pdf
         /// <remarks>Returns this array as an array of doubles. Will throw a PdfException when it encounters an issue.
         ///     </remarks>
         /// <returns>this array as an array of doubles</returns>
-        public virtual double[] ToDoubleArray()
-        {
-            try
-            {
+        public virtual double[] ToDoubleArray() {
+            try {
                 double[] rslt = new double[Size()];
-                for (int k = 0; k < rslt.Length; ++k)
-                {
+                for (int k = 0; k < rslt.Length; ++k) {
                     rslt[k] = GetAsNumber(k).DoubleValue();
                 }
                 return rslt;
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 throw new PdfException(PdfException.CannotConvertPdfArrayToDoubleArray, e, this);
             }
         }
@@ -597,19 +518,15 @@ namespace iText.Kernel.Pdf
         /// <summary>Returns this array as an array of longs.</summary>
         /// <remarks>Returns this array as an array of longs. Will throw a PdfException when it encounters an issue.</remarks>
         /// <returns>this array as an array of longs</returns>
-        public virtual long[] ToLongArray()
-        {
-            try
-            {
+        public virtual long[] ToLongArray() {
+            try {
                 long[] rslt = new long[Size()];
-                for (int k = 0; k < rslt.Length; ++k)
-                {
+                for (int k = 0; k < rslt.Length; ++k) {
                     rslt[k] = GetAsNumber(k).LongValue();
                 }
                 return rslt;
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 throw new PdfException(PdfException.CannotConvertPdfArrayToLongArray, e, this);
             }
         }
@@ -617,19 +534,15 @@ namespace iText.Kernel.Pdf
         /// <summary>Returns this array as an array of ints.</summary>
         /// <remarks>Returns this array as an array of ints. Will throw a PdfException when it encounters an issue.</remarks>
         /// <returns>this array as an array of ints</returns>
-        public virtual int[] ToIntArray()
-        {
-            try
-            {
+        public virtual int[] ToIntArray() {
+            try {
                 int[] rslt = new int[Size()];
-                for (int k = 0; k < rslt.Length; ++k)
-                {
+                for (int k = 0; k < rslt.Length; ++k) {
                     rslt[k] = GetAsNumber(k).IntValue();
                 }
                 return rslt;
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 throw new PdfException(PdfException.CannotConvertPdfArrayToIntArray, e, this);
             }
         }
@@ -638,15 +551,12 @@ namespace iText.Kernel.Pdf
         /// <remarks>Returns this array as an array of booleans. Will throw a PdfException when it encounters an issue.
         ///     </remarks>
         /// <returns>this array as an array of booleans</returns>
-        public virtual bool[] ToBooleanArray()
-        {
+        public virtual bool[] ToBooleanArray() {
             bool[] rslt = new bool[Size()];
             PdfBoolean tmp;
-            for (int k = 0; k < rslt.Length; ++k)
-            {
+            for (int k = 0; k < rslt.Length; ++k) {
                 tmp = GetAsBoolean(k);
-                if (tmp == null)
-                {
+                if (tmp == null) {
                     throw new PdfException(PdfException.CannotConvertPdfArrayToBooleanArray, this);
                 }
                 rslt[k] = tmp.GetValue();
@@ -654,30 +564,25 @@ namespace iText.Kernel.Pdf
             return rslt;
         }
 
-        protected internal override PdfObject NewInstance()
-        {
+        protected internal override PdfObject NewInstance() {
             return new iText.Kernel.Pdf.PdfArray();
         }
 
-        protected internal override void CopyContent(PdfObject from, PdfDocument document)
-        {
+        protected internal override void CopyContent(PdfObject from, PdfDocument document) {
             base.CopyContent(from, document);
             iText.Kernel.Pdf.PdfArray array = (iText.Kernel.Pdf.PdfArray)from;
-            foreach (PdfObject entry in array.list)
-            {
+            foreach (PdfObject entry in array.list) {
                 Add(entry.ProcessCopying(document, false));
             }
         }
 
         /// <summary>Release content of PdfArray.</summary>
-        protected internal virtual void ReleaseContent()
-        {
+        protected internal virtual void ReleaseContent() {
             list = null;
         }
 
         /// <summary><inheritDoc/></summary>
-        IEnumerator IEnumerable.GetEnumerator()
-        {
+        IEnumerator IEnumerable.GetEnumerator() {
             return GetEnumerator();
         }
 

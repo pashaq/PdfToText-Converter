@@ -41,14 +41,13 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.Kernel.Counter.Context;
-using iText.Kernel.Counter.Event;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using iText.Kernel.Counter.Context;
+using iText.Kernel.Counter.Event;
 
-namespace iText.Kernel.Counter
-{
+namespace iText.Kernel.Counter {
     /// <summary>
     /// Manager that works with
     /// <see cref="IEventCounterFactory"/>.
@@ -82,8 +81,7 @@ namespace iText.Kernel.Counter
     /// <para />
     /// This functionality can be used to create metrics in a SaaS context.
     /// </remarks>
-    public class EventCounterHandler
-    {
+    public class EventCounterHandler {
         /// <summary>The singleton instance.</summary>
         private static readonly iText.Kernel.Counter.EventCounterHandler instance = new iText.Kernel.Counter.EventCounterHandler
             ();
@@ -92,14 +90,12 @@ namespace iText.Kernel.Counter
         private IDictionary<IEventCounterFactory, bool?> factories = new ConcurrentDictionary<IEventCounterFactory
             , bool?>();
 
-        private EventCounterHandler()
-        {
+        private EventCounterHandler() {
             Register(new SimpleEventCounterFactory(new DefaultEventCounter()));
         }
 
         /// <returns>the singleton instance of the factory.</returns>
-        public static iText.Kernel.Counter.EventCounterHandler GetInstance()
-        {
+        public static iText.Kernel.Counter.EventCounterHandler GetInstance() {
             return instance;
         }
 
@@ -122,33 +118,25 @@ namespace iText.Kernel.Counter
         /// object that can holds information about instance that throws the event
         /// </param>
         /// <param name="caller">the class that throws the event</param>
-        public virtual void OnEvent(IEvent @event, IMetaInfo metaInfo, Type caller)
-        {
+        public virtual void OnEvent(IEvent @event, IMetaInfo metaInfo, Type caller) {
             IContext context = null;
             bool contextInitialized = false;
-            foreach (IEventCounterFactory factory in factories.Keys)
-            {
+            foreach (IEventCounterFactory factory in factories.Keys) {
                 EventCounter counter = factory.GetCounter(caller);
-                if (counter != null)
-                {
-                    if (!contextInitialized)
-                    {
-                        if (metaInfo != null)
-                        {
+                if (counter != null) {
+                    if (!contextInitialized) {
+                        if (metaInfo != null) {
                             context = ContextManager.GetInstance().GetContext(metaInfo.GetType());
                         }
-                        if (context == null)
-                        {
+                        if (context == null) {
                             context = ContextManager.GetInstance().GetContext(caller);
                         }
-                        if (context == null)
-                        {
+                        if (context == null) {
                             context = ContextManager.GetInstance().GetContext(@event.GetType());
                         }
                         contextInitialized = true;
                     }
-                    if ((context != null && context.Allow(@event)) || (context == null && counter.fallback.Allow(@event)))
-                    {
+                    if ((context != null && context.Allow(@event)) || (context == null && counter.fallback.Allow(@event))) {
                         counter.OnEvent(@event, metaInfo);
                     }
                 }
@@ -169,10 +157,8 @@ namespace iText.Kernel.Counter
         /// <see cref="IEventCounterFactory"/>
         /// to be registered
         /// </param>
-        public virtual void Register(IEventCounterFactory factory)
-        {
-            if (factory != null)
-            {
+        public virtual void Register(IEventCounterFactory factory) {
+            if (factory != null) {
                 factories.Put(factory, true);
             }
         }
@@ -192,10 +178,8 @@ namespace iText.Kernel.Counter
         /// <see langword="true"/>
         /// if the specified factory is registered
         /// </returns>
-        public virtual bool IsRegistered(IEventCounterFactory factory)
-        {
-            if (factory != null)
-            {
+        public virtual bool IsRegistered(IEventCounterFactory factory) {
+            if (factory != null) {
                 return factories.ContainsKey(factory);
             }
             return false;
@@ -220,10 +204,8 @@ namespace iText.Kernel.Counter
         /// <see langword="true"/>
         /// if specified factory was registered first
         /// </returns>
-        public virtual bool Unregister(IEventCounterFactory factory)
-        {
-            if (factory != null)
-            {
+        public virtual bool Unregister(IEventCounterFactory factory) {
+            if (factory != null) {
                 return factories.JRemove(factory) != null;
             }
             return false;

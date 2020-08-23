@@ -43,10 +43,8 @@ address: sales@itextpdf.com
 */
 using System;
 
-namespace iText.IO.Font.Otf
-{
-    public class ScriptRecord
-    {
+namespace iText.IO.Font.Otf {
+    public class ScriptRecord {
         public String tag;
 
         public LanguageRecord defaultLanguage;

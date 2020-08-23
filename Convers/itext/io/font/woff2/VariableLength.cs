@@ -13,67 +13,53 @@
 // limitations under the License.
 //
 // This is part of java port of project hosted at https://github.com/google/woff2
-namespace iText.IO.Font.Woff2
-{
+namespace iText.IO.Font.Woff2 {
     // Helper functions for woff2 variable length types: 255UInt16 and UIntBase128
-    internal class VariableLength
-    {
+    internal class VariableLength {
         // Based on section 6.1.1 of MicroType Express draft spec
-        public static int Read255UShort(Buffer buf)
-        {
+        public static int Read255UShort(Buffer buf) {
             int kWordCode = 253;
             int kOneMoreByteCode2 = 254;
             int kOneMoreByteCode1 = 255;
             int kLowestUCode = 253;
             byte code = 0;
             code = buf.ReadByte();
-            if (JavaUnsignedUtil.AsU8(code) == kWordCode)
-            {
+            if (JavaUnsignedUtil.AsU8(code) == kWordCode) {
                 short result = buf.ReadShort();
                 return JavaUnsignedUtil.AsU16(result);
             }
-            else
-            {
-                if (JavaUnsignedUtil.AsU8(code) == kOneMoreByteCode1)
-                {
+            else {
+                if (JavaUnsignedUtil.AsU8(code) == kOneMoreByteCode1) {
                     byte result = buf.ReadByte();
                     return JavaUnsignedUtil.AsU8(result) + kLowestUCode;
                 }
-                else
-                {
-                    if (JavaUnsignedUtil.AsU8(code) == kOneMoreByteCode2)
-                    {
+                else {
+                    if (JavaUnsignedUtil.AsU8(code) == kOneMoreByteCode2) {
                         byte result = buf.ReadByte();
                         return JavaUnsignedUtil.AsU8(result) + kLowestUCode * 2;
                     }
-                    else
-                    {
+                    else {
                         return JavaUnsignedUtil.AsU8(code);
                     }
                 }
             }
         }
 
-        public static int ReadBase128(Buffer buf)
-        {
+        public static int ReadBase128(Buffer buf) {
             int result = 0;
-            for (int i = 0; i < 5; ++i)
-            {
+            for (int i = 0; i < 5; ++i) {
                 byte code = 0;
                 code = buf.ReadByte();
                 // Leading zeros are invalid.
-                if (i == 0 && JavaUnsignedUtil.AsU8(code) == 0x80)
-                {
+                if (i == 0 && JavaUnsignedUtil.AsU8(code) == 0x80) {
                     throw new FontCompressionException(FontCompressionException.READ_BASE_128_FAILED);
                 }
                 // If any of the top seven bits are set then we're about to overflow.
-                if ((result & unchecked((int)(0xfe000000))) != 0)
-                {
+                if ((result & unchecked((int)(0xfe000000))) != 0) {
                     throw new FontCompressionException(FontCompressionException.READ_BASE_128_FAILED);
                 }
                 result = (result << 7) | (code & 0x7f);
-                if ((code & 0x80) == 0)
-                {
+                if ((code & 0x80) == 0) {
                     return result;
                 }
             }

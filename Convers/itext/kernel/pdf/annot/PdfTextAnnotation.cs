@@ -42,14 +42,12 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Annot
-{
-    public class PdfTextAnnotation : PdfMarkupAnnotation
-    {
+namespace iText.Kernel.Pdf.Annot {
+    public class PdfTextAnnotation : PdfMarkupAnnotation {
         public PdfTextAnnotation(Rectangle rect)
-            : base(rect)
-        {
+            : base(rect) {
         }
 
         /// <summary>
@@ -66,32 +64,26 @@ namespace iText.Kernel.Pdf.Annot
         /// </param>
         /// <seealso cref="PdfAnnotation.MakeAnnotation(iText.Kernel.Pdf.PdfObject)"/>
         protected internal PdfTextAnnotation(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
-        public override PdfName GetSubtype()
-        {
+        public override PdfName GetSubtype() {
             return PdfName.Text;
         }
 
-        public virtual PdfString GetState()
-        {
+        public virtual PdfString GetState() {
             return GetPdfObject().GetAsString(PdfName.State);
         }
 
-        public virtual iText.Kernel.Pdf.Annot.PdfTextAnnotation SetState(PdfString state)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfTextAnnotation SetState(PdfString state) {
             return (iText.Kernel.Pdf.Annot.PdfTextAnnotation)Put(PdfName.State, state);
         }
 
-        public virtual PdfString GetStateModel()
-        {
+        public virtual PdfString GetStateModel() {
             return GetPdfObject().GetAsString(PdfName.StateModel);
         }
 
-        public virtual iText.Kernel.Pdf.Annot.PdfTextAnnotation SetStateModel(PdfString stateModel)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfTextAnnotation SetStateModel(PdfString stateModel) {
             return (iText.Kernel.Pdf.Annot.PdfTextAnnotation)Put(PdfName.StateModel, stateModel);
         }
 
@@ -101,8 +93,7 @@ namespace iText.Kernel.Pdf.Annot
         /// This flag has affect to not all kinds of annotations.
         /// </remarks>
         /// <returns>true if annotation is initially open, false - if closed.</returns>
-        public virtual bool GetOpen()
-        {
+        public virtual bool GetOpen() {
             return PdfBoolean.TRUE.Equals(GetPdfObject().GetAsBoolean(PdfName.Open));
         }
 
@@ -117,8 +108,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfTextAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfTextAnnotation SetOpen(bool open)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfTextAnnotation SetOpen(bool open) {
             return (iText.Kernel.Pdf.Annot.PdfTextAnnotation)Put(PdfName.Open, PdfBoolean.ValueOf(open));
         }
 
@@ -133,8 +123,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfName"/>
         /// that specifies the icon for displaying annotation, or null if icon name is not specified.
         /// </returns>
-        public virtual PdfName GetIconName()
-        {
+        public virtual PdfName GetIconName() {
             return GetPdfObject().GetAsName(PdfName.Name);
         }
 
@@ -165,8 +154,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfTextAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfTextAnnotation SetIconName(PdfName name)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfTextAnnotation SetIconName(PdfName name) {
             return (iText.Kernel.Pdf.Annot.PdfTextAnnotation)Put(PdfName.Name, name);
         }
     }

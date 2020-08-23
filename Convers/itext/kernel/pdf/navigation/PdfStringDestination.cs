@@ -43,29 +43,24 @@ address: sales@itextpdf.com
 */
 using System;
 using System.Collections.Generic;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Navigation
-{
-    public class PdfStringDestination : PdfDestination
-    {
+namespace iText.Kernel.Pdf.Navigation {
+    public class PdfStringDestination : PdfDestination {
         public PdfStringDestination(String @string)
-            : this(new PdfString(@string))
-        {
+            : this(new PdfString(@string)) {
         }
 
         public PdfStringDestination(PdfString pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
-        public override PdfObject GetDestinationPage(IDictionary<String, PdfObject> names)
-        {
+        public override PdfObject GetDestinationPage(IDictionary<String, PdfObject> names) {
             PdfArray array = (PdfArray)names.Get(((PdfString)GetPdfObject()).ToUnicodeString());
             return array != null ? array.Get(0) : null;
         }
 
-        protected internal override bool IsWrappedObjectMustBeIndirect()
-        {
+        protected internal override bool IsWrappedObjectMustBeIndirect() {
             return false;
         }
     }

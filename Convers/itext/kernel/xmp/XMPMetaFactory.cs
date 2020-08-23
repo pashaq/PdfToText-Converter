@@ -27,17 +27,15 @@
 //        SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //        http://www.adobe.com/devnet/xmp/library/eula-xmp-library-java.html
-using iText.Kernel.XMP.Impl;
-using iText.Kernel.XMP.Options;
 using System;
 using System.IO;
+using iText.Kernel.XMP.Impl;
+using iText.Kernel.XMP.Options;
 
-namespace iText.Kernel.XMP
-{
+namespace iText.Kernel.XMP {
     /// <summary>Creates <c>XMPMeta</c>-instances from an <c>InputStream</c></summary>
     /// <since>30.01.2006</since>
-    public sealed class XMPMetaFactory
-    {
+    public sealed class XMPMetaFactory {
         private static readonly Object staticLock = new Object();
 
         /// <summary>The singleton instance of the <c>XMPSchemaRegistry</c>.</summary>
@@ -47,20 +45,17 @@ namespace iText.Kernel.XMP
         private static XMPVersionInfo versionInfo = null;
 
         /// <summary>Hides public constructor</summary>
-        private XMPMetaFactory()
-        {
+        private XMPMetaFactory() {
         }
 
         // EMPTY
         /// <returns>Returns the singleton instance of the <c>XMPSchemaRegistry</c>.</returns>
-        public static XMPSchemaRegistry GetSchemaRegistry()
-        {
+        public static XMPSchemaRegistry GetSchemaRegistry() {
             return schema;
         }
 
         /// <returns>Returns an empty <c>XMPMeta</c>-object.</returns>
-        public static XMPMeta Create()
-        {
+        public static XMPMeta Create() {
             return new XMPMetaImpl();
         }
 
@@ -68,8 +63,7 @@ namespace iText.Kernel.XMP
         /// <param name="in">an <c>InputStream</c></param>
         /// <returns>Returns the <c>XMPMeta</c>-object created from the input.</returns>
         /// <seealso cref="Parse(System.IO.Stream, iText.Kernel.XMP.Options.ParseOptions)"/>
-        public static XMPMeta Parse(Stream @in)
-        {
+        public static XMPMeta Parse(Stream @in) {
             return Parse(@in, null);
         }
 
@@ -100,8 +94,7 @@ namespace iText.Kernel.XMP
         /// <em>Note:</em>The XMP_STRICT_ALIASING option is not yet implemented.
         /// </param>
         /// <returns>Returns the <c>XMPMeta</c>-object created from the input.</returns>
-        public static XMPMeta Parse(Stream @in, ParseOptions options)
-        {
+        public static XMPMeta Parse(Stream @in, ParseOptions options) {
             return XMPMetaParser.Parse(@in, options);
         }
 
@@ -109,8 +102,7 @@ namespace iText.Kernel.XMP
         /// <param name="packet">a String contain an XMP-file.</param>
         /// <returns>Returns the <c>XMPMeta</c>-object created from the input.</returns>
         /// <seealso cref="Parse(System.IO.Stream)"/>
-        public static XMPMeta ParseFromString(String packet)
-        {
+        public static XMPMeta ParseFromString(String packet) {
             return ParseFromString(packet, null);
         }
 
@@ -119,8 +111,7 @@ namespace iText.Kernel.XMP
         /// <param name="options">Options controlling the parsing.</param>
         /// <returns>Returns the <c>XMPMeta</c>-object created from the input.</returns>
         /// <seealso cref="ParseFromString(System.String, iText.Kernel.XMP.Options.ParseOptions)"/>
-        public static XMPMeta ParseFromString(String packet, ParseOptions options)
-        {
+        public static XMPMeta ParseFromString(String packet, ParseOptions options) {
             return XMPMetaParser.Parse(packet, options);
         }
 
@@ -128,8 +119,7 @@ namespace iText.Kernel.XMP
         /// <param name="buffer">a String contain an XMP-file.</param>
         /// <returns>Returns the <c>XMPMeta</c>-object created from the input.</returns>
         /// <seealso cref="ParseFromBuffer(byte[], iText.Kernel.XMP.Options.ParseOptions)"/>
-        public static XMPMeta ParseFromBuffer(byte[] buffer)
-        {
+        public static XMPMeta ParseFromBuffer(byte[] buffer) {
             return ParseFromBuffer(buffer, null);
         }
 
@@ -138,8 +128,7 @@ namespace iText.Kernel.XMP
         /// <param name="options">Options controlling the parsing.</param>
         /// <returns>Returns the <c>XMPMeta</c>-object created from the input.</returns>
         /// <seealso cref="Parse(System.IO.Stream, iText.Kernel.XMP.Options.ParseOptions)"/>
-        public static XMPMeta ParseFromBuffer(byte[] buffer, ParseOptions options)
-        {
+        public static XMPMeta ParseFromBuffer(byte[] buffer, ParseOptions options) {
             return XMPMetaParser.Parse(buffer, options);
         }
 
@@ -149,8 +138,7 @@ namespace iText.Kernel.XMP
         /// </summary>
         /// <param name="xmp">a metadata object</param>
         /// <param name="out">an <c>OutputStream</c> to write the serialized RDF to.</param>
-        public static void Serialize(XMPMeta xmp, Stream @out)
-        {
+        public static void Serialize(XMPMeta xmp, Stream @out) {
             Serialize(xmp, @out, null);
         }
 
@@ -162,8 +150,7 @@ namespace iText.Kernel.XMP
         /// ).
         /// </param>
         /// <param name="out">an <c>OutputStream</c> to write the serialized RDF to.</param>
-        public static void Serialize(XMPMeta xmp, Stream @out, SerializeOptions options)
-        {
+        public static void Serialize(XMPMeta xmp, Stream @out, SerializeOptions options) {
             AssertImplementation(xmp);
             XMPSerializerHelper.Serialize((XMPMetaImpl)xmp, @out, options);
         }
@@ -176,8 +163,7 @@ namespace iText.Kernel.XMP
         /// ).
         /// </param>
         /// <returns>Returns a byte buffer containing the serialized RDF.</returns>
-        public static byte[] SerializeToBuffer(XMPMeta xmp, SerializeOptions options)
-        {
+        public static byte[] SerializeToBuffer(XMPMeta xmp, SerializeOptions options) {
             AssertImplementation(xmp);
             return XMPSerializerHelper.SerializeToBuffer((XMPMetaImpl)xmp, options);
         }
@@ -194,17 +180,14 @@ namespace iText.Kernel.XMP
         /// ).
         /// </param>
         /// <returns>Returns a string containing the serialized RDF.</returns>
-        public static String SerializeToString(XMPMeta xmp, SerializeOptions options)
-        {
+        public static String SerializeToString(XMPMeta xmp, SerializeOptions options) {
             AssertImplementation(xmp);
             return XMPSerializerHelper.SerializeToString((XMPMetaImpl)xmp, options);
         }
 
         /// <param name="xmp">Asserts that xmp is compatible to <c>XMPMetaImpl</c>.s</param>
-        private static void AssertImplementation(XMPMeta xmp)
-        {
-            if (!(xmp is XMPMetaImpl))
-            {
+        private static void AssertImplementation(XMPMeta xmp) {
+            if (!(xmp is XMPMetaImpl)) {
                 throw new NotSupportedException("The serializing service works only" + "with the XMPMeta implementation of this library"
                     );
             }
@@ -216,8 +199,7 @@ namespace iText.Kernel.XMP
         /// Be careful this might break all existing XMPMeta-objects and should be used
         /// only for testing purpurses.
         /// </remarks>
-        public static void Reset()
-        {
+        public static void Reset() {
             schema = new XMPSchemaRegistryImpl();
         }
 
@@ -227,14 +209,10 @@ namespace iText.Kernel.XMP
         /// its requested.
         /// </remarks>
         /// <returns>Returns the version information.</returns>
-        public static XMPVersionInfo GetVersionInfo()
-        {
-            lock (staticLock)
-            {
-                if (versionInfo == null)
-                {
-                    try
-                    {
+        public static XMPVersionInfo GetVersionInfo() {
+            lock (staticLock) {
+                if (versionInfo == null) {
+                    try {
                         int major = 5;
                         int minor = 1;
                         int micro = 0;
@@ -244,8 +222,7 @@ namespace iText.Kernel.XMP
                         String message = "Adobe XMP Core 5.1.0-jc003";
                         versionInfo = new _XMPVersionInfo_266(major, minor, micro, debug, engBuild, message);
                     }
-                    catch (Exception e)
-                    {
+                    catch (Exception e) {
                         // EMTPY, severe error would be detected during the tests
                         System.Console.Out.WriteLine(e);
                     }
@@ -254,10 +231,8 @@ namespace iText.Kernel.XMP
             }
         }
 
-        private sealed class _XMPVersionInfo_266 : XMPVersionInfo
-        {
-            public _XMPVersionInfo_266(int major, int minor, int micro, bool debug, int engBuild, String message)
-            {
+        private sealed class _XMPVersionInfo_266 : XMPVersionInfo {
+            public _XMPVersionInfo_266(int major, int minor, int micro, bool debug, int engBuild, String message) {
                 this.major = major;
                 this.minor = minor;
                 this.micro = micro;
@@ -266,38 +241,31 @@ namespace iText.Kernel.XMP
                 this.message = message;
             }
 
-            public int GetMajor()
-            {
+            public int GetMajor() {
                 return major;
             }
 
-            public int GetMinor()
-            {
+            public int GetMinor() {
                 return minor;
             }
 
-            public int GetMicro()
-            {
+            public int GetMicro() {
                 return micro;
             }
 
-            public bool IsDebug()
-            {
+            public bool IsDebug() {
                 return debug;
             }
 
-            public int GetBuild()
-            {
+            public int GetBuild() {
                 return engBuild;
             }
 
-            public String GetMessage()
-            {
+            public String GetMessage() {
                 return message;
             }
 
-            public override String ToString()
-            {
+            public override String ToString() {
                 return message;
             }
 

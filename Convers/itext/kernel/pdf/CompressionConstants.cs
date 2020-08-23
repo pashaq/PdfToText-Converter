@@ -42,13 +42,11 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 
-namespace iText.Kernel.Pdf
-{
+namespace iText.Kernel.Pdf {
     /// <summary>
     /// Compression constants for <see cref="PdfStream"/>. 
     /// </summary>
-    public class CompressionConstants
-    {
+    public class CompressionConstants {
         /// <summary>A possible compression level.</summary>
         public const int UNDEFINED_COMPRESSION = int.MinValue;
 

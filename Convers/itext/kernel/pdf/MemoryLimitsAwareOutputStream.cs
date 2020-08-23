@@ -42,13 +42,13 @@ address: sales@itextpdf.com
 */
 using System;
 using System.IO;
+using iText.IO.Util;
+using iText.Kernel;
 
-namespace iText.Kernel.Pdf
-{
+namespace iText.Kernel.Pdf {
     /// <summary>This class implements an output stream which can be used for memory limits aware decompression of pdf streams.
     ///     </summary>
-    internal class MemoryLimitsAwareOutputStream : MemoryStream
-    {
+    internal class MemoryLimitsAwareOutputStream : MemoryStream {
         /// <summary>The maximum size of array to allocate.</summary>
         /// <remarks>
         /// The maximum size of array to allocate.
@@ -69,8 +69,7 @@ namespace iText.Kernel.Pdf
         /// initially 32 bytes, though its size increases if necessary.
         /// </remarks>
         public MemoryLimitsAwareOutputStream()
-            : base()
-        {
+            : base() {
         }
 
         /// <summary>
@@ -79,14 +78,12 @@ namespace iText.Kernel.Pdf
         /// </summary>
         /// <param name="size">the initial size.</param>
         public MemoryLimitsAwareOutputStream(int size)
-            : base(size)
-        {
+            : base(size) {
         }
 
         /// <summary>Gets the maximum size which can be occupied by this output stream.</summary>
         /// <returns>the maximum size which can be occupied by this output stream.</returns>
-        public virtual long GetMaxStreamSize()
-        {
+        public virtual long GetMaxStreamSize() {
             return maxStreamSize;
         }
 
@@ -96,42 +93,35 @@ namespace iText.Kernel.Pdf
         /// this
         /// <see cref="MemoryLimitsAwareOutputStream"/>
         /// </returns>
-        public virtual iText.Kernel.Pdf.MemoryLimitsAwareOutputStream SetMaxStreamSize(int maxStreamSize)
-        {
+        public virtual iText.Kernel.Pdf.MemoryLimitsAwareOutputStream SetMaxStreamSize(int maxStreamSize) {
             this.maxStreamSize = maxStreamSize;
             return this;
         }
 
         /// <summary><inheritDoc/></summary>
-        public override void Write(byte[] b, int off, int len)
-        {
+        public override void Write(byte[] b, int off, int len) {
             // NOTE: in case this method is updated, the ManualCompressionTest should be run!
-            if ((off < 0) || (off > b.Length) || (len < 0) || ((off + len) - b.Length > 0))
-            {
+            if ((off < 0) || (off > b.Length) || (len < 0) || ((off + len) - b.Length > 0)) {
                 throw new IndexOutOfRangeException();
             }
-            int minCapacity = (int)this.Position + len;
-            if (minCapacity < 0)
-            {
+            int minCapacity = (int) this.Position + len;
+            if (minCapacity < 0) {
                 // overflow
                 throw new MemoryLimitsAwareException(PdfException.DuringDecompressionSingleStreamOccupiedMoreThanMaxIntegerValue
                     );
             }
-            if (minCapacity > maxStreamSize)
-            {
+            if (minCapacity > maxStreamSize) {
                 throw new MemoryLimitsAwareException(PdfException.DuringDecompressionSingleStreamOccupiedMoreMemoryThanAllowed
                     );
             }
             // calculate new capacity
             int oldCapacity = this.GetBuffer().Length;
             int newCapacity = oldCapacity << 1;
-            if (newCapacity < 0 || newCapacity - minCapacity < 0)
-            {
+            if (newCapacity < 0 || newCapacity - minCapacity < 0) {
                 // overflow
                 newCapacity = minCapacity;
             }
-            if (newCapacity - maxStreamSize > 0)
-            {
+            if (newCapacity - maxStreamSize > 0) {
                 newCapacity = maxStreamSize;
                 this.Capacity = newCapacity;
             }

@@ -65,21 +65,18 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace iText.IO.Util
-{
+namespace iText.IO.Util {
 
     /**
     * Translates a IANA encoding name to a Java encoding.
     */
 
-    public class IanaEncodings
-    {
+    public class IanaEncodings {
 
-        /** The object that maps IANA to Java encodings. */
-        private static readonly Dictionary<string, int> map = new Dictionary<string, int>();
+	    /** The object that maps IANA to Java encodings. */
+        private static readonly Dictionary<string,int> map = new Dictionary<string,int>();
 
-        static IanaEncodings()
-        {
+        static IanaEncodings() {        
             // add IANA to .NET encoding mappings.
             map["CP037"] = 37;
             map["CSIBM037"] = 37;
@@ -522,9 +519,8 @@ namespace iText.IO.Util
             map["X-UNICODE-1-1-UTF-8"] = 65001;
             map["X-UNICODE-2-0-UTF-8"] = 65001;
         }
-
-        public static int GetEncodingNumber(string name)
-        {
+        
+        public static int GetEncodingNumber(string name) {
             name = name.ToUpperInvariant();
             if (map.ContainsKey(name))
                 return map[name];
@@ -532,8 +528,7 @@ namespace iText.IO.Util
                 return 0;
         }
 
-        public static Encoding GetEncodingEncoding(string name)
-        {
+        public static Encoding GetEncodingEncoding(string name) {
             String nameU = name.ToUpperInvariant();
             if (nameU.Equals("UNICODEBIGUNMARKED"))
                 return new UnicodeEncoding(true, false);
@@ -546,7 +541,7 @@ namespace iText.IO.Util
             Encoding enc;
             if (map.ContainsKey(nameU))
                 enc = EncodingUtil.GetEncoding(map[nameU], new EncoderReplacementFallback(""), new DecoderReplacementFallback());
-            else
+            else 
                 enc = EncodingUtil.GetEncoding(name, new EncoderReplacementFallback(""), new DecoderReplacementFallback());
             return enc;
         }

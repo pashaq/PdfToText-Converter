@@ -44,8 +44,7 @@ address: sales@itextpdf.com
 using System;
 using System.Text;
 
-namespace iText.Kernel.Numbering
-{
+namespace iText.Kernel.Numbering {
     /// <summary>
     /// This class is responsible for converting integer numbers to their
     /// Greek alphabet letter representations.
@@ -59,20 +58,17 @@ namespace iText.Kernel.Numbering
     /// need a font that has the obsolete Greek characters qoppa and sampi.
     /// So we use standard 24 letter Greek alphabet
     /// </remarks>
-    public class GreekAlphabetNumbering
-    {
+    public class GreekAlphabetNumbering {
         protected internal static readonly char[] ALPHABET_LOWERCASE;
 
         protected internal static readonly char[] ALPHABET_UPPERCASE;
 
         protected internal const int ALPHABET_LENGTH = 24;
 
-        static GreekAlphabetNumbering()
-        {
+        static GreekAlphabetNumbering() {
             ALPHABET_LOWERCASE = new char[ALPHABET_LENGTH];
             ALPHABET_UPPERCASE = new char[ALPHABET_LENGTH];
-            for (int i = 0; i < ALPHABET_LENGTH; i++)
-            {
+            for (int i = 0; i < ALPHABET_LENGTH; i++) {
                 ALPHABET_LOWERCASE[i] = (char)(945 + i + (i > 16 ? 1 : 0));
                 ALPHABET_UPPERCASE[i] = (char)(913 + i + (i > 16 ? 1 : 0));
             }
@@ -87,8 +83,7 @@ namespace iText.Kernel.Numbering
         /// </remarks>
         /// <param name="number">the number greater than zero to be converted</param>
         /// <returns>Greek alphabet lowercase string representation of an integer.</returns>
-        public static String ToGreekAlphabetNumberLowerCase(int number)
-        {
+        public static String ToGreekAlphabetNumberLowerCase(int number) {
             return AlphabetNumbering.ToAlphabetNumber(number, ALPHABET_LOWERCASE);
         }
 
@@ -101,8 +96,7 @@ namespace iText.Kernel.Numbering
         /// </remarks>
         /// <param name="number">the number greater than zero to be converted</param>
         /// <returns>Greek alphabet uppercase string representation of an integer.</returns>
-        public static String ToGreekAlphabetNumberUpperCase(int number)
-        {
+        public static String ToGreekAlphabetNumberUpperCase(int number) {
             return AlphabetNumbering.ToAlphabetNumber(number, ALPHABET_UPPERCASE);
         }
 
@@ -117,8 +111,7 @@ namespace iText.Kernel.Numbering
         /// <param name="number">the number greater than zero to be converted</param>
         /// <param name="upperCase">whether to use uppercase or lowercase alphabet</param>
         /// <returns>Greek alphabet string representation of an integer.</returns>
-        public static String ToGreekAlphabetNumber(int number, bool upperCase)
-        {
+        public static String ToGreekAlphabetNumber(int number, bool upperCase) {
             return ToGreekAlphabetNumber(number, upperCase, false);
         }
 
@@ -139,21 +132,17 @@ namespace iText.Kernel.Numbering
         /// <param name="symbolFont">if <c>true</c>, then the string representation will be returned ready to write it in Symbol font
         ///     </param>
         /// <returns>Greek alphabet string representation of an integer.</returns>
-        public static String ToGreekAlphabetNumber(int number, bool upperCase, bool symbolFont)
-        {
+        public static String ToGreekAlphabetNumber(int number, bool upperCase, bool symbolFont) {
             String result = upperCase ? ToGreekAlphabetNumberUpperCase(number) : ToGreekAlphabetNumberLowerCase(number
                 );
-            if (symbolFont)
-            {
+            if (symbolFont) {
                 StringBuilder symbolFontStr = new StringBuilder();
-                for (int i = 0; i < result.Length; i++)
-                {
+                for (int i = 0; i < result.Length; i++) {
                     symbolFontStr.Append(GetSymbolFontChar(result[i]));
                 }
                 return symbolFontStr.ToString();
             }
-            else
-            {
+            else {
                 return result;
             }
         }
@@ -162,308 +151,256 @@ namespace iText.Kernel.Numbering
         ///     </summary>
         /// <param name="unicodeChar">original unicode char</param>
         /// <returns>the corresponding symbol code in Symbol standard font</returns>
-        private static char GetSymbolFontChar(char unicodeChar)
-        {
-            switch (unicodeChar)
-            {
-                case (char)913:
-                    {
-                        // ALFA
-                        return 'A';
-                    }
+        private static char GetSymbolFontChar(char unicodeChar) {
+            switch (unicodeChar) {
+                case (char)913: {
+                    // ALFA
+                    return 'A';
+                }
 
-                case (char)914:
-                    {
-                        // BETA
-                        return 'B';
-                    }
+                case (char)914: {
+                    // BETA
+                    return 'B';
+                }
 
-                case (char)915:
-                    {
-                        // GAMMA
-                        return 'G';
-                    }
+                case (char)915: {
+                    // GAMMA
+                    return 'G';
+                }
 
-                case (char)916:
-                    {
-                        // DELTA
-                        return 'D';
-                    }
+                case (char)916: {
+                    // DELTA
+                    return 'D';
+                }
 
-                case (char)917:
-                    {
-                        // EPSILON
-                        return 'E';
-                    }
+                case (char)917: {
+                    // EPSILON
+                    return 'E';
+                }
 
-                case (char)918:
-                    {
-                        // ZETA
-                        return 'Z';
-                    }
+                case (char)918: {
+                    // ZETA
+                    return 'Z';
+                }
 
-                case (char)919:
-                    {
-                        // ETA
-                        return 'H';
-                    }
+                case (char)919: {
+                    // ETA
+                    return 'H';
+                }
 
-                case (char)920:
-                    {
-                        // THETA
-                        return 'Q';
-                    }
+                case (char)920: {
+                    // THETA
+                    return 'Q';
+                }
 
-                case (char)921:
-                    {
-                        // IOTA
-                        return 'I';
-                    }
+                case (char)921: {
+                    // IOTA
+                    return 'I';
+                }
 
-                case (char)922:
-                    {
-                        // KAPPA
-                        return 'K';
-                    }
+                case (char)922: {
+                    // KAPPA
+                    return 'K';
+                }
 
-                case (char)923:
-                    {
-                        // LAMBDA
-                        return 'L';
-                    }
+                case (char)923: {
+                    // LAMBDA
+                    return 'L';
+                }
 
-                case (char)924:
-                    {
-                        // MU
-                        return 'M';
-                    }
+                case (char)924: {
+                    // MU
+                    return 'M';
+                }
 
-                case (char)925:
-                    {
-                        // NU
-                        return 'N';
-                    }
+                case (char)925: {
+                    // NU
+                    return 'N';
+                }
 
-                case (char)926:
-                    {
-                        // XI
-                        return 'X';
-                    }
+                case (char)926: {
+                    // XI
+                    return 'X';
+                }
 
-                case (char)927:
-                    {
-                        // OMICRON
-                        return 'O';
-                    }
+                case (char)927: {
+                    // OMICRON
+                    return 'O';
+                }
 
-                case (char)928:
-                    {
-                        // PI
-                        return 'P';
-                    }
+                case (char)928: {
+                    // PI
+                    return 'P';
+                }
 
-                case (char)929:
-                    {
-                        // RHO
-                        return 'R';
-                    }
+                case (char)929: {
+                    // RHO
+                    return 'R';
+                }
 
-                case (char)931:
-                    {
-                        // SIGMA
-                        return 'S';
-                    }
+                case (char)931: {
+                    // SIGMA
+                    return 'S';
+                }
 
-                case (char)932:
-                    {
-                        // TAU
-                        return 'T';
-                    }
+                case (char)932: {
+                    // TAU
+                    return 'T';
+                }
 
-                case (char)933:
-                    {
-                        // UPSILON
-                        return 'U';
-                    }
+                case (char)933: {
+                    // UPSILON
+                    return 'U';
+                }
 
-                case (char)934:
-                    {
-                        // PHI
-                        return 'F';
-                    }
+                case (char)934: {
+                    // PHI
+                    return 'F';
+                }
 
-                case (char)935:
-                    {
-                        // CHI
-                        return 'C';
-                    }
+                case (char)935: {
+                    // CHI
+                    return 'C';
+                }
 
-                case (char)936:
-                    {
-                        // PSI
-                        return 'Y';
-                    }
+                case (char)936: {
+                    // PSI
+                    return 'Y';
+                }
 
-                case (char)937:
-                    {
-                        // OMEGA
-                        return 'W';
-                    }
+                case (char)937: {
+                    // OMEGA
+                    return 'W';
+                }
 
-                case (char)945:
-                    {
-                        // alfa
-                        return 'a';
-                    }
+                case (char)945: {
+                    // alfa
+                    return 'a';
+                }
 
-                case (char)946:
-                    {
-                        // beta
-                        return 'b';
-                    }
+                case (char)946: {
+                    // beta
+                    return 'b';
+                }
 
-                case (char)947:
-                    {
-                        // gamma
-                        return 'g';
-                    }
+                case (char)947: {
+                    // gamma
+                    return 'g';
+                }
 
-                case (char)948:
-                    {
-                        // delta
-                        return 'd';
-                    }
+                case (char)948: {
+                    // delta
+                    return 'd';
+                }
 
-                case (char)949:
-                    {
-                        // epsilon
-                        return 'e';
-                    }
+                case (char)949: {
+                    // epsilon
+                    return 'e';
+                }
 
-                case (char)950:
-                    {
-                        // zeta
-                        return 'z';
-                    }
+                case (char)950: {
+                    // zeta
+                    return 'z';
+                }
 
-                case (char)951:
-                    {
-                        // eta
-                        return 'h';
-                    }
+                case (char)951: {
+                    // eta
+                    return 'h';
+                }
 
-                case (char)952:
-                    {
-                        // theta
-                        return 'q';
-                    }
+                case (char)952: {
+                    // theta
+                    return 'q';
+                }
 
-                case (char)953:
-                    {
-                        // iota
-                        return 'i';
-                    }
+                case (char)953: {
+                    // iota
+                    return 'i';
+                }
 
-                case (char)954:
-                    {
-                        // kappa
-                        return 'k';
-                    }
+                case (char)954: {
+                    // kappa
+                    return 'k';
+                }
 
-                case (char)955:
-                    {
-                        // lambda
-                        return 'l';
-                    }
+                case (char)955: {
+                    // lambda
+                    return 'l';
+                }
 
-                case (char)956:
-                    {
-                        // mu
-                        return 'm';
-                    }
+                case (char)956: {
+                    // mu
+                    return 'm';
+                }
 
-                case (char)957:
-                    {
-                        // nu
-                        return 'n';
-                    }
+                case (char)957: {
+                    // nu
+                    return 'n';
+                }
 
-                case (char)958:
-                    {
-                        // xi
-                        return 'x';
-                    }
+                case (char)958: {
+                    // xi
+                    return 'x';
+                }
 
-                case (char)959:
-                    {
-                        // omicron
-                        return 'o';
-                    }
+                case (char)959: {
+                    // omicron
+                    return 'o';
+                }
 
-                case (char)960:
-                    {
-                        // pi
-                        return 'p';
-                    }
+                case (char)960: {
+                    // pi
+                    return 'p';
+                }
 
-                case (char)961:
-                    {
-                        // rho
-                        return 'r';
-                    }
+                case (char)961: {
+                    // rho
+                    return 'r';
+                }
 
-                case (char)962:
-                    {
-                        // sigma
-                        return 'V';
-                    }
+                case (char)962: {
+                    // sigma
+                    return 'V';
+                }
 
-                case (char)963:
-                    {
-                        // sigma
-                        return 's';
-                    }
+                case (char)963: {
+                    // sigma
+                    return 's';
+                }
 
-                case (char)964:
-                    {
-                        // tau
-                        return 't';
-                    }
+                case (char)964: {
+                    // tau
+                    return 't';
+                }
 
-                case (char)965:
-                    {
-                        // upsilon
-                        return 'u';
-                    }
+                case (char)965: {
+                    // upsilon
+                    return 'u';
+                }
 
-                case (char)966:
-                    {
-                        // phi
-                        return 'f';
-                    }
+                case (char)966: {
+                    // phi
+                    return 'f';
+                }
 
-                case (char)967:
-                    {
-                        // chi
-                        return 'c';
-                    }
+                case (char)967: {
+                    // chi
+                    return 'c';
+                }
 
-                case (char)968:
-                    {
-                        // psi
-                        return 'y';
-                    }
+                case (char)968: {
+                    // psi
+                    return 'y';
+                }
 
-                case (char)969:
-                    {
-                        // omega
-                        return 'w';
-                    }
+                case (char)969: {
+                    // omega
+                    return 'w';
+                }
 
-                default:
-                    {
-                        return ' ';
-                    }
+                default: {
+                    return ' ';
+                }
             }
         }
     }

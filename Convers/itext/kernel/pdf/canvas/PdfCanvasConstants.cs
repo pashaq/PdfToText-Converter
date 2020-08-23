@@ -41,13 +41,10 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-namespace iText.Kernel.Pdf.Canvas
-{
+namespace iText.Kernel.Pdf.Canvas {
     /// <summary>A container for constants defined in the PDF specification (ISO 32000-1).</summary>
-    public class PdfCanvasConstants
-    {
-        private PdfCanvasConstants()
-        {
+    public class PdfCanvasConstants {
+        private PdfCanvasConstants() {
         }
 
         // This private constructor will prevent the instantiation of this class
@@ -68,10 +65,8 @@ namespace iText.Kernel.Pdf.Canvas
         /// All documentation for this class is taken from ISO 32000-1, section 9.3.6
         /// "Text Rendering Mode".
         /// </remarks>
-        public sealed class TextRenderingMode
-        {
-            private TextRenderingMode()
-            {
+        public sealed class TextRenderingMode {
+            private TextRenderingMode() {
             }
 
             /// <summary>Fill text</summary>
@@ -109,10 +104,8 @@ namespace iText.Kernel.Pdf.Canvas
         /// All documentation for this class is taken from ISO 32000-1, section
         /// 8.4.3.3 "Line Cap Style".
         /// </remarks>
-        public class LineCapStyle
-        {
-            private LineCapStyle()
-            {
+        public class LineCapStyle {
+            private LineCapStyle() {
             }
 
             // This private constructor will prevent the instantiation of this class
@@ -148,10 +141,8 @@ namespace iText.Kernel.Pdf.Canvas
         /// All documentation for this class is taken from ISO 32000-1, section
         /// 8.4.3.4 "Line Join Style".
         /// </remarks>
-        public class LineJoinStyle
-        {
-            private LineJoinStyle()
-            {
+        public class LineJoinStyle {
+            private LineJoinStyle() {
             }
 
             // This private constructor will prevent the instantiation of this class
@@ -187,10 +178,8 @@ namespace iText.Kernel.Pdf.Canvas
             public const int BEVEL = 2;
         }
 
-        public class FillingRule
-        {
-            private FillingRule()
-            {
+        public class FillingRule {
+            private FillingRule() {
             }
 
             // This private constructor will prevent the instantiation of this class

@@ -41,10 +41,8 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-namespace iText.IO.Font.Otf
-{
-    public class GposValueRecord
-    {
+namespace iText.IO.Font.Otf {
+    public class GposValueRecord {
         public int XPlacement;
 
         public int YPlacement;

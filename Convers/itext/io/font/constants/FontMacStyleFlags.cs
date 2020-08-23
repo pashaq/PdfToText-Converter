@@ -40,18 +40,15 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-namespace iText.IO.Font.Constants
-{
+namespace iText.IO.Font.Constants {
     /// <summary>Represents Open Type head.macStyle bits.</summary>
     /// <remarks>
     /// Represents Open Type head.macStyle bits.
     /// <para />
     /// https://www.microsoft.com/typography/otspec/head.htm
     /// </remarks>
-    public sealed class FontMacStyleFlags
-    {
-        private FontMacStyleFlags()
-        {
+    public sealed class FontMacStyleFlags {
+        private FontMacStyleFlags() {
         }
 
         // Bit 0: Bold (if set to 1);

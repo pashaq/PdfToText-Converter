@@ -41,14 +41,13 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Util;
 using System.Collections.Generic;
+using iText.IO.Font.Otf;
+using iText.IO.Util;
 
-namespace iText.IO.Font.Otf.Lookuptype6
-{
+namespace iText.IO.Font.Otf.Lookuptype6 {
     /// <summary>Chaining Contextual Substitution Subtable: Class-based Chaining Context Glyph Substitution</summary>
-    public class SubTableLookup6Format2 : SubTableLookup6
-    {
+    public class SubTableLookup6Format2 : SubTableLookup6 {
         private ICollection<int> substCoverageGlyphIds;
 
         private IList<IList<ContextualSubstRule>> subClassSets;
@@ -61,31 +60,26 @@ namespace iText.IO.Font.Otf.Lookuptype6
 
         public SubTableLookup6Format2(OpenTypeFontTableReader openReader, int lookupFlag, ICollection<int> substCoverageGlyphIds
             , OtfClass backtrackClassDefinition, OtfClass inputClassDefinition, OtfClass lookaheadClassDefinition)
-            : base(openReader, lookupFlag)
-        {
+            : base(openReader, lookupFlag) {
             this.substCoverageGlyphIds = substCoverageGlyphIds;
             this.backtrackClassDefinition = backtrackClassDefinition;
             this.inputClassDefinition = inputClassDefinition;
             this.lookaheadClassDefinition = lookaheadClassDefinition;
         }
 
-        public virtual void SetSubClassSets(IList<IList<ContextualSubstRule>> subClassSets)
-        {
+        public virtual void SetSubClassSets(IList<IList<ContextualSubstRule>> subClassSets) {
             this.subClassSets = subClassSets;
         }
 
-        protected internal override IList<ContextualSubstRule> GetSetOfRulesForStartGlyph(int startId)
-        {
-            if (substCoverageGlyphIds.Contains(startId) && !openReader.IsSkip(startId, lookupFlag))
-            {
+        protected internal override IList<ContextualSubstRule> GetSetOfRulesForStartGlyph(int startId) {
+            if (substCoverageGlyphIds.Contains(startId) && !openReader.IsSkip(startId, lookupFlag)) {
                 int gClass = inputClassDefinition.GetOtfClass(startId);
                 return subClassSets[gClass];
             }
             return JavaCollectionsUtil.EmptyList<ContextualSubstRule>();
         }
 
-        public class SubstRuleFormat2 : ContextualSubstRule
-        {
+        public class SubstRuleFormat2 : ContextualSubstRule {
             // inputClassIds array omits the first class in the sequence,
             // the first class is defined by corresponding index of subClassSet array
             private int[] backtrackClassIds;
@@ -99,8 +93,7 @@ namespace iText.IO.Font.Otf.Lookuptype6
             private SubTableLookup6Format2 subTable;
 
             public SubstRuleFormat2(SubTableLookup6Format2 subTable, int[] backtrackClassIds, int[] inputClassIds, int
-                [] lookAheadClassIds, SubstLookupRecord[] substLookupRecords)
-            {
+                [] lookAheadClassIds, SubstLookupRecord[] substLookupRecords) {
                 this.subTable = subTable;
                 this.backtrackClassIds = backtrackClassIds;
                 this.inputClassIds = inputClassIds;
@@ -108,38 +101,31 @@ namespace iText.IO.Font.Otf.Lookuptype6
                 this.substLookupRecords = substLookupRecords;
             }
 
-            public override int GetContextLength()
-            {
+            public override int GetContextLength() {
                 return inputClassIds.Length + 1;
             }
 
-            public override int GetLookaheadContextLength()
-            {
+            public override int GetLookaheadContextLength() {
                 return lookAheadClassIds.Length;
             }
 
-            public override int GetBacktrackContextLength()
-            {
+            public override int GetBacktrackContextLength() {
                 return backtrackClassIds.Length;
             }
 
-            public override SubstLookupRecord[] GetSubstLookupRecords()
-            {
+            public override SubstLookupRecord[] GetSubstLookupRecords() {
                 return substLookupRecords;
             }
 
-            public override bool IsGlyphMatchesInput(int glyphId, int atIdx)
-            {
+            public override bool IsGlyphMatchesInput(int glyphId, int atIdx) {
                 return subTable.inputClassDefinition.GetOtfClass(glyphId) == inputClassIds[atIdx - 1];
             }
 
-            public override bool IsGlyphMatchesLookahead(int glyphId, int atIdx)
-            {
+            public override bool IsGlyphMatchesLookahead(int glyphId, int atIdx) {
                 return subTable.lookaheadClassDefinition.GetOtfClass(glyphId) == lookAheadClassIds[atIdx];
             }
 
-            public override bool IsGlyphMatchesBacktrack(int glyphId, int atIdx)
-            {
+            public override bool IsGlyphMatchesBacktrack(int glyphId, int atIdx) {
                 return subTable.backtrackClassDefinition.GetOtfClass(glyphId) == backtrackClassIds[atIdx];
             }
         }

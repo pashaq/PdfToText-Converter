@@ -43,14 +43,12 @@ address: sales@itextpdf.com
 */
 using iText.Kernel.Counter.Event;
 
-namespace iText.Kernel.Counter.Context
-{
+namespace iText.Kernel.Counter.Context {
     /// <summary>
     /// The fallback
     /// <see cref="IContext"/>
     /// </summary>
-    public class UnknownContext : IContext
-    {
+    public class UnknownContext : IContext {
         /// <summary>
         /// The
         /// <see cref="IContext"/>
@@ -67,13 +65,11 @@ namespace iText.Kernel.Counter.Context
 
         private readonly bool allowEvents;
 
-        public UnknownContext(bool allowEvents)
-        {
+        public UnknownContext(bool allowEvents) {
             this.allowEvents = allowEvents;
         }
 
-        public virtual bool Allow(IEvent @event)
-        {
+        public virtual bool Allow(IEvent @event) {
             return allowEvents;
         }
     }

@@ -41,12 +41,11 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
 using iText.Kernel.Counter.Context;
 using iText.Kernel.Counter.Event;
-using System;
 
-namespace iText.Kernel.Counter
-{
+namespace iText.Kernel.Counter {
     /// <summary>
     /// Class that can be extended if you want to count iText events, for example the number of documents
     /// that are being processed by iText.
@@ -58,8 +57,7 @@ namespace iText.Kernel.Counter
     /// Implementers may use this method to record actual system usage for licensing purposes
     /// (e.g. count the number of documents or the volume in bytes in the context of a SaaS license).
     /// </remarks>
-    public abstract class EventCounter
-    {
+    public abstract class EventCounter {
         internal readonly IContext fallback;
 
         /// <summary>
@@ -67,8 +65,7 @@ namespace iText.Kernel.Counter
         /// <see cref="iText.Kernel.Counter.Context.IContext"/>.
         /// </summary>
         public EventCounter()
-            : this(UnknownContext.PERMISSIVE)
-        {
+            : this(UnknownContext.PERMISSIVE) {
         }
 
         /// <summary>
@@ -80,10 +77,8 @@ namespace iText.Kernel.Counter
         /// <see cref="iText.Kernel.Counter.Context.IContext"/>
         /// that will be used in case the event context is unknown
         /// </param>
-        public EventCounter(IContext fallback)
-        {
-            if (fallback == null)
-            {
+        public EventCounter(IContext fallback) {
+            if (fallback == null) {
                 throw new ArgumentException("The fallback context in EventCounter constructor cannot be null");
             }
             this.fallback = fallback;

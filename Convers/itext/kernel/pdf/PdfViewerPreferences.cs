@@ -42,13 +42,11 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using System;
+using iText.Kernel;
 
-namespace iText.Kernel.Pdf
-{
-    public class PdfViewerPreferences : PdfObjectWrapper<PdfDictionary>
-    {
-        public enum PdfViewerPreferencesConstants
-        {
+namespace iText.Kernel.Pdf {
+    public class PdfViewerPreferences : PdfObjectWrapper<PdfDictionary> {
+        public enum PdfViewerPreferencesConstants {
             /// <summary>
             /// PageMode constant for
             /// <see cref="PdfName.NonFullScreenPageMode"/>.
@@ -170,13 +168,11 @@ namespace iText.Kernel.Pdf
         }
 
         public PdfViewerPreferences()
-            : this(new PdfDictionary())
-        {
+            : this(new PdfDictionary()) {
         }
 
         public PdfViewerPreferences(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
         /// <summary>This method sets HideToolBar flag to true or false</summary>
@@ -185,8 +181,7 @@ namespace iText.Kernel.Pdf
         /// current instance of
         /// <see cref="PdfViewerPreferences"/>
         /// </returns>
-        public virtual PdfViewerPreferences SetHideToolbar(bool hideToolbar)
-        {
+        public virtual PdfViewerPreferences SetHideToolbar(bool hideToolbar) {
             return Put(PdfName.HideToolbar, PdfBoolean.ValueOf(hideToolbar));
         }
 
@@ -196,8 +191,7 @@ namespace iText.Kernel.Pdf
         /// current instance of
         /// <see cref="PdfViewerPreferences"/>
         /// </returns>
-        public virtual PdfViewerPreferences SetHideMenubar(bool hideMenubar)
-        {
+        public virtual PdfViewerPreferences SetHideMenubar(bool hideMenubar) {
             return Put(PdfName.HideMenubar, PdfBoolean.ValueOf(hideMenubar));
         }
 
@@ -207,8 +201,7 @@ namespace iText.Kernel.Pdf
         /// current instance of
         /// <see cref="PdfViewerPreferences"/>
         /// </returns>
-        public virtual PdfViewerPreferences SetHideWindowUI(bool hideWindowUI)
-        {
+        public virtual PdfViewerPreferences SetHideWindowUI(bool hideWindowUI) {
             return Put(PdfName.HideWindowUI, PdfBoolean.ValueOf(hideWindowUI));
         }
 
@@ -218,8 +211,7 @@ namespace iText.Kernel.Pdf
         /// current instance of
         /// <see cref="PdfViewerPreferences"/>
         /// </returns>
-        public virtual PdfViewerPreferences SetFitWindow(bool fitWindow)
-        {
+        public virtual PdfViewerPreferences SetFitWindow(bool fitWindow) {
             return Put(PdfName.FitWindow, PdfBoolean.ValueOf(fitWindow));
         }
 
@@ -229,8 +221,7 @@ namespace iText.Kernel.Pdf
         /// current instance of
         /// <see cref="PdfViewerPreferences"/>
         /// </returns>
-        public virtual PdfViewerPreferences SetCenterWindow(bool centerWindow)
-        {
+        public virtual PdfViewerPreferences SetCenterWindow(bool centerWindow) {
             return Put(PdfName.CenterWindow, PdfBoolean.ValueOf(centerWindow));
         }
 
@@ -240,8 +231,7 @@ namespace iText.Kernel.Pdf
         /// current instance of
         /// <see cref="PdfViewerPreferences"/>
         /// </returns>
-        public virtual PdfViewerPreferences SetDisplayDocTitle(bool displayDocTitle)
-        {
+        public virtual PdfViewerPreferences SetDisplayDocTitle(bool displayDocTitle) {
             return Put(PdfName.DisplayDocTitle, PdfBoolean.ValueOf(displayDocTitle));
         }
 
@@ -256,38 +246,31 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfViewerPreferences"/>
         /// </returns>
         public virtual PdfViewerPreferences SetNonFullScreenPageMode(PdfViewerPreferences.PdfViewerPreferencesConstants
-             nonFullScreenPageMode)
-        {
-            switch (nonFullScreenPageMode)
-            {
-                case PdfViewerPreferences.PdfViewerPreferencesConstants.USE_NONE:
-                    {
-                        Put(PdfName.NonFullScreenPageMode, PdfName.UseNone);
-                        break;
-                    }
+             nonFullScreenPageMode) {
+            switch (nonFullScreenPageMode) {
+                case PdfViewerPreferences.PdfViewerPreferencesConstants.USE_NONE: {
+                    Put(PdfName.NonFullScreenPageMode, PdfName.UseNone);
+                    break;
+                }
 
-                case PdfViewerPreferences.PdfViewerPreferencesConstants.USE_OUTLINES:
-                    {
-                        Put(PdfName.NonFullScreenPageMode, PdfName.UseOutlines);
-                        break;
-                    }
+                case PdfViewerPreferences.PdfViewerPreferencesConstants.USE_OUTLINES: {
+                    Put(PdfName.NonFullScreenPageMode, PdfName.UseOutlines);
+                    break;
+                }
 
-                case PdfViewerPreferences.PdfViewerPreferencesConstants.USE_THUMBS:
-                    {
-                        Put(PdfName.NonFullScreenPageMode, PdfName.UseThumbs);
-                        break;
-                    }
+                case PdfViewerPreferences.PdfViewerPreferencesConstants.USE_THUMBS: {
+                    Put(PdfName.NonFullScreenPageMode, PdfName.UseThumbs);
+                    break;
+                }
 
-                case PdfViewerPreferences.PdfViewerPreferencesConstants.USE_OC:
-                    {
-                        Put(PdfName.NonFullScreenPageMode, PdfName.UseOC);
-                        break;
-                    }
+                case PdfViewerPreferences.PdfViewerPreferencesConstants.USE_OC: {
+                    Put(PdfName.NonFullScreenPageMode, PdfName.UseOC);
+                    break;
+                }
 
-                default:
-                    {
-                        break;
-                    }
+                default: {
+                    break;
+                }
             }
             return this;
         }
@@ -299,26 +282,21 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfViewerPreferences"/>
         /// </returns>
         public virtual PdfViewerPreferences SetDirection(PdfViewerPreferences.PdfViewerPreferencesConstants direction
-            )
-        {
-            switch (direction)
-            {
-                case PdfViewerPreferences.PdfViewerPreferencesConstants.LEFT_TO_RIGHT:
-                    {
-                        Put(PdfName.Direction, PdfName.L2R);
-                        break;
-                    }
+            ) {
+            switch (direction) {
+                case PdfViewerPreferences.PdfViewerPreferencesConstants.LEFT_TO_RIGHT: {
+                    Put(PdfName.Direction, PdfName.L2R);
+                    break;
+                }
 
-                case PdfViewerPreferences.PdfViewerPreferencesConstants.RIGHT_TO_LEFT:
-                    {
-                        Put(PdfName.Direction, PdfName.R2L);
-                        break;
-                    }
+                case PdfViewerPreferences.PdfViewerPreferencesConstants.RIGHT_TO_LEFT: {
+                    Put(PdfName.Direction, PdfName.R2L);
+                    break;
+                }
 
-                default:
-                    {
-                        break;
-                    }
+                default: {
+                    break;
+                }
             }
             return this;
         }
@@ -338,8 +316,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfViewerPreferences"/>
         /// </returns>
         public virtual PdfViewerPreferences SetViewArea(PdfViewerPreferences.PdfViewerPreferencesConstants pageBoundary
-            )
-        {
+            ) {
             return SetPageBoundary(PdfViewerPreferences.PdfViewerPreferencesConstants.VIEW_AREA, pageBoundary);
         }
 
@@ -358,8 +335,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfViewerPreferences"/>
         /// </returns>
         public virtual PdfViewerPreferences SetViewClip(PdfViewerPreferences.PdfViewerPreferencesConstants pageBoundary
-            )
-        {
+            ) {
             return SetPageBoundary(PdfViewerPreferences.PdfViewerPreferencesConstants.VIEW_CLIP, pageBoundary);
         }
 
@@ -378,8 +354,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfViewerPreferences"/>
         /// </returns>
         public virtual PdfViewerPreferences SetPrintArea(PdfViewerPreferences.PdfViewerPreferencesConstants pageBoundary
-            )
-        {
+            ) {
             return SetPageBoundary(PdfViewerPreferences.PdfViewerPreferencesConstants.PRINT_AREA, pageBoundary);
         }
 
@@ -398,8 +373,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfViewerPreferences"/>
         /// </returns>
         public virtual PdfViewerPreferences SetPrintClip(PdfViewerPreferences.PdfViewerPreferencesConstants pageBoundary
-            )
-        {
+            ) {
             return SetPageBoundary(PdfViewerPreferences.PdfViewerPreferencesConstants.PRINT_CLIP, pageBoundary);
         }
 
@@ -417,26 +391,21 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfViewerPreferences"/>
         /// </returns>
         public virtual PdfViewerPreferences SetPrintScaling(PdfViewerPreferences.PdfViewerPreferencesConstants printScaling
-            )
-        {
-            switch (printScaling)
-            {
-                case PdfViewerPreferences.PdfViewerPreferencesConstants.NONE:
-                    {
-                        Put(PdfName.PrintScaling, PdfName.None);
-                        break;
-                    }
+            ) {
+            switch (printScaling) {
+                case PdfViewerPreferences.PdfViewerPreferencesConstants.NONE: {
+                    Put(PdfName.PrintScaling, PdfName.None);
+                    break;
+                }
 
-                case PdfViewerPreferences.PdfViewerPreferencesConstants.APP_DEFAULT:
-                    {
-                        Put(PdfName.PrintScaling, PdfName.AppDefault);
-                        break;
-                    }
+                case PdfViewerPreferences.PdfViewerPreferencesConstants.APP_DEFAULT: {
+                    Put(PdfName.PrintScaling, PdfName.AppDefault);
+                    break;
+                }
 
-                default:
-                    {
-                        break;
-                    }
+                default: {
+                    break;
+                }
             }
             return this;
         }
@@ -452,32 +421,26 @@ namespace iText.Kernel.Pdf
         /// current instance of
         /// <see cref="PdfViewerPreferences"/>
         /// </returns>
-        public virtual PdfViewerPreferences SetDuplex(PdfViewerPreferences.PdfViewerPreferencesConstants duplex)
-        {
-            switch (duplex)
-            {
-                case PdfViewerPreferences.PdfViewerPreferencesConstants.SIMPLEX:
-                    {
-                        Put(PdfName.Duplex, PdfName.Simplex);
-                        break;
-                    }
+        public virtual PdfViewerPreferences SetDuplex(PdfViewerPreferences.PdfViewerPreferencesConstants duplex) {
+            switch (duplex) {
+                case PdfViewerPreferences.PdfViewerPreferencesConstants.SIMPLEX: {
+                    Put(PdfName.Duplex, PdfName.Simplex);
+                    break;
+                }
 
-                case PdfViewerPreferences.PdfViewerPreferencesConstants.DUPLEX_FLIP_SHORT_EDGE:
-                    {
-                        Put(PdfName.Duplex, PdfName.DuplexFlipShortEdge);
-                        break;
-                    }
+                case PdfViewerPreferences.PdfViewerPreferencesConstants.DUPLEX_FLIP_SHORT_EDGE: {
+                    Put(PdfName.Duplex, PdfName.DuplexFlipShortEdge);
+                    break;
+                }
 
-                case PdfViewerPreferences.PdfViewerPreferencesConstants.DUPLEX_FLIP_LONG_EDGE:
-                    {
-                        Put(PdfName.Duplex, PdfName.DuplexFlipLongEdge);
-                        break;
-                    }
+                case PdfViewerPreferences.PdfViewerPreferencesConstants.DUPLEX_FLIP_LONG_EDGE: {
+                    Put(PdfName.Duplex, PdfName.DuplexFlipLongEdge);
+                    break;
+                }
 
-                default:
-                    {
-                        break;
-                    }
+                default: {
+                    break;
+                }
             }
             return this;
         }
@@ -488,8 +451,7 @@ namespace iText.Kernel.Pdf
         /// current instance of
         /// <see cref="PdfViewerPreferences"/>
         /// </returns>
-        public virtual PdfViewerPreferences SetPickTrayByPDFSize(bool pickTrayByPdfSize)
-        {
+        public virtual PdfViewerPreferences SetPickTrayByPDFSize(bool pickTrayByPdfSize) {
             return Put(PdfName.PickTrayByPDFSize, PdfBoolean.ValueOf(pickTrayByPdfSize));
         }
 
@@ -500,8 +462,7 @@ namespace iText.Kernel.Pdf
         /// current instance of
         /// <see cref="PdfViewerPreferences"/>
         /// </returns>
-        public virtual PdfViewerPreferences SetPrintPageRange(int[] printPageRange)
-        {
+        public virtual PdfViewerPreferences SetPrintPageRange(int[] printPageRange) {
             return Put(PdfName.PrintPageRange, new PdfArray(printPageRange));
         }
 
@@ -512,8 +473,7 @@ namespace iText.Kernel.Pdf
         /// current instance of
         /// <see cref="PdfViewerPreferences"/>
         /// </returns>
-        public virtual PdfViewerPreferences SetNumCopies(int numCopies)
-        {
+        public virtual PdfViewerPreferences SetNumCopies(int numCopies) {
             return Put(PdfName.NumCopies, new PdfNumber(numCopies));
         }
 
@@ -529,24 +489,18 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfViewerPreferences"/>
         /// instance
         /// </returns>
-        public virtual PdfViewerPreferences SetEnforce(PdfArray enforce)
-        {
-            for (int i = 0; i < enforce.Size(); i++)
-            {
+        public virtual PdfViewerPreferences SetEnforce(PdfArray enforce) {
+            for (int i = 0; i < enforce.Size(); i++) {
                 PdfName curEnforce = enforce.GetAsName(i);
-                if (curEnforce == null)
-                {
+                if (curEnforce == null) {
                     throw new ArgumentException("Enforce array shall contain PdfName entries");
                 }
-                else
-                {
-                    if (PdfName.PrintScaling.Equals(curEnforce))
-                    {
+                else {
+                    if (PdfName.PrintScaling.Equals(curEnforce)) {
                         // This name may appear in the Enforce array only if the corresponding entry in
                         // the viewer preferences dictionary specifies a valid value other than AppDefault
                         PdfName curPrintScaling = GetPdfObject().GetAsName(PdfName.PrintScaling);
-                        if (curPrintScaling == null || PdfName.AppDefault.Equals(curPrintScaling))
-                        {
+                        if (curPrintScaling == null || PdfName.AppDefault.Equals(curPrintScaling)) {
                             throw new PdfException(PdfException.PrintScalingEnforceEntryInvalid);
                         }
                     }
@@ -562,96 +516,78 @@ namespace iText.Kernel.Pdf
         /// subsequent selections in the application user interface
         /// </remarks>
         /// <returns>array of names specifying settings to enforce in the PDF processors</returns>
-        public virtual PdfArray GetEnforce()
-        {
+        public virtual PdfArray GetEnforce() {
             return GetPdfObject().GetAsArray(PdfName.Enforce);
         }
 
-        public virtual PdfViewerPreferences Put(PdfName key, PdfObject value)
-        {
+        public virtual PdfViewerPreferences Put(PdfName key, PdfObject value) {
             GetPdfObject().Put(key, value);
             SetModified();
             return this;
         }
 
-        protected internal override bool IsWrappedObjectMustBeIndirect()
-        {
+        protected internal override bool IsWrappedObjectMustBeIndirect() {
             return false;
         }
 
         private PdfViewerPreferences SetPageBoundary(PdfViewerPreferences.PdfViewerPreferencesConstants viewerPreferenceType
-            , PdfViewerPreferences.PdfViewerPreferencesConstants pageBoundary)
-        {
+            , PdfViewerPreferences.PdfViewerPreferencesConstants pageBoundary) {
             PdfName type = null;
-            switch (viewerPreferenceType)
-            {
-                case PdfViewerPreferences.PdfViewerPreferencesConstants.VIEW_AREA:
-                    {
-                        type = PdfName.ViewArea;
-                        break;
-                    }
+            switch (viewerPreferenceType) {
+                case PdfViewerPreferences.PdfViewerPreferencesConstants.VIEW_AREA: {
+                    type = PdfName.ViewArea;
+                    break;
+                }
 
-                case PdfViewerPreferences.PdfViewerPreferencesConstants.VIEW_CLIP:
-                    {
-                        type = PdfName.ViewClip;
-                        break;
-                    }
+                case PdfViewerPreferences.PdfViewerPreferencesConstants.VIEW_CLIP: {
+                    type = PdfName.ViewClip;
+                    break;
+                }
 
-                case PdfViewerPreferences.PdfViewerPreferencesConstants.PRINT_AREA:
-                    {
-                        type = PdfName.PrintArea;
-                        break;
-                    }
+                case PdfViewerPreferences.PdfViewerPreferencesConstants.PRINT_AREA: {
+                    type = PdfName.PrintArea;
+                    break;
+                }
 
-                case PdfViewerPreferences.PdfViewerPreferencesConstants.PRINT_CLIP:
-                    {
-                        type = PdfName.PrintClip;
-                        break;
-                    }
+                case PdfViewerPreferences.PdfViewerPreferencesConstants.PRINT_CLIP: {
+                    type = PdfName.PrintClip;
+                    break;
+                }
 
-                default:
-                    {
-                        break;
-                    }
+                default: {
+                    break;
+                }
             }
-            if (type != null)
-            {
-                switch (pageBoundary)
-                {
-                    case PdfViewerPreferences.PdfViewerPreferencesConstants.MEDIA_BOX:
-                        {
-                            Put(type, PdfName.MediaBox);
-                            break;
-                        }
+            if (type != null) {
+                switch (pageBoundary) {
+                    case PdfViewerPreferences.PdfViewerPreferencesConstants.MEDIA_BOX: {
+                        Put(type, PdfName.MediaBox);
+                        break;
+                    }
 
-                    case PdfViewerPreferences.PdfViewerPreferencesConstants.CROP_BOX:
-                        {
-                            Put(type, PdfName.CropBox);
-                            break;
-                        }
+                    case PdfViewerPreferences.PdfViewerPreferencesConstants.CROP_BOX: {
+                        Put(type, PdfName.CropBox);
+                        break;
+                    }
 
-                    case PdfViewerPreferences.PdfViewerPreferencesConstants.BLEED_BOX:
-                        {
-                            Put(type, PdfName.BleedBox);
-                            break;
-                        }
+                    case PdfViewerPreferences.PdfViewerPreferencesConstants.BLEED_BOX: {
+                        Put(type, PdfName.BleedBox);
+                        break;
+                    }
 
-                    case PdfViewerPreferences.PdfViewerPreferencesConstants.TRIM_BOX:
-                        {
-                            Put(type, PdfName.TrimBox);
-                            break;
-                        }
+                    case PdfViewerPreferences.PdfViewerPreferencesConstants.TRIM_BOX: {
+                        Put(type, PdfName.TrimBox);
+                        break;
+                    }
 
-                    case PdfViewerPreferences.PdfViewerPreferencesConstants.ART_BOX:
-                        {
-                            Put(type, PdfName.ArtBox);
-                            break;
-                        }
+                    case PdfViewerPreferences.PdfViewerPreferencesConstants.ART_BOX: {
+                        Put(type, PdfName.ArtBox);
+                        break;
+                    }
 
-                    default:
-                        {
-                            break;
-                        }
+                    default: {
+                        break;
+                    }
                 }
             }
             return this;

@@ -41,23 +41,22 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
 using Common.Logging;
 using iText.IO.Font;
 using iText.Kernel.Colors;
 using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Filespec;
 using iText.Kernel.Pdf.Layer;
-using System;
 
-namespace iText.Kernel.Pdf.Annot
-{
+namespace iText.Kernel.Pdf.Annot {
     /// <summary>This is a super class for the annotation dictionary wrappers.</summary>
     /// <remarks>
     /// This is a super class for the annotation dictionary wrappers. Derived classes represent
     /// different standard types of annotations. See ISO-320001 12.5.6, "Annotation Types."
     /// </remarks>
-    public abstract class PdfAnnotation : PdfObjectWrapper<PdfDictionary>
-    {
+    public abstract class PdfAnnotation : PdfObjectWrapper<PdfDictionary> {
         /// <summary>Annotation flag.</summary>
         /// <remarks>
         /// Annotation flag.
@@ -307,150 +306,103 @@ namespace iText.Kernel.Pdf.Annot
         /// created
         /// <see cref="PdfAnnotation"/>.
         /// </returns>
-        public static iText.Kernel.Pdf.Annot.PdfAnnotation MakeAnnotation(PdfObject pdfObject)
-        {
+        public static iText.Kernel.Pdf.Annot.PdfAnnotation MakeAnnotation(PdfObject pdfObject) {
             iText.Kernel.Pdf.Annot.PdfAnnotation annotation = null;
-            if (pdfObject.IsIndirectReference())
-            {
+            if (pdfObject.IsIndirectReference()) {
                 pdfObject = ((PdfIndirectReference)pdfObject).GetRefersTo();
             }
-            if (pdfObject.IsDictionary())
-            {
+            if (pdfObject.IsDictionary()) {
                 PdfDictionary dictionary = (PdfDictionary)pdfObject;
                 PdfName subtype = dictionary.GetAsName(PdfName.Subtype);
-                if (PdfName.Link.Equals(subtype))
-                {
+                if (PdfName.Link.Equals(subtype)) {
                     annotation = new PdfLinkAnnotation((PdfDictionary)pdfObject);
                 }
-                else
-                {
-                    if (PdfName.Popup.Equals(subtype))
-                    {
+                else {
+                    if (PdfName.Popup.Equals(subtype)) {
                         annotation = new PdfPopupAnnotation((PdfDictionary)pdfObject);
                     }
-                    else
-                    {
-                        if (PdfName.Widget.Equals(subtype))
-                        {
+                    else {
+                        if (PdfName.Widget.Equals(subtype)) {
                             annotation = new PdfWidgetAnnotation((PdfDictionary)pdfObject);
                         }
-                        else
-                        {
-                            if (PdfName.Screen.Equals(subtype))
-                            {
+                        else {
+                            if (PdfName.Screen.Equals(subtype)) {
                                 annotation = new PdfScreenAnnotation((PdfDictionary)pdfObject);
                             }
-                            else
-                            {
-                                if (PdfName._3D.Equals(subtype))
-                                {
+                            else {
+                                if (PdfName._3D.Equals(subtype)) {
                                     annotation = new Pdf3DAnnotation((PdfDictionary)pdfObject);
                                 }
-                                else
-                                {
+                                else {
                                     if (PdfName.Highlight.Equals(subtype) || PdfName.Underline.Equals(subtype) || PdfName.Squiggly.Equals(subtype
-                                        ) || PdfName.StrikeOut.Equals(subtype))
-                                    {
+                                        ) || PdfName.StrikeOut.Equals(subtype)) {
                                         annotation = new PdfTextMarkupAnnotation((PdfDictionary)pdfObject);
                                     }
-                                    else
-                                    {
-                                        if (PdfName.Caret.Equals(subtype))
-                                        {
+                                    else {
+                                        if (PdfName.Caret.Equals(subtype)) {
                                             annotation = new PdfCaretAnnotation((PdfDictionary)pdfObject);
                                         }
-                                        else
-                                        {
-                                            if (PdfName.Text.Equals(subtype))
-                                            {
+                                        else {
+                                            if (PdfName.Text.Equals(subtype)) {
                                                 annotation = new PdfTextAnnotation((PdfDictionary)pdfObject);
                                             }
-                                            else
-                                            {
-                                                if (PdfName.Sound.Equals(subtype))
-                                                {
+                                            else {
+                                                if (PdfName.Sound.Equals(subtype)) {
                                                     annotation = new PdfSoundAnnotation((PdfDictionary)pdfObject);
                                                 }
-                                                else
-                                                {
-                                                    if (PdfName.Stamp.Equals(subtype))
-                                                    {
+                                                else {
+                                                    if (PdfName.Stamp.Equals(subtype)) {
                                                         annotation = new PdfStampAnnotation((PdfDictionary)pdfObject);
                                                     }
-                                                    else
-                                                    {
-                                                        if (PdfName.FileAttachment.Equals(subtype))
-                                                        {
+                                                    else {
+                                                        if (PdfName.FileAttachment.Equals(subtype)) {
                                                             annotation = new PdfFileAttachmentAnnotation((PdfDictionary)pdfObject);
                                                         }
-                                                        else
-                                                        {
-                                                            if (PdfName.Ink.Equals(subtype))
-                                                            {
+                                                        else {
+                                                            if (PdfName.Ink.Equals(subtype)) {
                                                                 annotation = new PdfInkAnnotation((PdfDictionary)pdfObject);
                                                             }
-                                                            else
-                                                            {
-                                                                if (PdfName.PrinterMark.Equals(subtype))
-                                                                {
+                                                            else {
+                                                                if (PdfName.PrinterMark.Equals(subtype)) {
                                                                     annotation = new PdfPrinterMarkAnnotation((PdfDictionary)pdfObject);
                                                                 }
-                                                                else
-                                                                {
-                                                                    if (PdfName.TrapNet.Equals(subtype))
-                                                                    {
+                                                                else {
+                                                                    if (PdfName.TrapNet.Equals(subtype)) {
                                                                         annotation = new PdfTrapNetworkAnnotation((PdfDictionary)pdfObject);
                                                                     }
-                                                                    else
-                                                                    {
-                                                                        if (PdfName.FreeText.Equals(subtype))
-                                                                        {
+                                                                    else {
+                                                                        if (PdfName.FreeText.Equals(subtype)) {
                                                                             annotation = new PdfFreeTextAnnotation((PdfDictionary)pdfObject);
                                                                         }
-                                                                        else
-                                                                        {
-                                                                            if (PdfName.Square.Equals(subtype))
-                                                                            {
+                                                                        else {
+                                                                            if (PdfName.Square.Equals(subtype)) {
                                                                                 annotation = new PdfSquareAnnotation((PdfDictionary)pdfObject);
                                                                             }
-                                                                            else
-                                                                            {
-                                                                                if (PdfName.Circle.Equals(subtype))
-                                                                                {
+                                                                            else {
+                                                                                if (PdfName.Circle.Equals(subtype)) {
                                                                                     annotation = new PdfCircleAnnotation((PdfDictionary)pdfObject);
                                                                                 }
-                                                                                else
-                                                                                {
-                                                                                    if (PdfName.Line.Equals(subtype))
-                                                                                    {
+                                                                                else {
+                                                                                    if (PdfName.Line.Equals(subtype)) {
                                                                                         annotation = new PdfLineAnnotation((PdfDictionary)pdfObject);
                                                                                     }
-                                                                                    else
-                                                                                    {
-                                                                                        if (PdfName.Polygon.Equals(subtype))
-                                                                                        {
+                                                                                    else {
+                                                                                        if (PdfName.Polygon.Equals(subtype)) {
                                                                                             annotation = new PdfPolygonAnnotation((PdfDictionary)pdfObject);
                                                                                         }
-                                                                                        else
-                                                                                        {
-                                                                                            if (PdfName.PolyLine.Equals(subtype))
-                                                                                            {
+                                                                                        else {
+                                                                                            if (PdfName.PolyLine.Equals(subtype)) {
                                                                                                 annotation = new PdfPolylineAnnotation((PdfDictionary)pdfObject);
                                                                                             }
-                                                                                            else
-                                                                                            {
-                                                                                                if (PdfName.Redact.Equals(subtype))
-                                                                                                {
+                                                                                            else {
+                                                                                                if (PdfName.Redact.Equals(subtype)) {
                                                                                                     annotation = new PdfRedactAnnotation((PdfDictionary)pdfObject);
                                                                                                 }
-                                                                                                else
-                                                                                                {
-                                                                                                    if (PdfName.Watermark.Equals(subtype))
-                                                                                                    {
+                                                                                                else {
+                                                                                                    if (PdfName.Watermark.Equals(subtype)) {
                                                                                                         annotation = new PdfWatermarkAnnotation((PdfDictionary)pdfObject);
                                                                                                     }
-                                                                                                    else
-                                                                                                    {
+                                                                                                    else {
                                                                                                         annotation = new PdfAnnotation.PdfUnknownAnnotation((PdfDictionary)pdfObject);
                                                                                                     }
                                                                                                 }
@@ -479,15 +431,13 @@ namespace iText.Kernel.Pdf.Annot
         }
 
         protected internal PdfAnnotation(Rectangle rect)
-            : this(new PdfDictionary())
-        {
+            : this(new PdfDictionary()) {
             Put(PdfName.Rect, new PdfArray(rect));
             Put(PdfName.Subtype, GetSubtype());
         }
 
         protected internal PdfAnnotation(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
             MarkObjectAsIndirect(GetPdfObject());
         }
 
@@ -507,8 +457,7 @@ namespace iText.Kernel.Pdf.Annot
 
         /// <summary>Sets the layer this annotation belongs to.</summary>
         /// <param name="layer">the layer this annotation belongs to</param>
-        public virtual void SetLayer(IPdfOCG layer)
-        {
+        public virtual void SetLayer(IPdfOCG layer) {
             GetPdfObject().Put(PdfName.OC, layer.GetIndirectReference());
         }
 
@@ -517,8 +466,7 @@ namespace iText.Kernel.Pdf.Annot
         /// an alternate description of the annotation’s contents in human-readable form.
         /// </summary>
         /// <returns>annotation text content.</returns>
-        public virtual PdfString GetContents()
-        {
+        public virtual PdfString GetContents() {
             return GetPdfObject().GetAsString(PdfName.Contents);
         }
 
@@ -536,8 +484,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetContents(PdfString contents)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetContents(PdfString contents) {
             return Put(PdfName.Contents, contents);
         }
 
@@ -555,8 +502,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetContents(String contents)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetContents(String contents) {
             return SetContents(new PdfString(contents, PdfEncodings.UNICODE_BIG));
         }
 
@@ -571,8 +517,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfDictionary"/>
         /// that is a page pdf object or null if annotation is not added to the page yet.
         /// </returns>
-        public virtual PdfDictionary GetPageObject()
-        {
+        public virtual PdfDictionary GetPageObject() {
             return GetPdfObject().GetAsDictionary(PdfName.P);
         }
 
@@ -586,28 +531,20 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfPage"/>
         /// on which annotation is placed or null if annotation is not placed yet.
         /// </returns>
-        public virtual PdfPage GetPage()
-        {
+        public virtual PdfPage GetPage() {
             PdfIndirectReference annotationIndirectReference;
-            if (page == null && (annotationIndirectReference = GetPdfObject().GetIndirectReference()) != null)
-            {
+            if (page == null && (annotationIndirectReference = GetPdfObject().GetIndirectReference()) != null) {
                 PdfDocument doc = annotationIndirectReference.GetDocument();
                 PdfDictionary pageDictionary = GetPageObject();
-                if (pageDictionary != null)
-                {
+                if (pageDictionary != null) {
                     page = doc.GetPage(pageDictionary);
                 }
-                else
-                {
-                    for (int i = 1; i <= doc.GetNumberOfPages(); i++)
-                    {
+                else {
+                    for (int i = 1; i <= doc.GetNumberOfPages(); i++) {
                         PdfPage docPage = doc.GetPage(i);
-                        if (!docPage.IsFlushed())
-                        {
-                            foreach (iText.Kernel.Pdf.Annot.PdfAnnotation annot in docPage.GetAnnotations())
-                            {
-                                if (annotationIndirectReference.Equals(annot.GetPdfObject().GetIndirectReference()))
-                                {
+                        if (!docPage.IsFlushed()) {
+                            foreach (iText.Kernel.Pdf.Annot.PdfAnnotation annot in docPage.GetAnnotations()) {
+                                if (annotationIndirectReference.Equals(annot.GetPdfObject().GetIndirectReference())) {
                                     page = docPage;
                                     break;
                                 }
@@ -637,8 +574,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetPage(PdfPage page)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetPage(PdfPage page) {
             this.page = page;
             // Explicitly using object indirect reference here in order to correctly process released objects.
             return Put(PdfName.P, page.GetPdfObject().GetIndirectReference());
@@ -654,8 +590,7 @@ namespace iText.Kernel.Pdf.Annot
         /// with annotation name as it's value or null if name
         /// is not specified.
         /// </returns>
-        public virtual PdfString GetName()
-        {
+        public virtual PdfString GetName() {
             return GetPdfObject().GetAsString(PdfName.NM);
         }
 
@@ -673,8 +608,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetName(PdfString name)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetName(PdfString name) {
             return Put(PdfName.NM, name);
         }
 
@@ -688,8 +622,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfString"/>
         /// with the modification date as it's value or null if date is not specified.
         /// </returns>
-        public virtual PdfString GetDate()
-        {
+        public virtual PdfString GetDate() {
             return GetPdfObject().GetAsString(PdfName.M);
         }
 
@@ -705,8 +638,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetDate(PdfString date)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetDate(PdfString date) {
             return Put(PdfName.M, date);
         }
 
@@ -719,15 +651,12 @@ namespace iText.Kernel.Pdf.Annot
         /// Default value: 0.
         /// </remarks>
         /// <returns>an integer interpreted as one-bit flags specifying various characteristics of the annotation.</returns>
-        public virtual int GetFlags()
-        {
+        public virtual int GetFlags() {
             PdfNumber f = GetPdfObject().GetAsNumber(PdfName.F);
-            if (f != null)
-            {
+            if (f != null) {
                 return f.IntValue();
             }
-            else
-            {
+            else {
                 return 0;
             }
         }
@@ -748,8 +677,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetFlags(int flags)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetFlags(int flags) {
             return Put(PdfName.F, new PdfNumber(flags));
         }
 
@@ -828,8 +756,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetFlag(int flag)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetFlag(int flag) {
             int flags = GetFlags();
             flags = flags | flag;
             return SetFlags(flags);
@@ -843,8 +770,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation ResetFlag(int flag)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation ResetFlag(int flag) {
             int flags = GetFlags();
             flags = flags & ~flag;
             return SetFlags(flags);
@@ -865,14 +791,11 @@ namespace iText.Kernel.Pdf.Annot
         /// exception is thrown.
         /// </param>
         /// <returns>true if the given flag is in enabled state.</returns>
-        public virtual bool HasFlag(int flag)
-        {
-            if (flag == 0)
-            {
+        public virtual bool HasFlag(int flag) {
+            if (flag == 0) {
                 return false;
             }
-            if ((flag & flag - 1) != 0)
-            {
+            if ((flag & flag - 1) != 0) {
                 throw new ArgumentException("Only one flag must be checked at once.");
             }
             int flags = GetFlags();
@@ -893,8 +816,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfDictionary"/>
         /// or null if it is not specified.
         /// </returns>
-        public virtual PdfDictionary GetAppearanceDictionary()
-        {
+        public virtual PdfDictionary GetAppearanceDictionary() {
             return GetPdfObject().GetAsDictionary(PdfName.AP);
         }
 
@@ -918,14 +840,11 @@ namespace iText.Kernel.Pdf.Annot
         /// null if their is no such appearance type or an appearance object which might be either
         /// an appearance stream or an appearance subdictionary.
         /// </returns>
-        public virtual PdfDictionary GetAppearanceObject(PdfName appearanceType)
-        {
+        public virtual PdfDictionary GetAppearanceObject(PdfName appearanceType) {
             PdfDictionary ap = GetAppearanceDictionary();
-            if (ap != null)
-            {
+            if (ap != null) {
                 PdfObject apObject = ap.Get(appearanceType);
-                if (apObject is PdfDictionary)
-                {
+                if (apObject is PdfDictionary) {
                     return (PdfDictionary)apObject;
                 }
             }
@@ -940,8 +859,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="GetAppearanceObject(iText.Kernel.Pdf.PdfName)"/>.
         /// </remarks>
         /// <returns>an appearance object which might be either an appearance stream or an appearance subdictionary.</returns>
-        public virtual PdfDictionary GetNormalAppearanceObject()
-        {
+        public virtual PdfDictionary GetNormalAppearanceObject() {
             return GetAppearanceObject(PdfName.N);
         }
 
@@ -959,8 +877,7 @@ namespace iText.Kernel.Pdf.Annot
         /// null if rollover appearance is not specified or an appearance object which might be either
         /// an appearance stream or an appearance subdictionary.
         /// </returns>
-        public virtual PdfDictionary GetRolloverAppearanceObject()
-        {
+        public virtual PdfDictionary GetRolloverAppearanceObject() {
             return GetAppearanceObject(PdfName.R);
         }
 
@@ -976,8 +893,7 @@ namespace iText.Kernel.Pdf.Annot
         /// null if down appearance is not specified or an appearance object which might be either
         /// an appearance stream or an appearance subdictionary.
         /// </returns>
-        public virtual PdfDictionary GetDownAppearanceObject()
-        {
+        public virtual PdfDictionary GetDownAppearanceObject() {
             return GetAppearanceObject(PdfName.D);
         }
 
@@ -1007,11 +923,9 @@ namespace iText.Kernel.Pdf.Annot
         /// instance.
         /// </returns>
         public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetAppearance(PdfName appearanceType, PdfDictionary appearance
-            )
-        {
+            ) {
             PdfDictionary ap = GetAppearanceDictionary();
-            if (ap == null)
-            {
+            if (ap == null) {
                 ap = new PdfDictionary();
                 GetPdfObject().Put(PdfName.AP, ap);
             }
@@ -1034,8 +948,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetNormalAppearance(PdfDictionary appearance)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetNormalAppearance(PdfDictionary appearance) {
             return SetAppearance(PdfName.N, appearance);
         }
 
@@ -1054,8 +967,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetRolloverAppearance(PdfDictionary appearance)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetRolloverAppearance(PdfDictionary appearance) {
             return SetAppearance(PdfName.R, appearance);
         }
 
@@ -1074,8 +986,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetDownAppearance(PdfDictionary appearance)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetDownAppearance(PdfDictionary appearance) {
             return SetAppearance(PdfName.D, appearance);
         }
 
@@ -1114,8 +1025,7 @@ namespace iText.Kernel.Pdf.Annot
         /// instance.
         /// </returns>
         public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetAppearance(PdfName appearanceType, PdfAnnotationAppearance
-             appearance)
-        {
+             appearance) {
             return SetAppearance(appearanceType, appearance.GetPdfObject());
         }
 
@@ -1144,8 +1054,7 @@ namespace iText.Kernel.Pdf.Annot
         /// instance.
         /// </returns>
         public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetNormalAppearance(PdfAnnotationAppearance appearance
-            )
-        {
+            ) {
             return SetAppearance(PdfName.N, appearance);
         }
 
@@ -1174,8 +1083,7 @@ namespace iText.Kernel.Pdf.Annot
         /// instance.
         /// </returns>
         public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetRolloverAppearance(PdfAnnotationAppearance appearance
-            )
-        {
+            ) {
             return SetAppearance(PdfName.R, appearance);
         }
 
@@ -1203,8 +1111,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetDownAppearance(PdfAnnotationAppearance appearance)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetDownAppearance(PdfAnnotationAppearance appearance) {
             return SetAppearance(PdfName.D, appearance);
         }
 
@@ -1223,8 +1130,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfName"/>
         /// which defines selected appearance state.
         /// </returns>
-        public virtual PdfName GetAppearanceState()
-        {
+        public virtual PdfName GetAppearanceState() {
             return GetPdfObject().GetAsName(PdfName.AS);
         }
 
@@ -1248,8 +1154,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetAppearanceState(PdfName @as)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetAppearanceState(PdfName @as) {
             return Put(PdfName.AS, @as);
         }
 
@@ -1268,8 +1173,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfArray"/>
         /// specifying the characteristics of the annotation’s border.
         /// </returns>
-        public virtual PdfArray GetBorder()
-        {
+        public virtual PdfArray GetBorder() {
             return GetPdfObject().GetAsArray(PdfName.Border);
         }
 
@@ -1287,8 +1191,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetBorder(PdfAnnotationBorder border)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetBorder(PdfAnnotationBorder border) {
             return Put(PdfName.Border, border.GetPdfObject());
         }
 
@@ -1306,8 +1209,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetBorder(PdfArray border)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetBorder(PdfArray border) {
             return Put(PdfName.Border, border);
         }
 
@@ -1334,8 +1236,7 @@ namespace iText.Kernel.Pdf.Annot
         /// </list>
         /// </summary>
         /// <returns>An array of numbers in the range 0.0 to 1.0, representing an annotation colour.</returns>
-        public virtual PdfArray GetColorObject()
-        {
+        public virtual PdfArray GetColorObject() {
             return GetPdfObject().GetAsArray(PdfName.C);
         }
 
@@ -1353,8 +1254,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetColor(PdfArray color)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetColor(PdfArray color) {
             return Put(PdfName.C, color);
         }
 
@@ -1370,8 +1270,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetColor(float[] color)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetColor(float[] color) {
             return SetColor(new PdfArray(color));
         }
 
@@ -1397,8 +1296,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetColor(Color color)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetColor(Color color) {
             return SetColor(new PdfArray(color.GetColorValue()));
         }
 
@@ -1407,15 +1305,12 @@ namespace iText.Kernel.Pdf.Annot
         /// (see ISO-320001 14.7.4.4, "Finding Structure Elements from Content Items").
         /// </summary>
         /// <returns>integer key in structural parent tree or -1 if annotation is not tagged.</returns>
-        public virtual int GetStructParentIndex()
-        {
+        public virtual int GetStructParentIndex() {
             PdfNumber n = GetPdfObject().GetAsNumber(PdfName.StructParent);
-            if (n == null)
-            {
+            if (n == null) {
                 return -1;
             }
-            else
-            {
+            else {
                 return n.IntValue();
             }
         }
@@ -1439,8 +1334,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetStructParentIndex(int structParentIndex)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetStructParentIndex(int structParentIndex) {
             return Put(PdfName.StructParent, new PdfNumber(structParentIndex));
         }
 
@@ -1456,8 +1350,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetTitle(PdfString title)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetTitle(PdfString title) {
             return Put(PdfName.T, title);
         }
 
@@ -1472,8 +1365,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfString"/>
         /// which value is an annotation title or null if it isn't specified.
         /// </returns>
-        public virtual PdfString GetTitle()
-        {
+        public virtual PdfString GetTitle() {
             return GetPdfObject().GetAsString(PdfName.T);
         }
 
@@ -1490,8 +1382,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetRectangle(PdfArray array)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetRectangle(PdfArray array) {
             return Put(PdfName.Rect, array);
         }
 
@@ -1503,8 +1394,7 @@ namespace iText.Kernel.Pdf.Annot
         /// which specifies a rectangle by two diagonally opposite corners.
         /// Typically, the array is of form [llx lly urx ury].
         /// </returns>
-        public virtual PdfArray GetRectangle()
-        {
+        public virtual PdfArray GetRectangle() {
             return GetPdfObject().GetAsArray(PdfName.Rect);
         }
 
@@ -1515,8 +1405,7 @@ namespace iText.Kernel.Pdf.Annot
         /// other explicit language specifications
         /// </remarks>
         /// <returns>the lang entry</returns>
-        public virtual String GetLang()
-        {
+        public virtual String GetLang() {
             PdfString lang = GetPdfObject().GetAsString(PdfName.Lang);
             return lang != null ? lang.ToUnicodeString() : null;
         }
@@ -1533,16 +1422,14 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfAnnotation"/>
         /// instance
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetLang(String lang)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetLang(String lang) {
             return Put(PdfName.Lang, new PdfString(lang, PdfEncodings.UNICODE_BIG));
         }
 
         /// <summary>PDF 2.0.</summary>
         /// <remarks>PDF 2.0. The blend mode that shall be used when painting the annotation onto the page</remarks>
         /// <returns>the blend mode</returns>
-        public virtual PdfName GetBlendMode()
-        {
+        public virtual PdfName GetBlendMode() {
             return GetPdfObject().GetAsName(PdfName.BM);
         }
 
@@ -1554,8 +1441,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfAnnotation"/>
         /// instance
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetBlendMode(PdfName blendMode)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetBlendMode(PdfName blendMode) {
             return Put(PdfName.BM, blendMode);
         }
 
@@ -1568,8 +1454,7 @@ namespace iText.Kernel.Pdf.Annot
         /// opened.
         /// </remarks>
         /// <returns>opacity value for nonstroking operations. Returns 1.0 (default value) if entry is not present</returns>
-        public virtual float GetNonStrokingOpacity()
-        {
+        public virtual float GetNonStrokingOpacity() {
             PdfNumber nonStrokingOpacity = GetPdfObject().GetAsNumber(PdfName.ca);
             return nonStrokingOpacity != null ? nonStrokingOpacity.FloatValue() : 1;
         }
@@ -1588,8 +1473,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfAnnotation"/>
         /// instance
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetNonStrokingOpacity(float nonStrokingOpacity)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetNonStrokingOpacity(float nonStrokingOpacity) {
             return Put(PdfName.ca, new PdfNumber(nonStrokingOpacity));
         }
 
@@ -1601,8 +1485,7 @@ namespace iText.Kernel.Pdf.Annot
         /// not the popup window that appears when the annotation is opened.
         /// </remarks>
         /// <returns>opacity for stroking operations, including background and border</returns>
-        public virtual float GetStrokingOpacity()
-        {
+        public virtual float GetStrokingOpacity() {
             PdfNumber strokingOpacity = GetPdfObject().GetAsNumber(PdfName.CA);
             return strokingOpacity != null ? strokingOpacity.FloatValue() : 1;
         }
@@ -1620,8 +1503,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfAnnotation"/>
         /// object
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetStrokingOpacity(float strokingOpacity)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation SetStrokingOpacity(float strokingOpacity) {
             return Put(PdfName.CA, new PdfNumber(strokingOpacity));
         }
 
@@ -1651,8 +1533,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation Put(PdfName key, PdfObject value)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation Put(PdfName key, PdfObject value) {
             GetPdfObject().Put(key, value);
             SetModified();
             return this;
@@ -1670,8 +1551,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation Remove(PdfName key)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfAnnotation Remove(PdfName key) {
             GetPdfObject().Remove(key);
             return this;
         }
@@ -1690,16 +1570,13 @@ namespace iText.Kernel.Pdf.Annot
         /// For associated files their associated file specification dictionaries shall include the AFRelationship key
         /// </remarks>
         /// <param name="fs">file specification dictionary of associated file</param>
-        public virtual void AddAssociatedFile(PdfFileSpec fs)
-        {
-            if (null == ((PdfDictionary)fs.GetPdfObject()).Get(PdfName.AFRelationship))
-            {
+        public virtual void AddAssociatedFile(PdfFileSpec fs) {
+            if (null == ((PdfDictionary)fs.GetPdfObject()).Get(PdfName.AFRelationship)) {
                 ILog logger = LogManager.GetLogger(typeof(iText.Kernel.Pdf.Annot.PdfAnnotation));
                 logger.Error(iText.IO.LogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
             }
             PdfArray afArray = GetPdfObject().GetAsArray(PdfName.AF);
-            if (afArray == null)
-            {
+            if (afArray == null) {
                 afArray = new PdfArray();
                 Put(PdfName.AF, afArray);
             }
@@ -1709,11 +1586,9 @@ namespace iText.Kernel.Pdf.Annot
         /// <summary>Returns files associated with PDF annotation.</summary>
         /// <param name="create">defines whether AF arrays will be created if it doesn't exist</param>
         /// <returns>associated files array</returns>
-        public virtual PdfArray GetAssociatedFiles(bool create)
-        {
+        public virtual PdfArray GetAssociatedFiles(bool create) {
             PdfArray afArray = GetPdfObject().GetAsArray(PdfName.AF);
-            if (afArray == null && create)
-            {
+            if (afArray == null && create) {
                 afArray = new PdfArray();
                 Put(PdfName.AF, afArray);
             }
@@ -1736,26 +1611,21 @@ namespace iText.Kernel.Pdf.Annot
         /// For example: wrapperInstance.makeIndirect(document).flush();
         /// Note that not every wrapper require this, only those that have such warning in documentation.
         /// </remarks>
-        public override void Flush()
-        {
+        public override void Flush() {
             base.Flush();
         }
 
-        protected internal override bool IsWrappedObjectMustBeIndirect()
-        {
+        protected internal override bool IsWrappedObjectMustBeIndirect() {
             return true;
         }
 
         // Created as a private static class in order to facilitate autoport.
-        internal class PdfUnknownAnnotation : PdfAnnotation
-        {
+        internal class PdfUnknownAnnotation : PdfAnnotation {
             protected internal PdfUnknownAnnotation(PdfDictionary pdfObject)
-                : base(pdfObject)
-            {
+                : base(pdfObject) {
             }
 
-            public override PdfName GetSubtype()
-            {
+            public override PdfName GetSubtype() {
                 return GetPdfObject().GetAsName(PdfName.Subtype);
             }
         }

@@ -41,17 +41,16 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Filters
-{
+namespace iText.Kernel.Pdf.Filters {
     /// <summary>A filter that doesn't modify the stream at all</summary>
-    public class DoNothingFilter : IFilterHandler
-    {
+    public class DoNothingFilter : IFilterHandler {
         private PdfName lastFilterName;
 
         public virtual byte[] Decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary
-            )
-        {
+            ) {
             lastFilterName = filterName;
             return b;
         }
@@ -60,8 +59,7 @@ namespace iText.Kernel.Pdf.Filters
         /// <returns>the last decoded filter name.</returns>
         [System.ObsoleteAttribute(@"Will be removed in 7.2. Used as a crutch iniText.Kernel.Pdf.Xobject.PdfImageXObject.GetImageBytes() implementation. Now this method does not needed. If the user has been used it, then the same approach can be reached with nested class."
             )]
-        public virtual PdfName GetLastFilterName()
-        {
+        public virtual PdfName GetLastFilterName() {
             return lastFilterName;
         }
     }

@@ -1,3 +1,4 @@
+using System;
 /*
  *
 Copyright (c) 2000,2001,2002,2003 ymnk, JCraft,Inc. All rights reserved.
@@ -32,28 +33,26 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * and contributors of zlib.
  */
 
-namespace System.util.zlib
-{
+namespace System.util.zlib {
 
-    internal sealed class InfTree
-    {
+    internal sealed class InfTree{
 
-        private const int MANY = 1440;
+        private const int MANY=1440;
 
-        private const int Z_OK = 0;
-        private const int Z_STREAM_END = 1;
-        private const int Z_NEED_DICT = 2;
-        private const int Z_ERRNO = -1;
-        private const int Z_STREAM_ERROR = -2;
-        private const int Z_DATA_ERROR = -3;
-        private const int Z_MEM_ERROR = -4;
-        private const int Z_BUF_ERROR = -5;
-        private const int Z_VERSION_ERROR = -6;
+        private const int Z_OK=0;
+        private const int Z_STREAM_END=1;
+        private const int Z_NEED_DICT=2;
+        private const int Z_ERRNO=-1;
+        private const int Z_STREAM_ERROR=-2;
+        private const int Z_DATA_ERROR=-3;
+        private const int Z_MEM_ERROR=-4;
+        private const int Z_BUF_ERROR=-5;
+        private const int Z_VERSION_ERROR=-6;
 
         private const int fixed_bl = 9;
         private const int fixed_bd = 5;
 
-        static readonly int[] fixed_tl = {
+		static readonly int[] fixed_tl = {
                                     96,7,256, 0,8,80, 0,8,16, 84,8,115,
                                     82,7,31, 0,8,112, 0,8,48, 0,9,192,
                                     80,7,10, 0,8,96, 0,8,32, 0,9,160,
@@ -219,7 +218,7 @@ namespace System.util.zlib
                                   12, 12, 13, 13};
 
         // If BMAX needs to be larger than 16, then h and x[] should be uLong.
-        const int BMAX = 15;         // maximum bit length of any code
+        const int BMAX=15;         // maximum bit length of any code
 
         int[] hn = null;  // hufts used in space
         int[] v = null;   // work area for huft_build 
@@ -229,7 +228,7 @@ namespace System.util.zlib
         int[] x = null;   // bit offsets, then code stack
 
         private int huft_build(int[] b, // code lengths in bits (all assumed <= BMAX)
-            int bindex,
+            int bindex, 
             int n,   // number of codes (assumed <= 288)
             int s,   // number of simple-valued codes (0..s-1)
             int[] d, // list of base values for non-simple codes
@@ -239,8 +238,7 @@ namespace System.util.zlib
             int[] hp,// space for trees
             int[] hn,// hufts used in space
             int[] v  // working area: values in order of bit length
-            )
-        {
+            ){
             // Given a list of code lengths and a maximum table size, make a set of
             // tables to decode that set of codes.  Return Z_OK on success, Z_BUF_ERROR
             // if the given code set is incomplete (the tables are still built in this
@@ -266,13 +264,11 @@ namespace System.util.zlib
             // Generate counts for each bit length
 
             p = 0; i = n;
-            do
-            {
-                c[b[bindex + p]]++; p++; i--;   // assume all entries <= BMAX
-            } while (i != 0);
+            do {
+                c[b[bindex+p]]++; p++; i--;   // assume all entries <= BMAX
+            }while(i!=0);
 
-            if (c[0] == n)
-            {                // null input--all zero length codes
+            if(c[0] == n){                // null input--all zero length codes
                 t[0] = -1;
                 m[0] = 0;
                 return Z_OK;
@@ -281,42 +277,35 @@ namespace System.util.zlib
             // Find minimum and maximum length, bound *m by those
             l = m[0];
             for (j = 1; j <= BMAX; j++)
-                if (c[j] != 0) break;
+                if(c[j]!=0) break;
             k = j;                        // minimum code length
-            if (l < j)
-            {
+            if(l < j){
                 l = j;
             }
-            for (i = BMAX; i != 0; i--)
-            {
-                if (c[i] != 0) break;
+            for (i = BMAX; i!=0; i--){
+                if(c[i]!=0) break;
             }
             g = i;                        // maximum code length
-            if (l > i)
-            {
+            if(l > i){
                 l = i;
             }
             m[0] = l;
 
             // Adjust last length count to fill out codes, if needed
-            for (y = 1 << j; j < i; j++, y <<= 1)
-            {
-                if ((y -= c[j]) < 0)
-                {
+            for (y = 1 << j; j < i; j++, y <<= 1){
+                if ((y -= c[j]) < 0){
                     return Z_DATA_ERROR;
                 }
             }
-            if ((y -= c[i]) < 0)
-            {
+            if ((y -= c[i]) < 0){
                 return Z_DATA_ERROR;
             }
             c[i] += y;
 
             // Generate starting offsets into the value table for each length
             x[1] = j = 0;
-            p = 1; xp = 2;
-            while (--i != 0)
-            {                 // note that i == g from above
+            p = 1;  xp = 2;
+            while (--i!=0) {                 // note that i == g from above
                 x[xp] = (j += c[p]);
                 xp++;
                 p++;
@@ -324,10 +313,8 @@ namespace System.util.zlib
 
             // Make a table of values in order of bit lengths
             i = 0; p = 0;
-            do
-            {
-                if ((j = b[bindex + p]) != 0)
-                {
+            do {
+                if ((j = b[bindex+p]) != 0){
                     v[x[j]++] = i;
                 }
                 p++;
@@ -345,30 +332,24 @@ namespace System.util.zlib
             z = 0;                        // ditto
 
             // go through the bit lengths (k already is bits in shortest code)
-            for (; k <= g; k++)
-            {
+            for (; k <= g; k++){
                 a = c[k];
-                while (a-- != 0)
-                {
+                while (a--!=0){
                     // here i is the Huffman code of length k bits for value *p
                     // make tables up to required level
-                    while (k > w + l)
-                    {
+                    while (k > w + l){
                         h++;
                         w += l;                 // previous table always l bits
                         // compute minimum size table less than or equal to l bits
                         z = g - w;
                         z = (z > l) ? l : z;        // table size upper limit
-                        if ((f = 1 << (j = k - w)) > a + 1)
-                        {     // try a k-w bit table
+                        if((f=1<<(j=k-w))>a+1){     // try a k-w bit table
                             // too few codes for k-w bit table
                             f -= a + 1;               // deduct codes from patterns left
                             xp = k;
-                            if (j < z)
-                            {
-                                while (++j < z)
-                                {        // try smaller tables up to z bits
-                                    if ((f <<= 1) <= c[++xp])
+                            if(j < z){
+                                while (++j < z){        // try smaller tables up to z bits
+                                    if((f <<= 1) <= c[++xp])
                                         break;              // enough codes to use up j bits
                                     f -= c[xp];           // else deduct codes from patterns
                                 }
@@ -377,64 +358,55 @@ namespace System.util.zlib
                         z = 1 << j;                 // table entries for j-bit table
 
                         // allocate new table
-                        if (hn[0] + z > MANY)
-                        {       // (note: doesn't matter for fixed)
+                        if (hn[0] + z > MANY){       // (note: doesn't matter for fixed)
                             return Z_DATA_ERROR;       // overflow of MANY
                         }
                         u[h] = q = /*hp+*/ hn[0];   // DEBUG
                         hn[0] += z;
-
+ 
                         // connect to last table, if there is one
-                        if (h != 0)
-                        {
-                            x[h] = i;           // save pattern for backing up
-                            r[0] = (byte)j;     // bits in this table
-                            r[1] = (byte)l;     // bits to dump before this table
-                            j = i >> (w - l);
-                            r[2] = (int)(q - u[h - 1] - j);               // offset to this table
-                            System.Array.Copy(r, 0, hp, (u[h - 1] + j) * 3, 3); // connect to last table
+                        if(h!=0){
+                            x[h]=i;           // save pattern for backing up
+                            r[0]=(byte)j;     // bits in this table
+                            r[1]=(byte)l;     // bits to dump before this table
+                            j=i>>(w - l);
+                            r[2] = (int)(q - u[h-1] - j);               // offset to this table
+                            System.Array.Copy(r, 0, hp, (u[h-1]+j)*3, 3); // connect to last table
                         }
-                        else
-                        {
+                        else{
                             t[0] = q;               // first table is returned result
                         }
                     }
 
                     // set up table entry in r
                     r[1] = (byte)(k - w);
-                    if (p >= n)
-                    {
+                    if (p >= n){
                         r[0] = 128 + 64;      // out of values--invalid code
                     }
-                    else if (v[p] < s)
-                    {
+                    else if (v[p] < s){
                         r[0] = (byte)(v[p] < 256 ? 0 : 32 + 64);  // 256 is end-of-block
                         r[2] = v[p++];          // simple code is just the value
                     }
-                    else
-                    {
-                        r[0] = (byte)(e[v[p] - s] + 16 + 64); // non-simple--look up in lists
-                        r[2] = d[v[p++] - s];
+                    else{
+                        r[0]=(byte)(e[v[p]-s]+16+64); // non-simple--look up in lists
+                        r[2]=d[v[p++] - s];
                     }
 
                     // fill code-like entries with r
-                    f = 1 << (k - w);
-                    for (j = i >> w; j < z; j += f)
-                    {
-                        System.Array.Copy(r, 0, hp, (q + j) * 3, 3);
+                    f=1<<(k-w);
+                    for (j=i>>w;j<z;j+=f){
+                        System.Array.Copy(r, 0, hp, (q+j)*3, 3);
                     }
 
                     // backwards increment the k-bit code i
-                    for (j = 1 << (k - 1); (i & j) != 0; j >>= 1)
-                    {
+                    for (j = 1 << (k - 1); (i & j)!=0; j >>= 1){
                         i ^= j;
                     }
                     i ^= j;
 
                     // backup over finished tables
                     mask = (1 << w) - 1;      // needed on HP, cc -O bug
-                    while ((i & mask) != x[h])
-                    {
+                    while ((i & mask) != x[h]){
                         h--;                    // don't need to update q
                         w -= l;
                         mask = (1 << w) - 1;
@@ -450,19 +422,16 @@ namespace System.util.zlib
             int[] tb, // bits tree result
             int[] hp, // space for trees
             ZStream z // for messages
-            )
-        {
+            ){
             int result;
             initWorkArea(19);
-            hn[0] = 0;
+            hn[0]=0;
             result = huft_build(c, 0, 19, 19, null, null, tb, bb, hp, hn, v);
 
-            if (result == Z_DATA_ERROR)
-            {
+            if(result == Z_DATA_ERROR){
                 z.msg = "oversubscribed dynamic bit lengths tree";
             }
-            else if (result == Z_BUF_ERROR || bb[0] == 0)
-            {
+            else if(result == Z_BUF_ERROR || bb[0] == 0){
                 z.msg = "incomplete dynamic bit lengths tree";
                 result = Z_DATA_ERROR;
             }
@@ -478,22 +447,18 @@ namespace System.util.zlib
             int[] td, // distance tree result
             int[] hp, // space for trees
             ZStream z // for messages
-            )
-        {
+            ){
             int result;
 
             // build literal/length tree
             initWorkArea(288);
-            hn[0] = 0;
+            hn[0]=0;
             result = huft_build(c, 0, nl, 257, cplens, cplext, tl, bl, hp, hn, v);
-            if (result != Z_OK || bl[0] == 0)
-            {
-                if (result == Z_DATA_ERROR)
-                {
+            if (result != Z_OK || bl[0] == 0){
+                if(result == Z_DATA_ERROR){
                     z.msg = "oversubscribed literal/length tree";
                 }
-                else if (result != Z_MEM_ERROR)
-                {
+                else if (result != Z_MEM_ERROR){
                     z.msg = "incomplete literal/length tree";
                     result = Z_DATA_ERROR;
                 }
@@ -504,19 +469,15 @@ namespace System.util.zlib
             initWorkArea(288);
             result = huft_build(c, nl, nd, 0, cpdist, cpdext, td, bd, hp, hn, v);
 
-            if (result != Z_OK || (bd[0] == 0 && nl > 257))
-            {
-                if (result == Z_DATA_ERROR)
-                {
+            if (result != Z_OK || (bd[0] == 0 && nl > 257)){
+                if (result == Z_DATA_ERROR){
                     z.msg = "oversubscribed distance tree";
                 }
-                else if (result == Z_BUF_ERROR)
-                {
+                else if (result == Z_BUF_ERROR) {
                     z.msg = "incomplete distance tree";
                     result = Z_DATA_ERROR;
                 }
-                else if (result != Z_MEM_ERROR)
-                {
+                else if (result != Z_MEM_ERROR){
                     z.msg = "empty distance tree with lengths";
                     result = Z_DATA_ERROR;
                 }
@@ -531,34 +492,31 @@ namespace System.util.zlib
             int[][] tl,//literal/length tree result
             int[][] td,//distance tree result 
             ZStream z  //for memory allocation
-            )
-        {
-            bl[0] = fixed_bl;
-            bd[0] = fixed_bd;
-            tl[0] = fixed_tl;
-            td[0] = fixed_td;
+            ){
+            bl[0]=fixed_bl;
+            bd[0]=fixed_bd;
+            tl[0]=fixed_tl;
+            td[0]=fixed_td;
             return Z_OK;
         }
 
-        private void initWorkArea(int vsize)
-        {
-            if (hn == null)
-            {
-                hn = new int[1];
-                v = new int[vsize];
-                c = new int[BMAX + 1];
-                r = new int[3];
-                u = new int[BMAX];
-                x = new int[BMAX + 1];
+        private void initWorkArea(int vsize){
+            if(hn==null){
+                hn=new int[1];
+                v=new int[vsize];
+                c=new int[BMAX+1];
+                r=new int[3];
+                u=new int[BMAX];
+                x=new int[BMAX+1];
             }
-            if (v.Length < vsize) { v = new int[vsize]; }
-            for (int i = 0; i < vsize; i++) { v[i] = 0; }
-            for (int i = 0; i < BMAX + 1; i++) { c[i] = 0; }
-            for (int i = 0; i < 3; i++) { r[i] = 0; }
+            if(v.Length<vsize){ v=new int[vsize]; }
+            for(int i=0; i<vsize; i++){v[i]=0;}
+            for(int i=0; i<BMAX+1; i++){c[i]=0;}
+            for(int i=0; i<3; i++){r[i]=0;}
             //  for(int i=0; i<BMAX; i++){u[i]=0;}
             System.Array.Copy(c, 0, u, 0, BMAX);
             //  for(int i=0; i<BMAX+1; i++){x[i]=0;}
-            System.Array.Copy(c, 0, x, 0, BMAX + 1);
+            System.Array.Copy(c, 0, x, 0, BMAX+1);
         }
     }
 }

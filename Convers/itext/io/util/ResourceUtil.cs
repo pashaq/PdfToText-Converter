@@ -52,39 +52,31 @@ using Microsoft.DotNet.PlatformAbstractions;
 using Microsoft.Extensions.DependencyModel;
 #endif
 
-namespace iText.IO.Util
-{
+namespace iText.IO.Util {
     /// <summary>
     /// This file is a helper class for internal usage only.
     /// Be aware that its API and functionality may be changed in future.
     /// </summary>
-    public static class ResourceUtil
-    {
+    public static class ResourceUtil {
 
         private static List<object> resourceSearch = new List<object>();
         private static ISet<string> iTextResourceAssemblyNames;
 
-        static ResourceUtil()
-        {
+        static ResourceUtil() {
             iTextResourceAssemblyNames = new HashSet<string>();
             iTextResourceAssemblyNames.Add("itext.hyph");
             iTextResourceAssemblyNames.Add("itext.font_asian");
 
             LoadITextResourceAssemblies();
         }
+        
 
-
-        public static void AddToResourceSearch(object obj)
-        {
-            lock (resourceSearch)
-            {
-                if (obj is Assembly)
-                {
+        public static void AddToResourceSearch(object obj) {
+            lock (resourceSearch) {
+                if (obj is Assembly) {
                     resourceSearch.Add(obj);
-                }
-                else if (obj is string)
-                {
-                    string f = (string)obj;
+                } else if (obj is string) {
+                    string f = (string) obj;
                     if (Directory.Exists(f) || File.Exists(f))
                         resourceSearch.Add(obj);
                 }
@@ -105,48 +97,37 @@ namespace iText.IO.Util
             return GetResourceStream(key, null);
         }
 
-        public static Stream GetResourceStream(string key, Type definedClassType)
-        {
+        public static Stream GetResourceStream(string key, Type definedClassType) {
             Stream istr = null;
             // Try to use resource loader to load the properties file.
-            try
-            {
+            try {
                 Assembly assm = definedClassType != null ? definedClassType.GetAssembly() : typeof(ResourceUtil).GetAssembly();
                 istr = assm.GetManifestResourceStream(key);
-            }
-            catch
-            {
+            } catch {
             }
             if (istr != null)
                 return istr;
 
             int count;
-            lock (resourceSearch)
-            {
+            lock (resourceSearch) {
                 count = resourceSearch.Count;
             }
-            for (int k = 0; k < count; ++k)
-            {
+            for (int k = 0; k < count; ++k) {
                 object obj;
-                lock (resourceSearch)
-                {
+                lock (resourceSearch) {
                     obj = resourceSearch[k];
                 }
                 istr = SearchResourceInAssembly(key, obj);
-                if (istr != null)
-                {
+                if (istr != null) {
                     return istr;
                 }
             }
 
 #if !NETSTANDARD1_6
-            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                if (assembly.GetName().Name.StartsWith("itext"))
-                {
+            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies()) {
+                if (assembly.GetName().Name.StartsWith("itext")) {
                     istr = SearchResourceInAssembly(key, assembly);
-                    if (istr != null)
-                    {
+                    if (istr != null) {
                         return istr;
                     }
                 }
@@ -174,8 +155,7 @@ namespace iText.IO.Util
             return istr;
         }
 
-        private static Stream SearchResourceInAssembly(string key, Object obj)
-        {
+        private static Stream SearchResourceInAssembly(string key, Object obj) {
             Stream istr = null;
             try
             {
@@ -223,10 +203,9 @@ namespace iText.IO.Util
             return istr;
         }
 
-        private static void LoadITextResourceAssemblies()
-        {
+        private static void LoadITextResourceAssemblies() {
 #if !NETSTANDARD1_6
-            var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().Where(a => !a.IsDynamic).ToList();
+            var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().Where( a=> !a.IsDynamic).ToList();
             List<string> loadedPaths = new List<string>();
             foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
             {
@@ -246,11 +225,9 @@ namespace iText.IO.Util
             var toLoad = referencedPaths.Where(referencePath => !loadedPaths.Any(loadedPath => loadedPath.Equals(referencePath, StringComparison.OrdinalIgnoreCase))).ToList();
             foreach (String path in toLoad)
             {
-                try
-                {
+                try {
                     AssemblyName name = AssemblyName.GetAssemblyName(path);
-                    if (iTextResourceAssemblyNames.Contains(name.Name) && !loadedAssemblies.Any(assembly => assembly.GetName().Name.Equals(name.Name)))
-                    {
+                    if (iTextResourceAssemblyNames.Contains(name.Name) && !loadedAssemblies.Any(assembly => assembly.GetName().Name.Equals(name.Name))) {
                         loadedAssemblies.Add(AppDomain.CurrentDomain.Load(name));
                     }
                 }

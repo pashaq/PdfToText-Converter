@@ -41,10 +41,8 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-namespace iText.IO.Font.Otf
-{
-    public abstract class OpenTableLookup
-    {
+namespace iText.IO.Font.Otf {
+    public abstract class OpenTableLookup {
         protected internal int lookupFlag;
 
         protected internal int[] subTableLocations;
@@ -52,76 +50,62 @@ namespace iText.IO.Font.Otf
         protected internal OpenTypeFontTableReader openReader;
 
         protected internal OpenTableLookup(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations
-            )
-        {
+            ) {
             this.lookupFlag = lookupFlag;
             this.subTableLocations = subTableLocations;
             this.openReader = openReader;
         }
 
-        public virtual int GetLookupFlag()
-        {
+        public virtual int GetLookupFlag() {
             return lookupFlag;
         }
 
         public abstract bool TransformOne(GlyphLine line);
 
-        public virtual bool TransformLine(GlyphLine line)
-        {
+        public virtual bool TransformLine(GlyphLine line) {
             bool changed = false;
             line.idx = line.start;
-            while (line.idx < line.end && line.idx >= line.start)
-            {
+            while (line.idx < line.end && line.idx >= line.start) {
                 changed = TransformOne(line) || changed;
             }
             return changed;
         }
 
-        public virtual bool HasSubstitution(int index)
-        {
+        public virtual bool HasSubstitution(int index) {
             return false;
         }
 
-        protected internal virtual void ReadSubTables()
-        {
-            foreach (int subTableLocation in subTableLocations)
-            {
+        protected internal virtual void ReadSubTables() {
+            foreach (int subTableLocation in subTableLocations) {
                 ReadSubTable(subTableLocation);
             }
         }
 
         protected internal abstract void ReadSubTable(int subTableLocation);
 
-        public class GlyphIndexer
-        {
+        public class GlyphIndexer {
             public GlyphLine line;
 
             public Glyph glyph;
 
             public int idx;
 
-            public virtual void NextGlyph(OpenTypeFontTableReader openReader, int lookupFlag)
-            {
+            public virtual void NextGlyph(OpenTypeFontTableReader openReader, int lookupFlag) {
                 glyph = null;
-                while (++idx < line.end)
-                {
+                while (++idx < line.end) {
                     Glyph g = line.Get(idx);
-                    if (!openReader.IsSkip(g.GetCode(), lookupFlag))
-                    {
+                    if (!openReader.IsSkip(g.GetCode(), lookupFlag)) {
                         glyph = g;
                         break;
                     }
                 }
             }
 
-            public virtual void PreviousGlyph(OpenTypeFontTableReader openReader, int lookupFlag)
-            {
+            public virtual void PreviousGlyph(OpenTypeFontTableReader openReader, int lookupFlag) {
                 glyph = null;
-                while (--idx >= line.start)
-                {
+                while (--idx >= line.start) {
                     Glyph g = line.Get(idx);
-                    if (!openReader.IsSkip(g.GetCode(), lookupFlag))
-                    {
+                    if (!openReader.IsSkip(g.GetCode(), lookupFlag)) {
                         glyph = g;
                         break;
                     }

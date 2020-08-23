@@ -41,41 +41,33 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Util;
 using System;
+using iText.IO.Util;
 
-namespace iText.IO.Font.Cmap
-{
+namespace iText.IO.Font.Cmap {
     /// <author>psoares</author>
-    public class CMapCidUni : AbstractCMap
-    {
+    public class CMapCidUni : AbstractCMap {
         private IntHashtable map = new IntHashtable(65537);
 
-        internal override void AddChar(String mark, CMapObject code)
-        {
-            if (code.IsNumber())
-            {
+        internal override void AddChar(String mark, CMapObject code) {
+            if (code.IsNumber()) {
                 int codePoint;
                 String s = ToUnicodeString(mark, true);
-                if (iText.IO.Util.TextUtil.IsSurrogatePair(s, 0))
-                {
+                if (iText.IO.Util.TextUtil.IsSurrogatePair(s, 0)) {
                     codePoint = iText.IO.Util.TextUtil.ConvertToUtf32(s, 0);
                 }
-                else
-                {
+                else {
                     codePoint = (int)s[0];
                 }
                 map.Put((int)code.GetValue(), codePoint);
             }
         }
 
-        public virtual int Lookup(int character)
-        {
+        public virtual int Lookup(int character) {
             return map.Get(character);
         }
 
-        public virtual int[] GetCids()
-        {
+        public virtual int[] GetCids() {
             return map.GetKeys();
         }
     }

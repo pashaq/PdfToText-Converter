@@ -41,22 +41,22 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
+using System.Collections.Generic;
 using Common.Logging;
+using iText.Kernel;
+using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Annot;
 using iText.Kernel.Pdf.Filespec;
 using iText.Kernel.Pdf.Navigation;
-using System;
-using System.Collections.Generic;
 
-namespace iText.Kernel.Pdf.Action
-{
+namespace iText.Kernel.Pdf.Action {
     /// <summary>A wrapper for action dictionaries (ISO 32000-1 section 12.6).</summary>
     /// <remarks>
     /// A wrapper for action dictionaries (ISO 32000-1 section 12.6).
     /// An action dictionary defines the characteristics and behaviour of an action.
     /// </remarks>
-    public class PdfAction : PdfObjectWrapper<PdfDictionary>
-    {
+    public class PdfAction : PdfObjectWrapper<PdfDictionary> {
         /// <summary>A possible submit value</summary>
         public const int SUBMIT_EXCLUDE = 1;
 
@@ -101,8 +101,7 @@ namespace iText.Kernel.Pdf.Action
 
         /// <summary>Constructs an empty action that can be further modified.</summary>
         public PdfAction()
-            : this(new PdfDictionary())
-        {
+            : this(new PdfDictionary()) {
             Put(PdfName.Type, PdfName.Action);
         }
 
@@ -119,16 +118,14 @@ namespace iText.Kernel.Pdf.Action
         /// </remarks>
         /// <param name="pdfObject">the dictionary to construct the wrapper around</param>
         public PdfAction(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
             MarkObjectAsIndirect(GetPdfObject());
         }
 
         /// <summary>Creates a GoTo action (section 12.6.4.2 of ISO 32000-1) via a given destination.</summary>
         /// <param name="destination">the desired destination of the action</param>
         /// <returns>created action</returns>
-        public static iText.Kernel.Pdf.Action.PdfAction CreateGoTo(PdfDestination destination)
-        {
+        public static iText.Kernel.Pdf.Action.PdfAction CreateGoTo(PdfDestination destination) {
             ValidateNotRemoteDestination(destination);
             return new iText.Kernel.Pdf.Action.PdfAction().Put(PdfName.S, PdfName.GoTo).Put(PdfName.D, destination.GetPdfObject
                 ());
@@ -145,8 +142,7 @@ namespace iText.Kernel.Pdf.Action
         /// name
         /// </param>
         /// <returns>created action</returns>
-        public static iText.Kernel.Pdf.Action.PdfAction CreateGoTo(String destination)
-        {
+        public static iText.Kernel.Pdf.Action.PdfAction CreateGoTo(String destination) {
             return CreateGoTo(new PdfStringDestination(destination));
         }
 
@@ -156,8 +152,7 @@ namespace iText.Kernel.Pdf.Action
         /// <param name="newWindow">a flag specifying whether to open the destination document in a new window</param>
         /// <returns>created action</returns>
         public static iText.Kernel.Pdf.Action.PdfAction CreateGoToR(PdfFileSpec fileSpec, PdfDestination destination
-            , bool newWindow)
-        {
+            , bool newWindow) {
             return CreateGoToR(fileSpec, destination).Put(PdfName.NewWindow, PdfBoolean.ValueOf(newWindow));
         }
 
@@ -166,8 +161,7 @@ namespace iText.Kernel.Pdf.Action
         /// <param name="destination">the destination in the remote document to jump to</param>
         /// <returns>created action</returns>
         public static iText.Kernel.Pdf.Action.PdfAction CreateGoToR(PdfFileSpec fileSpec, PdfDestination destination
-            )
-        {
+            ) {
             ValidateRemoteDestination(destination);
             return new iText.Kernel.Pdf.Action.PdfAction().Put(PdfName.S, PdfName.GoToR).Put(PdfName.F, fileSpec.GetPdfObject
                 ()).Put(PdfName.D, destination.GetPdfObject());
@@ -177,8 +171,7 @@ namespace iText.Kernel.Pdf.Action
         /// <param name="filename">the remote destination file to jump to</param>
         /// <param name="pageNum">the remote destination document page to jump to</param>
         /// <returns>created action</returns>
-        public static iText.Kernel.Pdf.Action.PdfAction CreateGoToR(String filename, int pageNum)
-        {
+        public static iText.Kernel.Pdf.Action.PdfAction CreateGoToR(String filename, int pageNum) {
             return CreateGoToR(filename, pageNum, false);
         }
 
@@ -187,9 +180,8 @@ namespace iText.Kernel.Pdf.Action
         /// <param name="pageNum">the remote destination document page to jump to</param>
         /// <param name="newWindow">a flag specifying whether to open the destination document in a new window</param>
         /// <returns>created action</returns>
-        public static iText.Kernel.Pdf.Action.PdfAction CreateGoToR(String filename, int pageNum, bool newWindow)
-        {
-            return CreateGoToR(new PdfStringFS(filename), PdfExplicitRemoteGoToDestination.CreateFitH(pageNum, 10000),
+        public static iText.Kernel.Pdf.Action.PdfAction CreateGoToR(String filename, int pageNum, bool newWindow) {
+            return CreateGoToR(new PdfStringFS(filename), PdfExplicitRemoteGoToDestination.CreateFitH(pageNum, 10000), 
                 newWindow);
         }
 
@@ -199,8 +191,7 @@ namespace iText.Kernel.Pdf.Action
         /// <param name="newWindow">a flag specifying whether to open the destination document in a new window</param>
         /// <returns>created action</returns>
         public static iText.Kernel.Pdf.Action.PdfAction CreateGoToR(String filename, String destination, bool newWindow
-            )
-        {
+            ) {
             return CreateGoToR(new PdfStringFS(filename), new PdfStringDestination(destination), newWindow);
         }
 
@@ -208,8 +199,7 @@ namespace iText.Kernel.Pdf.Action
         /// <param name="filename">the remote destination file to jump to</param>
         /// <param name="destination">the string destination in the remote document to jump to</param>
         /// <returns>created action</returns>
-        public static iText.Kernel.Pdf.Action.PdfAction CreateGoToR(String filename, String destination)
-        {
+        public static iText.Kernel.Pdf.Action.PdfAction CreateGoToR(String filename, String destination) {
             return CreateGoToR(filename, destination, false);
         }
 
@@ -226,8 +216,7 @@ namespace iText.Kernel.Pdf.Action
         /// </param>
         /// <returns>created action</returns>
         public static iText.Kernel.Pdf.Action.PdfAction CreateGoToE(PdfDestination destination, bool newWindow, PdfTarget
-             targetDictionary)
-        {
+             targetDictionary) {
             return CreateGoToE(null, destination, newWindow, targetDictionary);
         }
 
@@ -245,26 +234,21 @@ namespace iText.Kernel.Pdf.Action
         /// </param>
         /// <returns>created action</returns>
         public static iText.Kernel.Pdf.Action.PdfAction CreateGoToE(PdfFileSpec fileSpec, PdfDestination destination
-            , bool newWindow, PdfTarget targetDictionary)
-        {
+            , bool newWindow, PdfTarget targetDictionary) {
             iText.Kernel.Pdf.Action.PdfAction action = new iText.Kernel.Pdf.Action.PdfAction().Put(PdfName.S, PdfName.
                 GoToE).Put(PdfName.NewWindow, PdfBoolean.ValueOf(newWindow));
-            if (fileSpec != null)
-            {
+            if (fileSpec != null) {
                 action.Put(PdfName.F, fileSpec.GetPdfObject());
             }
-            if (destination != null)
-            {
+            if (destination != null) {
                 ValidateRemoteDestination(destination);
                 action.Put(PdfName.D, destination.GetPdfObject());
             }
-            else
-            {
+            else {
                 LogManager.GetLogger(typeof(iText.Kernel.Pdf.Action.PdfAction)).Warn(iText.IO.LogMessageConstant.EMBEDDED_GO_TO_DESTINATION_NOT_SPECIFIED
                     );
             }
-            if (targetDictionary != null)
-            {
+            if (targetDictionary != null) {
                 action.Put(PdfName.T, targetDictionary.GetPdfObject());
             }
             return action;
@@ -275,8 +259,7 @@ namespace iText.Kernel.Pdf.Action
         ///     </param>
         /// <param name="newWindow">a flag specifying whether to open the destination document in a new window</param>
         /// <returns>created action</returns>
-        public static iText.Kernel.Pdf.Action.PdfAction CreateLaunch(PdfFileSpec fileSpec, bool newWindow)
-        {
+        public static iText.Kernel.Pdf.Action.PdfAction CreateLaunch(PdfFileSpec fileSpec, bool newWindow) {
             return CreateLaunch(fileSpec).Put(PdfName.NewWindow, new PdfBoolean(newWindow));
         }
 
@@ -284,12 +267,10 @@ namespace iText.Kernel.Pdf.Action
         /// <param name="fileSpec">the application that shall be launched or the document that shall beopened or printed
         ///     </param>
         /// <returns>created action</returns>
-        public static iText.Kernel.Pdf.Action.PdfAction CreateLaunch(PdfFileSpec fileSpec)
-        {
+        public static iText.Kernel.Pdf.Action.PdfAction CreateLaunch(PdfFileSpec fileSpec) {
             iText.Kernel.Pdf.Action.PdfAction action = new iText.Kernel.Pdf.Action.PdfAction().Put(PdfName.S, PdfName.
                 Launch);
-            if (fileSpec != null)
-            {
+            if (fileSpec != null) {
                 action.Put(PdfName.F, fileSpec.GetPdfObject());
             }
             return action;
@@ -308,12 +289,10 @@ namespace iText.Kernel.Pdf.Action
         /// <param name="bead">the bead in the destination thread</param>
         /// <returns>created action</returns>
         public static iText.Kernel.Pdf.Action.PdfAction CreateThread(PdfFileSpec fileSpec, PdfObject destinationThread
-            , PdfObject bead)
-        {
+            , PdfObject bead) {
             iText.Kernel.Pdf.Action.PdfAction action = new iText.Kernel.Pdf.Action.PdfAction().Put(PdfName.S, PdfName.
                 Launch).Put(PdfName.D, destinationThread).Put(PdfName.B, bead);
-            if (fileSpec != null)
-            {
+            if (fileSpec != null) {
                 action.Put(PdfName.F, fileSpec.GetPdfObject());
             }
             return action;
@@ -329,16 +308,14 @@ namespace iText.Kernel.Pdf.Action
         /// <param name="fileSpec">the file containing the thread. If this entry is absent, the thread is in the current file
         ///     </param>
         /// <returns>created action</returns>
-        public static iText.Kernel.Pdf.Action.PdfAction CreateThread(PdfFileSpec fileSpec)
-        {
+        public static iText.Kernel.Pdf.Action.PdfAction CreateThread(PdfFileSpec fileSpec) {
             return CreateThread(fileSpec, null, null);
         }
 
         /// <summary>Creates a URI action (section 12.6.4.7 of ISO 32000-1).</summary>
         /// <param name="uri">the uniform resource identifier to resolve</param>
         /// <returns>created action</returns>
-        public static iText.Kernel.Pdf.Action.PdfAction CreateURI(String uri)
-        {
+        public static iText.Kernel.Pdf.Action.PdfAction CreateURI(String uri) {
             return CreateURI(uri, false);
         }
 
@@ -346,8 +323,7 @@ namespace iText.Kernel.Pdf.Action
         /// <param name="uri">the uniform resource identifier to resolve</param>
         /// <param name="isMap">a flag specifying whether to track the mouse position when the URI is resolved</param>
         /// <returns>created action</returns>
-        public static iText.Kernel.Pdf.Action.PdfAction CreateURI(String uri, bool isMap)
-        {
+        public static iText.Kernel.Pdf.Action.PdfAction CreateURI(String uri, bool isMap) {
             return new iText.Kernel.Pdf.Action.PdfAction().Put(PdfName.S, PdfName.URI).Put(PdfName.URI, new PdfString(
                 uri)).Put(PdfName.IsMap, PdfBoolean.ValueOf(isMap));
         }
@@ -357,8 +333,7 @@ namespace iText.Kernel.Pdf.Action
         /// <param name="sound">a sound object defining the sound that shall be played (see section 13.3 of ISO 32000-1)
         ///     </param>
         /// <returns>created action</returns>
-        public static iText.Kernel.Pdf.Action.PdfAction CreateSound(PdfStream sound)
-        {
+        public static iText.Kernel.Pdf.Action.PdfAction CreateSound(PdfStream sound) {
             return new iText.Kernel.Pdf.Action.PdfAction().Put(PdfName.S, PdfName.Sound).Put(PdfName.Sound, sound);
         }
 
@@ -380,10 +355,8 @@ namespace iText.Kernel.Pdf.Action
         /// <param name="mix">a flag specifying whether to mix this sound with any other sound already playing</param>
         /// <returns>created action</returns>
         public static iText.Kernel.Pdf.Action.PdfAction CreateSound(PdfStream sound, float volume, bool synchronous
-            , bool repeat, bool mix)
-        {
-            if (volume < -1 || volume > 1)
-            {
+            , bool repeat, bool mix) {
+            if (volume < -1 || volume > 1) {
                 throw new ArgumentException("volume");
             }
             return new iText.Kernel.Pdf.Action.PdfAction().Put(PdfName.S, PdfName.Sound).Put(PdfName.Sound, sound).Put
@@ -407,12 +380,10 @@ namespace iText.Kernel.Pdf.Action
         /// </param>
         /// <returns>created annotation</returns>
         public static iText.Kernel.Pdf.Action.PdfAction CreateMovie(PdfAnnotation annotation, String title, PdfName
-             operation)
-        {
+             operation) {
             iText.Kernel.Pdf.Action.PdfAction action = new iText.Kernel.Pdf.Action.PdfAction().Put(PdfName.S, PdfName.
                 Movie).Put(PdfName.T, new PdfString(title)).Put(PdfName.Operation, operation);
-            if (annotation != null)
-            {
+            if (annotation != null) {
                 action.Put(PdfName.Annotation, annotation.GetPdfObject());
             }
             return action;
@@ -423,8 +394,7 @@ namespace iText.Kernel.Pdf.Action
         /// <param name="hidden">a flag indicating whether to hide the annotation (<c>true</c>) or show it (<c>false</c>)
         ///     </param>
         /// <returns>created action</returns>
-        public static iText.Kernel.Pdf.Action.PdfAction CreateHide(PdfAnnotation annotation, bool hidden)
-        {
+        public static iText.Kernel.Pdf.Action.PdfAction CreateHide(PdfAnnotation annotation, bool hidden) {
             return new iText.Kernel.Pdf.Action.PdfAction().Put(PdfName.S, PdfName.Hide).Put(PdfName.T, annotation.GetPdfObject
                 ()).Put(PdfName.H, PdfBoolean.ValueOf(hidden));
         }
@@ -434,8 +404,7 @@ namespace iText.Kernel.Pdf.Action
         /// <param name="hidden">a flag indicating whether to hide the annotation (<c>true</c>) or show it (<c>false</c>)
         ///     </param>
         /// <returns>created action</returns>
-        public static iText.Kernel.Pdf.Action.PdfAction CreateHide(PdfAnnotation[] annotations, bool hidden)
-        {
+        public static iText.Kernel.Pdf.Action.PdfAction CreateHide(PdfAnnotation[] annotations, bool hidden) {
             return new iText.Kernel.Pdf.Action.PdfAction().Put(PdfName.S, PdfName.Hide).Put(PdfName.T, GetPdfArrayFromAnnotationsList
                 (annotations)).Put(PdfName.H, PdfBoolean.ValueOf(hidden));
         }
@@ -448,8 +417,7 @@ namespace iText.Kernel.Pdf.Action
         /// <param name="hidden">a flag indicating whether to hide the annotation (<c>true</c>) or show it (<c>false</c>)
         ///     </param>
         /// <returns>created action</returns>
-        public static iText.Kernel.Pdf.Action.PdfAction CreateHide(String text, bool hidden)
-        {
+        public static iText.Kernel.Pdf.Action.PdfAction CreateHide(String text, bool hidden) {
             return new iText.Kernel.Pdf.Action.PdfAction().Put(PdfName.S, PdfName.Hide).Put(PdfName.T, new PdfString(text
                 )).Put(PdfName.H, PdfBoolean.ValueOf(hidden));
         }
@@ -462,8 +430,7 @@ namespace iText.Kernel.Pdf.Action
         /// <param name="hidden">a flag indicating whether to hide the annotation (<c>true</c>) or show it (<c>false</c>)
         ///     </param>
         /// <returns>created action</returns>
-        public static iText.Kernel.Pdf.Action.PdfAction CreateHide(String[] text, bool hidden)
-        {
+        public static iText.Kernel.Pdf.Action.PdfAction CreateHide(String[] text, bool hidden) {
             return new iText.Kernel.Pdf.Action.PdfAction().Put(PdfName.S, PdfName.Hide).Put(PdfName.T, GetArrayFromStringList
                 (text)).Put(PdfName.H, PdfBoolean.ValueOf(hidden));
         }
@@ -480,8 +447,7 @@ namespace iText.Kernel.Pdf.Action
         /// <see cref="iText.Kernel.Pdf.PdfName.LastPage"/>
         /// </param>
         /// <returns>created action</returns>
-        public static iText.Kernel.Pdf.Action.PdfAction CreateNamed(PdfName namedAction)
-        {
+        public static iText.Kernel.Pdf.Action.PdfAction CreateNamed(PdfName namedAction) {
             return new iText.Kernel.Pdf.Action.PdfAction().Put(PdfName.S, PdfName.Named).Put(PdfName.N, namedAction);
         }
 
@@ -492,8 +458,7 @@ namespace iText.Kernel.Pdf.Action
         /// state descriptions
         /// </param>
         /// <returns>created action</returns>
-        public static iText.Kernel.Pdf.Action.PdfAction CreateSetOcgState(IList<PdfActionOcgState> states)
-        {
+        public static iText.Kernel.Pdf.Action.PdfAction CreateSetOcgState(IList<PdfActionOcgState> states) {
             return CreateSetOcgState(states, false);
         }
 
@@ -509,11 +474,9 @@ namespace iText.Kernel.Pdf.Action
         /// </param>
         /// <returns>created action</returns>
         public static iText.Kernel.Pdf.Action.PdfAction CreateSetOcgState(IList<PdfActionOcgState> states, bool preserveRb
-            )
-        {
+            ) {
             PdfArray stateArr = new PdfArray();
-            foreach (PdfActionOcgState state in states)
-            {
+            foreach (PdfActionOcgState state in states) {
                 stateArr.AddAll(state.GetObjectList());
             }
             return new iText.Kernel.Pdf.Action.PdfAction().Put(PdfName.S, PdfName.SetOCGState).Put(PdfName.State, stateArr
@@ -526,19 +489,17 @@ namespace iText.Kernel.Pdf.Action
         /// <param name="mimeType">an ASCII string identifying the type of data</param>
         /// <param name="screenAnnotation">a screen annotation</param>
         /// <returns>created action</returns>
-        public static iText.Kernel.Pdf.Action.PdfAction CreateRendition(String file, PdfFileSpec fileSpec, String
-            mimeType, PdfAnnotation screenAnnotation)
-        {
+        public static iText.Kernel.Pdf.Action.PdfAction CreateRendition(String file, PdfFileSpec fileSpec, String 
+            mimeType, PdfAnnotation screenAnnotation) {
             return new iText.Kernel.Pdf.Action.PdfAction().Put(PdfName.S, PdfName.Rendition).Put(PdfName.OP, new PdfNumber
-                (0)).Put(PdfName.AN, screenAnnotation.GetPdfObject()).Put(PdfName.R, new PdfRendition(file, fileSpec,
+                (0)).Put(PdfName.AN, screenAnnotation.GetPdfObject()).Put(PdfName.R, new PdfRendition(file, fileSpec, 
                 mimeType).GetPdfObject());
         }
 
         /// <summary>Creates a JavaScript action (section 12.6.4.16 of ISO 32000-1).</summary>
         /// <param name="javaScript">a text string containing the JavaScript script to be executed.</param>
         /// <returns>created action</returns>
-        public static iText.Kernel.Pdf.Action.PdfAction CreateJavaScript(String javaScript)
-        {
+        public static iText.Kernel.Pdf.Action.PdfAction CreateJavaScript(String javaScript) {
             return new iText.Kernel.Pdf.Action.PdfAction().Put(PdfName.S, PdfName.JavaScript).Put(PdfName.JS, new PdfString
                 (javaScript));
         }
@@ -555,16 +516,14 @@ namespace iText.Kernel.Pdf.Action
         /// Default value to be passed: 0.
         /// </param>
         /// <returns>created action</returns>
-        public static iText.Kernel.Pdf.Action.PdfAction CreateSubmitForm(String file, Object[] names, int flags)
-        {
+        public static iText.Kernel.Pdf.Action.PdfAction CreateSubmitForm(String file, Object[] names, int flags) {
             iText.Kernel.Pdf.Action.PdfAction action = new iText.Kernel.Pdf.Action.PdfAction();
             action.Put(PdfName.S, PdfName.SubmitForm);
             PdfDictionary urlFileSpec = new PdfDictionary();
             urlFileSpec.Put(PdfName.F, new PdfString(file));
             urlFileSpec.Put(PdfName.FS, PdfName.URL);
             action.Put(PdfName.F, urlFileSpec);
-            if (names != null)
-            {
+            if (names != null) {
                 action.Put(PdfName.Fields, BuildArray(names));
             }
             action.Put(PdfName.Flags, new PdfNumber(flags));
@@ -581,12 +540,10 @@ namespace iText.Kernel.Pdf.Action
         /// Default value to be passed: 0.
         /// </param>
         /// <returns>created action</returns>
-        public static iText.Kernel.Pdf.Action.PdfAction CreateResetForm(Object[] names, int flags)
-        {
+        public static iText.Kernel.Pdf.Action.PdfAction CreateResetForm(Object[] names, int flags) {
             iText.Kernel.Pdf.Action.PdfAction action = new iText.Kernel.Pdf.Action.PdfAction();
             action.Put(PdfName.S, PdfName.ResetForm);
-            if (names != null)
-            {
+            if (names != null) {
                 action.Put(PdfName.Fields, BuildArray(names));
             }
             action.Put(PdfName.Flags, new PdfNumber(flags));
@@ -612,24 +569,20 @@ namespace iText.Kernel.Pdf.Action
         /// to add as an additional action
         /// </param>
         public static void SetAdditionalAction(PdfObjectWrapper<PdfDictionary> wrapper, PdfName key, iText.Kernel.Pdf.Action.PdfAction
-             action)
-        {
+             action) {
             PdfDictionary dic;
             PdfObject obj = wrapper.GetPdfObject().Get(PdfName.AA);
             bool aaExists = obj != null && obj.IsDictionary();
-            if (aaExists)
-            {
+            if (aaExists) {
                 dic = (PdfDictionary)obj;
             }
-            else
-            {
+            else {
                 dic = new PdfDictionary();
             }
             dic.Put(key, action.GetPdfObject());
             dic.SetModified();
             wrapper.GetPdfObject().Put(PdfName.AA, dic);
-            if (!aaExists || !dic.IsIndirect())
-            {
+            if (!aaExists || !dic.IsIndirect()) {
                 wrapper.GetPdfObject().SetModified();
             }
         }
@@ -637,23 +590,18 @@ namespace iText.Kernel.Pdf.Action
         /// <summary>Adds a chained action.</summary>
         /// <param name="nextAction">the next action or sequence of actions that shall be performed after the current action
         ///     </param>
-        public virtual void Next(iText.Kernel.Pdf.Action.PdfAction nextAction)
-        {
+        public virtual void Next(iText.Kernel.Pdf.Action.PdfAction nextAction) {
             PdfObject currentNextAction = GetPdfObject().Get(PdfName.Next);
-            if (currentNextAction == null)
-            {
+            if (currentNextAction == null) {
                 Put(PdfName.Next, nextAction.GetPdfObject());
             }
-            else
-            {
-                if (currentNextAction.IsDictionary())
-                {
+            else {
+                if (currentNextAction.IsDictionary()) {
                     PdfArray array = new PdfArray(currentNextAction);
                     array.Add(nextAction.GetPdfObject());
                     Put(PdfName.Next, array);
                 }
-                else
-                {
+                else {
                     ((PdfArray)currentNextAction).Add(nextAction.GetPdfObject());
                 }
             }
@@ -679,8 +627,7 @@ namespace iText.Kernel.Pdf.Action
         /// <see cref="PdfAction"/>
         /// instance
         /// </returns>
-        public virtual iText.Kernel.Pdf.Action.PdfAction Put(PdfName key, PdfObject value)
-        {
+        public virtual iText.Kernel.Pdf.Action.PdfAction Put(PdfName key, PdfObject value) {
             GetPdfObject().Put(key, value);
             SetModified();
             return this;
@@ -702,54 +649,42 @@ namespace iText.Kernel.Pdf.Action
         /// For example: wrapperInstance.makeIndirect(document).flush();
         /// Note that not every wrapper require this, only those that have such warning in documentation.
         /// </remarks>
-        public override void Flush()
-        {
+        public override void Flush() {
             base.Flush();
         }
 
         /// <summary><inheritDoc/></summary>
-        protected internal override bool IsWrappedObjectMustBeIndirect()
-        {
+        protected internal override bool IsWrappedObjectMustBeIndirect() {
             return true;
         }
 
-        private static PdfArray GetPdfArrayFromAnnotationsList(PdfAnnotation[] wrappers)
-        {
+        private static PdfArray GetPdfArrayFromAnnotationsList(PdfAnnotation[] wrappers) {
             PdfArray arr = new PdfArray();
-            foreach (PdfAnnotation wrapper in wrappers)
-            {
+            foreach (PdfAnnotation wrapper in wrappers) {
                 arr.Add(wrapper.GetPdfObject());
             }
             return arr;
         }
 
-        private static PdfArray GetArrayFromStringList(String[] strings)
-        {
+        private static PdfArray GetArrayFromStringList(String[] strings) {
             PdfArray arr = new PdfArray();
-            foreach (String @string in strings)
-            {
+            foreach (String @string in strings) {
                 arr.Add(new PdfString(@string));
             }
             return arr;
         }
 
-        private static PdfArray BuildArray(Object[] names)
-        {
+        private static PdfArray BuildArray(Object[] names) {
             PdfArray array = new PdfArray();
-            foreach (Object obj in names)
-            {
-                if (obj is String)
-                {
+            foreach (Object obj in names) {
+                if (obj is String) {
                     array.Add(new PdfString((String)obj));
                 }
-                else
-                {
-                    if (obj is PdfAnnotation)
-                    {
+                else {
+                    if (obj is PdfAnnotation) {
                         array.Add(((PdfAnnotation)obj).GetPdfObject());
                     }
-                    else
-                    {
+                    else {
                         throw new PdfException("The array must contain string or PDFAnnotation");
                     }
                 }
@@ -757,41 +692,33 @@ namespace iText.Kernel.Pdf.Action
             return array;
         }
 
-        private static void ValidateRemoteDestination(PdfDestination destination)
-        {
+        private static void ValidateRemoteDestination(PdfDestination destination) {
             // No page object can be specified for a destination associated with a remote go-to action because the
             // destination page is in a different PDF document. In this case, the page parameter specifies an integer
             // page number within the remote document instead of a page object in the current document.
             // See section 12.3.2.2 of ISO 32000-1.
-            if (destination is PdfExplicitDestination)
-            {
+            if (destination is PdfExplicitDestination) {
                 PdfObject firstObj = ((PdfArray)destination.GetPdfObject()).Get(0);
-                if (firstObj.IsDictionary())
-                {
+                if (firstObj.IsDictionary()) {
                     throw new ArgumentException("Explicit destinations shall specify page number in remote go-to actions instead of page dictionary"
                         );
                 }
             }
-            else
-            {
-                if (destination is PdfStructureDestination)
-                {
+            else {
+                if (destination is PdfStructureDestination) {
                     // No structure element dictionary can be specified for a structure destination associated with a remote
                     // go-to action because the destination structure element is in a
                     // different PDF document. In this case, the indirect reference to the structure element dictionary shall be
                     // replaced by a byte string representing a structure element ID
                     PdfObject firstObj = ((PdfArray)destination.GetPdfObject()).Get(0);
-                    if (firstObj.IsDictionary())
-                    {
+                    if (firstObj.IsDictionary()) {
                         PdfDictionary structElemObj = (PdfDictionary)firstObj;
                         PdfString id = structElemObj.GetAsString(PdfName.ID);
-                        if (id == null)
-                        {
+                        if (id == null) {
                             throw new ArgumentException("Structure destinations shall specify structure element ID in remote go-to actions. Structure element that has no ID is specified instead"
                                 );
                         }
-                        else
-                        {
+                        else {
                             LogManager.GetLogger(typeof(iText.Kernel.Pdf.Action.PdfAction)).Warn(iText.IO.LogMessageConstant.STRUCTURE_ELEMENT_REPLACED_BY_ITS_ID_IN_STRUCTURE_DESTINATION
                                 );
                             ((PdfArray)destination.GetPdfObject()).Set(0, id);
@@ -802,22 +729,17 @@ namespace iText.Kernel.Pdf.Action
             }
         }
 
-        public static void ValidateNotRemoteDestination(PdfDestination destination)
-        {
-            if (destination is PdfExplicitRemoteGoToDestination)
-            {
+        public static void ValidateNotRemoteDestination(PdfDestination destination) {
+            if (destination is PdfExplicitRemoteGoToDestination) {
                 LogManager.GetLogger(typeof(iText.Kernel.Pdf.Action.PdfAction)).Warn(iText.IO.LogMessageConstant.INVALID_DESTINATION_TYPE
                     );
             }
-            else
-            {
-                if (destination is PdfExplicitDestination)
-                {
+            else {
+                if (destination is PdfExplicitDestination) {
                     // No page number can be specified for a destination associated with a not remote go-to action because the
                     // destination page is in a current PDF document. See section 12.3.2.2 of ISO 32000-1.
                     PdfObject firstObj = ((PdfArray)destination.GetPdfObject()).Get(0);
-                    if (firstObj.IsNumber())
-                    {
+                    if (firstObj.IsNumber()) {
                         LogManager.GetLogger(typeof(iText.Kernel.Pdf.Action.PdfAction)).Warn(iText.IO.LogMessageConstant.INVALID_DESTINATION_TYPE
                             );
                     }

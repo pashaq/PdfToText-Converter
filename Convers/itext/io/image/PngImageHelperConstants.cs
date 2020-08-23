@@ -22,10 +22,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 using System;
 
-namespace iText.IO.Image
-{
-    public class PngImageHelperConstants
-    {
+namespace iText.IO.Image {
+    public class PngImageHelperConstants {
         public const String ABSOLUTE_COLORMETRIC = "/AbsoluteColormetric";
 
         public const String BITS_PER_COMPONENT = "BitsPerComponent";

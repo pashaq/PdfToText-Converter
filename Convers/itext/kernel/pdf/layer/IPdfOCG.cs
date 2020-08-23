@@ -41,12 +41,11 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Layer
-{
+namespace iText.Kernel.Pdf.Layer {
     /// <summary>The interface generalizing the layer types (PdfLayer, PdfLayerMembership).</summary>
-    public interface IPdfOCG
-    {
+    public interface IPdfOCG {
         /// <summary>Gets the object representing the layer.</summary>
         /// <returns>the object representing the layer</returns>
         PdfDictionary GetPdfObject();

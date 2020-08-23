@@ -41,14 +41,12 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.Kernel.Pdf;
 using System;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Events
-{
+namespace iText.Kernel.Events {
     /// <summary>Event dispatched by PdfDocument.</summary>
-    public class PdfDocumentEvent : iText.Kernel.Events.Event
-    {
+    public class PdfDocumentEvent : iText.Kernel.Events.Event {
         /// <summary>Dispatched after page is created.</summary>
         public const String START_PAGE = "StartPdfPage";
 
@@ -76,8 +74,7 @@ namespace iText.Kernel.Events
         /// <param name="type">type of the event that fired this event</param>
         /// <param name="document">document that fired this event</param>
         public PdfDocumentEvent(String type, PdfDocument document)
-            : base(type)
-        {
+            : base(type) {
             this.document = document;
         }
 
@@ -85,24 +82,21 @@ namespace iText.Kernel.Events
         /// <param name="type">type of the event that fired this event</param>
         /// <param name="page">page that fired this event</param>
         public PdfDocumentEvent(String type, PdfPage page)
-            : base(type)
-        {
+            : base(type) {
             this.page = page;
             this.document = page.GetDocument();
         }
 
         /// <summary>Returns the PdfDocument associated with this event.</summary>
         /// <returns>the PdfDocument associated with this event</returns>
-        public virtual PdfDocument GetDocument()
-        {
+        public virtual PdfDocument GetDocument() {
             return document;
         }
 
         /// <summary>Returns the PdfPage associated with this event.</summary>
         /// <remarks>Returns the PdfPage associated with this event. Warning: this can be null.</remarks>
         /// <returns>the PdfPage associated with this event</returns>
-        public virtual PdfPage GetPage()
-        {
+        public virtual PdfPage GetPage() {
             return page;
         }
     }

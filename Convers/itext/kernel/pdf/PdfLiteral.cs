@@ -41,92 +41,74 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
 using iText.IO.Font;
 using iText.IO.Util;
-using System;
 
-namespace iText.Kernel.Pdf
-{
-    public class PdfLiteral : PdfPrimitiveObject
-    {
+namespace iText.Kernel.Pdf {
+    public class PdfLiteral : PdfPrimitiveObject {
         private long position;
 
         public PdfLiteral(byte[] content)
-            : base(true)
-        {
+            : base(true) {
             this.content = content;
         }
 
         public PdfLiteral(int size)
-            : this(new byte[size])
-        {
+            : this(new byte[size]) {
             JavaUtil.Fill(content, (byte)32);
         }
 
         public PdfLiteral(String content)
-            : this(PdfEncodings.ConvertToBytes(content, null))
-        {
+            : this(PdfEncodings.ConvertToBytes(content, null)) {
         }
 
         private PdfLiteral()
-            : this((byte[])null)
-        {
+            : this((byte[])null) {
         }
 
-        public override byte GetObjectType()
-        {
+        public override byte GetObjectType() {
             return LITERAL;
         }
 
-        public override String ToString()
-        {
-            if (content != null)
-            {
+        public override String ToString() {
+            if (content != null) {
                 return iText.IO.Util.JavaUtil.GetStringForBytes(content, iText.IO.Util.EncodingUtil.ISO_8859_1);
             }
-            else
-            {
+            else {
                 return "";
             }
         }
 
-        public virtual long GetPosition()
-        {
+        public virtual long GetPosition() {
             return position;
         }
 
-        public virtual void SetPosition(long position)
-        {
+        public virtual void SetPosition(long position) {
             this.position = position;
         }
 
-        public virtual int GetBytesCount()
-        {
+        public virtual int GetBytesCount() {
             return content.Length;
         }
 
-        protected internal override void GenerateContent()
-        {
+        protected internal override void GenerateContent() {
         }
 
-        public override bool Equals(Object o)
-        {
+        public override bool Equals(Object o) {
             return this == o || o != null && GetType() == o.GetType() && JavaUtil.ArraysEquals(content, ((iText.Kernel.Pdf.PdfLiteral
                 )o).content);
         }
 
-        public override int GetHashCode()
-        {
+        public override int GetHashCode() {
             return content == null ? 0 : JavaUtil.ArraysHashCode(content);
         }
 
-        protected internal override PdfObject NewInstance()
-        {
+        protected internal override PdfObject NewInstance() {
             return new iText.Kernel.Pdf.PdfLiteral();
         }
 
-        protected internal override void CopyContent(PdfObject from, PdfDocument document)
-        {
+        protected internal override void CopyContent(PdfObject from, PdfDocument document) {
             base.CopyContent(from, document);
             iText.Kernel.Pdf.PdfLiteral literal = (iText.Kernel.Pdf.PdfLiteral)from;
             this.content = literal.GetInternalContent();

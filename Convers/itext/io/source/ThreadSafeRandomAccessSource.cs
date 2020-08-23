@@ -42,47 +42,36 @@ address: sales@itextpdf.com
 */
 using System;
 
-namespace iText.IO.Source
-{
-    public class ThreadSafeRandomAccessSource : IRandomAccessSource
-    {
+namespace iText.IO.Source {
+    public class ThreadSafeRandomAccessSource : IRandomAccessSource {
         private readonly IRandomAccessSource source;
 
         private readonly Object lockObj = new Object();
 
-        public ThreadSafeRandomAccessSource(IRandomAccessSource source)
-        {
+        public ThreadSafeRandomAccessSource(IRandomAccessSource source) {
             this.source = source;
         }
 
-        public virtual int Get(long position)
-        {
-            lock (lockObj)
-            {
+        public virtual int Get(long position) {
+            lock (lockObj) {
                 return source.Get(position);
             }
         }
 
-        public virtual int Get(long position, byte[] bytes, int off, int len)
-        {
-            lock (lockObj)
-            {
+        public virtual int Get(long position, byte[] bytes, int off, int len) {
+            lock (lockObj) {
                 return source.Get(position, bytes, off, len);
             }
         }
 
-        public virtual long Length()
-        {
-            lock (lockObj)
-            {
+        public virtual long Length() {
+            lock (lockObj) {
                 return source.Length();
             }
         }
 
-        public virtual void Close()
-        {
-            lock (lockObj)
-            {
+        public virtual void Close() {
+            lock (lockObj) {
                 source.Close();
             }
         }

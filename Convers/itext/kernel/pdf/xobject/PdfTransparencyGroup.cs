@@ -41,14 +41,12 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Xobject
-{
-    public class PdfTransparencyGroup : PdfObjectWrapper<PdfDictionary>
-    {
+namespace iText.Kernel.Pdf.Xobject {
+    public class PdfTransparencyGroup : PdfObjectWrapper<PdfDictionary> {
         public PdfTransparencyGroup()
-            : base(new PdfDictionary())
-        {
+            : base(new PdfDictionary()) {
             GetPdfObject().Put(PdfName.S, PdfName.Transparency);
         }
 
@@ -58,14 +56,11 @@ namespace iText.Kernel.Pdf.Xobject
         /// <see cref="iText.Kernel.Pdf.PdfName.I"/>
         /// flag will be set or removed
         /// </param>
-        public virtual void SetIsolated(bool isolated)
-        {
-            if (isolated)
-            {
+        public virtual void SetIsolated(bool isolated) {
+            if (isolated) {
                 GetPdfObject().Put(PdfName.I, PdfBoolean.TRUE);
             }
-            else
-            {
+            else {
                 GetPdfObject().Remove(PdfName.I);
             }
         }
@@ -77,36 +72,29 @@ namespace iText.Kernel.Pdf.Xobject
         /// <see cref="iText.Kernel.Pdf.PdfName.K"/>
         /// flag will be set or removed
         /// </param>
-        public virtual void SetKnockout(bool knockout)
-        {
-            if (knockout)
-            {
+        public virtual void SetKnockout(bool knockout) {
+            if (knockout) {
                 GetPdfObject().Put(PdfName.K, PdfBoolean.TRUE);
             }
-            else
-            {
+            else {
                 GetPdfObject().Remove(PdfName.K);
             }
         }
 
-        public virtual void SetColorSpace(PdfName colorSpace)
-        {
+        public virtual void SetColorSpace(PdfName colorSpace) {
             GetPdfObject().Put(PdfName.CS, colorSpace);
         }
 
-        public virtual void SetColorSpace(PdfArray colorSpace)
-        {
+        public virtual void SetColorSpace(PdfArray colorSpace) {
             GetPdfObject().Put(PdfName.CS, colorSpace);
         }
 
-        public virtual iText.Kernel.Pdf.Xobject.PdfTransparencyGroup Put(PdfName key, PdfObject value)
-        {
+        public virtual iText.Kernel.Pdf.Xobject.PdfTransparencyGroup Put(PdfName key, PdfObject value) {
             GetPdfObject().Put(key, value);
             return this;
         }
 
-        protected internal override bool IsWrappedObjectMustBeIndirect()
-        {
+        protected internal override bool IsWrappedObjectMustBeIndirect() {
             return false;
         }
     }

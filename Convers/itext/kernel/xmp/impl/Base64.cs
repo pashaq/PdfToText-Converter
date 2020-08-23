@@ -29,8 +29,7 @@
 //        http://www.adobe.com/devnet/xmp/library/eula-xmp-library-java.html
 using System;
 
-namespace iText.Kernel.XMP.Impl
-{
+namespace iText.Kernel.XMP.Impl {
     /// <summary>
     /// A utility class to perform base64 encoding and decoding as specified
     /// in RFC-1521.
@@ -40,8 +39,7 @@ namespace iText.Kernel.XMP.Impl
     /// in RFC-1521. See also RFC 1421.
     /// </remarks>
     /// <version>$Revision: 1.4 $</version>
-    public class Base64
-    {
+    public class Base64 {
         /// <summary>marker for invalid bytes</summary>
         private const byte INVALID = (byte)0xff;
 
@@ -86,16 +84,13 @@ namespace iText.Kernel.XMP.Impl
         // 60 to 63
         private static byte[] ascii = new byte[255];
 
-        static Base64()
-        {
+        static Base64() {
             // not valid bytes
-            for (int idx = 0; idx < 255; idx++)
-            {
+            for (int idx = 0; idx < 255; idx++) {
                 ascii[idx] = INVALID;
             }
             // valid bytes
-            for (int idx = 0; idx < base64.Length; idx++)
-            {
+            for (int idx = 0; idx < base64.Length; idx++) {
                 ascii[base64[idx]] = (byte)idx;
             }
             // whitespaces
@@ -110,8 +105,7 @@ namespace iText.Kernel.XMP.Impl
         /// <summary>Encode the given byte[].</summary>
         /// <param name="src">the source string.</param>
         /// <returns>the base64-encoded data.</returns>
-        public static byte[] Encode(byte[] src)
-        {
+        public static byte[] Encode(byte[] src) {
             return Encode(src, 0);
         }
 
@@ -122,18 +116,15 @@ namespace iText.Kernel.XMP.Impl
         /// must be dividable by four; 0 means no linefeeds
         /// </param>
         /// <returns>the base64-encoded data.</returns>
-        public static byte[] Encode(byte[] src, int lineFeed)
-        {
+        public static byte[] Encode(byte[] src, int lineFeed) {
             // linefeed must be dividable by 4
             lineFeed = lineFeed / 4 * 4;
-            if (lineFeed < 0)
-            {
+            if (lineFeed < 0) {
                 lineFeed = 0;
             }
             // determine code length
             int codeLength = ((src.Length + 2) / 3) * 4;
-            if (lineFeed > 0)
-            {
+            if (lineFeed > 0) {
                 codeLength += (codeLength - 1) / lineFeed;
             }
             byte[] dst = new byte[codeLength];
@@ -145,8 +136,7 @@ namespace iText.Kernel.XMP.Impl
             int didx = 0;
             int sidx = 0;
             int lf = 0;
-            while (sidx + 3 <= src.Length)
-            {
+            while (sidx + 3 <= src.Length) {
                 bits24 = (src[sidx++] & 0xFF) << 16;
                 bits24 |= (src[sidx++] & 0xFF) << 8;
                 bits24 |= (src[sidx++] & 0xFF) << 0;
@@ -159,13 +149,11 @@ namespace iText.Kernel.XMP.Impl
                 bits6 = (bits24 & 0x0000003F);
                 dst[didx++] = base64[bits6];
                 lf += 4;
-                if (didx < codeLength && lineFeed > 0 && lf % lineFeed == 0)
-                {
+                if (didx < codeLength && lineFeed > 0 && lf % lineFeed == 0) {
                     dst[didx++] = 0x0A;
                 }
             }
-            if (src.Length - sidx == 2)
-            {
+            if (src.Length - sidx == 2) {
                 bits24 = (src[sidx] & 0xFF) << 16;
                 bits24 |= (src[sidx + 1] & 0xFF) << 8;
                 bits6 = (bits24 & 0x00FC0000) >> 18;
@@ -176,10 +164,8 @@ namespace iText.Kernel.XMP.Impl
                 dst[didx++] = base64[bits6];
                 dst[didx++] = (byte)'=';
             }
-            else
-            {
-                if (src.Length - sidx == 1)
-                {
+            else {
+                if (src.Length - sidx == 1) {
                     bits24 = (src[sidx] & 0xFF) << 16;
                     bits6 = (bits24 & 0x00FC0000) >> 18;
                     dst[didx++] = base64[bits6];
@@ -195,32 +181,26 @@ namespace iText.Kernel.XMP.Impl
         /// <summary>Encode the given string.</summary>
         /// <param name="src">the source string.</param>
         /// <returns>the base64-encoded string.</returns>
-        public static String Encode(String src)
-        {
+        public static String Encode(String src) {
             return iText.IO.Util.JavaUtil.GetStringForBytes(Encode(src.GetBytes()));
         }
 
         /// <summary>Decode the given byte[].</summary>
         /// <param name="src">the base64-encoded data.</param>
         /// <returns>the decoded data.</returns>
-        public static byte[] Decode(byte[] src)
-        {
+        public static byte[] Decode(byte[] src) {
             //
             // Do ascii printable to 0-63 conversion.
             //
             int sidx;
             int srcLen = 0;
-            for (sidx = 0; sidx < src.Length; sidx++)
-            {
+            for (sidx = 0; sidx < src.Length; sidx++) {
                 byte val = ascii[src[sidx]];
-                if (val >= 0)
-                {
+                if (val >= 0) {
                     src[srcLen++] = val;
                 }
-                else
-                {
-                    if (val == INVALID)
-                    {
+                else {
+                    if (val == INVALID) {
                         throw new ArgumentException("Invalid base 64 string");
                     }
                 }
@@ -228,8 +208,7 @@ namespace iText.Kernel.XMP.Impl
             //
             // Trim any padding.
             //
-            while (srcLen > 0 && src[srcLen - 1] == EQUAL)
-            {
+            while (srcLen > 0 && src[srcLen - 1] == EQUAL) {
                 srcLen--;
             }
             byte[] dst = new byte[srcLen * 3 / 4];
@@ -237,18 +216,15 @@ namespace iText.Kernel.XMP.Impl
             // Do 4-byte to 3-byte conversion.
             //
             int didx;
-            for (sidx = 0, didx = 0; didx < dst.Length - 2; sidx += 4, didx += 3)
-            {
+            for (sidx = 0, didx = 0; didx < dst.Length - 2; sidx += 4, didx += 3) {
                 dst[didx] = (byte)(((src[sidx] << 2) & 0xFF) | ((src[sidx + 1] >> 4) & 0x03));
                 dst[didx + 1] = (byte)(((src[sidx + 1] << 4) & 0xFF) | ((src[sidx + 2] >> 2) & 0x0F));
                 dst[didx + 2] = (byte)(((src[sidx + 2] << 6) & 0xFF) | ((src[sidx + 3]) & 0x3F));
             }
-            if (didx < dst.Length)
-            {
+            if (didx < dst.Length) {
                 dst[didx] = (byte)(((src[sidx] << 2) & 0xFF) | ((src[sidx + 1] >> 4) & 0x03));
             }
-            if (++didx < dst.Length)
-            {
+            if (++didx < dst.Length) {
                 dst[didx] = (byte)(((src[sidx + 1] << 4) & 0xFF) | ((src[sidx + 2] >> 2) & 0x0F));
             }
             return dst;
@@ -257,8 +233,7 @@ namespace iText.Kernel.XMP.Impl
         /// <summary>Decode the given string.</summary>
         /// <param name="src">the base64-encoded string.</param>
         /// <returns>the decoded string.</returns>
-        public static String Decode(String src)
-        {
+        public static String Decode(String src) {
             return iText.IO.Util.JavaUtil.GetStringForBytes(Decode(src.GetBytes()));
         }
     }

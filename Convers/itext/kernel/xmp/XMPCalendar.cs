@@ -44,61 +44,49 @@ address: sales@itextpdf.com
 
 using System;
 
-namespace iText.Kernel.XMP
-{
-
-    public class XMPCalendar
-    {
+namespace iText.Kernel.XMP {
+	
+    public class XMPCalendar {
         private DateTime dateTime;
         private TimeZoneInfo timeZone;
 
-        public XMPCalendar(DateTime dateTime, TimeZoneInfo timeZone)
-        {
+        public XMPCalendar(DateTime dateTime, TimeZoneInfo timeZone) {
             this.dateTime = dateTime;
             this.timeZone = timeZone;
         }
 
-        public XMPCalendar(DateTime dateTime) : this(dateTime, TimeZoneInfo.Local)
-        {
+        public XMPCalendar(DateTime dateTime) : this(dateTime, TimeZoneInfo.Local) {
         }
 
         public XMPCalendar(TimeZoneInfo timeZone)
-            : this(DateTime.Now, timeZone)
-        {
+            : this(DateTime.Now, timeZone) {
         }
 
-        public XMPCalendar() : this(DateTime.Now, TimeZoneInfo.Local)
-        {
+        public XMPCalendar() : this(DateTime.Now, TimeZoneInfo.Local) {
         }
 
-        public virtual DateTime GetDateTime()
-        {
+        public virtual DateTime GetDateTime() {
             return dateTime;
         }
 
-        public virtual void SetDateTime(DateTime dateTime)
-        {
-            this.dateTime = dateTime;
-        }
+		public virtual void SetDateTime(DateTime dateTime) {
+			this.dateTime = dateTime;
+		}
 
-        public virtual void SetTimeZone(TimeZoneInfo timeZone)
-        {
-            this.timeZone = timeZone;
-        }
+        public virtual void SetTimeZone(TimeZoneInfo timeZone) {
+			this.timeZone = timeZone;
+		}
 
-        public virtual TimeZoneInfo GetTimeZone()
-        {
+		public virtual TimeZoneInfo GetTimeZone() {
             return timeZone;
         }
 
-        public virtual long GetTimeInMillis()
-        {
+        public virtual long GetTimeInMillis() {
             return dateTime.Ticks;
         }
 
-        public virtual void SetTimeInMillis(long value)
-        {
-            dateTime = new DateTime(value);
-        }
+		public virtual void SetTimeInMillis(long value) {
+			dateTime = new DateTime(value);
+		}
     }
 }

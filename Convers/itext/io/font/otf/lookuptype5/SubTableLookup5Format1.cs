@@ -41,58 +41,49 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Util;
 using System.Collections.Generic;
+using iText.IO.Font.Otf;
+using iText.IO.Util;
 
-namespace iText.IO.Font.Otf.Lookuptype5
-{
+namespace iText.IO.Font.Otf.Lookuptype5 {
     /// <summary>Contextual Substitution Subtable: Simple context glyph substitution</summary>
-    public class SubTableLookup5Format1 : ContextualSubTable
-    {
+    public class SubTableLookup5Format1 : ContextualSubTable {
         private IDictionary<int, IList<ContextualSubstRule>> substMap;
 
         public SubTableLookup5Format1(OpenTypeFontTableReader openReader, int lookupFlag, IDictionary<int, IList<ContextualSubstRule
             >> substMap)
-            : base(openReader, lookupFlag)
-        {
+            : base(openReader, lookupFlag) {
             this.substMap = substMap;
         }
 
-        protected internal override IList<ContextualSubstRule> GetSetOfRulesForStartGlyph(int startGlyphId)
-        {
-            if (substMap.ContainsKey(startGlyphId) && !openReader.IsSkip(startGlyphId, lookupFlag))
-            {
+        protected internal override IList<ContextualSubstRule> GetSetOfRulesForStartGlyph(int startGlyphId) {
+            if (substMap.ContainsKey(startGlyphId) && !openReader.IsSkip(startGlyphId, lookupFlag)) {
                 return substMap.Get(startGlyphId);
             }
             return JavaCollectionsUtil.EmptyList<ContextualSubstRule>();
         }
 
-        public class SubstRuleFormat1 : ContextualSubstRule
-        {
+        public class SubstRuleFormat1 : ContextualSubstRule {
             // inputGlyphIds array omits the first glyph in the sequence,
             // the first glyph is defined by corresponding coverage glyph
             private int[] inputGlyphIds;
 
             private SubstLookupRecord[] substLookupRecords;
 
-            public SubstRuleFormat1(int[] inputGlyphIds, SubstLookupRecord[] substLookupRecords)
-            {
+            public SubstRuleFormat1(int[] inputGlyphIds, SubstLookupRecord[] substLookupRecords) {
                 this.inputGlyphIds = inputGlyphIds;
                 this.substLookupRecords = substLookupRecords;
             }
 
-            public override int GetContextLength()
-            {
+            public override int GetContextLength() {
                 return inputGlyphIds.Length + 1;
             }
 
-            public override SubstLookupRecord[] GetSubstLookupRecords()
-            {
+            public override SubstLookupRecord[] GetSubstLookupRecords() {
                 return substLookupRecords;
             }
 
-            public override bool IsGlyphMatchesInput(int glyphId, int atIdx)
-            {
+            public override bool IsGlyphMatchesInput(int glyphId, int atIdx) {
                 return glyphId == inputGlyphIds[atIdx - 1];
             }
         }

@@ -43,14 +43,12 @@ address: sales@itextpdf.com
 */
 using System;
 
-namespace iText.Kernel.Pdf
-{
+namespace iText.Kernel.Pdf {
     /// <summary>
     /// Page label numbering style constants for
     /// <see cref="PdfPage.SetPageLabel(PageLabelNumberingStyle, String)"/>.
     /// </summary>
-    public enum PageLabelNumberingStyle
-    {
+    public enum PageLabelNumberingStyle {
         /// <summary>1, 2, 3, 4...</summary>
         DECIMAL_ARABIC_NUMERALS,
         /// <summary>I, II, III, IV...</summary>

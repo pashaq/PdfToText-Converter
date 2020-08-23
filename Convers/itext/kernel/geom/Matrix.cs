@@ -41,17 +41,15 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Util;
 using System;
+using iText.IO.Util;
 
-namespace iText.Kernel.Geom
-{
+namespace iText.Kernel.Geom {
     /// <summary>
     /// Keeps all the values of a 3 by 3 matrix and allows you to
     /// do some math with matrices.
     /// </summary>
-    public class Matrix
-    {
+    public class Matrix {
         /// <summary>the row=1, col=1 position ('a') in the matrix.</summary>
         public const int I11 = 0;
 
@@ -90,15 +88,13 @@ namespace iText.Kernel.Geom
         private readonly float[] vals = new float[] { 1, 0, 0, 0, 1, 0, 0, 0, 1 };
 
         /// <summary>constructs a new Matrix with identity.</summary>
-        public Matrix()
-        {
+        public Matrix() {
         }
 
         /// <summary>Constructs a matrix that represents translation</summary>
         /// <param name="tx">x-axis translation</param>
         /// <param name="ty">y-axis translation</param>
-        public Matrix(float tx, float ty)
-        {
+        public Matrix(float tx, float ty) {
             vals[I31] = tx;
             vals[I32] = ty;
         }
@@ -114,8 +110,7 @@ namespace iText.Kernel.Geom
         /// <param name="e32">element at position (3,2)</param>
         /// <param name="e33">element at position (3,3)</param>
         public Matrix(float e11, float e12, float e13, float e21, float e22, float e23, float e31, float e32, float
-             e33)
-        {
+             e33) {
             vals[I11] = e11;
             vals[I12] = e12;
             vals[I13] = e13;
@@ -138,8 +133,7 @@ namespace iText.Kernel.Geom
         /// <param name="d">element at (2,2)</param>
         /// <param name="e">element at (3,1)</param>
         /// <param name="f">element at (3,2)</param>
-        public Matrix(float a, float b, float c, float d, float e, float f)
-        {
+        public Matrix(float a, float b, float c, float d, float e, float f) {
             vals[I11] = a;
             vals[I12] = b;
             vals[I13] = 0;
@@ -161,8 +155,7 @@ namespace iText.Kernel.Geom
         /// </remarks>
         /// <param name="index">an array index corresponding with a value inside the matrix</param>
         /// <returns>the value at that specific position.</returns>
-        public virtual float Get(int index)
-        {
+        public virtual float Get(int index) {
             return vals[index];
         }
 
@@ -172,8 +165,7 @@ namespace iText.Kernel.Geom
         /// </summary>
         /// <param name="by">The matrix to multiply by</param>
         /// <returns>the resulting matrix</returns>
-        public virtual iText.Kernel.Geom.Matrix Multiply(iText.Kernel.Geom.Matrix by)
-        {
+        public virtual iText.Kernel.Geom.Matrix Multiply(iText.Kernel.Geom.Matrix by) {
             iText.Kernel.Geom.Matrix rslt = new iText.Kernel.Geom.Matrix();
             float[] a = vals;
             float[] b = by.vals;
@@ -193,8 +185,7 @@ namespace iText.Kernel.Geom
         /// <summary>adds a matrix from this matrix and returns the results</summary>
         /// <param name="arg">the matrix to subtract from this matrix</param>
         /// <returns>a Matrix object</returns>
-        public virtual iText.Kernel.Geom.Matrix Add(iText.Kernel.Geom.Matrix arg)
-        {
+        public virtual iText.Kernel.Geom.Matrix Add(iText.Kernel.Geom.Matrix arg) {
             iText.Kernel.Geom.Matrix rslt = new iText.Kernel.Geom.Matrix();
             float[] a = vals;
             float[] b = arg.vals;
@@ -214,8 +205,7 @@ namespace iText.Kernel.Geom
         /// <summary>Subtracts a matrix from this matrix and returns the results</summary>
         /// <param name="arg">the matrix to subtract from this matrix</param>
         /// <returns>a Matrix object</returns>
-        public virtual iText.Kernel.Geom.Matrix Subtract(iText.Kernel.Geom.Matrix arg)
-        {
+        public virtual iText.Kernel.Geom.Matrix Subtract(iText.Kernel.Geom.Matrix arg) {
             iText.Kernel.Geom.Matrix rslt = new iText.Kernel.Geom.Matrix();
             float[] a = vals;
             float[] b = arg.vals;
@@ -234,13 +224,12 @@ namespace iText.Kernel.Geom
 
         /// <summary>Computes the determinant of the matrix.</summary>
         /// <returns>the determinant of the matrix</returns>
-        public virtual float GetDeterminant()
-        {
+        public virtual float GetDeterminant() {
             // ref http://en.wikipedia.org/wiki/Determinant
             // note that in PDF, I13 and I23 are always 0 and I33 is always 1
             // so this could be simplified/faster
             return vals[I11] * vals[I22] * vals[I33] + vals[I12] * vals[I23] * vals[I31] + vals[I13] * vals[I21] * vals
-                [I32] - vals[I11] * vals[I23] * vals[I32] - vals[I12] * vals[I21] * vals[I33] - vals[I13] * vals[I22]
+                [I32] - vals[I11] * vals[I23] * vals[I32] - vals[I12] * vals[I21] * vals[I33] - vals[I13] * vals[I22] 
                 * vals[I31];
         }
 
@@ -248,10 +237,8 @@ namespace iText.Kernel.Geom
         /// <param name="obj">the other Matrix that needs to be compared with this matrix.</param>
         /// <returns>true if both matrices are equal</returns>
         /// <seealso cref="System.Object.Equals(System.Object)"/>
-        public override bool Equals(Object obj)
-        {
-            if (!(obj is iText.Kernel.Geom.Matrix))
-            {
+        public override bool Equals(Object obj) {
+            if (!(obj is iText.Kernel.Geom.Matrix)) {
                 return false;
             }
             return JavaUtil.ArraysEquals(vals, ((iText.Kernel.Geom.Matrix)obj).vals);
@@ -260,16 +247,14 @@ namespace iText.Kernel.Geom
         /// <summary>Generates a hash code for this object.</summary>
         /// <returns>the hash code of this object</returns>
         /// <seealso cref="System.Object.GetHashCode()"/>
-        public override int GetHashCode()
-        {
+        public override int GetHashCode() {
             return JavaUtil.ArraysHashCode(vals);
         }
 
         /// <summary>Generates a String representation of the matrix.</summary>
         /// <returns>the values, delimited with tabs and newlines.</returns>
         /// <seealso cref="System.Object.ToString()"/>
-        public override String ToString()
-        {
+        public override String ToString() {
             return vals[I11] + "\t" + vals[I12] + "\t" + vals[I13] + "\n" + vals[I21] + "\t" + vals[I22] + "\t" + vals
                 [I23] + "\n" + vals[I31] + "\t" + vals[I32] + "\t" + vals[I33];
         }

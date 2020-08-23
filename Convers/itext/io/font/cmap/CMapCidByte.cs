@@ -41,52 +41,42 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Util;
 using System;
 using System.Collections.Generic;
+using iText.IO.Util;
 
-namespace iText.IO.Font.Cmap
-{
+namespace iText.IO.Font.Cmap {
     /// <author>psoares</author>
-    public class CMapCidByte : AbstractCMap
-    {
+    public class CMapCidByte : AbstractCMap {
         private IDictionary<int, byte[]> map = new Dictionary<int, byte[]>();
 
-        private readonly byte[] EMPTY = new byte[] { };
+        private readonly byte[] EMPTY = new byte[] {  };
 
         private IList<byte[]> codeSpaceRanges = new List<byte[]>();
 
-        internal override void AddChar(String mark, CMapObject code)
-        {
-            if (code.IsNumber())
-            {
+        internal override void AddChar(String mark, CMapObject code) {
+            if (code.IsNumber()) {
                 byte[] ser = DecodeStringToByte(mark);
                 map.Put((int)code.GetValue(), ser);
             }
         }
 
-        public virtual byte[] Lookup(int cid)
-        {
+        public virtual byte[] Lookup(int cid) {
             byte[] ser = map.Get(cid);
-            if (ser == null)
-            {
+            if (ser == null) {
                 return EMPTY;
             }
-            else
-            {
+            else {
                 return ser;
             }
         }
 
-        public virtual IntHashtable GetReversMap()
-        {
+        public virtual IntHashtable GetReversMap() {
             IntHashtable code2cid = new IntHashtable(map.Count);
-            foreach (int cid in map.Keys)
-            {
+            foreach (int cid in map.Keys) {
                 byte[] bytes = map.Get(cid);
                 int byteCode = 0;
-                foreach (byte b in bytes)
-                {
+                foreach (byte b in bytes) {
                     byteCode <<= 8;
                     byteCode += b & 0xff;
                 }
@@ -99,13 +89,11 @@ namespace iText.IO.Font.Cmap
         /// Returns a list containing sequential pairs of code space beginning and endings:
         /// (begincodespacerange1, endcodespacerange1, begincodespacerange2, endcodespacerange1, ...)
         /// </summary>
-        public virtual IList<byte[]> GetCodeSpaceRanges()
-        {
+        public virtual IList<byte[]> GetCodeSpaceRanges() {
             return codeSpaceRanges;
         }
 
-        internal override void AddCodeSpaceRange(byte[] low, byte[] high)
-        {
+        internal override void AddCodeSpaceRange(byte[] low, byte[] high) {
             codeSpaceRanges.Add(low);
             codeSpaceRanges.Add(high);
         }

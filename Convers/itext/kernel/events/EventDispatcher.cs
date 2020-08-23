@@ -44,68 +44,55 @@ address: sales@itextpdf.com
 using System;
 using System.Collections.Generic;
 
-namespace iText.Kernel.Events
-{
+namespace iText.Kernel.Events {
     /// <summary>
     /// IEventDispatcher implementation that forwards Events to registered
     /// <see cref="IEventHandler"/>
     /// implementations.
     /// </summary>
-    public class EventDispatcher : IEventDispatcher
-    {
+    public class EventDispatcher : IEventDispatcher {
         protected internal IDictionary<String, IList<IEventHandler>> eventHandlers = new Dictionary<String, IList<
             IEventHandler>>();
 
-        public virtual void AddEventHandler(String type, IEventHandler handler)
-        {
+        public virtual void AddEventHandler(String type, IEventHandler handler) {
             RemoveEventHandler(type, handler);
             IList<IEventHandler> handlers = eventHandlers.Get(type);
-            if (handlers == null)
-            {
+            if (handlers == null) {
                 handlers = new List<IEventHandler>();
                 eventHandlers.Put(type, handlers);
             }
             handlers.Add(handler);
         }
 
-        public virtual void DispatchEvent(iText.Kernel.Events.Event @event)
-        {
+        public virtual void DispatchEvent(iText.Kernel.Events.Event @event) {
             DispatchEvent(@event, false);
         }
 
-        public virtual void DispatchEvent(iText.Kernel.Events.Event @event, bool delayed)
-        {
+        public virtual void DispatchEvent(iText.Kernel.Events.Event @event, bool delayed) {
             IList<IEventHandler> handlers = eventHandlers.Get(@event.GetEventType());
-            if (handlers != null)
-            {
-                foreach (IEventHandler handler in handlers)
-                {
+            if (handlers != null) {
+                foreach (IEventHandler handler in handlers) {
                     handler.HandleEvent(@event);
                 }
             }
         }
 
-        public virtual bool HasEventHandler(String type)
-        {
+        public virtual bool HasEventHandler(String type) {
             return eventHandlers.ContainsKey(type);
         }
 
-        public virtual void RemoveEventHandler(String type, IEventHandler handler)
-        {
+        public virtual void RemoveEventHandler(String type, IEventHandler handler) {
             IList<IEventHandler> handlers = eventHandlers.Get(type);
-            if (handlers == null)
-            {
+            if (handlers == null) {
                 return;
             }
             handlers.Remove(handler);
-            if (handlers.Count == 0)
-            {
+            if (handlers.Count == 0) {
                 eventHandlers.JRemove(type);
             }
         }
 
-        public virtual void RemoveAllHandlers()
-        {
+        public virtual void RemoveAllHandlers() {
             eventHandlers.Clear();
         }
     }

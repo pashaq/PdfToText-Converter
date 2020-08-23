@@ -43,13 +43,12 @@ address: sales@itextpdf.com
 */
 using Common.Logging;
 using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Action;
 using iText.Kernel.Pdf.Navigation;
 
-namespace iText.Kernel.Pdf.Annot
-{
-    public class PdfLinkAnnotation : PdfAnnotation
-    {
+namespace iText.Kernel.Pdf.Annot {
+    public class PdfLinkAnnotation : PdfAnnotation {
         private static readonly ILog logger = LogManager.GetLogger(typeof(iText.Kernel.Pdf.Annot.PdfLinkAnnotation
             ));
 
@@ -76,47 +75,38 @@ namespace iText.Kernel.Pdf.Annot
         /// </param>
         /// <seealso cref="PdfAnnotation.MakeAnnotation(iText.Kernel.Pdf.PdfObject)"/>
         protected internal PdfLinkAnnotation(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
         public PdfLinkAnnotation(Rectangle rect)
-            : base(rect)
-        {
+            : base(rect) {
         }
 
-        public override PdfName GetSubtype()
-        {
+        public override PdfName GetSubtype() {
             return PdfName.Link;
         }
 
-        public virtual PdfObject GetDestinationObject()
-        {
+        public virtual PdfObject GetDestinationObject() {
             return GetPdfObject().Get(PdfName.Dest);
         }
 
-        public virtual iText.Kernel.Pdf.Annot.PdfLinkAnnotation SetDestination(PdfObject destination)
-        {
-            if (GetPdfObject().ContainsKey(PdfName.A))
-            {
+        public virtual iText.Kernel.Pdf.Annot.PdfLinkAnnotation SetDestination(PdfObject destination) {
+            if (GetPdfObject().ContainsKey(PdfName.A)) {
                 GetPdfObject().Remove(PdfName.A);
                 logger.Warn(iText.IO.LogMessageConstant.DESTINATION_NOT_PERMITTED_WHEN_ACTION_IS_SET);
             }
-            if (destination.IsArray() && ((PdfArray)destination).Get(0).IsNumber())
-            {
+            if (destination.IsArray() && ((PdfArray)destination).Get(0).IsNumber()) {
                 LogManager.GetLogger(typeof(iText.Kernel.Pdf.Annot.PdfLinkAnnotation)).Warn(iText.IO.LogMessageConstant.INVALID_DESTINATION_TYPE
                     );
             }
             return (iText.Kernel.Pdf.Annot.PdfLinkAnnotation)Put(PdfName.Dest, destination);
         }
 
-        public virtual iText.Kernel.Pdf.Annot.PdfLinkAnnotation SetDestination(PdfDestination destination)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfLinkAnnotation SetDestination(PdfDestination destination) {
             return SetDestination(destination.GetPdfObject());
         }
 
-        public virtual iText.Kernel.Pdf.Annot.PdfLinkAnnotation RemoveDestination()
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfLinkAnnotation RemoveDestination() {
             GetPdfObject().Remove(PdfName.Dest);
             return this;
         }
@@ -132,8 +122,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfDictionary"/>
         /// which defines the characteristics and behaviour of an action.
         /// </returns>
-        public virtual PdfDictionary GetAction()
-        {
+        public virtual PdfDictionary GetAction() {
             return GetPdfObject().GetAsDictionary(PdfName.A);
         }
 
@@ -153,8 +142,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfLinkAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfLinkAnnotation SetAction(PdfDictionary action)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfLinkAnnotation SetAction(PdfDictionary action) {
             return (iText.Kernel.Pdf.Annot.PdfLinkAnnotation)Put(PdfName.A, action);
         }
 
@@ -173,44 +161,36 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfLinkAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfLinkAnnotation SetAction(PdfAction action)
-        {
-            if (GetDestinationObject() != null)
-            {
+        public virtual iText.Kernel.Pdf.Annot.PdfLinkAnnotation SetAction(PdfAction action) {
+            if (GetDestinationObject() != null) {
                 RemoveDestination();
                 logger.Warn(iText.IO.LogMessageConstant.ACTION_WAS_SET_TO_LINK_ANNOTATION_WITH_DESTINATION);
             }
             return (iText.Kernel.Pdf.Annot.PdfLinkAnnotation)Put(PdfName.A, action.GetPdfObject());
         }
 
-        public virtual iText.Kernel.Pdf.Annot.PdfLinkAnnotation RemoveAction()
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfLinkAnnotation RemoveAction() {
             GetPdfObject().Remove(PdfName.A);
             return this;
         }
 
-        public virtual PdfName GetHighlightMode()
-        {
+        public virtual PdfName GetHighlightMode() {
             return GetPdfObject().GetAsName(PdfName.H);
         }
 
-        public virtual iText.Kernel.Pdf.Annot.PdfLinkAnnotation SetHighlightMode(PdfName hlMode)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfLinkAnnotation SetHighlightMode(PdfName hlMode) {
             return (iText.Kernel.Pdf.Annot.PdfLinkAnnotation)Put(PdfName.H, hlMode);
         }
 
-        public virtual PdfDictionary GetUriActionObject()
-        {
+        public virtual PdfDictionary GetUriActionObject() {
             return GetPdfObject().GetAsDictionary(PdfName.PA);
         }
 
-        public virtual iText.Kernel.Pdf.Annot.PdfLinkAnnotation SetUriAction(PdfDictionary action)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfLinkAnnotation SetUriAction(PdfDictionary action) {
             return (iText.Kernel.Pdf.Annot.PdfLinkAnnotation)Put(PdfName.PA, action);
         }
 
-        public virtual iText.Kernel.Pdf.Annot.PdfLinkAnnotation SetUriAction(PdfAction action)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfLinkAnnotation SetUriAction(PdfAction action) {
             return (iText.Kernel.Pdf.Annot.PdfLinkAnnotation)Put(PdfName.PA, action.GetPdfObject());
         }
 
@@ -225,8 +205,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfArray"/>
         /// of 8 × n numbers specifying the coordinates of n quadrilaterals.
         /// </returns>
-        public virtual PdfArray GetQuadPoints()
-        {
+        public virtual PdfArray GetQuadPoints() {
             return GetPdfObject().GetAsArray(PdfName.QuadPoints);
         }
 
@@ -252,8 +231,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfLinkAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfLinkAnnotation SetQuadPoints(PdfArray quadPoints)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfLinkAnnotation SetQuadPoints(PdfArray quadPoints) {
             return (iText.Kernel.Pdf.Annot.PdfLinkAnnotation)Put(PdfName.QuadPoints, quadPoints);
         }
 
@@ -278,8 +256,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfDictionary"/>
         /// which is a border style dictionary or null if it is not specified.
         /// </returns>
-        public virtual PdfDictionary GetBorderStyle()
-        {
+        public virtual PdfDictionary GetBorderStyle() {
             return GetPdfObject().GetAsDictionary(PdfName.BS);
         }
 
@@ -305,8 +282,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfLinkAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfLinkAnnotation SetBorderStyle(PdfDictionary borderStyle)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfLinkAnnotation SetBorderStyle(PdfDictionary borderStyle) {
             return (iText.Kernel.Pdf.Annot.PdfLinkAnnotation)Put(PdfName.BS, borderStyle);
         }
 
@@ -344,8 +320,7 @@ namespace iText.Kernel.Pdf.Annot
         /// instance.
         /// </returns>
         /// <seealso cref="GetBorderStyle()"/>
-        public virtual iText.Kernel.Pdf.Annot.PdfLinkAnnotation SetBorderStyle(PdfName style)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfLinkAnnotation SetBorderStyle(PdfName style) {
             return SetBorderStyle(BorderStyleUtil.SetStyle(GetBorderStyle(), style));
         }
 
@@ -366,8 +341,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfLinkAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfLinkAnnotation SetDashPattern(PdfArray dashPattern)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfLinkAnnotation SetDashPattern(PdfArray dashPattern) {
             return SetBorderStyle(BorderStyleUtil.SetDashPattern(GetBorderStyle(), dashPattern));
         }
     }

@@ -41,16 +41,14 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Source;
-using iText.IO.Util;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using iText.IO.Source;
+using iText.IO.Util;
 
-namespace iText.Kernel.Pdf
-{
-    public class PdfName : PdfPrimitiveObject, IComparable<iText.Kernel.Pdf.PdfName>
-    {
+namespace iText.Kernel.Pdf {
+    public class PdfName : PdfPrimitiveObject, IComparable<iText.Kernel.Pdf.PdfName> {
         //  ' '
         private static readonly byte[] space = ByteUtils.GetIsoBytes("#20");
 
@@ -1808,52 +1806,43 @@ namespace iText.Kernel.Pdf
         /// <summary>map strings to all known static names</summary>
         public static IDictionary<String, iText.Kernel.Pdf.PdfName> staticNames;
 
-        static PdfName()
-        {
+        static PdfName() {
             staticNames = PdfNameLoader.LoadNames();
         }
 
-        private static iText.Kernel.Pdf.PdfName CreateDirectName(String name)
-        {
+        private static iText.Kernel.Pdf.PdfName CreateDirectName(String name) {
             return new iText.Kernel.Pdf.PdfName(name, true);
         }
 
         /// <summary>Create a PdfName from the passed string</summary>
         /// <param name="value">string value, shall not be null.</param>
         public PdfName(String value)
-            : base()
-        {
+            : base() {
             System.Diagnostics.Debug.Assert(value != null);
             this.value = value;
         }
 
         private PdfName(String value, bool directOnly)
-            : base(directOnly)
-        {
+            : base(directOnly) {
             this.value = value;
         }
 
         /// <summary>Create a PdfName from the passed bytes</summary>
         /// <param name="content">byte content, shall not be null.</param>
         public PdfName(byte[] content)
-            : base(content)
-        {
+            : base(content) {
         }
 
         private PdfName()
-            : base()
-        {
+            : base() {
         }
 
-        public override byte GetObjectType()
-        {
+        public override byte GetObjectType() {
             return PdfObject.NAME;
         }
 
-        public virtual String GetValue()
-        {
-            if (value == null)
-            {
+        public virtual String GetValue() {
+            if (value == null) {
                 GenerateValue();
             }
             return value;
@@ -1863,40 +1852,31 @@ namespace iText.Kernel.Pdf
         /// <param name="o">PdfName to compare this object to/</param>
         /// <returns>Comparison between both values or, if one of the values is null, Comparison between contents. If one of the values and one of the contents are equal to null, generate values and compare those.
         ///     </returns>
-        public virtual int CompareTo(iText.Kernel.Pdf.PdfName o)
-        {
+        public virtual int CompareTo(iText.Kernel.Pdf.PdfName o) {
             return string.CompareOrdinal(GetValue(), o.GetValue());
         }
 
-        public override bool Equals(Object o)
-        {
-            if (this == o)
-            {
+        public override bool Equals(Object o) {
+            if (this == o) {
                 return true;
             }
-            if (o == null || GetType() != o.GetType())
-            {
+            if (o == null || GetType() != o.GetType()) {
                 return false;
             }
             iText.Kernel.Pdf.PdfName pdfName = (iText.Kernel.Pdf.PdfName)o;
             return this.CompareTo(pdfName) == 0;
         }
 
-        public override int GetHashCode()
-        {
+        public override int GetHashCode() {
             return GetValue().GetHashCode();
         }
 
-        protected internal virtual void GenerateValue()
-        {
+        protected internal virtual void GenerateValue() {
             StringBuilder buf = new StringBuilder();
-            try
-            {
-                for (int k = 0; k < content.Length; ++k)
-                {
+            try {
+                for (int k = 0; k < content.Length; ++k) {
                     char c = (char)content[k];
-                    if (c == '#')
-                    {
+                    if (c == '#') {
                         byte c1 = content[k + 1];
                         byte c2 = content[k + 2];
                         c = (char)((ByteBuffer.GetHex(c1) << 4) + ByteBuffer.GetHex(c2));
@@ -1905,138 +1885,113 @@ namespace iText.Kernel.Pdf
                     buf.Append(c);
                 }
             }
-            catch (IndexOutOfRangeException)
-            {
+            catch (IndexOutOfRangeException) {
             }
             // empty on purpose
             value = buf.ToString();
         }
 
-        protected internal override void GenerateContent()
-        {
+        protected internal override void GenerateContent() {
             int length = value.Length;
             ByteBuffer buf = new ByteBuffer(length + 20);
             char c;
             char[] chars = value.ToCharArray();
-            for (int k = 0; k < length; k++)
-            {
+            for (int k = 0; k < length; k++) {
                 c = (char)(chars[k] & 0xff);
                 // Escape special characters
-                switch (c)
-                {
-                    case ' ':
-                        {
-                            buf.Append(space);
-                            break;
-                        }
+                switch (c) {
+                    case ' ': {
+                        buf.Append(space);
+                        break;
+                    }
 
-                    case '%':
-                        {
-                            buf.Append(percent);
-                            break;
-                        }
+                    case '%': {
+                        buf.Append(percent);
+                        break;
+                    }
 
-                    case '(':
-                        {
-                            buf.Append(leftParenthesis);
-                            break;
-                        }
+                    case '(': {
+                        buf.Append(leftParenthesis);
+                        break;
+                    }
 
-                    case ')':
-                        {
-                            buf.Append(rightParenthesis);
-                            break;
-                        }
+                    case ')': {
+                        buf.Append(rightParenthesis);
+                        break;
+                    }
 
-                    case '<':
-                        {
-                            buf.Append(lessThan);
-                            break;
-                        }
+                    case '<': {
+                        buf.Append(lessThan);
+                        break;
+                    }
 
-                    case '>':
-                        {
-                            buf.Append(greaterThan);
-                            break;
-                        }
+                    case '>': {
+                        buf.Append(greaterThan);
+                        break;
+                    }
 
-                    case '[':
-                        {
-                            buf.Append(leftSquare);
-                            break;
-                        }
+                    case '[': {
+                        buf.Append(leftSquare);
+                        break;
+                    }
 
-                    case ']':
-                        {
-                            buf.Append(rightSquare);
-                            break;
-                        }
+                    case ']': {
+                        buf.Append(rightSquare);
+                        break;
+                    }
 
-                    case '{':
-                        {
-                            buf.Append(leftCurlyBracket);
-                            break;
-                        }
+                    case '{': {
+                        buf.Append(leftCurlyBracket);
+                        break;
+                    }
 
-                    case '}':
-                        {
-                            buf.Append(rightCurlyBracket);
-                            break;
-                        }
+                    case '}': {
+                        buf.Append(rightCurlyBracket);
+                        break;
+                    }
 
-                    case '/':
-                        {
-                            buf.Append(solidus);
-                            break;
-                        }
+                    case '/': {
+                        buf.Append(solidus);
+                        break;
+                    }
 
-                    case '#':
-                        {
-                            buf.Append(numberSign);
-                            break;
-                        }
+                    case '#': {
+                        buf.Append(numberSign);
+                        break;
+                    }
 
-                    default:
-                        {
-                            if (c >= 32 && c <= 126)
-                            {
-                                buf.Append(c);
+                    default: {
+                        if (c >= 32 && c <= 126) {
+                            buf.Append(c);
+                        }
+                        else {
+                            buf.Append('#');
+                            if (c < 16) {
+                                buf.Append('0');
                             }
-                            else
-                            {
-                                buf.Append('#');
-                                if (c < 16)
-                                {
-                                    buf.Append('0');
-                                }
-                                buf.Append(JavaUtil.IntegerToHexString(c));
-                            }
-                            break;
+                            buf.Append(JavaUtil.IntegerToHexString(c));
                         }
+                        break;
+                    }
                 }
             }
             content = buf.ToByteArray();
         }
 
-        public override String ToString()
-        {
-            if (content != null)
-            {
+        public override String ToString() {
+            if (content != null) {
                 return "/" + iText.IO.Util.JavaUtil.GetStringForBytes(content, iText.IO.Util.EncodingUtil.ISO_8859_1);
             }
-            else
-            {
+            else {
                 return "/" + GetValue();
             }
         }
 
-        protected internal override PdfObject NewInstance()
-        {
+        protected internal override PdfObject NewInstance() {
             return new iText.Kernel.Pdf.PdfName();
         }
 
-        protected internal override void CopyContent(PdfObject from, PdfDocument document)
-        {
+        protected internal override void CopyContent(PdfObject from, PdfDocument document) {
             base.CopyContent(from, document);
             iText.Kernel.Pdf.PdfName name = (iText.Kernel.Pdf.PdfName)from;
             value = name.value;

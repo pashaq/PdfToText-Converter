@@ -20,11 +20,10 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-using iText.IO.Util;
 using System;
+using iText.IO.Util;
 
-namespace iText.Kernel.Colors.Gradients
-{
+namespace iText.Kernel.Colors.Gradients {
     /// <summary>The gradient stop color structure representing the stop color configuration.</summary>
     /// <remarks>
     /// The gradient stop color structure representing the stop color configuration.
@@ -46,8 +45,7 @@ namespace iText.Kernel.Colors.Gradients
     /// hint offset type specifies the color
     /// transition mid point offset between the current color and the next color
     /// </remarks>
-    public class GradientColorStop
-    {
+    public class GradientColorStop {
         private readonly float[] rgb;
 
         private readonly float opacity;
@@ -68,8 +66,7 @@ namespace iText.Kernel.Colors.Gradients
         /// </summary>
         /// <param name="rgb">the color value</param>
         public GradientColorStop(float[] rgb)
-            : this(rgb, 1f, 0d, GradientColorStop.OffsetType.AUTO)
-        {
+            : this(rgb, 1f, 0d, GradientColorStop.OffsetType.AUTO) {
         }
 
         /// <summary>Constructor of stop color with with specified rgb color and offset</summary>
@@ -82,8 +79,7 @@ namespace iText.Kernel.Colors.Gradients
         /// </param>
         /// <param name="offsetType">the offset's type</param>
         public GradientColorStop(float[] rgb, double offset, GradientColorStop.OffsetType offsetType)
-            : this(rgb, 1f, offset, offsetType)
-        {
+            : this(rgb, 1f, offset, offsetType) {
         }
 
         /// <summary>Constructor that creates the stop with the same color as the another stop and new offset</summary>
@@ -95,15 +91,13 @@ namespace iText.Kernel.Colors.Gradients
         /// <see cref="OffsetType.AUTO"/>
         /// </param>
         /// <param name="offsetType">the new offset's type</param>
-        public GradientColorStop(iText.Kernel.Colors.Gradients.GradientColorStop gradientColorStop, double offset,
+        public GradientColorStop(iText.Kernel.Colors.Gradients.GradientColorStop gradientColorStop, double offset, 
             GradientColorStop.OffsetType offsetType)
-            : this(gradientColorStop.GetRgbArray(), gradientColorStop.GetOpacity(), offset, offsetType)
-        {
+            : this(gradientColorStop.GetRgbArray(), gradientColorStop.GetOpacity(), offset, offsetType) {
         }
 
         private GradientColorStop(float[] rgb, float opacity, double offset, GradientColorStop.OffsetType offsetType
-            )
-        {
+            ) {
             this.rgb = CopyRgbArray(rgb);
             this.opacity = Normalize(opacity);
             SetOffset(offset, offsetType);
@@ -111,44 +105,38 @@ namespace iText.Kernel.Colors.Gradients
 
         /// <summary>Get the stop color rgb value</summary>
         /// <returns>the copy of stop's rgb value</returns>
-        public virtual float[] GetRgbArray()
-        {
+        public virtual float[] GetRgbArray() {
             return CopyRgbArray(this.rgb);
         }
 
         // TODO: DEVSIX-4136 make public with opacity logic implementation
         /// <summary>Get the stop color opacity value</summary>
         /// <returns>the stop color opacity value</returns>
-        private float GetOpacity()
-        {
+        private float GetOpacity() {
             return this.opacity;
         }
 
         /// <summary>Get the offset type</summary>
         /// <returns>the offset type</returns>
-        public virtual GradientColorStop.OffsetType GetOffsetType()
-        {
+        public virtual GradientColorStop.OffsetType GetOffsetType() {
             return offsetType;
         }
 
         /// <summary>Get the offset value</summary>
         /// <returns>the offset value</returns>
-        public virtual double GetOffset()
-        {
+        public virtual double GetOffset() {
             return this.offset;
         }
 
         /// <summary>Get the hint offset value</summary>
         /// <returns>the hint offset value</returns>
-        public virtual double GetHintOffset()
-        {
+        public virtual double GetHintOffset() {
             return hintOffset;
         }
 
         /// <summary>Get the hint offset type</summary>
         /// <returns>the hint offset type</returns>
-        public virtual GradientColorStop.HintOffsetType GetHintOffsetType()
-        {
+        public virtual GradientColorStop.HintOffsetType GetHintOffsetType() {
             return hintOffsetType;
         }
 
@@ -166,8 +154,7 @@ namespace iText.Kernel.Colors.Gradients
         /// instance
         /// </returns>
         public virtual iText.Kernel.Colors.Gradients.GradientColorStop SetOffset(double offset, GradientColorStop.OffsetType
-             offsetType)
-        {
+             offsetType) {
             this.offsetType = offsetType != null ? offsetType : GradientColorStop.OffsetType.AUTO;
             this.offset = this.offsetType != GradientColorStop.OffsetType.AUTO ? offset : 0d;
             return this;
@@ -192,21 +179,17 @@ namespace iText.Kernel.Colors.Gradients
         /// instance
         /// </returns>
         public virtual iText.Kernel.Colors.Gradients.GradientColorStop SetHint(double hintOffset, GradientColorStop.HintOffsetType
-             hintOffsetType)
-        {
+             hintOffsetType) {
             this.hintOffsetType = hintOffsetType != null ? hintOffsetType : GradientColorStop.HintOffsetType.NONE;
             this.hintOffset = this.hintOffsetType != GradientColorStop.HintOffsetType.NONE ? hintOffset : 0d;
             return this;
         }
 
-        public override bool Equals(Object o)
-        {
-            if (this == o)
-            {
+        public override bool Equals(Object o) {
+            if (this == o) {
                 return true;
             }
-            if (o == null || GetType() != o.GetType())
-            {
+            if (o == null || GetType() != o.GetType()) {
                 return false;
             }
             iText.Kernel.Colors.Gradients.GradientColorStop that = (iText.Kernel.Colors.Gradients.GradientColorStop)o;
@@ -215,8 +198,7 @@ namespace iText.Kernel.Colors.Gradients
                  && offsetType == that.offsetType && hintOffsetType == that.hintOffsetType;
         }
 
-        public override int GetHashCode()
-        {
+        public override int GetHashCode() {
             int result = JavaUtil.ArraysHashCode(opacity, offset, hintOffset);
             result = 31 * result + offsetType.GetHashCode();
             result = 31 * result + hintOffsetType.GetHashCode();
@@ -224,23 +206,19 @@ namespace iText.Kernel.Colors.Gradients
             return result;
         }
 
-        private static float Normalize(float toNormalize)
-        {
+        private static float Normalize(float toNormalize) {
             return toNormalize > 1f ? 1f : toNormalize > 0f ? toNormalize : 0f;
         }
 
-        private static float[] CopyRgbArray(float[] toCopy)
-        {
-            if (toCopy == null || toCopy.Length < 3)
-            {
+        private static float[] CopyRgbArray(float[] toCopy) {
+            if (toCopy == null || toCopy.Length < 3) {
                 return new float[] { 0f, 0f, 0f };
             }
             return new float[] { Normalize(toCopy[0]), Normalize(toCopy[1]), Normalize(toCopy[2]) };
         }
 
         /// <summary>Represents the possible offset type</summary>
-        public enum OffsetType
-        {
+        public enum OffsetType {
             /// <summary>The absolute offset value from the target coordinates vector's start</summary>
             ABSOLUTE,
             /// <summary>The automatic offset evaluation.</summary>
@@ -265,8 +243,7 @@ namespace iText.Kernel.Colors.Gradients
         }
 
         /// <summary>Represents the possible hint offset type</summary>
-        public enum HintOffsetType
-        {
+        public enum HintOffsetType {
             /// <summary>The absolute hint offset value on the target gradient value</summary>
             ABSOLUTE_ON_GRADIENT,
             /// <summary>The relative hint offset value to the target coordinates vector.</summary>

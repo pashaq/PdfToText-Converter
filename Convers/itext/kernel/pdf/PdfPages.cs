@@ -41,10 +41,8 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-namespace iText.Kernel.Pdf
-{
-    internal class PdfPages : PdfObjectWrapper<PdfDictionary>
-    {
+namespace iText.Kernel.Pdf {
+    internal class PdfPages : PdfObjectWrapper<PdfDictionary> {
         private int from;
 
         private PdfNumber count;
@@ -54,10 +52,8 @@ namespace iText.Kernel.Pdf
         private readonly iText.Kernel.Pdf.PdfPages parent;
 
         public PdfPages(int from, PdfDocument pdfDocument, iText.Kernel.Pdf.PdfPages parent)
-            : base(new PdfDictionary())
-        {
-            if (pdfDocument.GetWriter() != null)
-            {
+            : base(new PdfDictionary()) {
+            if (pdfDocument.GetWriter() != null) {
                 GetPdfObject().MakeIndirect(pdfDocument);
             }
             SetForbidRelease();
@@ -68,33 +64,27 @@ namespace iText.Kernel.Pdf
             GetPdfObject().Put(PdfName.Type, PdfName.Pages);
             GetPdfObject().Put(PdfName.Kids, this.kids);
             GetPdfObject().Put(PdfName.Count, this.count);
-            if (parent != null)
-            {
+            if (parent != null) {
                 GetPdfObject().Put(PdfName.Parent, this.parent.GetPdfObject());
             }
         }
 
         public PdfPages(int from, PdfDocument pdfDocument)
-            : this(from, pdfDocument, null)
-        {
+            : this(from, pdfDocument, null) {
         }
 
         public PdfPages(int from, int maxCount, PdfDictionary pdfObject, iText.Kernel.Pdf.PdfPages parent)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
             SetForbidRelease();
             this.from = from;
             this.count = pdfObject.GetAsNumber(PdfName.Count);
             this.parent = parent;
-            if (this.count == null)
-            {
+            if (this.count == null) {
                 this.count = new PdfNumber(1);
                 pdfObject.Put(PdfName.Count, this.count);
             }
-            else
-            {
-                if (maxCount < this.count.IntValue())
-                {
+            else {
+                if (maxCount < this.count.IntValue()) {
                     this.count.SetValue(maxCount);
                 }
             }
@@ -102,18 +92,15 @@ namespace iText.Kernel.Pdf
             pdfObject.Put(PdfName.Type, PdfName.Pages);
         }
 
-        public virtual void AddPage(PdfDictionary page)
-        {
+        public virtual void AddPage(PdfDictionary page) {
             kids.Add(page);
             IncrementCount();
             page.Put(PdfName.Parent, GetPdfObject());
             page.SetModified();
         }
 
-        public virtual bool AddPage(int index, PdfPage pdfPage)
-        {
-            if (index < from || index > from + GetCount())
-            {
+        public virtual bool AddPage(int index, PdfPage pdfPage) {
+            if (index < from || index > from + GetCount()) {
                 return false;
             }
             kids.Add(index - from, pdfPage.GetPdfObject());
@@ -123,10 +110,8 @@ namespace iText.Kernel.Pdf
             return true;
         }
 
-        public virtual bool RemovePage(int pageNum)
-        {
-            if (pageNum < from || pageNum >= from + GetCount())
-            {
+        public virtual bool RemovePage(int pageNum) {
+            if (pageNum < from || pageNum >= from + GetCount()) {
                 return false;
             }
             DecrementCount();
@@ -134,8 +119,7 @@ namespace iText.Kernel.Pdf
             return true;
         }
 
-        public virtual void AddPages(iText.Kernel.Pdf.PdfPages pdfPages)
-        {
+        public virtual void AddPages(iText.Kernel.Pdf.PdfPages pdfPages) {
             kids.Add(pdfPages.GetPdfObject());
             count.SetValue(count.IntValue() + pdfPages.GetCount());
             pdfPages.GetPdfObject().Put(PdfName.Parent, GetPdfObject());
@@ -144,79 +128,63 @@ namespace iText.Kernel.Pdf
         }
 
         // remove empty PdfPage.
-        public virtual void RemoveFromParent()
-        {
-            if (parent != null)
-            {
+        public virtual void RemoveFromParent() {
+            if (parent != null) {
                 System.Diagnostics.Debug.Assert(GetCount() == 0);
                 parent.kids.Remove(GetPdfObject().GetIndirectReference());
-                if (parent.GetCount() == 0)
-                {
+                if (parent.GetCount() == 0) {
                     parent.RemoveFromParent();
                 }
             }
         }
 
-        public virtual int GetFrom()
-        {
+        public virtual int GetFrom() {
             return from;
         }
 
-        public virtual int GetCount()
-        {
+        public virtual int GetCount() {
             return count.IntValue();
         }
 
-        public virtual void CorrectFrom(int correction)
-        {
+        public virtual void CorrectFrom(int correction) {
             from += correction;
         }
 
-        public virtual PdfArray GetKids()
-        {
+        public virtual PdfArray GetKids() {
             return GetPdfObject().GetAsArray(PdfName.Kids);
         }
 
-        public virtual iText.Kernel.Pdf.PdfPages GetParent()
-        {
+        public virtual iText.Kernel.Pdf.PdfPages GetParent() {
             return parent;
         }
 
-        public virtual void IncrementCount()
-        {
+        public virtual void IncrementCount() {
             count.Increment();
             SetModified();
-            if (parent != null)
-            {
+            if (parent != null) {
                 parent.IncrementCount();
             }
         }
 
-        public virtual void DecrementCount()
-        {
+        public virtual void DecrementCount() {
             count.Decrement();
             SetModified();
-            if (parent != null)
-            {
+            if (parent != null) {
                 parent.DecrementCount();
             }
         }
 
-        public virtual int CompareTo(int index)
-        {
-            if (index < from)
-            {
+        public virtual int CompareTo(int index) {
+            if (index < from) {
                 return 1;
             }
-            if (index >= from + GetCount())
-            {
+            if (index >= from + GetCount()) {
                 return -1;
             }
             return 0;
         }
 
-        protected internal override bool IsWrappedObjectMustBeIndirect()
-        {
+        protected internal override bool IsWrappedObjectMustBeIndirect() {
             return true;
         }
     }

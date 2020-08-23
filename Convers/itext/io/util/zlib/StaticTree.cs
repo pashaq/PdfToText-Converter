@@ -1,3 +1,4 @@
+using System;
 /*
  *
 Copyright (c) 2000,2001,2002,2003 ymnk, JCraft,Inc. All rights reserved.
@@ -32,21 +33,19 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * and contributors of zlib.
  */
 
-namespace System.util.zlib
-{
+namespace System.util.zlib {
 
-    internal sealed class StaticTree
-    {
-        private const int MAX_BITS = 15;
+    internal sealed class StaticTree{
+        private const int MAX_BITS=15;
 
-        private const int BL_CODES = 19;
-        private const int D_CODES = 30;
-        private const int LITERALS = 256;
-        private const int LENGTH_CODES = 29;
-        private const int L_CODES = (LITERALS + 1 + LENGTH_CODES);
+        private const int BL_CODES=19;
+        private const int D_CODES=30;
+        private const int LITERALS=256;
+        private const int LENGTH_CODES=29;
+        private const int L_CODES=(LITERALS+1+LENGTH_CODES);
 
         // Bit length codes must not exceed MAX_BL_BITS bits
-        internal const int MAX_BL_BITS = 7;
+        internal const int MAX_BL_BITS=7; 
 
         internal static readonly short[] static_ltree = {
                                                    12,  8, 140,  8,  76,  8, 204,  8,  44,  8,
@@ -120,11 +119,11 @@ namespace System.util.zlib
 
         internal static readonly StaticTree static_l_desc =
             new StaticTree(static_ltree, Tree.extra_lbits,
-            LITERALS + 1, L_CODES, MAX_BITS);
+            LITERALS+1, L_CODES, MAX_BITS);
 
         internal static readonly StaticTree static_d_desc =
             new StaticTree(static_dtree, Tree.extra_dbits,
-            0, D_CODES, MAX_BITS);
+            0,  D_CODES, MAX_BITS);
 
         internal static readonly StaticTree static_bl_desc =
             new StaticTree(null, Tree.extra_blbits,
@@ -141,13 +140,12 @@ namespace System.util.zlib
             int extra_base,
             int elems,
             int max_length
-            )
-        {
-            this.static_tree = static_tree;
-            this.extra_bits = extra_bits;
-            this.extra_base = extra_base;
-            this.elems = elems;
-            this.max_length = max_length;
+            ){
+            this.static_tree=static_tree;
+            this.extra_bits=extra_bits;
+            this.extra_base=extra_base;
+            this.elems=elems;
+            this.max_length=max_length;
         }
     }
 }

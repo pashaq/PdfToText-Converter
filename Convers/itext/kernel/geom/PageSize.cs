@@ -41,10 +41,8 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-namespace iText.Kernel.Geom
-{
-    public class PageSize : Rectangle
-    {
+namespace iText.Kernel.Geom {
+    public class PageSize : Rectangle {
         public static iText.Kernel.Geom.PageSize A0 = new iText.Kernel.Geom.PageSize(2384, 3370);
 
         public static iText.Kernel.Geom.PageSize A1 = new iText.Kernel.Geom.PageSize(1684, 2384);
@@ -102,13 +100,11 @@ namespace iText.Kernel.Geom
         public static iText.Kernel.Geom.PageSize Default = A4;
 
         public PageSize(float width, float height)
-            : base(0, 0, width, height)
-        {
+            : base(0, 0, width, height) {
         }
 
         public PageSize(Rectangle box)
-            : base(box.GetX(), box.GetY(), box.GetWidth(), box.GetHeight())
-        {
+            : base(box.GetX(), box.GetY(), box.GetWidth(), box.GetHeight()) {
         }
 
         /// <summary>
@@ -120,8 +116,7 @@ namespace iText.Kernel.Geom
         /// the rotated
         /// <see cref="PageSize"/>.
         /// </returns>
-        public virtual iText.Kernel.Geom.PageSize Rotate()
-        {
+        public virtual iText.Kernel.Geom.PageSize Rotate() {
             return new iText.Kernel.Geom.PageSize(height, width);
         }
 
@@ -139,8 +134,7 @@ namespace iText.Kernel.Geom
         /// <see cref="PageSize"/>.
         /// </remarks>
         /// <returns>the copied PageSize.</returns>
-        public override Rectangle Clone()
-        {
+        public override Rectangle Clone() {
             // super.clone is safe to return since all of the PagSize's fields are primitive.
             return base.Clone();
         }

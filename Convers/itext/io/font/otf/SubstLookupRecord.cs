@@ -41,10 +41,8 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-namespace iText.IO.Font.Otf
-{
-    public class SubstLookupRecord
-    {
+namespace iText.IO.Font.Otf {
+    public class SubstLookupRecord {
         internal int sequenceIndex;
 
         internal int lookupListIndex;

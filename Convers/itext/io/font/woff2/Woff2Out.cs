@@ -13,8 +13,7 @@
 // limitations under the License.
 //
 // This is part of java port of project hosted at https://github.com/google/woff2
-namespace iText.IO.Font.Woff2
-{
+namespace iText.IO.Font.Woff2 {
     /// <summary>Output interface for the woff2 decoding.</summary>
     /// <remarks>
     /// Output interface for the woff2 decoding.
@@ -23,8 +22,7 @@ namespace iText.IO.Font.Woff2
     /// supported so a 'loca' table can be built up while writing glyphs.
     /// By default limits size to kDefaultMaxSize.
     /// </remarks>
-    internal interface Woff2Out
-    {
+    internal interface Woff2Out {
         // Append n bytes of data from buf.
         // Return true if all written, false otherwise.
         void Write(byte[] buf, int buff_offset, int n);

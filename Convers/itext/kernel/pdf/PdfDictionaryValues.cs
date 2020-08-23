@@ -44,15 +44,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace iText.Kernel.Pdf
-{
+namespace iText.Kernel.Pdf {
 
-    internal class PdfDictionaryValues : ICollection<PdfObject>
-    {
+    internal class PdfDictionaryValues : ICollection<PdfObject> {
         private readonly ICollection<PdfObject> collection;
 
-        internal PdfDictionaryValues(ICollection<PdfObject> collection)
-        {
+        internal PdfDictionaryValues(ICollection<PdfObject> collection) {
             this.collection = collection;
         }
 

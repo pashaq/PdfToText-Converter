@@ -43,8 +43,7 @@ address: sales@itextpdf.com
 */
 using System;
 
-namespace iText.Kernel.Counter
-{
+namespace iText.Kernel.Counter {
     /// <summary>
     /// Factory that can be registered in
     /// <see cref="EventCounterHandler"/>
@@ -69,8 +68,7 @@ namespace iText.Kernel.Counter
     /// <para />
     /// This functionality can be used to create metrics in a SaaS context.
     /// </remarks>
-    public interface IEventCounterFactory
-    {
+    public interface IEventCounterFactory {
         EventCounter GetCounter(Type cls);
     }
 }

@@ -43,14 +43,12 @@ address: sales@itextpdf.com
 */
 using iText.Kernel.Colors;
 
-namespace iText.Kernel.Pdf.Canvas.Wmf
-{
+namespace iText.Kernel.Pdf.Canvas.Wmf {
     /// <summary>
     /// A Brush bject that holds information about the style, the hatch and the color of
     /// the brush.
     /// </summary>
-    public class MetaBrush : MetaObject
-    {
+    public class MetaBrush : MetaObject {
         public const int BS_SOLID = 0;
 
         public const int BS_NULL = 1;
@@ -81,14 +79,12 @@ namespace iText.Kernel.Pdf.Canvas.Wmf
 
         /// <summary>Creates a MetaBrush object.</summary>
         public MetaBrush()
-            : base(META_BRUSH)
-        {
+            : base(META_BRUSH) {
         }
 
         /// <summary>Initializes this MetaBrush object.</summary>
         /// <param name="in">the InputMeta</param>
-        public virtual void Init(InputMeta @in)
-        {
+        public virtual void Init(InputMeta @in) {
             style = @in.ReadWord();
             color = @in.ReadColor();
             hatch = @in.ReadWord();
@@ -96,22 +92,19 @@ namespace iText.Kernel.Pdf.Canvas.Wmf
 
         /// <summary>Get the style of the MetaBrush.</summary>
         /// <returns>style of the brush</returns>
-        public virtual int GetStyle()
-        {
+        public virtual int GetStyle() {
             return style;
         }
 
         /// <summary>Get the hatch pattern of the MetaBrush</summary>
         /// <returns>hatch of the brush</returns>
-        public virtual int GetHatch()
-        {
+        public virtual int GetHatch() {
             return hatch;
         }
 
         /// <summary>Get the color of the MetaBrush.</summary>
         /// <returns>color of the brush</returns>
-        public virtual Color GetColor()
-        {
+        public virtual Color GetColor() {
             return color;
         }
     }

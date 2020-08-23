@@ -41,26 +41,24 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using iText.Kernel;
 using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas.Wmf;
 
-namespace iText.Kernel.Pdf.Xobject
-{
+namespace iText.Kernel.Pdf.Xobject {
     /// <summary>A wrapper for Form XObject.</summary>
     /// <remarks>A wrapper for Form XObject. ISO 32000-1, 8.10 FormXObjects.</remarks>
-    public class PdfFormXObject : PdfXObject
-    {
+    public class PdfFormXObject : PdfXObject {
         protected internal PdfResources resources = null;
 
         /// <summary>Creates a new instance of Form XObject.</summary>
         /// <param name="bBox">the form XObject’s bounding box.</param>
         public PdfFormXObject(Rectangle bBox)
-            : base(new PdfStream())
-        {
+            : base(new PdfStream()) {
             GetPdfObject().Put(PdfName.Type, PdfName.XObject);
             GetPdfObject().Put(PdfName.Subtype, PdfName.Form);
-            if (bBox != null)
-            {
+            if (bBox != null) {
                 GetPdfObject().Put(PdfName.BBox, new PdfArray(bBox));
             }
         }
@@ -85,10 +83,8 @@ namespace iText.Kernel.Pdf.Xobject
         /// </param>
         /// <seealso cref="PdfXObject.MakeXObject(iText.Kernel.Pdf.PdfStream)"/>
         public PdfFormXObject(PdfStream pdfStream)
-            : base(pdfStream)
-        {
-            if (!GetPdfObject().ContainsKey(PdfName.Subtype))
-            {
+            : base(pdfStream) {
+            if (!GetPdfObject().ContainsKey(PdfName.Subtype)) {
                 GetPdfObject().Put(PdfName.Subtype, PdfName.Form);
             }
         }
@@ -103,8 +99,7 @@ namespace iText.Kernel.Pdf.Xobject
         /// <see cref="iText.Kernel.Pdf.PdfPage"/>
         /// </param>
         public PdfFormXObject(PdfPage page)
-            : this(page.GetCropBox())
-        {
+            : this(page.GetCropBox()) {
             GetPdfObject().GetOutputStream().WriteBytes(page.GetContentBytes());
             resources = new PdfResources((PdfDictionary)page.GetResources().GetPdfObject().Clone());
             GetPdfObject().Put(PdfName.Resources, resources.GetPdfObject());
@@ -127,8 +122,7 @@ namespace iText.Kernel.Pdf.Xobject
         /// <param name="image">image to create form object from</param>
         /// <param name="pdfDocument">document instance which is needed for writing form stream contents</param>
         public PdfFormXObject(WmfImageData image, PdfDocument pdfDocument)
-            : this(new WmfImageHelper(image).CreateFormXObject(pdfDocument).GetPdfObject())
-        {
+            : this(new WmfImageHelper(image).CreateFormXObject(pdfDocument).GetPdfObject()) {
         }
 
         /// <summary>
@@ -146,13 +140,10 @@ namespace iText.Kernel.Pdf.Xobject
         /// not null instance of
         /// <see cref="iText.Kernel.Pdf.PdfResources"/>.
         /// </returns>
-        public virtual PdfResources GetResources()
-        {
-            if (this.resources == null)
-            {
+        public virtual PdfResources GetResources() {
+            if (this.resources == null) {
                 PdfDictionary resourcesDict = GetPdfObject().GetAsDictionary(PdfName.Resources);
-                if (resourcesDict == null)
-                {
+                if (resourcesDict == null) {
                     resourcesDict = new PdfDictionary();
                     GetPdfObject().Put(PdfName.Resources, resourcesDict);
                 }
@@ -172,8 +163,7 @@ namespace iText.Kernel.Pdf.Xobject
         /// , that represents
         /// <see cref="iText.Kernel.Geom.Rectangle"/>.
         /// </returns>
-        public virtual PdfArray GetBBox()
-        {
+        public virtual PdfArray GetBBox() {
             return GetPdfObject().GetAsArray(PdfName.BBox);
         }
 
@@ -189,8 +179,7 @@ namespace iText.Kernel.Pdf.Xobject
         /// <see cref="iText.Kernel.Geom.Rectangle"/>.
         /// </param>
         /// <returns>object itself.</returns>
-        public virtual iText.Kernel.Pdf.Xobject.PdfFormXObject SetBBox(PdfArray bBox)
-        {
+        public virtual iText.Kernel.Pdf.Xobject.PdfFormXObject SetBBox(PdfArray bBox) {
             return Put(PdfName.BBox, bBox);
         }
 
@@ -210,23 +199,20 @@ namespace iText.Kernel.Pdf.Xobject
         /// </param>
         /// <returns>object itself.</returns>
         /// <seealso cref="PdfTransparencyGroup"/>
-        public virtual iText.Kernel.Pdf.Xobject.PdfFormXObject SetGroup(PdfTransparencyGroup transparency)
-        {
+        public virtual iText.Kernel.Pdf.Xobject.PdfFormXObject SetGroup(PdfTransparencyGroup transparency) {
             return Put(PdfName.Group, transparency.GetPdfObject());
         }
 
         /// <summary>Gets width based on XObject's BBox.</summary>
         /// <returns>float value.</returns>
-        public override float GetWidth()
-        {
+        public override float GetWidth() {
             return GetBBox() == null ? 0 : GetBBox().GetAsNumber(2).FloatValue() - GetBBox().GetAsNumber(0).FloatValue
                 ();
         }
 
         /// <summary>Gets height based on XObject's BBox.</summary>
         /// <returns>float value.</returns>
-        public override float GetHeight()
-        {
+        public override float GetHeight() {
             return GetBBox() == null ? 0 : GetBBox().GetAsNumber(3).FloatValue() - GetBBox().GetAsNumber(1).FloatValue
                 ();
         }
@@ -247,11 +233,9 @@ namespace iText.Kernel.Pdf.Xobject
         /// For example: wrapperInstance.makeIndirect(document).flush();
         /// Note that not every wrapper require this, only those that have such warning in documentation.
         /// </remarks>
-        public override void Flush()
-        {
+        public override void Flush() {
             resources = null;
-            if (GetPdfObject().Get(PdfName.BBox) == null)
-            {
+            if (GetPdfObject().Get(PdfName.BBox) == null) {
                 throw new PdfException(PdfException.FormXObjectMustHaveBbox);
             }
             base.Flush();
@@ -278,8 +262,7 @@ namespace iText.Kernel.Pdf.Xobject
         /// <see cref="iText.Kernel.Pdf.PdfName.DeviceN"/>.
         /// </param>
         /// <returns>object itself.</returns>
-        public virtual iText.Kernel.Pdf.Xobject.PdfFormXObject SetProcessColorModel(PdfName model)
-        {
+        public virtual iText.Kernel.Pdf.Xobject.PdfFormXObject SetProcessColorModel(PdfName model) {
             return Put(PdfName.PCM, model);
         }
 
@@ -304,8 +287,7 @@ namespace iText.Kernel.Pdf.Xobject
         /// , and
         /// <see cref="iText.Kernel.Pdf.PdfName.DeviceN"/>.
         /// </returns>
-        public virtual PdfName GetProcessColorModel()
-        {
+        public virtual PdfName GetProcessColorModel() {
             return GetPdfObject().GetAsName(PdfName.PCM);
         }
 
@@ -319,8 +301,7 @@ namespace iText.Kernel.Pdf.Xobject
         /// when the trap network appearance was created.
         /// </param>
         /// <returns>object itself.</returns>
-        public virtual iText.Kernel.Pdf.Xobject.PdfFormXObject SetSeparationColorNames(PdfArray colorNames)
-        {
+        public virtual iText.Kernel.Pdf.Xobject.PdfFormXObject SetSeparationColorNames(PdfArray colorNames) {
             return Put(PdfName.SeparationColorNames, colorNames);
         }
 
@@ -334,8 +315,7 @@ namespace iText.Kernel.Pdf.Xobject
         /// <see cref="iText.Kernel.Pdf.PdfArray"/>
         /// of names identifying the colorants.
         /// </returns>
-        public virtual PdfArray GetSeparationColorNames()
-        {
+        public virtual PdfArray GetSeparationColorNames() {
             return GetPdfObject().GetAsArray(PdfName.SeparationColorNames);
         }
 
@@ -357,8 +337,7 @@ namespace iText.Kernel.Pdf.Xobject
         /// of indirect references to <b>TrapRegion</b> objects.
         /// </param>
         /// <returns>object itself.</returns>
-        public virtual iText.Kernel.Pdf.Xobject.PdfFormXObject SetTrapRegions(PdfArray regions)
-        {
+        public virtual iText.Kernel.Pdf.Xobject.PdfFormXObject SetTrapRegions(PdfArray regions) {
             return Put(PdfName.TrapRegions, regions);
         }
 
@@ -379,8 +358,7 @@ namespace iText.Kernel.Pdf.Xobject
         /// <see cref="iText.Kernel.Pdf.PdfArray"/>
         /// of indirect references to <b>TrapRegion</b> objects.
         /// </returns>
-        public virtual PdfArray GetTrapRegions()
-        {
+        public virtual PdfArray GetTrapRegions() {
             return GetPdfObject().GetAsArray(PdfName.TrapRegions);
         }
 
@@ -396,8 +374,7 @@ namespace iText.Kernel.Pdf.Xobject
         /// value.
         /// </param>
         /// <returns>object itself.</returns>
-        public virtual iText.Kernel.Pdf.Xobject.PdfFormXObject SetTrapStyles(PdfString trapStyles)
-        {
+        public virtual iText.Kernel.Pdf.Xobject.PdfFormXObject SetTrapStyles(PdfString trapStyles) {
             return Put(PdfName.TrapStyles, trapStyles);
         }
 
@@ -412,8 +389,7 @@ namespace iText.Kernel.Pdf.Xobject
         /// <see cref="iText.Kernel.Pdf.PdfString"/>
         /// value.
         /// </returns>
-        public virtual PdfString GetTrapStyles()
-        {
+        public virtual PdfString GetTrapStyles() {
             return GetPdfObject().GetAsString(PdfName.TrapStyles);
         }
 
@@ -421,15 +397,13 @@ namespace iText.Kernel.Pdf.Xobject
         /// <summary>Sets a text string representing the printer’s mark in human-readable form.</summary>
         /// <param name="markStyle">a string value.</param>
         /// <returns>object itself.</returns>
-        public virtual iText.Kernel.Pdf.Xobject.PdfFormXObject SetMarkStyle(PdfString markStyle)
-        {
+        public virtual iText.Kernel.Pdf.Xobject.PdfFormXObject SetMarkStyle(PdfString markStyle) {
             return Put(PdfName.MarkStyle, markStyle);
         }
 
         /// <summary>Gets a text string representing the printer’s mark in human-readable form.</summary>
         /// <returns>a string value.</returns>
-        public virtual PdfString GetMarkStyle()
-        {
+        public virtual PdfString GetMarkStyle() {
             return GetPdfObject().GetAsString(PdfName.MarkStyle);
         }
 
@@ -441,8 +415,7 @@ namespace iText.Kernel.Pdf.Xobject
         /// <param name="key">key to insert or to override</param>
         /// <param name="value">the value to associate with the specified key</param>
         /// <returns>object itself.</returns>
-        public virtual iText.Kernel.Pdf.Xobject.PdfFormXObject Put(PdfName key, PdfObject value)
-        {
+        public virtual iText.Kernel.Pdf.Xobject.PdfFormXObject Put(PdfName key, PdfObject value) {
             GetPdfObject().Put(key, value);
             SetModified();
             return this;

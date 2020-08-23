@@ -41,13 +41,11 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.Kernel.Pdf;
 using System.Collections.Generic;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Utils
-{
-    public class PdfMerger
-    {
+namespace iText.Kernel.Utils {
+    public class PdfMerger {
         private PdfDocument pdfDocument;
 
         private bool closeSrcDocuments;
@@ -63,8 +61,7 @@ namespace iText.Kernel.Utils
         /// </remarks>
         /// <param name="pdfDocument">the document into which source documents will be merged</param>
         public PdfMerger(PdfDocument pdfDocument)
-            : this(pdfDocument, true, true)
-        {
+            : this(pdfDocument, true, true) {
         }
 
         /// <summary>This class is used to merge a number of existing documents into one.</summary>
@@ -81,8 +78,7 @@ namespace iText.Kernel.Utils
         /// destination document outlines were explicitly initialized with
         /// <see cref="iText.Kernel.Pdf.PdfDocument.InitializeOutlines()"/>
         /// </param>
-        public PdfMerger(PdfDocument pdfDocument, bool mergeTags, bool mergeOutlines)
-        {
+        public PdfMerger(PdfDocument pdfDocument, bool mergeTags, bool mergeOutlines) {
             this.pdfDocument = pdfDocument;
             this.mergeTags = mergeTags;
             this.mergeOutlines = mergeOutlines;
@@ -107,8 +103,7 @@ namespace iText.Kernel.Utils
         /// <c>PdfMerger</c>
         /// instance
         /// </returns>
-        public virtual iText.Kernel.Utils.PdfMerger SetCloseSourceDocuments(bool closeSourceDocuments)
-        {
+        public virtual iText.Kernel.Utils.PdfMerger SetCloseSourceDocuments(bool closeSourceDocuments) {
             this.closeSrcDocuments = closeSourceDocuments;
             return this;
         }
@@ -136,11 +131,9 @@ namespace iText.Kernel.Utils
         /// <c>PdfMerger</c>
         /// instance
         /// </returns>
-        public virtual iText.Kernel.Utils.PdfMerger Merge(PdfDocument from, int fromPage, int toPage)
-        {
+        public virtual iText.Kernel.Utils.PdfMerger Merge(PdfDocument from, int fromPage, int toPage) {
             IList<int> pages = new List<int>(toPage - fromPage);
-            for (int pageNum = fromPage; pageNum <= toPage; pageNum++)
-            {
+            for (int pageNum = fromPage; pageNum <= toPage; pageNum++) {
                 pages.Add(pageNum);
             }
             return Merge(from, pages);
@@ -168,19 +161,15 @@ namespace iText.Kernel.Utils
         /// <c>PdfMerger</c>
         /// instance
         /// </returns>
-        public virtual iText.Kernel.Utils.PdfMerger Merge(PdfDocument from, IList<int> pages)
-        {
-            if (mergeTags && from.IsTagged())
-            {
+        public virtual iText.Kernel.Utils.PdfMerger Merge(PdfDocument from, IList<int> pages) {
+            if (mergeTags && from.IsTagged()) {
                 pdfDocument.SetTagged();
             }
-            if (mergeOutlines && from.HasOutlines())
-            {
+            if (mergeOutlines && from.HasOutlines()) {
                 pdfDocument.InitializeOutlines();
             }
             from.CopyPagesTo(pages, pdfDocument);
-            if (closeSrcDocuments)
-            {
+            if (closeSrcDocuments) {
                 from.Close();
             }
             return this;
@@ -197,8 +186,7 @@ namespace iText.Kernel.Utils
         /// <i>close</i> either on passed PdfDocument or on this PdfMerger instance, but there is no need
         /// to call them both.
         /// </remarks>
-        public virtual void Close()
-        {
+        public virtual void Close() {
             pdfDocument.Close();
         }
     }

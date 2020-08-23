@@ -43,14 +43,12 @@ address: sales@itextpdf.com
 */
 using iText.Kernel.Colors;
 using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Annot
-{
-    public class PdfSquareAnnotation : PdfMarkupAnnotation
-    {
+namespace iText.Kernel.Pdf.Annot {
+    public class PdfSquareAnnotation : PdfMarkupAnnotation {
         public PdfSquareAnnotation(Rectangle rect)
-            : base(rect)
-        {
+            : base(rect) {
         }
 
         /// <summary>
@@ -67,12 +65,10 @@ namespace iText.Kernel.Pdf.Annot
         /// </param>
         /// <seealso cref="PdfAnnotation.MakeAnnotation(iText.Kernel.Pdf.PdfObject)"/>
         protected internal PdfSquareAnnotation(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
-        public override PdfName GetSubtype()
-        {
+        public override PdfName GetSubtype() {
             return PdfName.Square;
         }
 
@@ -94,8 +90,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfDictionary"/>
         /// which is a border style dictionary or null if it is not specified.
         /// </returns>
-        public virtual PdfDictionary GetBorderStyle()
-        {
+        public virtual PdfDictionary GetBorderStyle() {
             return GetPdfObject().GetAsDictionary(PdfName.BS);
         }
 
@@ -121,8 +116,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfSquareAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfSquareAnnotation SetBorderStyle(PdfDictionary borderStyle)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfSquareAnnotation SetBorderStyle(PdfDictionary borderStyle) {
             return (iText.Kernel.Pdf.Annot.PdfSquareAnnotation)Put(PdfName.BS, borderStyle);
         }
 
@@ -160,8 +154,7 @@ namespace iText.Kernel.Pdf.Annot
         /// instance.
         /// </returns>
         /// <seealso cref="GetBorderStyle()"/>
-        public virtual iText.Kernel.Pdf.Annot.PdfSquareAnnotation SetBorderStyle(PdfName style)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfSquareAnnotation SetBorderStyle(PdfName style) {
             return SetBorderStyle(BorderStyleUtil.SetStyle(GetBorderStyle(), style));
         }
 
@@ -182,8 +175,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfSquareAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfSquareAnnotation SetDashPattern(PdfArray dashPattern)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfSquareAnnotation SetDashPattern(PdfArray dashPattern) {
             return SetBorderStyle(BorderStyleUtil.SetDashPattern(GetBorderStyle(), dashPattern));
         }
 
@@ -198,8 +190,7 @@ namespace iText.Kernel.Pdf.Annot
         /// differences in default user space between the left, top, right, and bottom coordinates of Rect and those
         /// of the inner rectangle, respectively.
         /// </returns>
-        public virtual PdfArray GetRectangleDifferences()
-        {
+        public virtual PdfArray GetRectangleDifferences() {
             return GetPdfObject().GetAsArray(PdfName.RD);
         }
 
@@ -221,8 +212,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfSquareAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfSquareAnnotation SetRectangleDifferences(PdfArray rect)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfSquareAnnotation SetRectangleDifferences(PdfArray rect) {
             return (iText.Kernel.Pdf.Annot.PdfSquareAnnotation)Put(PdfName.RD, rect);
         }
 
@@ -233,8 +223,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfDictionary"/>
         /// , which is a border effect dictionary (see ISO-320001, Table 167).
         /// </returns>
-        public virtual PdfDictionary GetBorderEffect()
-        {
+        public virtual PdfDictionary GetBorderEffect() {
             return GetPdfObject().GetAsDictionary(PdfName.BE);
         }
 
@@ -250,8 +239,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfSquareAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfSquareAnnotation SetBorderEffect(PdfDictionary borderEffect)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfSquareAnnotation SetBorderEffect(PdfDictionary borderEffect) {
             return (iText.Kernel.Pdf.Annot.PdfSquareAnnotation)Put(PdfName.BE, borderEffect);
         }
 
@@ -268,8 +256,7 @@ namespace iText.Kernel.Pdf.Annot
         /// type which defines
         /// interior color of the annotation, or null if interior color is not specified.
         /// </returns>
-        public virtual Color GetInteriorColor()
-        {
+        public virtual Color GetInteriorColor() {
             return InteriorColorUtil.ParseInteriorColor(GetPdfObject().GetAsArray(PdfName.IC));
         }
 
@@ -292,8 +279,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfSquareAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfSquareAnnotation SetInteriorColor(PdfArray interiorColor)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfSquareAnnotation SetInteriorColor(PdfArray interiorColor) {
             return (iText.Kernel.Pdf.Annot.PdfSquareAnnotation)Put(PdfName.IC, interiorColor);
         }
 
@@ -307,8 +293,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfSquareAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfSquareAnnotation SetInteriorColor(float[] interiorColor)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfSquareAnnotation SetInteriorColor(float[] interiorColor) {
             return SetInteriorColor(new PdfArray(interiorColor));
         }
     }

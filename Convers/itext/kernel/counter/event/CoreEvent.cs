@@ -42,29 +42,25 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using System;
+using iText.Kernel.Counter;
 
-namespace iText.Kernel.Counter.Event
-{
+namespace iText.Kernel.Counter.Event {
     /// <summary>The generic event for core</summary>
-    public class CoreEvent : IGenericEvent
-    {
+    public class CoreEvent : IGenericEvent {
         public static readonly iText.Kernel.Counter.Event.CoreEvent PROCESS = new iText.Kernel.Counter.Event.CoreEvent
             ("process");
 
         private readonly String subtype;
 
-        private CoreEvent(String subtype)
-        {
+        private CoreEvent(String subtype) {
             this.subtype = subtype;
         }
 
-        public virtual String GetEventType()
-        {
+        public virtual String GetEventType() {
             return "core-" + subtype;
         }
 
-        public virtual String GetOriginId()
-        {
+        public virtual String GetOriginId() {
             return NamespaceConstant.ITEXT;
         }
     }

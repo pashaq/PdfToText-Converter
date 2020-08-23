@@ -41,24 +41,21 @@ Copyright (c) 1998-2020 iText Group NV
 * For more information, please contact iText Software Corp. at this
 * address: sales@itextpdf.com
 */
-using iText.IO.Source;
-using iText.IO.Util;
 using System;
 using System.IO;
 using System.Text;
+using iText.IO.Source;
+using iText.IO.Util;
 
-namespace iText.IO.Font
-{
+namespace iText.IO.Font {
     /// <summary>Converts a PFM file into an AFM file.</summary>
-    public sealed class Pfm2afm
-    {
+    public sealed class Pfm2afm {
         private RandomAccessFileOrArray input;
 
         private FormattingStreamWriter output;
 
         /// <summary>Creates a new instance of Pfm2afm</summary>
-        private Pfm2afm(RandomAccessFileOrArray input, Stream output)
-        {
+        private Pfm2afm(RandomAccessFileOrArray input, Stream output) {
             this.input = input;
             this.output = (FormattingStreamWriter)FileUtil.CreatePrintWriter(output, "ISO-8859-1");
         }
@@ -66,8 +63,7 @@ namespace iText.IO.Font
         /// <summary>Converts a PFM file into an AFM file.</summary>
         /// <param name="input">the PFM file</param>
         /// <param name="output">the AFM file</param>
-        public static void Convert(RandomAccessFileOrArray input, Stream output)
-        {
+        public static void Convert(RandomAccessFileOrArray input, Stream output) {
             iText.IO.Font.Pfm2afm p = new iText.IO.Font.Pfm2afm(input, output);
             p.Openpfm();
             p.Putheader();
@@ -77,29 +73,23 @@ namespace iText.IO.Font
             p.output.Flush();
         }
 
-        private String ReadString(int n)
-        {
+        private String ReadString(int n) {
             byte[] b = new byte[n];
             input.ReadFully(b);
             int k;
-            for (k = 0; k < b.Length; ++k)
-            {
-                if (b[k] == 0)
-                {
+            for (k = 0; k < b.Length; ++k) {
+                if (b[k] == 0) {
                     break;
                 }
             }
             return iText.IO.Util.JavaUtil.GetStringForBytes(b, 0, k, "ISO-8859-1");
         }
 
-        private String ReadString()
-        {
+        private String ReadString() {
             StringBuilder buf = new StringBuilder();
-            while (true)
-            {
+            while (true) {
                 int c = input.Read();
-                if (c <= 0)
-                {
+                if (c <= 0) {
                     break;
                 }
                 buf.Append((char)c);
@@ -107,8 +97,7 @@ namespace iText.IO.Font
             return buf.ToString();
         }
 
-        private void Outval(int n)
-        {
+        private void Outval(int n) {
             output.Write(' ');
             output.Write(n);
         }
@@ -116,22 +105,19 @@ namespace iText.IO.Font
         /*
         *  Output a character entry
         */
-        private void Outchar(int code, int width, String name)
-        {
+        private void Outchar(int code, int width, String name) {
             output.Write("C ");
             Outval(code);
             output.Write(" ; WX ");
             Outval(width);
-            if (name != null)
-            {
+            if (name != null) {
                 output.Write(" ; N ");
                 output.Write(name);
             }
             output.Write(" ;\n");
         }
 
-        private void Openpfm()
-        {
+        private void Openpfm() {
             input.Seek(0);
             vers = input.ReadShortLE();
             h_len = input.ReadIntLE();
@@ -169,8 +155,7 @@ namespace iText.IO.Font
             kernpairs = input.ReadIntLE();
             res2 = input.ReadIntLE();
             fontname = input.ReadIntLE();
-            if (h_len != input.Length() || extlen != 30 || fontname < 75 || fontname > 512)
-            {
+            if (h_len != input.Length() || extlen != 30 || fontname < 75 || fontname > 512) {
                 throw new System.IO.IOException("not.a.valid.pfm.file");
             }
             input.Seek(psext + 14);
@@ -180,11 +165,9 @@ namespace iText.IO.Font
             descender = input.ReadShortLE();
         }
 
-        private void Putheader()
-        {
+        private void Putheader() {
             output.Write("StartFontMetrics 2.0\n");
-            if (copyright.Length > 0)
-            {
+            if (copyright.Length > 0) {
                 output.Write("Comment " + copyright + '\n');
             }
             output.Write("FontName ");
@@ -192,12 +175,10 @@ namespace iText.IO.Font
             String fname = ReadString();
             output.Write(fname);
             output.Write("\nEncodingScheme ");
-            if (charset != 0)
-            {
+            if (charset != 0) {
                 output.Write("FontSpecific\n");
             }
-            else
-            {
+            else {
                 output.Write("AdobeStandardEncoding\n");
             }
             /*
@@ -206,41 +187,32 @@ namespace iText.IO.Font
             * of cases.
             */
             output.Write("FullName " + fname.Replace('-', ' '));
-            if (face != 0)
-            {
+            if (face != 0) {
                 input.Seek(face);
                 output.Write("\nFamilyName " + ReadString());
             }
             output.Write("\nWeight ");
-            if (weight > 475 || fname.ToLowerInvariant().Contains("bold"))
-            {
+            if (weight > 475 || fname.ToLowerInvariant().Contains("bold")) {
                 output.Write("Bold");
             }
-            else
-            {
-                if ((weight < 325 && weight != 0) || fname.ToLowerInvariant().Contains("light"))
-                {
+            else {
+                if ((weight < 325 && weight != 0) || fname.ToLowerInvariant().Contains("light")) {
                     output.Write("Light");
                 }
-                else
-                {
-                    if (fname.ToLowerInvariant().Contains("black"))
-                    {
+                else {
+                    if (fname.ToLowerInvariant().Contains("black")) {
                         output.Write("Black");
                     }
-                    else
-                    {
+                    else {
                         output.Write("Medium");
                     }
                 }
             }
             output.Write("\nItalicAngle ");
-            if (italic != 0 || fname.ToLowerInvariant().Contains("italic"))
-            {
+            if (italic != 0 || fname.ToLowerInvariant().Contains("italic")) {
                 output.Write("-12.00");
             }
-            else
-            {
+            else {
                 /* this is a typical value; something else may work better for a
                 specific font */
                 output.Write("0");
@@ -250,14 +222,12 @@ namespace iText.IO.Font
             *  table of font widths, not if they are all the same.
             */
             output.Write("\nIsFixedPitch ");
-            if ((kind & 1) == 0 || /* Flag for mono */ avgwidth == maxwidth)
-            {
+            if ((kind & 1) == 0 || /* Flag for mono */ avgwidth == maxwidth) {
                 /* Avg width = max width */
                 output.Write("true");
                 isMono = true;
             }
-            else
-            {
+            else {
                 output.Write("false");
                 isMono = false;
             }
@@ -267,12 +237,10 @@ namespace iText.IO.Font
             * the .afm, but is not used by the PM font installer.
             */
             output.Write("\nFontBBox");
-            if (isMono)
-            {
+            if (isMono) {
                 Outval(-20);
             }
-            else
-            {
+            else {
                 /* Just guess at left bounds */
                 Outval(-100);
             }
@@ -294,22 +262,17 @@ namespace iText.IO.Font
             output.Write('\n');
         }
 
-        private void Putchartab()
-        {
+        private void Putchartab() {
             int count = lastchar - firstchar + 1;
             int[] ctabs = new int[count];
             input.Seek(chartab);
-            for (int k = 0; k < count; ++k)
-            {
+            for (int k = 0; k < count; ++k) {
                 ctabs[k] = input.ReadUnsignedShortLE();
             }
             int[] back = new int[256];
-            if (charset == 0)
-            {
-                for (int i = firstchar; i <= lastchar; ++i)
-                {
-                    if (Win2PSStd[i] != 0)
-                    {
+            if (charset == 0) {
+                for (int i = firstchar; i <= lastchar; ++i) {
+                    if (Win2PSStd[i] != 0) {
                         back[Win2PSStd[i]] = i;
                     }
                 }
@@ -319,36 +282,28 @@ namespace iText.IO.Font
             Outval(count);
             output.Write('\n');
             /* Put out all encoded chars */
-            if (charset != 0)
-            {
+            if (charset != 0) {
                 /*
                 * If the charset is not the Windows standard, just put out
                 * unnamed entries.
                 */
-                for (int i = firstchar; i <= lastchar; i++)
-                {
-                    if (ctabs[i - firstchar] != 0)
-                    {
+                for (int i = firstchar; i <= lastchar; i++) {
+                    if (ctabs[i - firstchar] != 0) {
                         Outchar(i, ctabs[i - firstchar], null);
                     }
                 }
             }
-            else
-            {
-                for (int i = 0; i < 256; i++)
-                {
+            else {
+                for (int i = 0; i < 256; i++) {
                     int j = back[i];
-                    if (j != 0)
-                    {
+                    if (j != 0) {
                         Outchar(i, ctabs[j - firstchar], WinChars[j]);
                         ctabs[j - firstchar] = 0;
                     }
                 }
                 /* Put out all non-encoded chars */
-                for (int i = firstchar; i <= lastchar; i++)
-                {
-                    if (ctabs[i - firstchar] != 0)
-                    {
+                for (int i = firstchar; i <= lastchar; i++) {
+                    if (ctabs[i - firstchar] != 0) {
                         Outchar(-1, ctabs[i - firstchar], WinChars[i]);
                     }
                 }
@@ -357,36 +312,29 @@ namespace iText.IO.Font
             output.Write("EndCharMetrics\n");
         }
 
-        private void Putkerntab()
-        {
-            if (kernpairs == 0)
-            {
+        private void Putkerntab() {
+            if (kernpairs == 0) {
                 return;
             }
             input.Seek(kernpairs);
             int count = input.ReadUnsignedShortLE();
             int nzero = 0;
             int[] kerns = new int[count * 3];
-            for (int k = 0; k < kerns.Length;)
-            {
+            for (int k = 0; k < kerns.Length; ) {
                 kerns[k++] = input.Read();
                 kerns[k++] = input.Read();
-                if ((kerns[k++] = input.ReadShortLE()) != 0)
-                {
+                if ((kerns[k++] = input.ReadShortLE()) != 0) {
                     ++nzero;
                 }
             }
-            if (nzero == 0)
-            {
+            if (nzero == 0) {
                 return;
             }
             output.Write("StartKernData\nStartKernPairs");
             Outval(nzero);
             output.Write('\n');
-            for (int k = 0; k < kerns.Length; k += 3)
-            {
-                if (kerns[k + 2] != 0)
-                {
+            for (int k = 0; k < kerns.Length; k += 3) {
+                if (kerns[k + 2] != 0) {
                     output.Write("KPX ");
                     output.Write(WinChars[kerns[k]]);
                     output.Write(' ');
@@ -399,8 +347,7 @@ namespace iText.IO.Font
             output.Write("EndKernPairs\nEndKernData\n");
         }
 
-        private void Puttrailer()
-        {
+        private void Puttrailer() {
             output.Write("EndFontMetrics\n");
         }
 

@@ -41,19 +41,17 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Source;
 using System;
 using System.IO;
+using iText.IO.Source;
 
-namespace iText.IO.Util
-{
+namespace iText.IO.Util {
     /// <summary>This file is a helper class for internal usage only.</summary>
     /// <remarks>
     /// This file is a helper class for internal usage only.
     /// Be aware that its API and functionality may be changed in future.
     /// </remarks>
-    public sealed class StreamUtil
-    {
+    public sealed class StreamUtil {
         private const int TRANSFER_SIZE = 64 * 1024;
 
         private static readonly byte[] escR = ByteUtils.GetIsoBytes("\\r");
@@ -66,8 +64,7 @@ namespace iText.IO.Util
 
         private static readonly byte[] escF = ByteUtils.GetIsoBytes("\\f");
 
-        private StreamUtil()
-        {
+        private StreamUtil() {
         }
 
         /// <summary>
@@ -81,14 +78,11 @@ namespace iText.IO.Util
         /// <c>InputStream</c>
         /// </param>
         /// <param name="size">the number of bytes to skip</param>
-        public static void Skip(Stream stream, long size)
-        {
+        public static void Skip(Stream stream, long size) {
             long n;
-            while (size > 0)
-            {
+            while (size > 0) {
                 n = stream.Skip(size);
-                if (n <= 0)
-                {
+                if (n <= 0) {
                     break;
                 }
                 size -= n;
@@ -110,8 +104,7 @@ namespace iText.IO.Util
         /// <c>byte</c>
         /// array
         /// </returns>
-        public static byte[] CreateEscapedString(byte[] bytes)
-        {
+        public static byte[] CreateEscapedString(byte[] bytes) {
             return CreateBufferedEscapedString(bytes).ToByteArray();
         }
 
@@ -132,144 +125,114 @@ namespace iText.IO.Util
         /// <c>byte</c>
         /// array to escape.
         /// </param>
-        public static void WriteEscapedString(Stream outputStream, byte[] bytes)
-        {
+        public static void WriteEscapedString(Stream outputStream, byte[] bytes) {
             ByteBuffer buf = CreateBufferedEscapedString(bytes);
-            try
-            {
+            try {
                 outputStream.Write(buf.GetInternalBuffer(), 0, buf.Size());
             }
-            catch (System.IO.IOException e)
-            {
+            catch (System.IO.IOException e) {
                 throw new iText.IO.IOException(iText.IO.IOException.CannotWriteBytes, e);
             }
         }
 
-        public static void WriteHexedString(Stream outputStream, byte[] bytes)
-        {
+        public static void WriteHexedString(Stream outputStream, byte[] bytes) {
             ByteBuffer buf = CreateBufferedHexedString(bytes);
-            try
-            {
+            try {
                 outputStream.Write(buf.GetInternalBuffer(), 0, buf.Size());
             }
-            catch (System.IO.IOException e)
-            {
+            catch (System.IO.IOException e) {
                 throw new iText.IO.IOException(iText.IO.IOException.CannotWriteBytes, e);
             }
         }
 
-        public static ByteBuffer CreateBufferedEscapedString(byte[] bytes)
-        {
+        public static ByteBuffer CreateBufferedEscapedString(byte[] bytes) {
             ByteBuffer buf = new ByteBuffer(bytes.Length * 2 + 2);
             buf.Append('(');
-            foreach (byte b in bytes)
-            {
-                switch (b)
-                {
-                    case (byte)'\r':
-                        {
-                            buf.Append(escR);
-                            break;
-                        }
+            foreach (byte b in bytes) {
+                switch (b) {
+                    case (byte)'\r': {
+                        buf.Append(escR);
+                        break;
+                    }
 
-                    case (byte)'\n':
-                        {
-                            buf.Append(escN);
-                            break;
-                        }
+                    case (byte)'\n': {
+                        buf.Append(escN);
+                        break;
+                    }
 
-                    case (byte)'\t':
-                        {
-                            buf.Append(escT);
-                            break;
-                        }
+                    case (byte)'\t': {
+                        buf.Append(escT);
+                        break;
+                    }
 
-                    case (byte)'\b':
-                        {
-                            buf.Append(escB);
-                            break;
-                        }
+                    case (byte)'\b': {
+                        buf.Append(escB);
+                        break;
+                    }
 
-                    case (byte)'\f':
-                        {
-                            buf.Append(escF);
-                            break;
-                        }
+                    case (byte)'\f': {
+                        buf.Append(escF);
+                        break;
+                    }
 
                     case (byte)'(':
                     case (byte)')':
-                    case (byte)'\\':
-                        {
-                            buf.Append('\\').Append(b);
-                            break;
-                        }
+                    case (byte)'\\': {
+                        buf.Append('\\').Append(b);
+                        break;
+                    }
 
-                    default:
-                        {
-                            if (b < 8 && b >= 0)
-                            {
-                                buf.Append("\\00").Append(JavaUtil.IntegerToOctalString(b));
-                            }
-                            else
-                            {
-                                if (b >= 8 && b < 32)
-                                {
-                                    buf.Append("\\0").Append(JavaUtil.IntegerToOctalString(b));
-                                }
-                                else
-                                {
-                                    buf.Append(b);
-                                }
-                            }
-                            break;
+                    default: {
+                        if (b < 8 && b >= 0) {
+                            buf.Append("\\00").Append(JavaUtil.IntegerToOctalString(b));
                         }
+                        else {
+                            if (b >= 8 && b < 32) {
+                                buf.Append("\\0").Append(JavaUtil.IntegerToOctalString(b));
+                            }
+                            else {
+                                buf.Append(b);
+                            }
+                        }
+                        break;
+                    }
                 }
             }
             buf.Append(')');
             return buf;
         }
 
-        public static ByteBuffer CreateBufferedHexedString(byte[] bytes)
-        {
+        public static ByteBuffer CreateBufferedHexedString(byte[] bytes) {
             ByteBuffer buf = new ByteBuffer(bytes.Length * 2 + 2);
             buf.Append('<');
-            foreach (byte b in bytes)
-            {
+            foreach (byte b in bytes) {
                 buf.AppendHex(b);
             }
             buf.Append('>');
             return buf;
         }
 
-        public static void TransferBytes(Stream input, Stream output)
-        {
+        public static void TransferBytes(Stream input, Stream output) {
             byte[] buffer = new byte[TRANSFER_SIZE];
-            for (; ; )
-            {
+            for (; ; ) {
                 int len = input.JRead(buffer, 0, TRANSFER_SIZE);
-                if (len > 0)
-                {
+                if (len > 0) {
                     output.Write(buffer, 0, len);
                 }
-                else
-                {
+                else {
                     break;
                 }
             }
         }
 
-        public static void TransferBytes(RandomAccessFileOrArray input, Stream output)
-        {
+        public static void TransferBytes(RandomAccessFileOrArray input, Stream output) {
             byte[] buffer = new byte[TRANSFER_SIZE];
-            for (; ; )
-            {
+            for (; ; ) {
                 int len = input.Read(buffer, 0, TRANSFER_SIZE);
-                if (len > 0)
-                {
+                if (len > 0) {
                     output.Write(buffer, 0, len);
                 }
-                else
-                {
+                else {
                     break;
                 }
             }
@@ -278,15 +241,12 @@ namespace iText.IO.Util
         /// <summary>Reads the full content of a stream and returns them in a byte array</summary>
         /// <param name="stream">the stream to read</param>
         /// <returns>a byte array containing all of the bytes from the stream</returns>
-        public static byte[] InputStreamToArray(Stream stream)
-        {
+        public static byte[] InputStreamToArray(Stream stream) {
             byte[] b = new byte[8192];
             MemoryStream output = new MemoryStream();
-            while (true)
-            {
+            while (true) {
                 int read = stream.Read(b);
-                if (read < 1)
-                {
+                if (read < 1) {
                     break;
                 }
                 output.Write(b, 0, read);
@@ -313,19 +273,15 @@ namespace iText.IO.Util
         /// <c>OutputStream</c>
         /// copy to.
         /// </param>
-        public static void CopyBytes(IRandomAccessSource source, long start, long length, Stream output)
-        {
-            if (length <= 0)
-            {
+        public static void CopyBytes(IRandomAccessSource source, long start, long length, Stream output) {
+            if (length <= 0) {
                 return;
             }
             long idx = start;
             byte[] buf = new byte[8192];
-            while (length > 0)
-            {
+            while (length > 0) {
                 long n = source.Get(idx, buf, 0, (int)Math.Min((long)buf.Length, length));
-                if (n <= 0)
-                {
+                if (n <= 0) {
                     throw new EndOfStreamException();
                 }
                 output.Write(buf, 0, (int)n);
@@ -342,18 +298,14 @@ namespace iText.IO.Util
         /// <param name="b">the buffer into which the data is read.</param>
         /// <param name="off">an int specifying the offset into the data.</param>
         /// <param name="len">an int specifying the number of bytes to read.</param>
-        public static void ReadFully(Stream input, byte[] b, int off, int len)
-        {
-            if (len < 0)
-            {
+        public static void ReadFully(Stream input, byte[] b, int off, int len) {
+            if (len < 0) {
                 throw new IndexOutOfRangeException();
             }
             int n = 0;
-            while (n < len)
-            {
+            while (n < len) {
                 int count = input.JRead(b, off + n, len - n);
-                if (count < 0)
-                {
+                if (count < 0) {
                     throw new EndOfStreamException();
                 }
                 n += count;

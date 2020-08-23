@@ -13,14 +13,11 @@
 // limitations under the License.
 //
 // This is part of java port of project hosted at https://github.com/google/woff2
-namespace iText.IO.Font.Woff2
-{
+namespace iText.IO.Font.Woff2 {
     // Font table tags
-    internal class TableTags
-    {
+    internal class TableTags {
         // Note that the byte order is big-endian
-        private static int Tag(char a, char b, char c, char d)
-        {
+        private static int Tag(char a, char b, char c, char d) {
             return ((a << 24) | (b << 16) | (c << 8) | d);
         }
 

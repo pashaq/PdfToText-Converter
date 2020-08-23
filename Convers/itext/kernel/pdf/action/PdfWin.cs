@@ -41,17 +41,15 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Action
-{
+namespace iText.Kernel.Pdf.Action {
     /// <summary>This class is a wrapper around a Windows launch parameter dictionary.</summary>
-    public class PdfWin : PdfObjectWrapper<PdfDictionary>
-    {
+    public class PdfWin : PdfObjectWrapper<PdfDictionary> {
         /// <summary>Creates a new wrapper around an existing Windows launch parameter dictionary.</summary>
         /// <param name="pdfObject">the dictionary to create a wrapper for</param>
         public PdfWin(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
         /// <summary>Creates a new wrapper around a newly created Windows launch parameter dictionary.</summary>
@@ -61,8 +59,7 @@ namespace iText.Kernel.Pdf.Action
         /// the backslash shall itself be preceded by a backslash.
         /// </param>
         public PdfWin(PdfString f)
-            : this(new PdfDictionary())
-        {
+            : this(new PdfDictionary()) {
             GetPdfObject().Put(PdfName.F, f);
         }
 
@@ -82,8 +79,7 @@ namespace iText.Kernel.Pdf.Action
         /// This entry shall be omitted if a document is abound to be opened
         /// </param>
         public PdfWin(PdfString f, PdfString d, PdfString o, PdfString p)
-            : this(new PdfDictionary())
-        {
+            : this(new PdfDictionary()) {
             GetPdfObject().Put(PdfName.F, f);
             GetPdfObject().Put(PdfName.D, d);
             GetPdfObject().Put(PdfName.O, o);
@@ -91,8 +87,7 @@ namespace iText.Kernel.Pdf.Action
         }
 
         /// <summary><inheritDoc/></summary>
-        protected internal override bool IsWrappedObjectMustBeIndirect()
-        {
+        protected internal override bool IsWrappedObjectMustBeIndirect() {
             return false;
         }
     }

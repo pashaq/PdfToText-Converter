@@ -43,18 +43,14 @@ address: sales@itextpdf.com
 */
 using iText.Kernel.Pdf.Colorspace;
 
-namespace iText.Kernel.Colors
-{
-    public class Indexed : Color
-    {
+namespace iText.Kernel.Colors {
+    public class Indexed : Color {
         public Indexed(PdfColorSpace colorSpace)
-            : this(colorSpace, 0)
-        {
+            : this(colorSpace, 0) {
         }
 
         public Indexed(PdfColorSpace colorSpace, int colorValue)
-            : base(colorSpace, new float[] { colorValue })
-        {
+            : base(colorSpace, new float[] { colorValue }) {
         }
     }
 }

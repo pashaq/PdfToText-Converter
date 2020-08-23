@@ -45,14 +45,12 @@ address: sales@itextpdf.com
 using System;
 using System.Globalization;
 
-namespace iText.IO.Util
-{
+namespace iText.IO.Util {
     /// <summary>
     /// This file is a helper class for internal usage only.
     /// Be aware that its API and functionality may be changed in future.
     /// </summary>
-    public static class UnicodeScriptUtil
-    {
+    public static class UnicodeScriptUtil {
         public const int MAX_CODE_POINT = 0X10FFFF;
 
         private static readonly UnicodeScript[] Scripts = {
@@ -709,31 +707,27 @@ namespace iText.IO.Util
         *
         */
 
-        public static UnicodeScript Of(int codePoint)
-        {
+        public static UnicodeScript Of(int codePoint) {
             if (!IsValidCodePoint(codePoint))
                 throw new Exception();
             string value = Char.ConvertFromUtf32(codePoint);
             UnicodeCategory type = CharUnicodeInfo.GetUnicodeCategory(value, 0);
             // leave SURROGATE and PRIVATE_USE for table lookup
-            if (type == UnicodeCategory.OtherNotAssigned)
-            {
+            if (type == UnicodeCategory.OtherNotAssigned) {
                 return UnicodeScript.UNKNOWN;
             }
             int index = Array.BinarySearch(ScriptStarts, codePoint);
-            if (index < 0)
-            {
+            if (index < 0) {
                 index = -index - 2;
             }
             return Scripts[index];
         }
 
-        public static bool IsValidCodePoint(int codePoint)
-        {
+        public static bool IsValidCodePoint(int codePoint) {
             // Optimized form of:
             //     codePoint >= MIN_CODE_POINT && codePoint <= MAX_CODE_POINT
-            int plane = (int)((uint)codePoint >> 16);
-            return plane < (int)((uint)(MAX_CODE_POINT + 1) >> 16);
+            int plane = (int) ((uint) codePoint >> 16);
+            return plane < (int) ((uint) (MAX_CODE_POINT + 1) >> 16);
         }
     }
 }

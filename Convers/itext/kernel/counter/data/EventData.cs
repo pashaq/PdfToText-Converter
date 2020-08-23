@@ -41,8 +41,7 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-namespace iText.Kernel.Counter.Data
-{
+namespace iText.Kernel.Counter.Data {
     /// <summary>
     /// The data that class that contains event signature (in simple cases it can be just event type)
     /// and count.
@@ -56,39 +55,33 @@ namespace iText.Kernel.Counter.Data
     /// and merging same events by increasing count.
     /// </remarks>
     /// <typeparam name="T">the signature type</typeparam>
-    public class EventData<T>
-    {
+    public class EventData<T> {
         private readonly T signature;
 
         private long count;
 
         public EventData(T signature)
-            : this(signature, 1)
-        {
+            : this(signature, 1) {
         }
 
-        public EventData(T signature, long count)
-        {
+        public EventData(T signature, long count) {
             this.signature = signature;
             this.count = count;
         }
 
         /// <summary>The signature that identifies this data.</summary>
         /// <returns>data signature</returns>
-        public T GetSignature()
-        {
+        public T GetSignature() {
             return signature;
         }
 
         /// <summary>Number of data instances with the same signature that where merged.</summary>
         /// <returns>data count</returns>
-        public long GetCount()
-        {
+        public long GetCount() {
             return count;
         }
 
-        protected internal virtual void MergeWith(iText.Kernel.Counter.Data.EventData<T> data)
-        {
+        protected internal virtual void MergeWith(iText.Kernel.Counter.Data.EventData<T> data) {
             this.count += data.GetCount();
         }
     }

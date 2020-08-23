@@ -41,15 +41,13 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-namespace iText.Kernel.Pdf
-{
+namespace iText.Kernel.Pdf {
     /// <summary>
     /// This interface defines logic which can be used to perform a custom copying
     /// operation of a
     /// <see cref="PdfPage"/>.
     /// </summary>
-    public interface IPdfPageExtraCopier
-    {
+    public interface IPdfPageExtraCopier {
         /// <summary>Copies a page.</summary>
         /// <remarks>
         /// Copies a page.

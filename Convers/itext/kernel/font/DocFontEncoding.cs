@@ -41,34 +41,26 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
 using Common.Logging;
 using iText.IO.Font;
 using iText.IO.Font.Cmap;
 using iText.IO.Util;
 using iText.Kernel.Pdf;
-using System;
 
-namespace iText.Kernel.Font
-{
+namespace iText.Kernel.Font {
     /// <summary>This class allow to parse document font's encoding.</summary>
-    internal class DocFontEncoding : FontEncoding
-    {
-        protected internal DocFontEncoding()
-        {
+    internal class DocFontEncoding : FontEncoding {
+        protected internal DocFontEncoding() {
         }
 
-        public static FontEncoding CreateDocFontEncoding(PdfObject encoding, CMapToUnicode toUnicode)
-        {
-            if (encoding != null)
-            {
-                if (encoding.IsName())
-                {
+        public static FontEncoding CreateDocFontEncoding(PdfObject encoding, CMapToUnicode toUnicode) {
+            if (encoding != null) {
+                if (encoding.IsName()) {
                     return FontEncoding.CreateFontEncoding(((PdfName)encoding).GetValue());
                 }
-                else
-                {
-                    if (encoding.IsDictionary())
-                    {
+                else {
+                    if (encoding.IsDictionary()) {
                         iText.Kernel.Font.DocFontEncoding fontEncoding = new iText.Kernel.Font.DocFontEncoding();
                         fontEncoding.differences = new String[256];
                         FillBaseEncoding(fontEncoding, ((PdfDictionary)encoding).GetAsName(PdfName.BaseEncoding));
@@ -77,44 +69,34 @@ namespace iText.Kernel.Font
                     }
                 }
             }
-            if (toUnicode != null)
-            {
+            if (toUnicode != null) {
                 iText.Kernel.Font.DocFontEncoding fontEncoding = new iText.Kernel.Font.DocFontEncoding();
                 fontEncoding.differences = new String[256];
                 FillDifferences(fontEncoding, toUnicode);
                 return fontEncoding;
             }
-            else
-            {
+            else {
                 return FontEncoding.CreateFontSpecificEncoding();
             }
         }
 
         private static void FillBaseEncoding(iText.Kernel.Font.DocFontEncoding fontEncoding, PdfName baseEncodingName
-            )
-        {
-            if (baseEncodingName != null)
-            {
+            ) {
+            if (baseEncodingName != null) {
                 fontEncoding.baseEncoding = baseEncodingName.GetValue();
             }
-            if (PdfName.MacRomanEncoding.Equals(baseEncodingName) || PdfName.WinAnsiEncoding.Equals(baseEncodingName)
-                || PdfName.Symbol.Equals(baseEncodingName) || PdfName.ZapfDingbats.Equals(baseEncodingName))
-            {
+            if (PdfName.MacRomanEncoding.Equals(baseEncodingName) || PdfName.WinAnsiEncoding.Equals(baseEncodingName) 
+                || PdfName.Symbol.Equals(baseEncodingName) || PdfName.ZapfDingbats.Equals(baseEncodingName)) {
                 String enc = PdfEncodings.WINANSI;
-                if (PdfName.MacRomanEncoding.Equals(baseEncodingName))
-                {
+                if (PdfName.MacRomanEncoding.Equals(baseEncodingName)) {
                     enc = PdfEncodings.MACROMAN;
                 }
-                else
-                {
-                    if (PdfName.Symbol.Equals(baseEncodingName))
-                    {
+                else {
+                    if (PdfName.Symbol.Equals(baseEncodingName)) {
                         enc = PdfEncodings.SYMBOL;
                     }
-                    else
-                    {
-                        if (PdfName.ZapfDingbats.Equals(baseEncodingName))
-                        {
+                    else {
+                        if (PdfName.ZapfDingbats.Equals(baseEncodingName)) {
                             enc = PdfEncodings.ZAPFDINGBATS;
                         }
                     }
@@ -122,8 +104,7 @@ namespace iText.Kernel.Font
                 fontEncoding.baseEncoding = enc;
                 fontEncoding.FillNamedEncoding();
             }
-            else
-            {
+            else {
                 // Actually, font's built in encoding should be used if font file is embedded
                 // and standard encoding should be used otherwise
                 fontEncoding.FillStandardEncoding();
@@ -131,29 +112,22 @@ namespace iText.Kernel.Font
         }
 
         private static void FillDifferences(iText.Kernel.Font.DocFontEncoding fontEncoding, PdfArray diffs, CMapToUnicode
-             toUnicode)
-        {
+             toUnicode) {
             IntHashtable byte2uni = toUnicode != null ? toUnicode.CreateDirectMapping() : new IntHashtable();
-            if (diffs != null)
-            {
+            if (diffs != null) {
                 int currentNumber = 0;
-                for (int k = 0; k < diffs.Size(); ++k)
-                {
+                for (int k = 0; k < diffs.Size(); ++k) {
                     PdfObject obj = diffs.Get(k);
-                    if (obj.IsNumber())
-                    {
+                    if (obj.IsNumber()) {
                         currentNumber = ((PdfNumber)obj).IntValue();
                     }
-                    else
-                    {
-                        if (currentNumber > 255)
-                        {
+                    else {
+                        if (currentNumber > 255) {
                             ILog LOGGER = LogManager.GetLogger(typeof(iText.Kernel.Font.DocFontEncoding));
                             LOGGER.Warn(MessageFormatUtil.Format(iText.IO.LogMessageConstant.DOCFONT_HAS_ILLEGAL_DIFFERENCES, ((PdfName
                                 )obj).GetValue()));
                         }
-                        else
-                        {
+                        else {
                             /* don't return or break, because differences subarrays may
                             * be in any order:
                             * e.g. [255 /space /one 250 /two /three]
@@ -161,17 +135,14 @@ namespace iText.Kernel.Font
                             */
                             String glyphName = ((PdfName)obj).GetValue();
                             int unicode = AdobeGlyphList.NameToUnicode(glyphName);
-                            if (unicode != -1)
-                            {
+                            if (unicode != -1) {
                                 fontEncoding.codeToUnicode[currentNumber] = (int)unicode;
                                 fontEncoding.unicodeToCode.Put((int)unicode, currentNumber);
                                 fontEncoding.differences[currentNumber] = glyphName;
                                 fontEncoding.unicodeDifferences.Put((int)unicode, (int)unicode);
                             }
-                            else
-                            {
-                                if (byte2uni.ContainsKey(currentNumber))
-                                {
+                            else {
+                                if (byte2uni.ContainsKey(currentNumber)) {
                                     unicode = byte2uni.Get(currentNumber);
                                     fontEncoding.codeToUnicode[currentNumber] = (int)unicode;
                                     fontEncoding.unicodeToCode.Put((int)unicode, currentNumber);
@@ -187,11 +158,9 @@ namespace iText.Kernel.Font
         }
 
         private static void FillDifferences(iText.Kernel.Font.DocFontEncoding fontEncoding, CMapToUnicode toUnicode
-            )
-        {
+            ) {
             IntHashtable byte2uni = toUnicode.CreateDirectMapping();
-            foreach (int? code in byte2uni.GetKeys())
-            {
+            foreach (int? code in byte2uni.GetKeys()) {
                 int unicode = byte2uni.Get((int)code);
                 String glyphName = AdobeGlyphList.UnicodeToName(unicode);
                 fontEncoding.codeToUnicode[(int)code] = unicode;

@@ -41,14 +41,12 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Util;
 using System;
 using System.Text;
+using iText.IO.Util;
 
-namespace iText.Kernel.Pdf
-{
-    public class PdfIndirectReference : PdfObject, IComparable<iText.Kernel.Pdf.PdfIndirectReference>
-    {
+namespace iText.Kernel.Pdf {
+    public class PdfIndirectReference : PdfObject, IComparable<iText.Kernel.Pdf.PdfIndirectReference> {
         private const int LENGTH_OF_INDIRECTS_CHAIN = 31;
 
         /// <summary>Object number.</summary>
@@ -85,21 +83,18 @@ namespace iText.Kernel.Pdf
         protected internal PdfDocument pdfDocument = null;
 
         protected internal PdfIndirectReference(PdfDocument doc, int objNr)
-            : this(doc, objNr, 0)
-        {
+            : this(doc, objNr, 0) {
         }
 
         protected internal PdfIndirectReference(PdfDocument doc, int objNr, int genNr)
-            : base()
-        {
+            : base() {
             this.pdfDocument = doc;
             this.objNr = objNr;
             this.genNr = genNr;
         }
 
         protected internal PdfIndirectReference(PdfDocument doc, int objNr, int genNr, long offset)
-            : base()
-        {
+            : base() {
             this.pdfDocument = doc;
             this.objNr = objNr;
             this.genNr = genNr;
@@ -107,18 +102,15 @@ namespace iText.Kernel.Pdf
             System.Diagnostics.Debug.Assert(offset >= 0);
         }
 
-        public virtual int GetObjNumber()
-        {
+        public virtual int GetObjNumber() {
             return objNr;
         }
 
-        public virtual int GetGenNumber()
-        {
+        public virtual int GetGenNumber() {
             return genNr;
         }
 
-        public virtual PdfObject GetRefersTo()
-        {
+        public virtual PdfObject GetRefersTo() {
             return GetRefersTo(true);
         }
 
@@ -139,28 +131,21 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfObject"/>
         /// result of indirect reference resolving
         /// </returns>
-        public virtual PdfObject GetRefersTo(bool recursively)
-        {
-            if (!recursively)
-            {
-                if (refersTo == null && !CheckState(FLUSHED) && !CheckState(MODIFIED) && !CheckState(FREE) && GetReader()
-                    != null)
-                {
+        public virtual PdfObject GetRefersTo(bool recursively) {
+            if (!recursively) {
+                if (refersTo == null && !CheckState(FLUSHED) && !CheckState(MODIFIED) && !CheckState(FREE) && GetReader() 
+                    != null) {
                     refersTo = GetReader().ReadObject(this);
                 }
                 return refersTo;
             }
-            else
-            {
+            else {
                 PdfObject currentRefersTo = GetRefersTo(false);
-                for (int i = 0; i < LENGTH_OF_INDIRECTS_CHAIN; i++)
-                {
-                    if (currentRefersTo is iText.Kernel.Pdf.PdfIndirectReference)
-                    {
+                for (int i = 0; i < LENGTH_OF_INDIRECTS_CHAIN; i++) {
+                    if (currentRefersTo is iText.Kernel.Pdf.PdfIndirectReference) {
                         currentRefersTo = ((iText.Kernel.Pdf.PdfIndirectReference)currentRefersTo).GetRefersTo(false);
                     }
-                    else
-                    {
+                    else {
                         break;
                     }
                 }
@@ -168,57 +153,46 @@ namespace iText.Kernel.Pdf
             }
         }
 
-        protected internal virtual void SetRefersTo(PdfObject refersTo)
-        {
+        protected internal virtual void SetRefersTo(PdfObject refersTo) {
             this.refersTo = refersTo;
         }
 
-        public virtual int GetObjStreamNumber()
-        {
+        public virtual int GetObjStreamNumber() {
             return objectStreamNumber;
         }
 
         /// <summary>Gets refersTo object offset in a document.</summary>
         /// <returns>object offset in a document. If refersTo object is in object stream then -1.</returns>
-        public virtual long GetOffset()
-        {
+        public virtual long GetOffset() {
             return objectStreamNumber == 0 ? offsetOrIndex : -1;
         }
 
         /// <summary>Gets refersTo object index in the object stream.</summary>
         /// <returns>object index in a document. If refersTo object is not in object stream then -1.</returns>
-        public virtual int GetIndex()
-        {
+        public virtual int GetIndex() {
             return objectStreamNumber == 0 ? -1 : (int)offsetOrIndex;
         }
 
-        public override bool Equals(Object o)
-        {
-            if (this == o)
-            {
+        public override bool Equals(Object o) {
+            if (this == o) {
                 return true;
             }
-            if (o == null || GetType() != o.GetType())
-            {
+            if (o == null || GetType() != o.GetType()) {
                 return false;
             }
             iText.Kernel.Pdf.PdfIndirectReference that = (iText.Kernel.Pdf.PdfIndirectReference)o;
             return objNr == that.objNr && genNr == that.genNr;
         }
 
-        public override int GetHashCode()
-        {
+        public override int GetHashCode() {
             int result = objNr;
             result = 31 * result + genNr;
             return result;
         }
 
-        public virtual int CompareTo(iText.Kernel.Pdf.PdfIndirectReference o)
-        {
-            if (objNr == o.objNr)
-            {
-                if (genNr == o.genNr)
-                {
+        public virtual int CompareTo(iText.Kernel.Pdf.PdfIndirectReference o) {
+            if (objNr == o.objNr) {
+                if (genNr == o.genNr) {
                     return 0;
                 }
                 return (genNr > o.genNr) ? 1 : -1;
@@ -226,13 +200,11 @@ namespace iText.Kernel.Pdf
             return (objNr > o.objNr) ? 1 : -1;
         }
 
-        public override byte GetObjectType()
-        {
+        public override byte GetObjectType() {
             return INDIRECT_REFERENCE;
         }
 
-        public virtual PdfDocument GetDocument()
-        {
+        public virtual PdfDocument GetDocument() {
             return pdfDocument;
         }
 
@@ -250,8 +222,7 @@ namespace iText.Kernel.Pdf
         /// leaving the actual object in the document structure might lead to errors, because some objects are expected
         /// to always have such explicit link (e.g. Catalog object, page objects, etc).
         /// </remarks>
-        public virtual void SetFree()
-        {
+        public virtual void SetFree() {
             GetDocument().GetXref().FreeReference(this);
         }
 
@@ -278,44 +249,34 @@ namespace iText.Kernel.Pdf
         /// <see langword="false"/>
         /// otherwise.
         /// </returns>
-        public virtual bool IsFree()
-        {
+        public virtual bool IsFree() {
             return CheckState(FREE);
         }
 
-        public override String ToString()
-        {
+        public override String ToString() {
             StringBuilder states = new StringBuilder(" ");
-            if (CheckState(FREE))
-            {
+            if (CheckState(FREE)) {
                 states.Append("Free; ");
             }
-            if (CheckState(MODIFIED))
-            {
+            if (CheckState(MODIFIED)) {
                 states.Append("Modified; ");
             }
-            if (CheckState(MUST_BE_FLUSHED))
-            {
+            if (CheckState(MUST_BE_FLUSHED)) {
                 states.Append("MustBeFlushed; ");
             }
-            if (CheckState(READING))
-            {
+            if (CheckState(READING)) {
                 states.Append("Reading; ");
             }
-            if (CheckState(FLUSHED))
-            {
+            if (CheckState(FLUSHED)) {
                 states.Append("Flushed; ");
             }
-            if (CheckState(ORIGINAL_OBJECT_STREAM))
-            {
+            if (CheckState(ORIGINAL_OBJECT_STREAM)) {
                 states.Append("OriginalObjectStream; ");
             }
-            if (CheckState(FORBID_RELEASE))
-            {
+            if (CheckState(FORBID_RELEASE)) {
                 states.Append("ForbidRelease; ");
             }
-            if (CheckState(READ_ONLY))
-            {
+            if (CheckState(READ_ONLY)) {
                 states.Append("ReadOnly; ");
             }
             return MessageFormatUtil.Format("{0} {1} R{2}", JavaUtil.IntegerToString(GetObjNumber()), JavaUtil.IntegerToString
@@ -324,10 +285,8 @@ namespace iText.Kernel.Pdf
 
         /// <summary>Gets a PdfWriter associated with the document object belongs to.</summary>
         /// <returns>PdfWriter.</returns>
-        protected internal virtual PdfWriter GetWriter()
-        {
-            if (GetDocument() != null)
-            {
+        protected internal virtual PdfWriter GetWriter() {
+            if (GetDocument() != null) {
                 return GetDocument().GetWriter();
             }
             return null;
@@ -335,51 +294,41 @@ namespace iText.Kernel.Pdf
 
         /// <summary>Gets a PdfReader associated with the document object belongs to.</summary>
         /// <returns>PdfReader.</returns>
-        protected internal virtual PdfReader GetReader()
-        {
-            if (GetDocument() != null)
-            {
+        protected internal virtual PdfReader GetReader() {
+            if (GetDocument() != null) {
                 return GetDocument().GetReader();
             }
             return null;
         }
 
-        protected internal override PdfObject NewInstance()
-        {
+        protected internal override PdfObject NewInstance() {
             return PdfNull.PDF_NULL;
         }
 
-        protected internal override void CopyContent(PdfObject from, PdfDocument document)
-        {
+        protected internal override void CopyContent(PdfObject from, PdfDocument document) {
         }
 
         /// <summary>Sets special states of current object.</summary>
         /// <param name="state">special flag of current object</param>
-        protected internal override PdfObject SetState(short state)
-        {
+        protected internal override PdfObject SetState(short state) {
             return base.SetState(state);
         }
 
-        internal virtual void SetObjStreamNumber(int objectStreamNumber)
-        {
+        internal virtual void SetObjStreamNumber(int objectStreamNumber) {
             this.objectStreamNumber = objectStreamNumber;
         }
 
-        internal virtual void SetIndex(long index)
-        {
+        internal virtual void SetIndex(long index) {
             this.offsetOrIndex = index;
         }
 
-        internal virtual void SetOffset(long offset)
-        {
+        internal virtual void SetOffset(long offset) {
             this.offsetOrIndex = offset;
             this.objectStreamNumber = 0;
         }
 
-        internal virtual void FixOffset(long offset)
-        {
-            if (!IsFree())
-            {
+        internal virtual void FixOffset(long offset) {
+            if (!IsFree()) {
                 this.offsetOrIndex = offset;
             }
         }

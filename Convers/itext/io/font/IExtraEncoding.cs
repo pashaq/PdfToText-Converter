@@ -43,8 +43,7 @@ address: sales@itextpdf.com
 */
 using System;
 
-namespace iText.IO.Font
-{
+namespace iText.IO.Font {
     /// <summary>
     /// Classes implementing this interface can create custom encodings or
     /// replace existing ones.
@@ -54,8 +53,7 @@ namespace iText.IO.Font
     /// replace existing ones. It is used in the context of <c>PdfEncoding</c>.
     /// </remarks>
     /// <author>Paulo Soares</author>
-    public interface IExtraEncoding
-    {
+    public interface IExtraEncoding {
         /// <summary>Converts an Unicode string to a byte array according to some encoding.</summary>
         /// <param name="text">the Unicode string</param>
         /// <param name="encoding">

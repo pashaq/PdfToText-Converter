@@ -41,17 +41,17 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Util;
-using iText.Kernel.Geom;
-using iText.Kernel.Pdf.Canvas.Parser.Data;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using iText.IO.Util;
+using iText.Kernel.Geom;
+using iText.Kernel.Pdf.Canvas;
+using iText.Kernel.Pdf.Canvas.Parser;
+using iText.Kernel.Pdf.Canvas.Parser.Data;
 
-namespace iText.Kernel.Pdf.Canvas.Parser.Listener
-{
-    public class LocationTextExtractionStrategy : ITextExtractionStrategy
-    {
+namespace iText.Kernel.Pdf.Canvas.Parser.Listener {
+    public class LocationTextExtractionStrategy : ITextExtractionStrategy {
         /// <summary>set to true for debugging</summary>
         private static bool DUMP_STATE = false;
 
@@ -68,18 +68,14 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
 
         /// <summary>Creates a new text extraction renderer.</summary>
         public LocationTextExtractionStrategy()
-            : this(new _ITextChunkLocationStrategy_85())
-        {
+            : this(new _ITextChunkLocationStrategy_85()) {
         }
 
-        private sealed class _ITextChunkLocationStrategy_85 : LocationTextExtractionStrategy.ITextChunkLocationStrategy
-        {
-            public _ITextChunkLocationStrategy_85()
-            {
+        private sealed class _ITextChunkLocationStrategy_85 : LocationTextExtractionStrategy.ITextChunkLocationStrategy {
+            public _ITextChunkLocationStrategy_85() {
             }
 
-            public ITextChunkLocation CreateLocation(TextRenderInfo renderInfo, LineSegment baseline)
-            {
+            public ITextChunkLocation CreateLocation(TextRenderInfo renderInfo, LineSegment baseline) {
                 return new TextChunkLocationDefaultImp(baseline.GetStartPoint(), baseline.GetEndPoint(), renderInfo.GetSingleSpaceWidth
                     ());
             }
@@ -91,8 +87,7 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
         /// TextRenderInfo.
         /// </summary>
         /// <param name="strat">the custom strategy</param>
-        public LocationTextExtractionStrategy(LocationTextExtractionStrategy.ITextChunkLocationStrategy strat)
-        {
+        public LocationTextExtractionStrategy(LocationTextExtractionStrategy.ITextChunkLocationStrategy strat) {
             tclStrat = strat;
         }
 
@@ -112,8 +107,7 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
         /// <param name="useActualText">true to use /ActualText, false otherwise</param>
         /// <returns>this object</returns>
         public virtual iText.Kernel.Pdf.Canvas.Parser.Listener.LocationTextExtractionStrategy SetUseActualText(bool
-             useActualText)
-        {
+             useActualText) {
             this.useActualText = useActualText;
             return this;
         }
@@ -127,8 +121,7 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
         /// <param name="rightToLeftRunDirection">value specifying whether the direction should be right to left</param>
         /// <returns>this object</returns>
         public virtual iText.Kernel.Pdf.Canvas.Parser.Listener.LocationTextExtractionStrategy SetRightToLeftRunDirection
-            (bool rightToLeftRunDirection)
-        {
+            (bool rightToLeftRunDirection) {
             this.rightToLeftRunDirection = rightToLeftRunDirection;
             return this;
         }
@@ -138,30 +131,24 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
         /// the text
         /// </summary>
         /// <returns>true if /ActualText value is used, false otherwise</returns>
-        public virtual bool IsUseActualText()
-        {
+        public virtual bool IsUseActualText() {
             return useActualText;
         }
 
-        public virtual void EventOccurred(IEventData data, EventType type)
-        {
-            if (type.Equals(EventType.RENDER_TEXT))
-            {
+        public virtual void EventOccurred(IEventData data, EventType type) {
+            if (type.Equals(EventType.RENDER_TEXT)) {
                 TextRenderInfo renderInfo = (TextRenderInfo)data;
                 LineSegment segment = renderInfo.GetBaseline();
-                if (renderInfo.GetRise() != 0)
-                {
+                if (renderInfo.GetRise() != 0) {
                     // remove the rise from the baseline - we do this because the text from a super/subscript render operations should probably be considered as part of the baseline of the text the super/sub is relative to
                     Matrix riseOffsetTransform = new Matrix(0, -renderInfo.GetRise());
                     segment = segment.TransformBy(riseOffsetTransform);
                 }
-                if (useActualText)
-                {
+                if (useActualText) {
                     CanvasTag lastTagWithActualText = lastTextRenderInfo != null ? FindLastTagWithActualText(lastTextRenderInfo
                         .GetCanvasTagHierarchy()) : null;
                     if (lastTagWithActualText != null && lastTagWithActualText == FindLastTagWithActualText(renderInfo.GetCanvasTagHierarchy
-                        ()))
-                    {
+                        ())) {
                         // Merge two text pieces, assume they will be in the same line
                         TextChunk lastTextChunk = locationalResult[locationalResult.Count - 1];
                         Vector mergedStart = new Vector(Math.Min(lastTextChunk.GetLocation().GetStartLocation().Get(0), segment.GetStartPoint
@@ -174,16 +161,14 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
                             (mergedStart, mergedEnd)));
                         locationalResult[locationalResult.Count - 1] = merged;
                     }
-                    else
-                    {
+                    else {
                         String actualText = renderInfo.GetActualText();
                         TextChunk tc = new TextChunk(actualText != null ? actualText : renderInfo.GetText(), tclStrat.CreateLocation
                             (renderInfo, segment));
                         locationalResult.Add(tc);
                     }
                 }
-                else
-                {
+                else {
                     TextChunk tc = new TextChunk(renderInfo.GetText(), tclStrat.CreateLocation(renderInfo, segment));
                     locationalResult.Add(tc);
                 }
@@ -191,41 +176,32 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
             }
         }
 
-        public virtual ICollection<EventType> GetSupportedEvents()
-        {
+        public virtual ICollection<EventType> GetSupportedEvents() {
             return null;
         }
 
-        public virtual String GetResultantText()
-        {
-            if (DUMP_STATE)
-            {
+        public virtual String GetResultantText() {
+            if (DUMP_STATE) {
                 DumpState();
             }
             IList<TextChunk> textChunks = new List<TextChunk>(locationalResult);
             SortWithMarks(textChunks);
             StringBuilder sb = new StringBuilder();
             TextChunk lastChunk = null;
-            foreach (TextChunk chunk in textChunks)
-            {
-                if (lastChunk == null)
-                {
+            foreach (TextChunk chunk in textChunks) {
+                if (lastChunk == null) {
                     sb.Append(chunk.text);
                 }
-                else
-                {
-                    if (chunk.SameLine(lastChunk))
-                    {
+                else {
+                    if (chunk.SameLine(lastChunk)) {
                         // we only insert a blank space if the trailing character of the previous string wasn't a space, and the leading character of the current string isn't a space
                         if (IsChunkAtWordBoundary(chunk, lastChunk) && !StartsWithSpace(chunk.text) && !EndsWithSpace(lastChunk.text
-                            ))
-                        {
+                            )) {
                             sb.Append(' ');
                         }
                         sb.Append(chunk.text);
                     }
-                    else
-                    {
+                    else {
                         sb.Append('\n');
                         sb.Append(chunk.text);
                     }
@@ -248,8 +224,7 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
         /// <param name="previousChunk">the chunk that appeared immediately before the current chunk</param>
         /// <returns>true if the two chunks represent different words (i.e. should have a space between them).  False otherwise.
         ///     </returns>
-        protected internal virtual bool IsChunkAtWordBoundary(TextChunk chunk, TextChunk previousChunk)
-        {
+        protected internal virtual bool IsChunkAtWordBoundary(TextChunk chunk, TextChunk previousChunk) {
             return chunk.GetLocation().IsAtWordBoundary(previousChunk.GetLocation());
         }
 
@@ -258,8 +233,7 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
         /// <param name="str">the string to be checked</param>
         /// <returns>true if the string starts with a space character, false if the string is empty or starts with a non-space character
         ///     </returns>
-        private bool StartsWithSpace(String str)
-        {
+        private bool StartsWithSpace(String str) {
             return str.Length != 0 && str[0] == ' ';
         }
 
@@ -268,28 +242,22 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
         /// <param name="str">the string to be checked</param>
         /// <returns>true if the string ends with a space character, false if the string is empty or ends with a non-space character
         ///     </returns>
-        private bool EndsWithSpace(String str)
-        {
+        private bool EndsWithSpace(String str) {
             return str.Length != 0 && str[str.Length - 1] == ' ';
         }
 
         /// <summary>Used for debugging only</summary>
-        private void DumpState()
-        {
-            foreach (TextChunk location in locationalResult)
-            {
+        private void DumpState() {
+            foreach (TextChunk location in locationalResult) {
                 location.PrintDiagnostics();
                 System.Console.Out.WriteLine();
             }
         }
 
-        private CanvasTag FindLastTagWithActualText(IList<CanvasTag> canvasTagHierarchy)
-        {
+        private CanvasTag FindLastTagWithActualText(IList<CanvasTag> canvasTagHierarchy) {
             CanvasTag lastActualText = null;
-            foreach (CanvasTag tag in canvasTagHierarchy)
-            {
-                if (tag.GetActualText() != null)
-                {
+            foreach (CanvasTag tag in canvasTagHierarchy) {
+                if (tag.GetActualText() != null) {
                     lastActualText = tag;
                     break;
                 }
@@ -297,37 +265,28 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
             return lastActualText;
         }
 
-        private void SortWithMarks(IList<TextChunk> textChunks)
-        {
+        private void SortWithMarks(IList<TextChunk> textChunks) {
             IDictionary<TextChunk, LocationTextExtractionStrategy.TextChunkMarks> marks = new Dictionary<TextChunk, LocationTextExtractionStrategy.TextChunkMarks
                 >();
             IList<TextChunk> toSort = new List<TextChunk>();
-            for (int markInd = 0; markInd < textChunks.Count; markInd++)
-            {
+            for (int markInd = 0; markInd < textChunks.Count; markInd++) {
                 ITextChunkLocation location = textChunks[markInd].GetLocation();
-                if (location.GetStartLocation().Equals(location.GetEndLocation()))
-                {
+                if (location.GetStartLocation().Equals(location.GetEndLocation())) {
                     bool foundBaseToAttachTo = false;
-                    for (int baseInd = 0; baseInd < textChunks.Count; baseInd++)
-                    {
-                        if (markInd != baseInd)
-                        {
+                    for (int baseInd = 0; baseInd < textChunks.Count; baseInd++) {
+                        if (markInd != baseInd) {
                             ITextChunkLocation baseLocation = textChunks[baseInd].GetLocation();
                             if (!baseLocation.GetStartLocation().Equals(baseLocation.GetEndLocation()) && TextChunkLocationDefaultImp.
-                                ContainsMark(baseLocation, location))
-                            {
+                                ContainsMark(baseLocation, location)) {
                                 LocationTextExtractionStrategy.TextChunkMarks currentMarks = marks.Get(textChunks[baseInd]);
-                                if (currentMarks == null)
-                                {
+                                if (currentMarks == null) {
                                     currentMarks = new LocationTextExtractionStrategy.TextChunkMarks();
                                     marks.Put(textChunks[baseInd], currentMarks);
                                 }
-                                if (markInd < baseInd)
-                                {
+                                if (markInd < baseInd) {
                                     currentMarks.preceding.Add(textChunks[markInd]);
                                 }
-                                else
-                                {
+                                else {
                                     currentMarks.succeeding.Add(textChunks[markInd]);
                                 }
                                 foundBaseToAttachTo = true;
@@ -335,53 +294,40 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
                             }
                         }
                     }
-                    if (!foundBaseToAttachTo)
-                    {
+                    if (!foundBaseToAttachTo) {
                         toSort.Add(textChunks[markInd]);
                     }
                 }
-                else
-                {
+                else {
                     toSort.Add(textChunks[markInd]);
                 }
             }
             JavaCollectionsUtil.Sort(toSort, new TextChunkLocationBasedComparator(new DefaultTextChunkLocationComparator
                 (!rightToLeftRunDirection)));
             textChunks.Clear();
-            foreach (TextChunk current in toSort)
-            {
+            foreach (TextChunk current in toSort) {
                 LocationTextExtractionStrategy.TextChunkMarks currentMarks = marks.Get(current);
-                if (currentMarks != null)
-                {
-                    if (!rightToLeftRunDirection)
-                    {
-                        for (int j = 0; j < currentMarks.preceding.Count; j++)
-                        {
+                if (currentMarks != null) {
+                    if (!rightToLeftRunDirection) {
+                        for (int j = 0; j < currentMarks.preceding.Count; j++) {
                             textChunks.Add(currentMarks.preceding[j]);
                         }
                     }
-                    else
-                    {
-                        for (int j = currentMarks.succeeding.Count - 1; j >= 0; j--)
-                        {
+                    else {
+                        for (int j = currentMarks.succeeding.Count - 1; j >= 0; j--) {
                             textChunks.Add(currentMarks.succeeding[j]);
                         }
                     }
                 }
                 textChunks.Add(current);
-                if (currentMarks != null)
-                {
-                    if (!rightToLeftRunDirection)
-                    {
-                        for (int j = 0; j < currentMarks.succeeding.Count; j++)
-                        {
+                if (currentMarks != null) {
+                    if (!rightToLeftRunDirection) {
+                        for (int j = 0; j < currentMarks.succeeding.Count; j++) {
                             textChunks.Add(currentMarks.succeeding[j]);
                         }
                     }
-                    else
-                    {
-                        for (int j = currentMarks.preceding.Count - 1; j >= 0; j--)
-                        {
+                    else {
+                        for (int j = currentMarks.preceding.Count - 1; j >= 0; j--) {
                             textChunks.Add(currentMarks.preceding[j]);
                         }
                     }
@@ -389,13 +335,11 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
             }
         }
 
-        public interface ITextChunkLocationStrategy
-        {
+        public interface ITextChunkLocationStrategy {
             ITextChunkLocation CreateLocation(TextRenderInfo renderInfo, LineSegment baseline);
         }
 
-        private class TextChunkMarks
-        {
+        private class TextChunkMarks {
             internal IList<TextChunk> preceding = new List<TextChunk>();
 
             internal IList<TextChunk> succeeding = new List<TextChunk>();

@@ -44,8 +44,7 @@ address: sales@itextpdf.com
 using System;
 using System.Collections.Generic;
 
-namespace iText.IO.Util
-{
+namespace iText.IO.Util {
     class IdentityComparator<T> : EqualityComparer<T>
     {
         public override bool Equals(T x, T y)

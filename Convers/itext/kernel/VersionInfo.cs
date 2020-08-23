@@ -43,10 +43,8 @@ address: sales@itextpdf.com
 */
 using System;
 
-namespace iText.Kernel
-{
-    public class VersionInfo
-    {
+namespace iText.Kernel {
+    public class VersionInfo {
         private readonly String productName;
 
         private readonly String releaseNumber;
@@ -55,8 +53,7 @@ namespace iText.Kernel
 
         private readonly String licenseKey;
 
-        public VersionInfo(String productName, String releaseNumber, String producerLine, String licenseKey)
-        {
+        public VersionInfo(String productName, String releaseNumber, String producerLine, String licenseKey) {
             this.productName = productName;
             this.releaseNumber = releaseNumber;
             this.producerLine = producerLine;
@@ -70,8 +67,7 @@ namespace iText.Kernel
         /// in every PDF that is created or manipulated using iText.
         /// </remarks>
         /// <returns>the product name</returns>
-        public virtual String GetProduct()
-        {
+        public virtual String GetProduct() {
             return productName;
         }
 
@@ -82,8 +78,7 @@ namespace iText.Kernel
         /// in every PDF that is created or manipulated using iText.
         /// </remarks>
         /// <returns>the release number</returns>
-        public virtual String GetRelease()
-        {
+        public virtual String GetRelease() {
             return releaseNumber;
         }
 
@@ -95,15 +90,13 @@ namespace iText.Kernel
         /// in every PDF that is created or manipulated using iText.
         /// </remarks>
         /// <returns>iText version</returns>
-        public virtual String GetVersion()
-        {
+        public virtual String GetVersion() {
             return producerLine;
         }
 
         /// <summary>Returns a license key if one was provided, or null if not.</summary>
         /// <returns>a license key.</returns>
-        public virtual String GetKey()
-        {
+        public virtual String GetKey() {
             return licenseKey;
         }
     }

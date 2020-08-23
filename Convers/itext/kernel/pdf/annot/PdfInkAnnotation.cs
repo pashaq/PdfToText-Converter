@@ -42,19 +42,16 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Annot
-{
-    public class PdfInkAnnotation : PdfMarkupAnnotation
-    {
+namespace iText.Kernel.Pdf.Annot {
+    public class PdfInkAnnotation : PdfMarkupAnnotation {
         public PdfInkAnnotation(Rectangle rect)
-            : base(rect)
-        {
+            : base(rect) {
         }
 
         public PdfInkAnnotation(Rectangle rect, PdfArray inkList)
-            : this(rect)
-        {
+            : this(rect) {
             Put(PdfName.InkList, inkList);
         }
 
@@ -72,12 +69,10 @@ namespace iText.Kernel.Pdf.Annot
         /// </param>
         /// <seealso cref="PdfAnnotation.MakeAnnotation(iText.Kernel.Pdf.PdfObject)"/>
         protected internal PdfInkAnnotation(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
-        public override PdfName GetSubtype()
-        {
+        public override PdfName GetSubtype() {
             return PdfName.Ink;
         }
 
@@ -99,8 +94,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfDictionary"/>
         /// which is a border style dictionary or null if it is not specified.
         /// </returns>
-        public virtual PdfDictionary GetBorderStyle()
-        {
+        public virtual PdfDictionary GetBorderStyle() {
             return GetPdfObject().GetAsDictionary(PdfName.BS);
         }
 
@@ -126,8 +120,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfInkAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfInkAnnotation SetBorderStyle(PdfDictionary borderStyle)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfInkAnnotation SetBorderStyle(PdfDictionary borderStyle) {
             return (iText.Kernel.Pdf.Annot.PdfInkAnnotation)Put(PdfName.BS, borderStyle);
         }
 
@@ -165,8 +158,7 @@ namespace iText.Kernel.Pdf.Annot
         /// instance.
         /// </returns>
         /// <seealso cref="GetBorderStyle()"/>
-        public virtual iText.Kernel.Pdf.Annot.PdfInkAnnotation SetBorderStyle(PdfName style)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfInkAnnotation SetBorderStyle(PdfName style) {
             return SetBorderStyle(BorderStyleUtil.SetStyle(GetBorderStyle(), style));
         }
 
@@ -187,8 +179,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfInkAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfInkAnnotation SetDashPattern(PdfArray dashPattern)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfInkAnnotation SetDashPattern(PdfArray dashPattern) {
             return SetBorderStyle(BorderStyleUtil.SetDashPattern(GetBorderStyle(), dashPattern));
         }
     }

@@ -41,14 +41,14 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using Common.Logging;
 using System;
 using System.Collections.Generic;
 using System.Security;
 using System.Threading;
+using Common.Logging;
+using iText.IO.Util;
 
-namespace iText.Kernel.Counter.Data
-{
+namespace iText.Kernel.Counter.Data {
     /// <summary>
     /// The util class with service methods for
     /// <see cref="EventDataHandler{T, V}"/>
@@ -57,10 +57,8 @@ namespace iText.Kernel.Counter.Data
     /// <see cref="EventDataCacheComparatorBased{T, V}"/>
     /// .
     /// </summary>
-    public sealed class EventDataHandlerUtil
-    {
-        private EventDataHandlerUtil()
-        {
+    public sealed class EventDataHandlerUtil {
+        private EventDataHandlerUtil() {
         }
 
         /// <summary>
@@ -77,10 +75,8 @@ namespace iText.Kernel.Counter.Data
         /// 
         /// 
         public static void RegisterProcessAllShutdownHook<T, V>(EventDataHandler<T, V> dataHandler)
-            where V : EventData<T>
-        {
-            try
-            {
+            where V : EventData<T> {
+            try {
 #if !NETSTANDARD1_6
                 AppDomain.CurrentDomain.ProcessExit += (s, e) => dataHandler.TryProcessRest();
                 AppDomain.CurrentDomain.DomainUnload += (s, e) => dataHandler.TryProcessRest();
@@ -89,13 +85,11 @@ namespace iText.Kernel.Counter.Data
                 AssemblyLoadContextUtil.RegisterUnloadingEvent(context => dataHandler.TryProcessRest());
 #endif
             }
-            catch (SecurityException)
-            {
+            catch (SecurityException) {
                 LogManager.GetLogger(typeof(iText.Kernel.Counter.Data.EventDataHandlerUtil)).Error(iText.IO.LogMessageConstant
                     .UNABLE_TO_REGISTER_EVENT_DATA_HANDLER_SHUTDOWN_HOOK);
             }
-            catch (Exception)
-            {
+            catch (Exception) {
             }
         }
 
@@ -111,25 +105,19 @@ namespace iText.Kernel.Counter.Data
         /// 
         /// 
         public static void RegisterTimedProcessing<T, V>(EventDataHandler<T, V> dataHandler)
-            where V : EventData<T>
-        {
-            Thread thread = new Thread(() =>
-            {
-                while (true)
-                {
-                    try
-                    {
-                        Thread.Sleep((int)dataHandler.GetWaitTime().GetTime());
+            where V : EventData<T> {
+            Thread thread = new Thread(() => {
+                while (true) {
+                    try {
+                        Thread.Sleep((int) dataHandler.GetWaitTime().GetTime());
                         dataHandler.TryProcessNextAsync(false);
                     }
 #if !NETSTANDARD1_6
-                    catch (ThreadInterruptedException any)
-                    {
+                    catch (ThreadInterruptedException any) {
                         break;
                     }
 #endif
-                    catch (Exception any)
-                    {
+                    catch (Exception any) {
                         LogManager.GetLogger(typeof(iText.Kernel.Counter.Data.EventDataHandlerUtil)).Error(iText.IO.LogMessageConstant
                             .UNEXPECTED_EVENT_HANDLER_SERVICE_THREAD_EXCEPTION, any);
                         break;
@@ -151,10 +139,8 @@ namespace iText.Kernel.Counter.Data
         /// 
         /// 
         public class BiggerCountComparator<T, V> : IComparer<V>
-            where V : EventData<T>
-        {
-            public virtual int Compare(V o1, V o2)
-            {
+            where V : EventData<T> {
+            public virtual int Compare(V o1, V o2) {
                 return o2.GetCount().CompareTo(o1.GetCount());
             }
         }

@@ -41,19 +41,19 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
+using System.IO;
 using Common.Logging;
-using iText.IO.Util;
-using iText.Kernel.Pdf;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Security;
-using System;
-using System.IO;
+using iText.IO.Util;
+using iText.Kernel;
+using iText.Kernel.Crypto;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Crypto.Securityhandler
-{
-    public class StandardHandlerUsingAes256 : StandardSecurityHandler
-    {
+namespace iText.Kernel.Crypto.Securityhandler {
+    public class StandardHandlerUsingAes256 : StandardSecurityHandler {
         private const int VALIDATION_SALT_OFFSET = 32;
 
         private const int KEY_SALT_OFFSET = 40;
@@ -65,64 +65,52 @@ namespace iText.Kernel.Crypto.Securityhandler
         protected internal bool encryptMetadata;
 
         public StandardHandlerUsingAes256(PdfDictionary encryptionDictionary, byte[] userPassword, byte[] ownerPassword
-            , int permissions, bool encryptMetadata, bool embeddedFilesOnly, PdfVersion version)
-        {
+            , int permissions, bool encryptMetadata, bool embeddedFilesOnly, PdfVersion version) {
             isPdf2 = version != null && version.CompareTo(PdfVersion.PDF_2_0) >= 0;
-            InitKeyAndFillDictionary(encryptionDictionary, userPassword, ownerPassword, permissions, encryptMetadata,
+            InitKeyAndFillDictionary(encryptionDictionary, userPassword, ownerPassword, permissions, encryptMetadata, 
                 embeddedFilesOnly);
         }
 
-        public StandardHandlerUsingAes256(PdfDictionary encryptionDictionary, byte[] password)
-        {
+        public StandardHandlerUsingAes256(PdfDictionary encryptionDictionary, byte[] password) {
             InitKeyAndReadDictionary(encryptionDictionary, password);
         }
 
-        public virtual bool IsEncryptMetadata()
-        {
+        public virtual bool IsEncryptMetadata() {
             return encryptMetadata;
         }
 
-        public override void SetHashKeyForNextObject(int objNumber, int objGeneration)
-        {
+        public override void SetHashKeyForNextObject(int objNumber, int objGeneration) {
         }
 
         // in AES256 we don't recalculate nextObjectKey
-        public override OutputStreamEncryption GetEncryptionStream(Stream os)
-        {
+        public override OutputStreamEncryption GetEncryptionStream(Stream os) {
             return new OutputStreamAesEncryption(os, nextObjectKey, 0, nextObjectKeySize);
         }
 
-        public override IDecryptor GetDecryptor()
-        {
+        public override IDecryptor GetDecryptor() {
             return new AesDecryptor(nextObjectKey, 0, nextObjectKeySize);
         }
 
         private void InitKeyAndFillDictionary(PdfDictionary encryptionDictionary, byte[] userPassword, byte[] ownerPassword
-            , int permissions, bool encryptMetadata, bool embeddedFilesOnly)
-        {
+            , int permissions, bool encryptMetadata, bool embeddedFilesOnly) {
             ownerPassword = GenerateOwnerPasswordIfNullOrEmpty(ownerPassword);
             permissions |= PERMS_MASK_1_FOR_REVISION_3_OR_GREATER;
             permissions &= PERMS_MASK_2;
-            try
-            {
+            try {
                 byte[] userKey;
                 byte[] ownerKey;
                 byte[] ueKey;
                 byte[] oeKey;
                 byte[] aes256Perms;
-                if (userPassword == null)
-                {
+                if (userPassword == null) {
                     userPassword = new byte[0];
                 }
-                else
-                {
-                    if (userPassword.Length > 127)
-                    {
+                else {
+                    if (userPassword.Length > 127) {
                         userPassword = JavaUtil.ArraysCopyOf(userPassword, 127);
                     }
                 }
-                if (ownerPassword.Length > 127)
-                {
+                if (ownerPassword.Length > 127) {
                     ownerPassword = JavaUtil.ArraysCopyOf(ownerPassword, 127);
                 }
                 // first 8 bytes are validation salt; second 8 bytes are key salt
@@ -168,15 +156,13 @@ namespace iText.Kernel.Crypto.Securityhandler
                 SetStandardHandlerDicEntries(encryptionDictionary, userKey, ownerKey);
                 SetAES256DicEntries(encryptionDictionary, oeKey, ueKey, aes256Perms, encryptMetadata, embeddedFilesOnly);
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 throw new PdfException(PdfException.PdfEncryption, ex);
             }
         }
 
         private void SetAES256DicEntries(PdfDictionary encryptionDictionary, byte[] oeKey, byte[] ueKey, byte[] aes256Perms
-            , bool encryptMetadata, bool embeddedFilesOnly)
-        {
+            , bool encryptMetadata, bool embeddedFilesOnly) {
             int vAes256 = 5;
             int rAes256 = 5;
             int rAes256Pdf2 = 6;
@@ -187,19 +173,16 @@ namespace iText.Kernel.Crypto.Securityhandler
             encryptionDictionary.Put(PdfName.V, new PdfNumber(vAes256));
             PdfDictionary stdcf = new PdfDictionary();
             stdcf.Put(PdfName.Length, new PdfNumber(32));
-            if (!encryptMetadata)
-            {
+            if (!encryptMetadata) {
                 encryptionDictionary.Put(PdfName.EncryptMetadata, PdfBoolean.FALSE);
             }
-            if (embeddedFilesOnly)
-            {
+            if (embeddedFilesOnly) {
                 stdcf.Put(PdfName.AuthEvent, PdfName.EFOpen);
                 encryptionDictionary.Put(PdfName.EFF, PdfName.StdCF);
                 encryptionDictionary.Put(PdfName.StrF, PdfName.Identity);
                 encryptionDictionary.Put(PdfName.StmF, PdfName.Identity);
             }
-            else
-            {
+            else {
                 stdcf.Put(PdfName.AuthEvent, PdfName.DocOpen);
                 encryptionDictionary.Put(PdfName.StrF, PdfName.StdCF);
                 encryptionDictionary.Put(PdfName.StmF, PdfName.StdCF);
@@ -210,18 +193,13 @@ namespace iText.Kernel.Crypto.Securityhandler
             encryptionDictionary.Put(PdfName.CF, cf);
         }
 
-        private void InitKeyAndReadDictionary(PdfDictionary encryptionDictionary, byte[] password)
-        {
-            try
-            {
-                if (password == null)
-                {
+        private void InitKeyAndReadDictionary(PdfDictionary encryptionDictionary, byte[] password) {
+            try {
+                if (password == null) {
                     password = new byte[0];
                 }
-                else
-                {
-                    if (password.Length > 127)
-                    {
+                else {
+                    if (password.Length > 127) {
                         password = JavaUtil.ArraysCopyOf(password, 127);
                     }
                 }
@@ -236,17 +214,14 @@ namespace iText.Kernel.Crypto.Securityhandler
                 byte[] hash;
                 hash = ComputeHash(password, oValue, VALIDATION_SALT_OFFSET, SALT_LENGTH, uValue);
                 usedOwnerPassword = CompareArray(hash, oValue, 32);
-                if (usedOwnerPassword)
-                {
+                if (usedOwnerPassword) {
                     hash = ComputeHash(password, oValue, KEY_SALT_OFFSET, SALT_LENGTH, uValue);
                     AESCipherCBCnoPad ac = new AESCipherCBCnoPad(false, hash);
                     nextObjectKey = ac.ProcessBlock(oeValue, 0, oeValue.Length);
                 }
-                else
-                {
+                else {
                     hash = ComputeHash(password, uValue, VALIDATION_SALT_OFFSET, SALT_LENGTH);
-                    if (!CompareArray(hash, uValue, 32))
-                    {
+                    if (!CompareArray(hash, uValue, 32)) {
                         throw new BadPasswordException(PdfException.BadUserPassword);
                     }
                     hash = ComputeHash(password, uValue, KEY_SALT_OFFSET, SALT_LENGTH);
@@ -256,8 +231,7 @@ namespace iText.Kernel.Crypto.Securityhandler
                 nextObjectKeySize = 32;
                 AESCipherCBCnoPad ac_1 = new AESCipherCBCnoPad(false, nextObjectKey);
                 byte[] decPerms = ac_1.ProcessBlock(perms, 0, perms.Length);
-                if (decPerms[9] != (byte)'a' || decPerms[10] != (byte)'d' || decPerms[11] != (byte)'b')
-                {
+                if (decPerms[9] != (byte)'a' || decPerms[10] != (byte)'d' || decPerms[11] != (byte)'b') {
                     throw new BadPasswordException(PdfException.BadUserPassword);
                 }
                 int permissionsDecoded = (decPerms[0] & 0xff) | ((decPerms[1] & 0xff) << 8) | ((decPerms[2] & 0xff) << 16)
@@ -265,8 +239,7 @@ namespace iText.Kernel.Crypto.Securityhandler
                 bool encryptMetadata = decPerms[8] == (byte)'T';
                 bool? encryptMetadataEntry = encryptionDictionary.GetAsBool(PdfName.EncryptMetadata);
                 if (permissionsDecoded != permissions || encryptMetadataEntry != null && encryptMetadata != encryptMetadataEntry
-                    )
-                {
+                    ) {
                     ILog logger = LogManager.GetLogger(typeof(iText.Kernel.Crypto.Securityhandler.StandardHandlerUsingAes256));
                     logger.Error(iText.IO.LogMessageConstant.ENCRYPTION_ENTRIES_P_AND_ENCRYPT_METADATA_NOT_CORRESPOND_PERMS_ENTRY
                         );
@@ -274,33 +247,27 @@ namespace iText.Kernel.Crypto.Securityhandler
                 this.permissions = permissionsDecoded;
                 this.encryptMetadata = encryptMetadata;
             }
-            catch (BadPasswordException ex)
-            {
+            catch (BadPasswordException ex) {
                 throw;
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 throw new PdfException(PdfException.PdfEncryption, ex);
             }
         }
 
-        private byte[] ComputeHash(byte[] password, byte[] salt, int saltOffset, int saltLen)
-        {
+        private byte[] ComputeHash(byte[] password, byte[] salt, int saltOffset, int saltLen) {
             return ComputeHash(password, salt, saltOffset, saltLen, null);
         }
 
-        private byte[] ComputeHash(byte[] password, byte[] salt, int saltOffset, int saltLen, byte[] userKey)
-        {
+        private byte[] ComputeHash(byte[] password, byte[] salt, int saltOffset, int saltLen, byte[] userKey) {
             IDigest mdSha256 = DigestUtilities.GetDigest("SHA-256");
             mdSha256.Update(password);
             mdSha256.Update(salt, saltOffset, saltLen);
-            if (userKey != null)
-            {
+            if (userKey != null) {
                 mdSha256.Update(userKey);
             }
             byte[] k = mdSha256.Digest();
-            if (isPdf2)
-            {
+            if (isPdf2) {
                 // See 7.6.4.3.3 "Algorithm 2.B"
                 IDigest mdSha384 = DigestUtilities.GetDigest("SHA-384");
                 IDigest mdSha512 = DigestUtilities.GetDigest("SHA-512");
@@ -309,19 +276,16 @@ namespace iText.Kernel.Crypto.Securityhandler
                 // k1 repetition length
                 int k1RepLen;
                 int roundNum = 0;
-                while (true)
-                {
+                while (true) {
                     // a)
                     k1RepLen = passAndUserKeyLen + k.Length;
                     byte[] k1 = new byte[k1RepLen * 64];
                     Array.Copy(password, 0, k1, 0, password.Length);
                     Array.Copy(k, 0, k1, password.Length, k.Length);
-                    if (userKey != null)
-                    {
+                    if (userKey != null) {
                         Array.Copy(userKey, 0, k1, password.Length + k.Length, userKeyLen);
                     }
-                    for (int i = 1; i < 64; ++i)
-                    {
+                    for (int i = 1; i < 64; ++i) {
                         Array.Copy(k1, 0, k1, k1RepLen * i, k1RepLen);
                     }
                     // b)
@@ -332,36 +296,30 @@ namespace iText.Kernel.Crypto.Securityhandler
                     IDigest md = null;
                     BigInteger i_1 = new BigInteger(1, JavaUtil.ArraysCopyOf(e, 16));
                     int remainder = i_1.Remainder(BigInteger.ValueOf(3)).IntValue;
-                    switch (remainder)
-                    {
-                        case 0:
-                            {
-                                md = mdSha256;
-                                break;
-                            }
+                    switch (remainder) {
+                        case 0: {
+                            md = mdSha256;
+                            break;
+                        }
 
-                        case 1:
-                            {
-                                md = mdSha384;
-                                break;
-                            }
+                        case 1: {
+                            md = mdSha384;
+                            break;
+                        }
 
-                        case 2:
-                            {
-                                md = mdSha512;
-                                break;
-                            }
+                        case 2: {
+                            md = mdSha512;
+                            break;
+                        }
                     }
                     // d)
                     k = md.Digest(e);
                     ++roundNum;
-                    if (roundNum > 63)
-                    {
+                    if (roundNum > 63) {
                         // e)
                         // interpreting last byte as unsigned integer
                         int condVal = e[e.Length - 1] & 0xFF;
-                        if (condVal <= roundNum - 32)
-                        {
+                        if (condVal <= roundNum - 32) {
                             break;
                         }
                     }
@@ -371,12 +329,9 @@ namespace iText.Kernel.Crypto.Securityhandler
             return k;
         }
 
-        private static bool CompareArray(byte[] a, byte[] b, int len)
-        {
-            for (int k = 0; k < len; ++k)
-            {
-                if (a[k] != b[k])
-                {
+        private static bool CompareArray(byte[] a, byte[] b, int len) {
+            for (int k = 0; k < len; ++k) {
+                if (a[k] != b[k]) {
                     return false;
                 }
             }

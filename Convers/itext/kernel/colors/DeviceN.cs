@@ -41,33 +41,27 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
+using System.Collections.Generic;
 using iText.IO.Util;
 using iText.Kernel.Pdf.Colorspace;
 using iText.Kernel.Pdf.Function;
-using System;
-using System.Collections.Generic;
 
-namespace iText.Kernel.Colors
-{
-    public class DeviceN : Color
-    {
+namespace iText.Kernel.Colors {
+    public class DeviceN : Color {
         public DeviceN(PdfSpecialCs.DeviceN cs)
-            : this(cs, GetDefaultColorants(cs.GetNumberOfComponents()))
-        {
+            : this(cs, GetDefaultColorants(cs.GetNumberOfComponents())) {
         }
 
         public DeviceN(PdfSpecialCs.DeviceN cs, float[] value)
-            : base(cs, value)
-        {
+            : base(cs, value) {
         }
 
         public DeviceN(IList<String> names, PdfColorSpace alternateCs, PdfFunction tintTransform, float[] value)
-            : this(new PdfSpecialCs.DeviceN(names, alternateCs, tintTransform), value)
-        {
+            : this(new PdfSpecialCs.DeviceN(names, alternateCs, tintTransform), value) {
         }
 
-        private static float[] GetDefaultColorants(int numOfColorants)
-        {
+        private static float[] GetDefaultColorants(int numOfColorants) {
             float[] colorants = new float[numOfColorants];
             JavaUtil.Fill(colorants, 1f);
             return colorants;

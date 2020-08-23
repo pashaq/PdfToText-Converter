@@ -27,11 +27,11 @@
 //        SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //        http://www.adobe.com/devnet/xmp/library/eula-xmp-library-java.html
-using iText.Kernel.XMP.Impl.XPath;
 using System;
+using iText.Kernel.XMP.Impl;
+using iText.Kernel.XMP.Impl.XPath;
 
-namespace iText.Kernel.XMP
-{
+namespace iText.Kernel.XMP {
     /// <summary>Utility services for the metadata object.</summary>
     /// <remarks>
     /// Utility services for the metadata object. It has only public static functions, you cannot create
@@ -73,11 +73,9 @@ namespace iText.Kernel.XMP
     /// path or array indices.
     /// </remarks>
     /// <since>25.01.2006</since>
-    public sealed class XMPPathFactory
-    {
+    public sealed class XMPPathFactory {
         /// <summary>Private constructor</summary>
-        private XMPPathFactory()
-        {
+        private XMPPathFactory() {
         }
 
         // EMPTY
@@ -95,20 +93,15 @@ namespace iText.Kernel.XMP
         /// <tt>ns:arrayName[i]</tt>, where &amp;quot;ns&amp;quot; is the prefix for schemaNS and
         /// &amp;quot;i&amp;quot; is the decimal representation of itemIndex.
         /// </returns>
-        public static String ComposeArrayItemPath(String arrayName, int itemIndex)
-        {
-            if (itemIndex > 0)
-            {
+        public static String ComposeArrayItemPath(String arrayName, int itemIndex) {
+            if (itemIndex > 0) {
                 return arrayName + '[' + itemIndex + ']';
             }
-            else
-            {
-                if (itemIndex == XMPConst.ARRAY_LAST_ITEM)
-                {
+            else {
+                if (itemIndex == XMPConst.ARRAY_LAST_ITEM) {
                     return arrayName + "[last()]";
                 }
-                else
-                {
+                else {
                     throw new XMPException("Array index must be larger than zero", XMPError.BADINDEX);
                 }
             }
@@ -132,13 +125,11 @@ namespace iText.Kernel.XMP
         /// <tt>ns:structName/fNS:fieldName</tt>, where &amp;quot;ns&amp;quot; is the prefix for
         /// schemaNS and &amp;quot;fNS&amp;quot; is the prefix for fieldNS.
         /// </returns>
-        public static String ComposeStructFieldPath(String fieldNS, String fieldName)
-        {
+        public static String ComposeStructFieldPath(String fieldNS, String fieldName) {
             AssertFieldNS(fieldNS);
             AssertFieldName(fieldName);
             XMPPath fieldPath = XMPPathParser.ExpandXPath(fieldNS, fieldName);
-            if (fieldPath.Size() != 2)
-            {
+            if (fieldPath.Size() != 2) {
                 throw new XMPException("The field name must be simple", XMPError.BADXPATH);
             }
             return '/' + fieldPath.GetSegment(XMPPath.STEP_ROOT_PROP).GetName();
@@ -158,13 +149,11 @@ namespace iText.Kernel.XMP
         /// <tt>ns:propName/?qNS:qualName</tt>, where &amp;quot;ns&amp;quot; is the prefix for
         /// schemaNS and &amp;quot;qNS&amp;quot; is the prefix for qualNS.
         /// </returns>
-        public static String ComposeQualifierPath(String qualNS, String qualName)
-        {
+        public static String ComposeQualifierPath(String qualNS, String qualName) {
             AssertQualNS(qualNS);
             AssertQualName(qualName);
             XMPPath qualPath = XMPPathParser.ExpandXPath(qualNS, qualName);
-            if (qualPath.Size() != 2)
-            {
+            if (qualPath.Size() != 2) {
                 throw new XMPException("The qualifier name must be simple", XMPError.BADXPATH);
             }
             return "/?" + qualPath.GetSegment(XMPPath.STEP_ROOT_PROP).GetName();
@@ -194,8 +183,7 @@ namespace iText.Kernel.XMP
         /// <tt>ns:arrayName[@xml:lang='langName']</tt>, where
         /// &amp;quot;ns&amp;quot; is the prefix for schemaNS.
         /// </returns>
-        public static String ComposeLangSelector(String arrayName, String langName)
-        {
+        public static String ComposeLangSelector(String arrayName, String langName) {
             return arrayName + "[?xml:lang=\"" + iText.Kernel.XMP.Impl.Utils.NormalizeLangValue(langName) + "\"]";
         }
 
@@ -238,11 +226,9 @@ namespace iText.Kernel.XMP
         /// prefix for schemaNS and &amp;quot;fNS&amp;quot; is the prefix for fieldNS.
         /// </returns>
         public static String ComposeFieldSelector(String arrayName, String fieldNS, String fieldName, String fieldValue
-            )
-        {
+            ) {
             XMPPath fieldPath = XMPPathParser.ExpandXPath(fieldNS, fieldName);
-            if (fieldPath.Size() != 2)
-            {
+            if (fieldPath.Size() != 2) {
                 throw new XMPException("The fieldName name must be simple", XMPError.BADXPATH);
             }
             return arrayName + '[' + fieldPath.GetSegment(XMPPath.STEP_ROOT_PROP).GetName() + "=\"" + fieldValue + "\"]";
@@ -250,40 +236,32 @@ namespace iText.Kernel.XMP
 
         /// <summary>ParameterAsserts that a qualifier namespace is set.</summary>
         /// <param name="qualNS">a qualifier namespace</param>
-        private static void AssertQualNS(String qualNS)
-        {
-            if (qualNS == null || qualNS.Length == 0)
-            {
+        private static void AssertQualNS(String qualNS) {
+            if (qualNS == null || qualNS.Length == 0) {
                 throw new XMPException("Empty qualifier namespace URI", XMPError.BADSCHEMA);
             }
         }
 
         /// <summary>ParameterAsserts that a qualifier name is set.</summary>
         /// <param name="qualName">a qualifier name or path</param>
-        private static void AssertQualName(String qualName)
-        {
-            if (qualName == null || qualName.Length == 0)
-            {
+        private static void AssertQualName(String qualName) {
+            if (qualName == null || qualName.Length == 0) {
                 throw new XMPException("Empty qualifier name", XMPError.BADXPATH);
             }
         }
 
         /// <summary>ParameterAsserts that a struct field namespace is set.</summary>
         /// <param name="fieldNS">a struct field namespace</param>
-        private static void AssertFieldNS(String fieldNS)
-        {
-            if (fieldNS == null || fieldNS.Length == 0)
-            {
+        private static void AssertFieldNS(String fieldNS) {
+            if (fieldNS == null || fieldNS.Length == 0) {
                 throw new XMPException("Empty field namespace URI", XMPError.BADSCHEMA);
             }
         }
 
         /// <summary>ParameterAsserts that a struct field name is set.</summary>
         /// <param name="fieldName">a struct field name or path</param>
-        private static void AssertFieldName(String fieldName)
-        {
-            if (fieldName == null || fieldName.Length == 0)
-            {
+        private static void AssertFieldName(String fieldName) {
+            if (fieldName == null || fieldName.Length == 0) {
                 throw new XMPException("Empty f name", XMPError.BADXPATH);
             }
         }

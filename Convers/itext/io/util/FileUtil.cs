@@ -46,55 +46,45 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 
-namespace iText.IO.Util
-{
+namespace iText.IO.Util {
     /// <summary>
     /// This file is a helper class for internal usage only.
     /// Be aware that its API and functionality may be changed in future.
     /// </summary>
-    public static class FileUtil
-    {
+    public static class FileUtil {
         private static int tempFileCounter = 0;
 
-        public static String GetFontsDir()
-        {
+        public static String GetFontsDir() {
             String windir = Environment.GetEnvironmentVariable("windir");
             return windir != null ? Path.Combine(windir, "fonts") : "";
         }
 
-        public static bool FileExists(String path)
-        {
-            if (!String.IsNullOrEmpty(path))
-            {
+        public static bool FileExists(String path) {
+            if (!String.IsNullOrEmpty(path)) {
                 return new FileInfo(path).Exists;
             }
             return false;
         }
 
-        public static bool DirectoryExists(String path)
-        {
-            if (!String.IsNullOrEmpty(path))
-            {
+        public static bool DirectoryExists(String path) {
+            if (!String.IsNullOrEmpty(path)) {
                 return new DirectoryInfo(path).Exists;
             }
             return false;
         }
 
-        public static String[] ListFilesInDirectory(String path, bool recursive)
-        {
-            if (!String.IsNullOrEmpty(path))
-            {
+        public static String[] ListFilesInDirectory(String path, bool recursive) {
+            if (!String.IsNullOrEmpty(path)) {
                 DirectoryInfo dir = new DirectoryInfo(path);
-                if (dir.Exists)
-                {
+                if (dir.Exists) {
                     FileInfo[] files = dir.GetFiles("*.*", recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
                     // Guarantee invariant order in all environments
                     files = files.OrderBy(file => file.Name).ToArray();
                     String[] list = new String[files.Length];
-                    for (int i = 0; i < files.Length; i++)
-                    {
+                    for (int i = 0; i < files.Length; i++) {
                         list[i] = files[i].FullName;
                     }
                     return list;
@@ -103,26 +93,20 @@ namespace iText.IO.Util
             return null;
         }
 
-        public static FileInfo[] ListFilesInDirectoryByFilter(String path, IFileFilter filter)
-        {
+        public static FileInfo[] ListFilesInDirectoryByFilter(String path, IFileFilter filter) {
             return ListFilesInDirectoryByFilter(path, false, filter);
         }
 
-        public static FileInfo[] ListFilesInDirectoryByFilter(String path, bool recursive, IFileFilter filter)
-        {
-            if (!String.IsNullOrEmpty(path))
-            {
+        public static FileInfo[] ListFilesInDirectoryByFilter(String path, bool recursive, IFileFilter filter) {
+            if (!String.IsNullOrEmpty(path)) {
                 DirectoryInfo dir = new DirectoryInfo(path);
-                if (dir.Exists)
-                {
+                if (dir.Exists) {
                     FileInfo[] files = dir.GetFiles("*.*", recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
                     // Guarantee invariant order in all environments
                     files = files.OrderBy(file => file.Name).ToArray();
                     List<FileInfo> list = new List<FileInfo>();
-                    foreach (FileInfo f in files)
-                    {
-                        if (filter.Accept(f))
-                        {
+                    foreach (FileInfo f in files) {
+                        if (filter.Accept(f)) {
                             list.Add(f);
                         }
                     }
@@ -132,37 +116,30 @@ namespace iText.IO.Util
             return null;
         }
 
-        public static StreamWriter CreatePrintWriter(Stream output, String encoding)
-        {
+        public static StreamWriter CreatePrintWriter(Stream output, String encoding) {
             return new FormattingStreamWriter(output, EncodingUtil.GetEncoding(encoding));
         }
 
-        public static Stream GetBufferedOutputStream(String filename)
-        {
+        public static Stream GetBufferedOutputStream(String filename) {
             return new FileStream(filename, FileMode.Create);
         }
 
-        public static FileInfo CreateTempFile(String path)
-        {
-            if (DirectoryExists(path))
-            {
+        public static FileInfo CreateTempFile(String path) {
+            if (DirectoryExists(path)) {
                 return new FileInfo(path + Path.DirectorySeparatorChar + "pdf_" + Interlocked.Increment(ref tempFileCounter));
             }
             return new FileInfo(path);
         }
 
-        public static FileStream GetFileOutputStream(FileInfo file)
-        {
+        public static FileStream GetFileOutputStream(FileInfo file) {
             return file.Open(FileMode.Create);
         }
-
-        public static FileStream GetInputStreamForFile(String path)
-        {
+        
+        public static FileStream GetInputStreamForFile(String path) {
             return new FileStream(path, FileMode.Open, FileAccess.Read);
         }
 
-        public static FileStream GetRandomAccessFile(FileInfo file)
-        {
+        public static FileStream GetRandomAccessFile(FileInfo file) {
             return file.Open(FileMode.Open);
         }
 
@@ -172,29 +149,24 @@ namespace iText.IO.Util
             return outputStream;
         }
 
-        public static void CreateDirectories(String outPath)
-        {
+        public static void CreateDirectories(String outPath) {
             Directory.CreateDirectory(outPath);
         }
 
-        public interface IFileFilter
-        {
+        public interface IFileFilter {
             bool Accept(FileInfo pathname);
         }
 
         [System.ObsoleteAttribute]
-        public static String GetParentDirectory(String path)
-        {
+        public static String GetParentDirectory(String path) {
             return Directory.GetParent(path).FullName;
         }
 
-        public static String GetParentDirectory(FileInfo file)
-        {
+        public static String GetParentDirectory(FileInfo file) {
             return file != null ? new Uri(Directory.GetParent(file.FullName).FullName).AbsoluteUri + System.IO.Path.DirectorySeparatorChar : "";
         }
 
-        public static String GetBaseDirectory()
-        {
+        public static String GetBaseDirectory() {
 #if !NETSTANDARD1_6
             return AppDomain.CurrentDomain.BaseDirectory;
 #else
@@ -204,21 +176,16 @@ namespace iText.IO.Util
 
         /// Deletes a file and returns whether the operation succeeded.
         /// Node that only *files* are supported, not directories.
-        public static bool DeleteFile(FileInfo file)
-        {
-            try
-            {
+        public static bool DeleteFile(FileInfo file) {
+            try {
                 file.Delete();
                 return true;
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
                 return false;
             }
         }
-
-        public static String ParentDirectory(Uri url)
-        {
+        
+        public static String ParentDirectory(Uri url) {
             return new Uri(url, ".").ToString();
         }
     }

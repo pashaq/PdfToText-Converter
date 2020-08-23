@@ -42,29 +42,22 @@ address: sales@itextpdf.com
 */
 using System;
 
-namespace iText.IO.Font.Woff2
-{
-    public class Woff2Converter
-    {
-        public static bool IsWoff2Font(byte[] woff2Bytes)
-        {
-            if (woff2Bytes.Length < 4)
-            {
+namespace iText.IO.Font.Woff2 {
+    public class Woff2Converter {
+        public static bool IsWoff2Font(byte[] woff2Bytes) {
+            if (woff2Bytes.Length < 4) {
                 return false;
             }
             Buffer file = new Buffer(woff2Bytes, 0, 4);
-            try
-            {
+            try {
                 return file.ReadInt() == Woff2Common.kWoff2Signature;
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 return false;
             }
         }
 
-        public static byte[] Convert(byte[] woff2Bytes)
-        {
+        public static byte[] Convert(byte[] woff2Bytes) {
             byte[] inner_byte_buffer = new byte[Woff2Dec.ComputeWoff2FinalSize(woff2Bytes, woff2Bytes.Length)];
             Woff2Out @out = new Woff2MemoryOut(inner_byte_buffer, inner_byte_buffer.Length);
             Woff2Dec.ConvertWoff2ToTtf(woff2Bytes, woff2Bytes.Length, @out);

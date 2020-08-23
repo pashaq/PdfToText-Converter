@@ -41,22 +41,21 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using iText.IO.Util;
+using iText.Kernel;
 using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Kernel.Pdf.Canvas.Parser.Data;
 using iText.Kernel.Pdf.Canvas.Parser.Listener;
 using iText.Kernel.Pdf.Tagging;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 
-namespace iText.Kernel.Utils
-{
+namespace iText.Kernel.Utils {
     /// <summary>Converts a tagged PDF document into an XML file.</summary>
-    public class TaggedPdfReaderTool
-    {
+    public class TaggedPdfReaderTool {
         protected internal PdfDocument document;
 
         protected internal StreamWriter @out;
@@ -74,47 +73,40 @@ namespace iText.Kernel.Utils
         /// <see cref="iText.Kernel.Pdf.PdfDocument"/>.
         /// </summary>
         /// <param name="document">the document to read tag structure from</param>
-        public TaggedPdfReaderTool(PdfDocument document)
-        {
+        public TaggedPdfReaderTool(PdfDocument document) {
             this.document = document;
         }
 
         /// <summary>Checks if a character value should be escaped/unescaped.</summary>
         /// <param name="c">a character value</param>
         /// <returns>true if it's OK to escape or unescape this value</returns>
-        public static bool IsValidCharacterValue(int c)
-        {
+        public static bool IsValidCharacterValue(int c) {
             return (c == 0x9 || c == 0xA || c == 0xD || c >= 0x20 && c <= 0xD7FF || c >= 0xE000 && c <= 0xFFFD || c >=
                  0x10000 && c <= 0x10FFFF);
         }
 
         /// <summary>Converts the current tag structure into an XML file with default encoding (UTF-8).</summary>
         /// <param name="os">the output stream to save XML file to</param>
-        public virtual void ConvertToXml(Stream os)
-        {
+        public virtual void ConvertToXml(Stream os) {
             ConvertToXml(os, "UTF-8");
         }
 
         /// <summary>Converts the current tag structure into an XML file with provided encoding.</summary>
         /// <param name="os">the output stream to save XML file to</param>
         /// <param name="charset">the charset of the resultant XML file</param>
-        public virtual void ConvertToXml(Stream os, String charset)
-        {
+        public virtual void ConvertToXml(Stream os, String charset) {
             @out = new StreamWriter(os, EncodingUtil.GetEncoding(charset));
-            if (rootTag != null)
-            {
+            if (rootTag != null) {
                 @out.Write("<" + rootTag + ">" + Environment.NewLine);
             }
             // get the StructTreeRoot from the document
             PdfStructTreeRoot structTreeRoot = document.GetStructTreeRoot();
-            if (structTreeRoot == null)
-            {
+            if (structTreeRoot == null) {
                 throw new PdfException(PdfException.DocumentDoesntContainStructTreeRoot);
             }
             // Inspect the child or children of the StructTreeRoot
             InspectKids(structTreeRoot.GetKids());
-            if (rootTag != null)
-            {
+            if (rootTag != null) {
                 @out.Write("</" + rootTag + ">");
             }
             @out.Flush();
@@ -124,30 +116,23 @@ namespace iText.Kernel.Utils
         /// <summary>Sets the name of the root tag of the resultant XML file</summary>
         /// <param name="rootTagName">the name of the root tag</param>
         /// <returns>this object</returns>
-        public virtual iText.Kernel.Utils.TaggedPdfReaderTool SetRootTag(String rootTagName)
-        {
+        public virtual iText.Kernel.Utils.TaggedPdfReaderTool SetRootTag(String rootTagName) {
             this.rootTag = rootTagName;
             return this;
         }
 
-        protected internal virtual void InspectKids(IList<IStructureNode> kids)
-        {
-            if (kids == null)
-            {
+        protected internal virtual void InspectKids(IList<IStructureNode> kids) {
+            if (kids == null) {
                 return;
             }
-            foreach (IStructureNode kid in kids)
-            {
+            foreach (IStructureNode kid in kids) {
                 InspectKid(kid);
             }
         }
 
-        protected internal virtual void InspectKid(IStructureNode kid)
-        {
-            try
-            {
-                if (kid is PdfStructElem)
-                {
+        protected internal virtual void InspectKid(IStructureNode kid) {
+            try {
+                if (kid is PdfStructElem) {
                     PdfStructElem structElemKid = (PdfStructElem)kid;
                     PdfName s = structElemKid.GetRole();
                     String tagN = s.GetValue();
@@ -157,8 +142,7 @@ namespace iText.Kernel.Utils
                     InspectAttributes(structElemKid);
                     @out.Write(">" + Environment.NewLine);
                     PdfString alt = (structElemKid).GetAlt();
-                    if (alt != null)
-                    {
+                    if (alt != null) {
                         @out.Write("<alt><![CDATA[");
                         @out.Write(iText.IO.Util.StringUtil.ReplaceAll(alt.GetValue(), "[\\000]*", ""));
                         @out.Write("]]></alt>" + Environment.NewLine);
@@ -168,42 +152,32 @@ namespace iText.Kernel.Utils
                     @out.Write(tag);
                     @out.Write(">" + Environment.NewLine);
                 }
-                else
-                {
-                    if (kid is PdfMcr)
-                    {
+                else {
+                    if (kid is PdfMcr) {
                         ParseTag((PdfMcr)kid);
                     }
-                    else
-                    {
+                    else {
                         @out.Write(" <flushedKid/> ");
                     }
                 }
             }
-            catch (System.IO.IOException e)
-            {
+            catch (System.IO.IOException e) {
                 throw new iText.IO.IOException(iText.IO.IOException.UnknownIOException, e);
             }
         }
 
-        protected internal virtual void InspectAttributes(PdfStructElem kid)
-        {
+        protected internal virtual void InspectAttributes(PdfStructElem kid) {
             PdfObject attrObj = kid.GetAttributes(false);
-            if (attrObj != null)
-            {
+            if (attrObj != null) {
                 PdfDictionary attrDict;
-                if (attrObj is PdfArray)
-                {
+                if (attrObj is PdfArray) {
                     attrDict = ((PdfArray)attrObj).GetAsDictionary(0);
                 }
-                else
-                {
+                else {
                     attrDict = (PdfDictionary)attrObj;
                 }
-                try
-                {
-                    foreach (PdfName key in attrDict.KeySet())
-                    {
+                try {
+                    foreach (PdfName key in attrDict.KeySet()) {
                         @out.Write(' ');
                         String attrName = key.GetValue();
                         @out.Write(char.ToLower(attrName[0]) + attrName.Substring(1));
@@ -212,22 +186,18 @@ namespace iText.Kernel.Utils
                         @out.Write("\"");
                     }
                 }
-                catch (System.IO.IOException e)
-                {
+                catch (System.IO.IOException e) {
                     throw new iText.IO.IOException(iText.IO.IOException.UnknownIOException, e);
                 }
             }
         }
 
-        protected internal virtual void ParseTag(PdfMcr kid)
-        {
+        protected internal virtual void ParseTag(PdfMcr kid) {
             int mcid = kid.GetMcid();
             PdfDictionary pageDic = kid.GetPageObject();
             String tagContent = "";
-            if (mcid != -1)
-            {
-                if (!parsedTags.ContainsKey(pageDic))
-                {
+            if (mcid != -1) {
+                if (!parsedTags.ContainsKey(pageDic)) {
                     TaggedPdfReaderTool.MarkedContentEventListener listener = new TaggedPdfReaderTool.MarkedContentEventListener
                         (this);
                     PdfCanvasProcessor processor = new PdfCanvasProcessor(listener);
@@ -235,36 +205,29 @@ namespace iText.Kernel.Utils
                     processor.ProcessContent(page.GetContentBytes(), page.GetResources());
                     parsedTags.Put(pageDic, listener.GetMcidContent());
                 }
-                if (parsedTags.Get(pageDic).ContainsKey(mcid))
-                {
+                if (parsedTags.Get(pageDic).ContainsKey(mcid)) {
                     tagContent = parsedTags.Get(pageDic).Get(mcid);
                 }
             }
-            else
-            {
+            else {
                 PdfObjRef objRef = (PdfObjRef)kid;
                 PdfObject @object = objRef.GetReferencedObject();
-                if (@object.IsDictionary())
-                {
+                if (@object.IsDictionary()) {
                     PdfName subtype = ((PdfDictionary)@object).GetAsName(PdfName.Subtype);
                     tagContent = subtype.ToString();
                 }
             }
-            try
-            {
+            try {
                 @out.Write(EscapeXML(tagContent, true));
             }
-            catch (System.IO.IOException e)
-            {
+            catch (System.IO.IOException e) {
                 throw new iText.IO.IOException(iText.IO.IOException.UnknownIOException, e);
             }
         }
 
-        protected internal static String FixTagName(String tag)
-        {
+        protected internal static String FixTagName(String tag) {
             StringBuilder sb = new StringBuilder();
-            for (int k = 0; k < tag.Length; ++k)
-            {
+            for (int k = 0; k < tag.Length; ++k) {
                 char c = tag[k];
                 bool nameStart = c == ':' || (c >= 'A' && c <= 'Z') || c == '_' || (c >= 'a' && c <= 'z') || (c >= '\u00c0'
                      && c <= '\u00d6') || (c >= '\u00d8' && c <= '\u00f6') || (c >= '\u00f8' && c <= '\u02ff') || (c >= '\u0370'
@@ -273,17 +236,13 @@ namespace iText.Kernel.Utils
                      && c <= '\ufdcf') || (c >= '\ufdf0' && c <= '\ufffd');
                 bool nameMiddle = c == '-' || c == '.' || (c >= '0' && c <= '9') || c == '\u00b7' || (c >= '\u0300' && c <=
                      '\u036f') || (c >= '\u203f' && c <= '\u2040') || nameStart;
-                if (k == 0)
-                {
-                    if (!nameStart)
-                    {
+                if (k == 0) {
+                    if (!nameStart) {
                         c = '_';
                     }
                 }
-                else
-                {
-                    if (!nameMiddle)
-                    {
+                else {
+                    if (!nameMiddle) {
                         c = '-';
                     }
                 }
@@ -299,116 +258,93 @@ namespace iText.Kernel.Utils
         /// <param name="s">the string to be escaped</param>
         /// <param name="onlyASCII">codes above 127 will always be escaped with &amp;#nn; if <c>true</c></param>
         /// <returns>the escaped string</returns>
-        protected internal static String EscapeXML(String s, bool onlyASCII)
-        {
+        protected internal static String EscapeXML(String s, bool onlyASCII) {
             char[] cc = s.ToCharArray();
             int len = cc.Length;
             StringBuilder sb = new StringBuilder();
-            for (int k = 0; k < len; ++k)
-            {
+            for (int k = 0; k < len; ++k) {
                 int c = cc[k];
-                switch (c)
-                {
-                    case '<':
-                        {
-                            sb.Append("&lt;");
-                            break;
-                        }
+                switch (c) {
+                    case '<': {
+                        sb.Append("&lt;");
+                        break;
+                    }
 
-                    case '>':
-                        {
-                            sb.Append("&gt;");
-                            break;
-                        }
+                    case '>': {
+                        sb.Append("&gt;");
+                        break;
+                    }
 
-                    case '&':
-                        {
-                            sb.Append("&amp;");
-                            break;
-                        }
+                    case '&': {
+                        sb.Append("&amp;");
+                        break;
+                    }
 
-                    case '"':
-                        {
-                            sb.Append("&quot;");
-                            break;
-                        }
+                    case '"': {
+                        sb.Append("&quot;");
+                        break;
+                    }
 
-                    case '\'':
-                        {
-                            sb.Append("&apos;");
-                            break;
-                        }
+                    case '\'': {
+                        sb.Append("&apos;");
+                        break;
+                    }
 
-                    default:
-                        {
-                            if (IsValidCharacterValue(c))
-                            {
-                                if (onlyASCII && c > 127)
-                                {
-                                    sb.Append("&#").Append(c).Append(';');
-                                }
-                                else
-                                {
-                                    sb.Append((char)c);
-                                }
+                    default: {
+                        if (IsValidCharacterValue(c)) {
+                            if (onlyASCII && c > 127) {
+                                sb.Append("&#").Append(c).Append(';');
                             }
-                            break;
+                            else {
+                                sb.Append((char)c);
+                            }
                         }
+                        break;
+                    }
                 }
             }
             return sb.ToString();
         }
 
-        private class MarkedContentEventListener : IEventListener
-        {
+        private class MarkedContentEventListener : IEventListener {
             private IDictionary<int, ITextExtractionStrategy> contentByMcid = new Dictionary<int, ITextExtractionStrategy
                 >();
 
-            public virtual IDictionary<int, String> GetMcidContent()
-            {
+            public virtual IDictionary<int, String> GetMcidContent() {
                 IDictionary<int, String> content = new Dictionary<int, String>();
-                foreach (int id in this.contentByMcid.Keys)
-                {
+                foreach (int id in this.contentByMcid.Keys) {
                     content.Put(id, this.contentByMcid.Get(id).GetResultantText());
                 }
                 return content;
             }
 
-            public virtual void EventOccurred(IEventData data, EventType type)
-            {
-                switch (type)
-                {
-                    case EventType.RENDER_TEXT:
-                        {
-                            TextRenderInfo textInfo = (TextRenderInfo)data;
-                            int mcid = textInfo.GetMcid();
-                            if (mcid != -1)
-                            {
-                                ITextExtractionStrategy textExtractionStrategy = this.contentByMcid.Get(mcid);
-                                if (textExtractionStrategy == null)
-                                {
-                                    textExtractionStrategy = new LocationTextExtractionStrategy();
-                                    this.contentByMcid.Put(mcid, textExtractionStrategy);
-                                }
-                                textExtractionStrategy.EventOccurred(data, type);
+            public virtual void EventOccurred(IEventData data, EventType type) {
+                switch (type) {
+                    case EventType.RENDER_TEXT: {
+                        TextRenderInfo textInfo = (TextRenderInfo)data;
+                        int mcid = textInfo.GetMcid();
+                        if (mcid != -1) {
+                            ITextExtractionStrategy textExtractionStrategy = this.contentByMcid.Get(mcid);
+                            if (textExtractionStrategy == null) {
+                                textExtractionStrategy = new LocationTextExtractionStrategy();
+                                this.contentByMcid.Put(mcid, textExtractionStrategy);
                             }
-                            break;
+                            textExtractionStrategy.EventOccurred(data, type);
                         }
+                        break;
+                    }
 
-                    default:
-                        {
-                            break;
-                        }
+                    default: {
+                        break;
+                    }
                 }
             }
 
-            public virtual ICollection<EventType> GetSupportedEvents()
-            {
+            public virtual ICollection<EventType> GetSupportedEvents() {
                 return null;
             }
 
-            internal MarkedContentEventListener(TaggedPdfReaderTool _enclosing)
-            {
+            internal MarkedContentEventListener(TaggedPdfReaderTool _enclosing) {
                 this._enclosing = _enclosing;
             }
 

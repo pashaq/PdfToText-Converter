@@ -40,13 +40,13 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
 using Common.Logging;
 using iText.IO.Util;
+using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Filespec;
-using System;
 
-namespace iText.Kernel.Pdf.Tagging
-{
+namespace iText.Kernel.Pdf.Tagging {
     /// <summary>A wrapper for namespace dictionaries (ISO 32000-2 section 14.7.4).</summary>
     /// <remarks>
     /// A wrapper for namespace dictionaries (ISO 32000-2 section 14.7.4).
@@ -54,8 +54,7 @@ namespace iText.Kernel.Pdf.Tagging
     /// <para />
     /// This pdf entity is meaningful only for the PDF documents of version <b>2.0 and higher</b>.
     /// </remarks>
-    public class PdfNamespace : PdfObjectWrapper<PdfDictionary>
-    {
+    public class PdfNamespace : PdfObjectWrapper<PdfDictionary> {
         /// <summary>
         /// Constructs namespace from the given
         /// <see cref="iText.Kernel.Pdf.PdfDictionary"/>
@@ -73,8 +72,7 @@ namespace iText.Kernel.Pdf.Tagging
         /// that represents namespace in the document.
         /// </param>
         public PdfNamespace(PdfDictionary dictionary)
-            : base(dictionary)
-        {
+            : base(dictionary) {
             SetForbidRelease();
         }
 
@@ -86,8 +84,7 @@ namespace iText.Kernel.Pdf.Tagging
         /// resource identifier, or URI).
         /// </param>
         public PdfNamespace(String namespaceName)
-            : this(new PdfString(namespaceName))
-        {
+            : this(new PdfString(namespaceName)) {
         }
 
         /// <summary>Constructs a namespace defined by the given namespace name.</summary>
@@ -98,8 +95,7 @@ namespace iText.Kernel.Pdf.Tagging
         /// resource identifier, or URI).
         /// </param>
         public PdfNamespace(PdfString namespaceName)
-            : this(new PdfDictionary())
-        {
+            : this(new PdfDictionary()) {
             Put(PdfName.Type, PdfName.Namespace);
             Put(PdfName.NS, namespaceName);
         }
@@ -116,8 +112,7 @@ namespace iText.Kernel.Pdf.Tagging
         /// <see cref="PdfNamespace"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Tagging.PdfNamespace SetNamespaceName(String namespaceName)
-        {
+        public virtual iText.Kernel.Pdf.Tagging.PdfNamespace SetNamespaceName(String namespaceName) {
             return SetNamespaceName(new PdfString(namespaceName));
         }
 
@@ -133,8 +128,7 @@ namespace iText.Kernel.Pdf.Tagging
         /// <see cref="PdfNamespace"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Tagging.PdfNamespace SetNamespaceName(PdfString namespaceName)
-        {
+        public virtual iText.Kernel.Pdf.Tagging.PdfNamespace SetNamespaceName(PdfString namespaceName) {
             return Put(PdfName.NS, namespaceName);
         }
 
@@ -145,8 +139,7 @@ namespace iText.Kernel.Pdf.Tagging
         /// defining the namespace name (conventionally a uniform
         /// resource identifier, or URI).
         /// </returns>
-        public virtual String GetNamespaceName()
-        {
+        public virtual String GetNamespaceName() {
             PdfString ns = GetPdfObject().GetAsString(PdfName.NS);
             return ns != null ? ns.ToUnicodeString() : null;
         }
@@ -162,8 +155,7 @@ namespace iText.Kernel.Pdf.Tagging
         /// <see cref="PdfNamespace"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Tagging.PdfNamespace SetSchema(PdfFileSpec fileSpec)
-        {
+        public virtual iText.Kernel.Pdf.Tagging.PdfNamespace SetSchema(PdfFileSpec fileSpec) {
             return Put(PdfName.Schema, fileSpec.GetPdfObject());
         }
 
@@ -173,8 +165,7 @@ namespace iText.Kernel.Pdf.Tagging
         /// <see cref="iText.Kernel.Pdf.Filespec.PdfFileSpec"/>
         /// identifying the schema file.
         /// </returns>
-        public virtual PdfFileSpec GetSchema()
-        {
+        public virtual PdfFileSpec GetSchema() {
             PdfObject schemaObject = GetPdfObject().Get(PdfName.Schema);
             return PdfFileSpec.WrapFileSpecObject(schemaObject);
         }
@@ -201,8 +192,7 @@ namespace iText.Kernel.Pdf.Tagging
         /// <see cref="PdfNamespace"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Tagging.PdfNamespace SetNamespaceRoleMap(PdfDictionary roleMapNs)
-        {
+        public virtual iText.Kernel.Pdf.Tagging.PdfNamespace SetNamespaceRoleMap(PdfDictionary roleMapNs) {
             return Put(PdfName.RoleMapNS, roleMapNs);
         }
 
@@ -223,8 +213,7 @@ namespace iText.Kernel.Pdf.Tagging
         /// where the first value shall be a structure element type name
         /// in a target namespace with the second value being an indirect reference to the target namespace dictionary.
         /// </returns>
-        public virtual PdfDictionary GetNamespaceRoleMap()
-        {
+        public virtual PdfDictionary GetNamespaceRoleMap() {
             return GetNamespaceRoleMap(false);
         }
 
@@ -250,8 +239,7 @@ namespace iText.Kernel.Pdf.Tagging
         /// instance.
         /// </returns>
         public virtual iText.Kernel.Pdf.Tagging.PdfNamespace AddNamespaceRoleMapping(String thisNsRole, String defaultNsRole
-            )
-        {
+            ) {
             PdfObject prevVal = GetNamespaceRoleMap(true).Put(PdfStructTreeRoot.ConvertRoleToPdfName(thisNsRole), PdfStructTreeRoot
                 .ConvertRoleToPdfName(defaultNsRole));
             LogOverwritingOfMappingIfNeeded(thisNsRole, prevVal);
@@ -286,8 +274,7 @@ namespace iText.Kernel.Pdf.Tagging
         /// instance.
         /// </returns>
         public virtual iText.Kernel.Pdf.Tagging.PdfNamespace AddNamespaceRoleMapping(String thisNsRole, String targetNsRole
-            , iText.Kernel.Pdf.Tagging.PdfNamespace targetNs)
-        {
+            , iText.Kernel.Pdf.Tagging.PdfNamespace targetNs) {
             PdfArray targetMapping = new PdfArray();
             targetMapping.Add(PdfStructTreeRoot.ConvertRoleToPdfName(targetNsRole));
             targetMapping.Add(targetNs.GetPdfObject());
@@ -298,37 +285,30 @@ namespace iText.Kernel.Pdf.Tagging
             return this;
         }
 
-        protected internal override bool IsWrappedObjectMustBeIndirect()
-        {
+        protected internal override bool IsWrappedObjectMustBeIndirect() {
             return true;
         }
 
-        private iText.Kernel.Pdf.Tagging.PdfNamespace Put(PdfName key, PdfObject value)
-        {
+        private iText.Kernel.Pdf.Tagging.PdfNamespace Put(PdfName key, PdfObject value) {
             GetPdfObject().Put(key, value);
             SetModified();
             return this;
         }
 
-        private PdfDictionary GetNamespaceRoleMap(bool createIfNotExist)
-        {
+        private PdfDictionary GetNamespaceRoleMap(bool createIfNotExist) {
             PdfDictionary roleMapNs = GetPdfObject().GetAsDictionary(PdfName.RoleMapNS);
-            if (createIfNotExist && roleMapNs == null)
-            {
+            if (createIfNotExist && roleMapNs == null) {
                 roleMapNs = new PdfDictionary();
                 Put(PdfName.RoleMapNS, roleMapNs);
             }
             return roleMapNs;
         }
 
-        private void LogOverwritingOfMappingIfNeeded(String thisNsRole, PdfObject prevVal)
-        {
-            if (prevVal != null)
-            {
+        private void LogOverwritingOfMappingIfNeeded(String thisNsRole, PdfObject prevVal) {
+            if (prevVal != null) {
                 ILog logger = LogManager.GetLogger(typeof(iText.Kernel.Pdf.Tagging.PdfNamespace));
                 String nsNameStr = GetNamespaceName();
-                if (nsNameStr == null)
-                {
+                if (nsNameStr == null) {
                     nsNameStr = "this";
                 }
                 logger.Warn(MessageFormatUtil.Format(iText.IO.LogMessageConstant.MAPPING_IN_NAMESPACE_OVERWRITTEN, thisNsRole

@@ -13,14 +13,11 @@
 // limitations under the License.
 //
 // This is part of java port of project hosted at https://github.com/google/woff2
-namespace iText.IO.Font.Woff2
-{
+namespace iText.IO.Font.Woff2 {
     // Helper functions for storing integer values into byte streams.
     // No bounds checking is performed, that is the responsibility of the caller.
-    internal class StoreBytes
-    {
-        public static int StoreU32(byte[] dst, int offset, int x)
-        {
+    internal class StoreBytes {
+        public static int StoreU32(byte[] dst, int offset, int x) {
             dst[offset] = JavaUnsignedUtil.ToU8(x >> 24);
             dst[offset + 1] = JavaUnsignedUtil.ToU8(x >> 16);
             dst[offset + 2] = JavaUnsignedUtil.ToU8(x >> 8);
@@ -28,8 +25,7 @@ namespace iText.IO.Font.Woff2
             return offset + 4;
         }
 
-        public static int StoreU16(byte[] dst, int offset, int x)
-        {
+        public static int StoreU16(byte[] dst, int offset, int x) {
             dst[offset] = JavaUnsignedUtil.ToU8(x >> 8);
             dst[offset + 1] = JavaUnsignedUtil.ToU8(x);
             return offset + 2;

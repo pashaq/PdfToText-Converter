@@ -40,40 +40,33 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Util;
 using System;
+using iText.IO.Util;
 
-namespace iText.Kernel.Pdf
-{
-    internal class SerializedObjectContent
-    {
+namespace iText.Kernel.Pdf {
+    internal class SerializedObjectContent {
         private readonly byte[] serializedContent;
 
         private readonly int hash;
 
-        internal SerializedObjectContent(byte[] serializedContent)
-        {
+        internal SerializedObjectContent(byte[] serializedContent) {
             this.serializedContent = serializedContent;
             this.hash = CalculateHash(serializedContent);
         }
 
-        public override bool Equals(Object obj)
-        {
+        public override bool Equals(Object obj) {
             return obj is iText.Kernel.Pdf.SerializedObjectContent && GetHashCode() == obj.GetHashCode() && JavaUtil.ArraysEquals
                 (serializedContent, ((iText.Kernel.Pdf.SerializedObjectContent)obj).serializedContent);
         }
 
-        public override int GetHashCode()
-        {
+        public override int GetHashCode() {
             return hash;
         }
 
-        private static int CalculateHash(byte[] b)
-        {
+        private static int CalculateHash(byte[] b) {
             int hash = 0;
             int len = b.Length;
-            for (int k = 0; k < len; ++k)
-            {
+            for (int k = 0; k < len; ++k) {
                 hash = hash * 31 + (b[k] & 0xff);
             }
             return hash;

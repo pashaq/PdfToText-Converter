@@ -41,63 +41,52 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Annot
-{
-    public class PdfFixedPrint : PdfObjectWrapper<PdfDictionary>
-    {
+namespace iText.Kernel.Pdf.Annot {
+    public class PdfFixedPrint : PdfObjectWrapper<PdfDictionary> {
         public PdfFixedPrint()
-            : this(new PdfDictionary())
-        {
+            : this(new PdfDictionary()) {
         }
 
         public PdfFixedPrint(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
             pdfObject.Put(PdfName.Type, PdfName.FixedPrint);
         }
 
-        public virtual iText.Kernel.Pdf.Annot.PdfFixedPrint SetMatrix(PdfArray matrix)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfFixedPrint SetMatrix(PdfArray matrix) {
             GetPdfObject().Put(PdfName.Matrix, matrix);
             return this;
         }
 
-        public virtual iText.Kernel.Pdf.Annot.PdfFixedPrint SetMatrix(float[] matrix)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfFixedPrint SetMatrix(float[] matrix) {
             GetPdfObject().Put(PdfName.Matrix, new PdfArray(matrix));
             return this;
         }
 
-        public virtual iText.Kernel.Pdf.Annot.PdfFixedPrint SetHorizontalTranslation(float horizontal)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfFixedPrint SetHorizontalTranslation(float horizontal) {
             GetPdfObject().Put(PdfName.H, new PdfNumber(horizontal));
             return this;
         }
 
-        public virtual iText.Kernel.Pdf.Annot.PdfFixedPrint SetVerticalTranslation(float vertical)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfFixedPrint SetVerticalTranslation(float vertical) {
             GetPdfObject().Put(PdfName.V, new PdfNumber(vertical));
             return this;
         }
 
-        public virtual PdfArray GetMatrix()
-        {
+        public virtual PdfArray GetMatrix() {
             return GetPdfObject().GetAsArray(PdfName.Matrix);
         }
 
-        public virtual PdfNumber GetHorizontalTranslation()
-        {
+        public virtual PdfNumber GetHorizontalTranslation() {
             return GetPdfObject().GetAsNumber(PdfName.H);
         }
 
-        public virtual PdfNumber GetVerticalTranslation()
-        {
+        public virtual PdfNumber GetVerticalTranslation() {
             return GetPdfObject().GetAsNumber(PdfName.V);
         }
 
-        protected internal override bool IsWrappedObjectMustBeIndirect()
-        {
+        protected internal override bool IsWrappedObjectMustBeIndirect() {
             return true;
         }
     }

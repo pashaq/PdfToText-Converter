@@ -43,23 +43,21 @@ address: sales@itextpdf.com
 */
 using iText.Kernel.Colors;
 using iText.Kernel.Geom;
+using iText.Kernel.Pdf.Canvas;
 
-namespace iText.Kernel.Pdf.Canvas.Draw
-{
+namespace iText.Kernel.Pdf.Canvas.Draw {
     /// <summary>
     /// Implementation of
     /// <see cref="ILineDrawer"/>
     /// which draws a dashed horizontal line over
     /// the middle of the specified rectangle.
     /// </summary>
-    public class DashedLine : ILineDrawer
-    {
+    public class DashedLine : ILineDrawer {
         private float lineWidth = 1;
 
         private Color color = ColorConstants.BLACK;
 
-        public DashedLine()
-        {
+        public DashedLine() {
         }
 
         /// <summary>
@@ -68,39 +66,33 @@ namespace iText.Kernel.Pdf.Canvas.Draw
         /// with the specified line width.
         /// </summary>
         /// <param name="lineWidth"/>
-        public DashedLine(float lineWidth)
-        {
+        public DashedLine(float lineWidth) {
             this.lineWidth = lineWidth;
         }
 
-        public virtual void Draw(PdfCanvas canvas, Rectangle drawArea)
-        {
-            canvas.SaveState().SetLineWidth(lineWidth).SetStrokeColor(color).SetLineDash(2, 2).MoveTo(drawArea.GetX(),
+        public virtual void Draw(PdfCanvas canvas, Rectangle drawArea) {
+            canvas.SaveState().SetLineWidth(lineWidth).SetStrokeColor(color).SetLineDash(2, 2).MoveTo(drawArea.GetX(), 
                 drawArea.GetY() + lineWidth / 2).LineTo(drawArea.GetX() + drawArea.GetWidth(), drawArea.GetY() + lineWidth
                  / 2).Stroke().RestoreState();
         }
 
         /// <summary>Gets line width in points</summary>
         /// <returns>line thickness</returns>
-        public virtual float GetLineWidth()
-        {
+        public virtual float GetLineWidth() {
             return lineWidth;
         }
 
         /// <summary>Sets line width in points</summary>
         /// <param name="lineWidth">new line width</param>
-        public virtual void SetLineWidth(float lineWidth)
-        {
+        public virtual void SetLineWidth(float lineWidth) {
             this.lineWidth = lineWidth;
         }
 
-        public virtual Color GetColor()
-        {
+        public virtual Color GetColor() {
             return color;
         }
 
-        public virtual void SetColor(Color color)
-        {
+        public virtual void SetColor(Color color) {
             this.color = color;
         }
     }

@@ -42,14 +42,12 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Annot
-{
-    public class PdfWatermarkAnnotation : PdfAnnotation
-    {
+namespace iText.Kernel.Pdf.Annot {
+    public class PdfWatermarkAnnotation : PdfAnnotation {
         public PdfWatermarkAnnotation(Rectangle rect)
-            : base(rect)
-        {
+            : base(rect) {
         }
 
         /// <summary>
@@ -66,22 +64,18 @@ namespace iText.Kernel.Pdf.Annot
         /// </param>
         /// <seealso cref="PdfAnnotation.MakeAnnotation(iText.Kernel.Pdf.PdfObject)"/>
         protected internal PdfWatermarkAnnotation(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
-        public override PdfName GetSubtype()
-        {
+        public override PdfName GetSubtype() {
             return PdfName.Watermark;
         }
 
-        public virtual iText.Kernel.Pdf.Annot.PdfWatermarkAnnotation SetFixedPrint(PdfFixedPrint fixedPrint)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfWatermarkAnnotation SetFixedPrint(PdfFixedPrint fixedPrint) {
             return (iText.Kernel.Pdf.Annot.PdfWatermarkAnnotation)Put(PdfName.FixedPrint, fixedPrint.GetPdfObject());
         }
 
-        public virtual PdfDictionary GetFixedPrint()
-        {
+        public virtual PdfDictionary GetFixedPrint() {
             return GetPdfObject().GetAsDictionary(PdfName.FixedPrint);
         }
     }

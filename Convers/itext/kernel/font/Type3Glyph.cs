@@ -41,18 +41,17 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
 using iText.IO.Image;
 using iText.IO.Source;
+using iText.Kernel;
 using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas;
 using iText.Kernel.Pdf.Xobject;
-using System;
 
-namespace iText.Kernel.Font
-{
+namespace iText.Kernel.Font {
     /// <summary>The content where Type3 glyphs are written to.</summary>
-    public sealed class Type3Glyph : PdfCanvas
-    {
+    public sealed class Type3Glyph : PdfCanvas {
         private const String D_0_STR = "d0\n";
 
         private const String D_1_STR = "d1\n";
@@ -77,8 +76,7 @@ namespace iText.Kernel.Font
         /// <param name="pdfDocument">the document that this canvas is created for</param>
         internal Type3Glyph(PdfDocument pdfDocument, float wx, float llx, float lly, float urx, float ury, bool isColor
             )
-            : base((PdfStream)new PdfStream().MakeIndirect(pdfDocument), null, pdfDocument)
-        {
+            : base((PdfStream)new PdfStream().MakeIndirect(pdfDocument), null, pdfDocument) {
             WriteMetrics(wx, llx, lly, urx, ury, isColor);
         }
 
@@ -94,43 +92,35 @@ namespace iText.Kernel.Font
         /// belongs.
         /// </param>
         internal Type3Glyph(PdfStream pdfStream, PdfDocument document)
-            : base(pdfStream, null, document)
-        {
-            if (pdfStream.GetBytes() != null)
-            {
+            : base(pdfStream, null, document) {
+            if (pdfStream.GetBytes() != null) {
                 FillBBFromBytes(pdfStream.GetBytes());
             }
         }
 
-        public float GetWx()
-        {
+        public float GetWx() {
             return wx;
         }
 
-        public float GetLlx()
-        {
+        public float GetLlx() {
             return llx;
         }
 
-        public float GetLly()
-        {
+        public float GetLly() {
             return lly;
         }
 
-        public float GetUrx()
-        {
+        public float GetUrx() {
             return urx;
         }
 
-        public float GetUry()
-        {
+        public float GetUry() {
             return ury;
         }
 
         /// <summary>Indicates if the glyph color specified in the glyph description or not.</summary>
         /// <returns>whether the glyph color is specified in the glyph description or not</returns>
-        public bool IsColor()
-        {
+        public bool IsColor() {
             return isColor;
         }
 
@@ -156,22 +146,19 @@ namespace iText.Kernel.Font
         /// defines whether the glyph color is specified in the glyph description in the font.
         /// The consequence of value <c>true</c> is that the bounding box parameters are ignored.
         /// </param>
-        private void WriteMetrics(float wx, float llx, float lly, float urx, float ury, bool isColor)
-        {
+        private void WriteMetrics(float wx, float llx, float lly, float urx, float ury, bool isColor) {
             this.isColor = isColor;
             this.wx = wx;
             this.llx = llx;
             this.lly = lly;
             this.urx = urx;
             this.ury = ury;
-            if (isColor)
-            {
+            if (isColor) {
                 contentStream.GetOutputStream().WriteFloat(wx).WriteSpace()
                                 //wy
                                 .WriteFloat(0).WriteSpace().WriteBytes(d0);
             }
-            else
-            {
+            else {
                 contentStream.GetOutputStream().WriteFloat(wx).WriteSpace()
                                 //wy
                                 .WriteFloat(0).WriteSpace().WriteFloat(llx).WriteSpace().WriteFloat(lly).WriteSpace().WriteFloat(urx).WriteSpace
@@ -197,38 +184,30 @@ namespace iText.Kernel.Font
         /// <param name="f">an element of the transformation matrix</param>
         /// <param name="inlineImage">true if to add image as in-line.</param>
         /// <returns>created Image XObject or null in case of in-line image (asInline = true).</returns>
-        public override PdfXObject AddImage(ImageData image, float a, float b, float c, float d, float e, float f,
-            bool inlineImage)
-        {
-            if (!isColor && (!image.IsMask() || !(image.GetBpc() == 1 || image.GetBpc() > 0xff)))
-            {
+        public override PdfXObject AddImage(ImageData image, float a, float b, float c, float d, float e, float f, 
+            bool inlineImage) {
+            if (!isColor && (!image.IsMask() || !(image.GetBpc() == 1 || image.GetBpc() > 0xff))) {
                 throw new PdfException("Not colorized type3 fonts accept only mask images.");
             }
             return base.AddImage(image, a, b, c, d, e, f, inlineImage);
         }
 
-        private void FillBBFromBytes(byte[] bytes)
-        {
+        private void FillBBFromBytes(byte[] bytes) {
             String str = iText.IO.Util.JavaUtil.GetStringForBytes(bytes, iText.IO.Util.EncodingUtil.ISO_8859_1);
             int d0Pos = str.IndexOf(D_0_STR, StringComparison.Ordinal);
             int d1Pos = str.IndexOf(D_1_STR, StringComparison.Ordinal);
-            if (d0Pos != -1)
-            {
+            if (d0Pos != -1) {
                 isColor = true;
                 String[] bbArray = iText.IO.Util.StringUtil.Split(str.JSubstring(0, d0Pos - 1), " ");
-                if (bbArray.Length == 2)
-                {
+                if (bbArray.Length == 2) {
                     this.wx = float.Parse(bbArray[0], System.Globalization.CultureInfo.InvariantCulture);
                 }
             }
-            else
-            {
-                if (d1Pos != -1)
-                {
+            else {
+                if (d1Pos != -1) {
                     isColor = false;
                     String[] bbArray = iText.IO.Util.StringUtil.Split(str.JSubstring(0, d1Pos - 1), " ");
-                    if (bbArray.Length == 6)
-                    {
+                    if (bbArray.Length == 6) {
                         this.wx = float.Parse(bbArray[0], System.Globalization.CultureInfo.InvariantCulture);
                         this.llx = float.Parse(bbArray[2], System.Globalization.CultureInfo.InvariantCulture);
                         this.lly = float.Parse(bbArray[3], System.Globalization.CultureInfo.InvariantCulture);

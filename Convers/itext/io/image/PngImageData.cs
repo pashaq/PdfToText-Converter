@@ -43,10 +43,8 @@ address: sales@itextpdf.com
 */
 using System;
 
-namespace iText.IO.Image
-{
-    public class PngImageData : RawImageData
-    {
+namespace iText.IO.Image {
+    public class PngImageData : RawImageData {
         private byte[] colorPalette;
 
         private int colorType;
@@ -56,67 +54,54 @@ namespace iText.IO.Image
         private PngChromaticities pngChromaticities;
 
         protected internal PngImageData(byte[] bytes)
-            : base(bytes, ImageType.PNG)
-        {
+            : base(bytes, ImageType.PNG) {
         }
 
         protected internal PngImageData(Uri url)
-            : base(url, ImageType.PNG)
-        {
+            : base(url, ImageType.PNG) {
         }
 
-        public virtual byte[] GetColorPalette()
-        {
+        public virtual byte[] GetColorPalette() {
             return colorPalette;
         }
 
-        public virtual void SetColorPalette(byte[] colorPalette)
-        {
+        public virtual void SetColorPalette(byte[] colorPalette) {
             this.colorPalette = colorPalette;
         }
 
-        public virtual float GetGamma()
-        {
+        public virtual float GetGamma() {
             return gamma;
         }
 
-        public virtual void SetGamma(float gamma)
-        {
+        public virtual void SetGamma(float gamma) {
             this.gamma = gamma;
         }
 
-        public virtual bool IsHasCHRM()
-        {
+        public virtual bool IsHasCHRM() {
             return this.pngChromaticities != null;
         }
 
-        public virtual PngChromaticities GetPngChromaticities()
-        {
+        public virtual PngChromaticities GetPngChromaticities() {
             return pngChromaticities;
         }
 
-        public virtual void SetPngChromaticities(PngChromaticities pngChromaticities)
-        {
+        public virtual void SetPngChromaticities(PngChromaticities pngChromaticities) {
             this.pngChromaticities = pngChromaticities;
         }
 
-        public virtual int GetColorType()
-        {
+        public virtual int GetColorType() {
             return colorType;
         }
 
-        public virtual void SetColorType(int colorType)
-        {
+        public virtual void SetColorType(int colorType) {
             this.colorType = colorType;
         }
 
-        public virtual bool IsIndexed()
-        {
+        public virtual bool IsIndexed() {
             return this.colorType == 3;
         }
 
-        public virtual bool IsGrayscaleImage()
-        {
+        public virtual bool IsGrayscaleImage() {
             return (this.colorType & 2) == 0;
         }
     }

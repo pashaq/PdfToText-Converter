@@ -44,32 +44,29 @@ address: sales@itextpdf.com
 using System.IO;
 using System.util.zlib;
 
-namespace iText.IO.Source
-{
-    public class DeflaterOutputStream : ZDeflaterOutputStream
-    {
-        public DeflaterOutputStream(Stream outp, int level, int size)
-            : base(outp, level)
-        {
-        }
+namespace iText.IO.Source {
+	public class DeflaterOutputStream : ZDeflaterOutputStream
+	{
+		public DeflaterOutputStream(Stream outp, int level, int size)
+			: base(outp, level)
+		{
+		}
 
-        public DeflaterOutputStream(Stream outp, int level)
-            : this(outp, level, 512)
-        {
-        }
+		public DeflaterOutputStream(Stream outp, int level)
+			: this(outp, level, 512)
+		{
+		}
 
-        public DeflaterOutputStream(Stream outp)
-            : this(outp, -1)
-        {
-        }
+		public DeflaterOutputStream(Stream outp)
+			: this(outp, -1)
+		{
+		}
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                Finish();
-            }
-            base.Dispose(disposing);
-        }
-    }
+	    protected override void Dispose(bool disposing) {
+	        if (disposing) {
+	            Finish();
+	        }
+	        base.Dispose(disposing);
+	    }
+	}
 }

@@ -43,9 +43,9 @@ address: sales@itextpdf.com
 */
 using System;
 using System.Collections.Generic;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Layer
-{
+namespace iText.Kernel.Pdf.Layer {
     /// <summary>
     /// Content typically belongs to a single optional content group,
     /// and is visible when the group is <b>ON</b> and invisible when it is <b>OFF</b>.
@@ -63,8 +63,7 @@ namespace iText.Kernel.Pdf.Layer
     /// <see cref="iText.Kernel.Pdf.PdfObject"/>
     /// must be indirect.
     /// </remarks>
-    public class PdfLayerMembership : PdfObjectWrapper<PdfDictionary>, IPdfOCG
-    {
+    public class PdfLayerMembership : PdfObjectWrapper<PdfDictionary>, IPdfOCG {
         /// <summary>Creates a new, empty membership layer.</summary>
         /// <param name="doc">
         /// a
@@ -72,8 +71,7 @@ namespace iText.Kernel.Pdf.Layer
         /// where a new empty membership layer creates
         /// </param>
         public PdfLayerMembership(PdfDocument doc)
-            : base(new PdfDictionary())
-        {
+            : base(new PdfDictionary()) {
             MakeIndirect(doc);
             GetPdfObject().Put(PdfName.Type, PdfName.OCMD);
         }
@@ -82,11 +80,9 @@ namespace iText.Kernel.Pdf.Layer
         ///     </summary>
         /// <param name="membershipDictionary">the membership dictionary, must have an indirect reference.</param>
         public PdfLayerMembership(PdfDictionary membershipDictionary)
-            : base(membershipDictionary)
-        {
+            : base(membershipDictionary) {
             EnsureObjectIsAddedToDocument(membershipDictionary);
-            if (!PdfName.OCMD.Equals(membershipDictionary.GetAsName(PdfName.Type)))
-            {
+            if (!PdfName.OCMD.Equals(membershipDictionary.GetAsName(PdfName.Type))) {
                 throw new ArgumentException("Invalid membershipDictionary.");
             }
         }
@@ -97,22 +93,17 @@ namespace iText.Kernel.Pdf.Layer
         /// <see cref="PdfLayer">layers</see>
         /// this layer membership operates with
         /// </returns>
-        public virtual ICollection<PdfLayer> GetLayers()
-        {
+        public virtual ICollection<PdfLayer> GetLayers() {
             PdfObject layers = GetPdfObject().Get(PdfName.OCGs);
-            if (layers is PdfDictionary)
-            {
+            if (layers is PdfDictionary) {
                 IList<PdfLayer> list = new List<PdfLayer>();
                 list.Add(new PdfLayer((PdfDictionary)((PdfDictionary)layers).MakeIndirect(GetDocument())));
                 return list;
             }
-            else
-            {
-                if (layers is PdfArray)
-                {
+            else {
+                if (layers is PdfArray) {
                     IList<PdfLayer> layerList = new List<PdfLayer>();
-                    for (int ind = 0; ind < ((PdfArray)layers).Size(); ind++)
-                    {
+                    for (int ind = 0; ind < ((PdfArray)layers).Size(); ind++) {
                         layerList.Add(new PdfLayer(((PdfArray)(((PdfArray)layers).MakeIndirect(GetDocument()))).GetAsDictionary(ind
                             )));
                     }
@@ -124,11 +115,9 @@ namespace iText.Kernel.Pdf.Layer
 
         /// <summary>Adds a new layer to the current layer membership.</summary>
         /// <param name="layer">the layer to be added</param>
-        public virtual void AddLayer(PdfLayer layer)
-        {
+        public virtual void AddLayer(PdfLayer layer) {
             PdfArray layers = GetPdfObject().GetAsArray(PdfName.OCGs);
-            if (layers == null)
-            {
+            if (layers == null) {
                 layers = new PdfArray();
                 GetPdfObject().Put(PdfName.OCGs, layers);
             }
@@ -150,11 +139,9 @@ namespace iText.Kernel.Pdf.Layer
         /// The default value is AnyOn.
         /// </remarks>
         /// <param name="visibilityPolicy">the visibility policy</param>
-        public virtual void SetVisibilityPolicy(PdfName visibilityPolicy)
-        {
+        public virtual void SetVisibilityPolicy(PdfName visibilityPolicy) {
             if (visibilityPolicy == null || !PdfName.AllOn.Equals(visibilityPolicy) && !PdfName.AnyOn.Equals(visibilityPolicy
-                ) && !PdfName.AnyOff.Equals(visibilityPolicy) && !PdfName.AllOff.Equals(visibilityPolicy))
-            {
+                ) && !PdfName.AnyOff.Equals(visibilityPolicy) && !PdfName.AllOff.Equals(visibilityPolicy)) {
                 throw new ArgumentException("Argument: visibilityPolicy");
             }
             GetPdfObject().Put(PdfName.P, visibilityPolicy);
@@ -163,12 +150,10 @@ namespace iText.Kernel.Pdf.Layer
 
         /// <summary>Gets the visibility policy for content belonging to this optional content membership dictionary.</summary>
         /// <returns>the visibility policy for content belonging to this membership dictionary</returns>
-        public virtual PdfName GetVisibilityPolicy()
-        {
+        public virtual PdfName GetVisibilityPolicy() {
             PdfName visibilityPolicy = GetPdfObject().GetAsName(PdfName.P);
             if (visibilityPolicy == null || !visibilityPolicy.Equals(PdfName.AllOn) && !visibilityPolicy.Equals(PdfName
-                .AllOff) && !visibilityPolicy.Equals(PdfName.AnyOn) && !visibilityPolicy.Equals(PdfName.AnyOff))
-            {
+                .AllOff) && !visibilityPolicy.Equals(PdfName.AnyOn) && !visibilityPolicy.Equals(PdfName.AnyOff)) {
                 return PdfName.AnyOn;
             }
             return visibilityPolicy;
@@ -183,8 +168,7 @@ namespace iText.Kernel.Pdf.Layer
         /// followed by a series of indirect references to OCGs or other visibility
         /// expressions.
         /// </param>
-        public virtual void SetVisibilityExpression(PdfVisibilityExpression visibilityExpression)
-        {
+        public virtual void SetVisibilityExpression(PdfVisibilityExpression visibilityExpression) {
             GetPdfObject().Put(PdfName.VE, visibilityExpression.GetPdfObject());
             GetPdfObject().SetModified();
         }
@@ -193,24 +177,20 @@ namespace iText.Kernel.Pdf.Layer
         ///     </summary>
         /// <returns>the visibility expression for content belonging to this membership dictionary, if not set return null
         ///     </returns>
-        public virtual PdfVisibilityExpression GetVisibilityExpression()
-        {
+        public virtual PdfVisibilityExpression GetVisibilityExpression() {
             PdfArray ve = GetPdfObject().GetAsArray(PdfName.VE);
             return ve != null ? new PdfVisibilityExpression(ve) : null;
         }
 
-        public virtual PdfIndirectReference GetIndirectReference()
-        {
+        public virtual PdfIndirectReference GetIndirectReference() {
             return GetPdfObject().GetIndirectReference();
         }
 
-        protected internal override bool IsWrappedObjectMustBeIndirect()
-        {
+        protected internal override bool IsWrappedObjectMustBeIndirect() {
             return true;
         }
 
-        protected internal virtual PdfDocument GetDocument()
-        {
+        protected internal virtual PdfDocument GetDocument() {
             return GetPdfObject().GetIndirectReference().GetDocument();
         }
     }

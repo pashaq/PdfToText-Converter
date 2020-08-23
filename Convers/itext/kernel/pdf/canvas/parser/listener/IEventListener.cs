@@ -41,11 +41,11 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.Kernel.Pdf.Canvas.Parser.Data;
 using System.Collections.Generic;
+using iText.Kernel.Pdf.Canvas.Parser;
+using iText.Kernel.Pdf.Canvas.Parser.Data;
 
-namespace iText.Kernel.Pdf.Canvas.Parser.Listener
-{
+namespace iText.Kernel.Pdf.Canvas.Parser.Listener {
     /// <summary>
     /// A callback interface that receives notifications from the
     /// <see cref="iText.Kernel.Pdf.Canvas.Parser.PdfCanvasProcessor"/>
@@ -53,8 +53,7 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
     /// <see cref="iText.Kernel.Pdf.Canvas.Parser.EventType"/>
     /// ).
     /// </summary>
-    public interface IEventListener
-    {
+    public interface IEventListener {
         /// <summary>Called when some event occurs during parsing a content stream.</summary>
         /// <param name="data">Combines the data required for processing corresponding event type.</param>
         /// <param name="type">Event type.</param>

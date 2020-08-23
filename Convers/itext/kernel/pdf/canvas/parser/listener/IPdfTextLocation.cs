@@ -40,17 +40,15 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.Kernel.Geom;
 using System;
+using iText.Kernel.Geom;
 
-namespace iText.Kernel.Pdf.Canvas.Parser.Listener
-{
+namespace iText.Kernel.Pdf.Canvas.Parser.Listener {
     /// <summary>
     /// Instances of this interface represent a piece of text,
     /// somewhere on a page in a pdf document.
     /// </summary>
-    public interface IPdfTextLocation
-    {
+    public interface IPdfTextLocation {
         /// <returns>
         /// the visual
         /// <see cref="iText.Kernel.Geom.Rectangle"/>

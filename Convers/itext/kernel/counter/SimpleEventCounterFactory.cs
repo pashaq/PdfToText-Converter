@@ -43,23 +43,19 @@ address: sales@itextpdf.com
 */
 using System;
 
-namespace iText.Kernel.Counter
-{
+namespace iText.Kernel.Counter {
     /// <summary>
     /// <see cref="IEventCounterFactory"/>
     /// implementation that always returns counter instance passed to it in constructor
     /// </summary>
-    public class SimpleEventCounterFactory : IEventCounterFactory
-    {
+    public class SimpleEventCounterFactory : IEventCounterFactory {
         private EventCounter counter;
 
-        public SimpleEventCounterFactory(EventCounter counter)
-        {
+        public SimpleEventCounterFactory(EventCounter counter) {
             this.counter = counter;
         }
 
-        public virtual EventCounter GetCounter(Type cls)
-        {
+        public virtual EventCounter GetCounter(Type cls) {
             return counter;
         }
     }

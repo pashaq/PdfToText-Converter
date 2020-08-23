@@ -1,3 +1,4 @@
+using System;
 /*
  *
 Copyright (c) 2000,2001,2002,2003 ymnk, JCraft,Inc. All rights reserved.
@@ -32,57 +33,52 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * and contributors of zlib.
  */
 
-namespace System.util.zlib
-{
+namespace System.util.zlib {
 
-    internal sealed class Deflate
-    {
+    internal sealed class Deflate{
 
-        private const int MAX_MEM_LEVEL = 9;
+        private const int MAX_MEM_LEVEL=9;
 
-        private const int Z_DEFAULT_COMPRESSION = -1;
+        private const int Z_DEFAULT_COMPRESSION=-1;
 
-        private const int MAX_WBITS = 15;            // 32K LZ77 window
-        private const int DEF_MEM_LEVEL = 8;
+        private const int MAX_WBITS=15;            // 32K LZ77 window
+        private const int DEF_MEM_LEVEL=8;
 
-        internal class Config
-        {
+        internal class Config{
             internal int good_length; // reduce lazy search above this match length
             internal int max_lazy;    // do not perform lazy search above this match length
             internal int nice_length; // quit search above this match length
             internal int max_chain;
             internal int func;
-            internal Config(int good_length, int max_lazy,
-                int nice_length, int max_chain, int func)
-            {
-                this.good_length = good_length;
-                this.max_lazy = max_lazy;
-                this.nice_length = nice_length;
-                this.max_chain = max_chain;
-                this.func = func;
+            internal Config(int good_length, int max_lazy, 
+                int nice_length, int max_chain, int func){
+                this.good_length=good_length;
+                this.max_lazy=max_lazy;
+                this.nice_length=nice_length;
+                this.max_chain=max_chain;
+                this.func=func;
             }
         }
-
-        private const int STORED = 0;
-        private const int FAST = 1;
-        private const int SLOW = 2;
+  
+        private const int STORED=0;
+        private const int FAST=1;
+        private const int SLOW=2;
         private static readonly Config[] config_table;
 
-        static Deflate()
-        {
-            config_table = new Config[10];
+        static Deflate(){
+            config_table=new Config[10];
             //                         good  lazy  nice  chain
-            config_table[0] = new Config(0, 0, 0, 0, STORED);
-            config_table[1] = new Config(4, 4, 8, 4, FAST);
-            config_table[2] = new Config(4, 5, 16, 8, FAST);
-            config_table[3] = new Config(4, 6, 32, 32, FAST);
+            config_table[0]=new Config(0,    0,    0,    0, STORED);
+            config_table[1]=new Config(4,    4,    8,    4, FAST);
+            config_table[2]=new Config(4,    5,   16,    8, FAST);
+            config_table[3]=new Config(4,    6,   32,   32, FAST);
 
-            config_table[4] = new Config(4, 4, 16, 16, SLOW);
-            config_table[5] = new Config(8, 16, 32, 32, SLOW);
-            config_table[6] = new Config(8, 16, 128, 128, SLOW);
-            config_table[7] = new Config(8, 32, 128, 256, SLOW);
-            config_table[8] = new Config(32, 128, 258, 1024, SLOW);
-            config_table[9] = new Config(32, 258, 258, 4096, SLOW);
+            config_table[4]=new Config(4,    4,   16,   16, SLOW);
+            config_table[5]=new Config(8,   16,   32,   32, SLOW);
+            config_table[6]=new Config(8,   16,  128,  128, SLOW);
+            config_table[7]=new Config(8,   32,  128,  256, SLOW);
+            config_table[8]=new Config(32, 128,  258, 1024, SLOW);
+            config_table[9]=new Config(32, 258,  258, 4096, SLOW);
         }
 
         private static readonly String[] z_errmsg = {
@@ -99,80 +95,80 @@ namespace System.util.zlib
                                            };
 
         // block not completed, need more input or more output
-        private const int NeedMore = 0;
+        private const int NeedMore=0; 
 
         // block flush performed
-        private const int BlockDone = 1;
+        private const int BlockDone=1; 
 
         // finish started, need only more output at next deflate
-        private const int FinishStarted = 2;
+        private const int FinishStarted=2;
 
         // finish done, accept no more input or output
-        private const int FinishDone = 3;
+        private const int FinishDone=3;
 
         // preset dictionary flag in zlib header
-        private const int PRESET_DICT = 0x20;
+        private const int PRESET_DICT=0x20;
 
-        private const int Z_FILTERED = 1;
-        private const int Z_HUFFMAN_ONLY = 2;
-        private const int Z_DEFAULT_STRATEGY = 0;
+        private const int Z_FILTERED=1;
+        private const int Z_HUFFMAN_ONLY=2;
+        private const int Z_DEFAULT_STRATEGY=0;
 
-        private const int Z_NO_FLUSH = 0;
-        private const int Z_PARTIAL_FLUSH = 1;
-        private const int Z_SYNC_FLUSH = 2;
-        private const int Z_FULL_FLUSH = 3;
-        private const int Z_FINISH = 4;
+        private const int Z_NO_FLUSH=0;
+        private const int Z_PARTIAL_FLUSH=1;
+        private const int Z_SYNC_FLUSH=2;
+        private const int Z_FULL_FLUSH=3;
+        private const int Z_FINISH=4;
 
-        private const int Z_OK = 0;
-        private const int Z_STREAM_END = 1;
-        private const int Z_NEED_DICT = 2;
-        private const int Z_ERRNO = -1;
-        private const int Z_STREAM_ERROR = -2;
-        private const int Z_DATA_ERROR = -3;
-        private const int Z_MEM_ERROR = -4;
-        private const int Z_BUF_ERROR = -5;
-        private const int Z_VERSION_ERROR = -6;
+        private const int Z_OK=0;
+        private const int Z_STREAM_END=1;
+        private const int Z_NEED_DICT=2;
+        private const int Z_ERRNO=-1;
+        private const int Z_STREAM_ERROR=-2;
+        private const int Z_DATA_ERROR=-3;
+        private const int Z_MEM_ERROR=-4;
+        private const int Z_BUF_ERROR=-5;
+        private const int Z_VERSION_ERROR=-6;
 
-        private const int INIT_STATE = 42;
-        private const int BUSY_STATE = 113;
-        private const int FINISH_STATE = 666;
+        private const int INIT_STATE=42;
+        private const int BUSY_STATE=113;
+        private const int FINISH_STATE=666;
 
         // The deflate compression method
-        private const int Z_DEFLATED = 8;
+        private const int Z_DEFLATED=8;
 
-        private const int STORED_BLOCK = 0;
-        private const int STATIC_TREES = 1;
-        private const int DYN_TREES = 2;
+        private const int STORED_BLOCK=0;
+        private const int STATIC_TREES=1;
+        private const int DYN_TREES=2;
 
         // The three kinds of block type
-        private const int Z_BINARY = 0;
-        private const int Z_ASCII = 1;
-        private const int Z_UNKNOWN = 2;
+        private const int Z_BINARY=0;
+        private const int Z_ASCII=1;
+        private const int Z_UNKNOWN=2;
 
-        private const int Buf_size = 8 * 2;
+        private const int Buf_size=8*2;
 
         // repeat previous bit length 3-6 times (2 bits of repeat count)
-        private const int REP_3_6 = 16;
+        private const int REP_3_6=16; 
 
         // repeat a zero length 3-10 times  (3 bits of repeat count)
-        private const int REPZ_3_10 = 17;
+        private const int REPZ_3_10=17; 
 
         // repeat a zero length 11-138 times  (7 bits of repeat count)
-        private const int REPZ_11_138 = 18;
+        private const int REPZ_11_138=18; 
 
-        private const int MIN_MATCH = 3;
-        private const int MAX_MATCH = 258;
-        private const int MIN_LOOKAHEAD = (MAX_MATCH + MIN_MATCH + 1);
+        private const int MIN_MATCH=3;
+        private const int MAX_MATCH=258;
+        private const int MIN_LOOKAHEAD=(MAX_MATCH+MIN_MATCH+1);
 
-        private const int MAX_BITS = 15;
-        private const int D_CODES = 30;
-        private const int BL_CODES = 19;
-        private const int LENGTH_CODES = 29;
-        private const int LITERALS = 256;
-        private const int L_CODES = (LITERALS + 1 + LENGTH_CODES);
-        private const int HEAP_SIZE = (2 * L_CODES + 1);
+        private const int MAX_BITS=15;
+        private const int D_CODES=30;
+        private const int BL_CODES=19;
+        private const int LENGTH_CODES=29;
+        private const int LITERALS=256;
+        private const int L_CODES=(LITERALS+1+LENGTH_CODES);
+        private const int HEAP_SIZE=(2*L_CODES+1);
 
-        private const int END_BLOCK = 256;
+        private const int END_BLOCK=256;
 
         internal ZStream strm;         // pointer back to this zlib stream
         internal int status;           // as the name implies
@@ -262,15 +258,15 @@ namespace System.util.zlib
         internal short[] dyn_dtree;       // distance tree
         internal short[] bl_tree;         // Huffman tree for bit lengths
 
-        internal Tree l_desc = new Tree();  // desc for literal tree
-        internal Tree d_desc = new Tree();  // desc for distance tree
-        internal Tree bl_desc = new Tree(); // desc for bit length tree
+        internal Tree l_desc=new Tree();  // desc for literal tree
+        internal Tree d_desc=new Tree();  // desc for distance tree
+        internal Tree bl_desc=new Tree(); // desc for bit length tree
 
         // number of codes at each bit length for an optimal tree
-        internal short[] bl_count = new short[MAX_BITS + 1];
+        internal short[] bl_count=new short[MAX_BITS+1];
 
         // heap used to build the Huffman trees
-        internal int[] heap = new int[2 * L_CODES + 1];
+        internal int[] heap=new int[2*L_CODES+1];
 
         internal int heap_len;               // number of elements in the heap
         internal int heap_max;               // element of largest frequency
@@ -278,7 +274,7 @@ namespace System.util.zlib
         // The same heap array is used to build all trees.
 
         // Depth of each subtree used as tie breaker for trees of equal frequency
-        internal byte[] depth = new byte[2 * L_CODES + 1];
+        internal byte[] depth=new byte[2*L_CODES+1];
 
         internal int l_buf;               // index for literals or lengths */
 
@@ -322,40 +318,36 @@ namespace System.util.zlib
         // are always zero.
         internal int bi_valid;
 
-        internal Deflate()
-        {
-            dyn_ltree = new short[HEAP_SIZE * 2];
-            dyn_dtree = new short[(2 * D_CODES + 1) * 2]; // distance tree
-            bl_tree = new short[(2 * BL_CODES + 1) * 2];  // Huffman tree for bit lengths
+        internal Deflate(){
+            dyn_ltree=new short[HEAP_SIZE*2];
+            dyn_dtree=new short[(2*D_CODES+1)*2]; // distance tree
+            bl_tree=new short[(2*BL_CODES+1)*2];  // Huffman tree for bit lengths
         }
 
-        internal void lm_init()
-        {
-            window_size = 2 * w_size;
+        internal void lm_init() {
+            window_size=2*w_size;
 
-            head[hash_size - 1] = 0;
-            for (int i = 0; i < hash_size - 1; i++)
-            {
-                head[i] = 0;
+            head[hash_size-1]=0;
+            for(int i=0; i<hash_size-1; i++){
+                head[i]=0;
             }
 
             // Set the default configuration parameters:
-            max_lazy_match = Deflate.config_table[level].max_lazy;
-            good_match = Deflate.config_table[level].good_length;
-            nice_match = Deflate.config_table[level].nice_length;
+            max_lazy_match   = Deflate.config_table[level].max_lazy;
+            good_match       = Deflate.config_table[level].good_length;
+            nice_match       = Deflate.config_table[level].nice_length;
             max_chain_length = Deflate.config_table[level].max_chain;
 
             strstart = 0;
             block_start = 0;
             lookahead = 0;
-            match_length = prev_length = MIN_MATCH - 1;
+            match_length = prev_length = MIN_MATCH-1;
             match_available = 0;
             ins_h = 0;
         }
 
         // Initialize the tree data structures for a new zlib stream.
-        internal void tr_init()
-        {
+        internal void tr_init(){
 
             l_desc.dyn_tree = dyn_ltree;
             l_desc.stat_desc = StaticTree.static_l_desc;
@@ -374,14 +366,13 @@ namespace System.util.zlib
             init_block();
         }
 
-        internal void init_block()
-        {
+        internal void init_block(){
             // Initialize the trees.
-            for (int i = 0; i < L_CODES; i++) dyn_ltree[i * 2] = 0;
-            for (int i = 0; i < D_CODES; i++) dyn_dtree[i * 2] = 0;
-            for (int i = 0; i < BL_CODES; i++) bl_tree[i * 2] = 0;
+            for(int i = 0; i < L_CODES; i++) dyn_ltree[i*2] = 0;
+            for(int i= 0; i < D_CODES; i++) dyn_dtree[i*2] = 0;
+            for(int i= 0; i < BL_CODES; i++) bl_tree[i*2] = 0;
 
-            dyn_ltree[END_BLOCK * 2] = 1;
+            dyn_ltree[END_BLOCK*2] = 1;
             opt_len = static_len = 0;
             last_lit = matches = 0;
         }
@@ -392,89 +383,75 @@ namespace System.util.zlib
         // two sons).
         internal void pqdownheap(short[] tree,  // the tree to restore
             int k          // node to move down
-            )
-        {
+            ){
             int v = heap[k];
             int j = k << 1;  // left son of k
-            while (j <= heap_len)
-            {
+            while (j <= heap_len) {
                 // Set j to the smallest of the two sons:
                 if (j < heap_len &&
-                    smaller(tree, heap[j + 1], heap[j], depth))
-                {
+                    smaller(tree, heap[j+1], heap[j], depth)){
                     j++;
                 }
                 // Exit if v is smaller than both sons
-                if (smaller(tree, v, heap[j], depth)) break;
+                if(smaller(tree, v, heap[j], depth)) break;
 
                 // Exchange v with the smallest son
-                heap[k] = heap[j]; k = j;
+                heap[k]=heap[j];  k = j;
                 // And continue down the tree, setting j to the left son of k
                 j <<= 1;
             }
             heap[k] = v;
         }
 
-        internal static bool smaller(short[] tree, int n, int m, byte[] depth)
-        {
-            short tn2 = tree[n * 2];
-            short tm2 = tree[m * 2];
-            return (tn2 < tm2 ||
-                (tn2 == tm2 && depth[n] <= depth[m]));
+        internal static bool smaller(short[] tree, int n, int m, byte[] depth){
+            short tn2=tree[n*2];
+            short tm2=tree[m*2];
+            return (tn2<tm2 ||
+                (tn2==tm2 && depth[n] <= depth[m]));
         }
 
         // Scan a literal or distance tree to determine the frequencies of the codes
         // in the bit length tree.
-        internal void scan_tree(short[] tree,// the tree to be scanned
+        internal void scan_tree (short[] tree,// the tree to be scanned
             int max_code // and its largest code of non zero frequency
-            )
-        {
+            ){
             int n;                     // iterates over all tree elements
             int prevlen = -1;          // last emitted length
             int curlen;                // length of current code
-            int nextlen = tree[0 * 2 + 1]; // length of next code
+            int nextlen = tree[0*2+1]; // length of next code
             int count = 0;             // repeat count of the current code
             int max_count = 7;         // max repeat count
             int min_count = 4;         // min repeat count
 
-            if (nextlen == 0) { max_count = 138; min_count = 3; }
-            tree[(max_code + 1) * 2 + 1] = -1; // guard
+            if (nextlen == 0){ max_count = 138; min_count = 3; }
+            tree[(max_code+1)*2+1] = -1; // guard
 
-            for (n = 0; n <= max_code; n++)
-            {
-                curlen = nextlen; nextlen = tree[(n + 1) * 2 + 1];
-                if (++count < max_count && curlen == nextlen)
-                {
+            for(n = 0; n <= max_code; n++) {
+                curlen = nextlen; nextlen = tree[(n+1)*2+1];
+                if(++count < max_count && curlen == nextlen) {
                     continue;
                 }
-                else if (count < min_count)
-                {
-                    bl_tree[curlen * 2] += (short)count;
+                else if(count < min_count) {
+                    bl_tree[curlen*2] += (short)count;
                 }
-                else if (curlen != 0)
-                {
-                    if (curlen != prevlen) bl_tree[curlen * 2]++;
-                    bl_tree[REP_3_6 * 2]++;
+                else if(curlen != 0) {
+                    if(curlen != prevlen) bl_tree[curlen*2]++;
+                    bl_tree[REP_3_6*2]++;
                 }
-                else if (count <= 10)
-                {
-                    bl_tree[REPZ_3_10 * 2]++;
+                else if(count <= 10) {
+                    bl_tree[REPZ_3_10*2]++;
                 }
-                else
-                {
-                    bl_tree[REPZ_11_138 * 2]++;
+                else{
+                    bl_tree[REPZ_11_138*2]++;
                 }
                 count = 0; prevlen = curlen;
-                if (nextlen == 0)
-                {
+                if(nextlen == 0) {
                     max_count = 138; min_count = 3;
                 }
-                else if (curlen == nextlen)
-                {
+                else if(curlen == nextlen) {
                     max_count = 6; min_count = 3;
                 }
-                else
-                {
+                else{
                     max_count = 7; min_count = 4;
                 }
             }
@@ -482,8 +459,7 @@ namespace System.util.zlib
 
         // Construct the Huffman tree for the bit lengths and return the index in
         // bl_order of the last bit length code to send.
-        internal int build_bl_tree()
-        {
+        internal int build_bl_tree(){
             int max_blindex;  // index of last bit length code of non zero freq
 
             // Determine the bit length frequencies for literal and distance trees
@@ -498,12 +474,11 @@ namespace System.util.zlib
             // Determine the number of bit length codes to send. The pkzip format
             // requires that at least 4 bit length codes be sent. (appnote.txt says
             // 3 but the actual value used is 4.)
-            for (max_blindex = BL_CODES - 1; max_blindex >= 3; max_blindex--)
-            {
-                if (bl_tree[Tree.bl_order[max_blindex] * 2 + 1] != 0) break;
+            for (max_blindex = BL_CODES-1; max_blindex >= 3; max_blindex--) {
+                if (bl_tree[Tree.bl_order[max_blindex]*2+1] != 0) break;
             }
             // Update opt_len to include the bit length tree and counts
-            opt_len += 3 * (max_blindex + 1) + 5 + 5 + 4;
+            opt_len += 3*(max_blindex+1) + 5+5+4;
 
             return max_blindex;
         }
@@ -512,78 +487,65 @@ namespace System.util.zlib
         // Send the header for a block using dynamic Huffman trees: the counts, the
         // lengths of the bit length codes, the literal tree and the distance tree.
         // IN assertion: lcodes >= 257, dcodes >= 1, blcodes >= 4.
-        internal void send_all_trees(int lcodes, int dcodes, int blcodes)
-        {
+        internal void send_all_trees(int lcodes, int dcodes, int blcodes){
             int rank;                    // index in bl_order
 
-            send_bits(lcodes - 257, 5); // not +255 as stated in appnote.txt
-            send_bits(dcodes - 1, 5);
-            send_bits(blcodes - 4, 4); // not -3 as stated in appnote.txt
-            for (rank = 0; rank < blcodes; rank++)
-            {
-                send_bits(bl_tree[Tree.bl_order[rank] * 2 + 1], 3);
+            send_bits(lcodes-257, 5); // not +255 as stated in appnote.txt
+            send_bits(dcodes-1,   5);
+            send_bits(blcodes-4,  4); // not -3 as stated in appnote.txt
+            for (rank = 0; rank < blcodes; rank++) {
+                send_bits(bl_tree[Tree.bl_order[rank]*2+1], 3);
             }
-            send_tree(dyn_ltree, lcodes - 1); // literal tree
-            send_tree(dyn_dtree, dcodes - 1); // distance tree
+            send_tree(dyn_ltree, lcodes-1); // literal tree
+            send_tree(dyn_dtree, dcodes-1); // distance tree
         }
 
         // Send a literal or distance tree in compressed form, using the codes in
         // bl_tree.
-        internal void send_tree(short[] tree,// the tree to be sent
+        internal void send_tree (short[] tree,// the tree to be sent
             int max_code // and its largest code of non zero frequency
-            )
-        {
+            ){
             int n;                     // iterates over all tree elements
             int prevlen = -1;          // last emitted length
             int curlen;                // length of current code
-            int nextlen = tree[0 * 2 + 1]; // length of next code
+            int nextlen = tree[0*2+1]; // length of next code
             int count = 0;             // repeat count of the current code
             int max_count = 7;         // max repeat count
             int min_count = 4;         // min repeat count
 
-            if (nextlen == 0) { max_count = 138; min_count = 3; }
+            if (nextlen == 0){ max_count = 138; min_count = 3; }
 
-            for (n = 0; n <= max_code; n++)
-            {
-                curlen = nextlen; nextlen = tree[(n + 1) * 2 + 1];
-                if (++count < max_count && curlen == nextlen)
-                {
+            for (n = 0; n <= max_code; n++) {
+                curlen = nextlen; nextlen = tree[(n+1)*2+1];
+                if(++count < max_count && curlen == nextlen) {
                     continue;
                 }
-                else if (count < min_count)
-                {
+                else if(count < min_count) {
                     do { send_code(curlen, bl_tree); } while (--count != 0);
                 }
-                else if (curlen != 0)
-                {
-                    if (curlen != prevlen)
-                    {
+                else if(curlen != 0){
+                    if(curlen != prevlen){
                         send_code(curlen, bl_tree); count--;
                     }
-                    send_code(REP_3_6, bl_tree);
-                    send_bits(count - 3, 2);
+                    send_code(REP_3_6, bl_tree); 
+                    send_bits(count-3, 2);
                 }
-                else if (count <= 10)
-                {
-                    send_code(REPZ_3_10, bl_tree);
-                    send_bits(count - 3, 3);
+                else if(count <= 10){
+                    send_code(REPZ_3_10, bl_tree); 
+                    send_bits(count-3, 3);
                 }
-                else
-                {
+                else{
                     send_code(REPZ_11_138, bl_tree);
-                    send_bits(count - 11, 7);
+                    send_bits(count-11, 7);
                 }
                 count = 0; prevlen = curlen;
-                if (nextlen == 0)
-                {
+                if(nextlen == 0){
                     max_count = 138; min_count = 3;
                 }
-                else if (curlen == nextlen)
-                {
+                else if(curlen == nextlen){
                     max_count = 6; min_count = 3;
                 }
-                else
-                {
+                else{
                     max_count = 7; min_count = 4;
                 }
             }
@@ -591,61 +553,52 @@ namespace System.util.zlib
 
         // Output a byte on the stream.
         // IN assertion: there is enough room in pending_buf.
-        internal void put_byte(byte[] p, int start, int len)
-        {
+        internal void put_byte(byte[] p, int start, int len){
             System.Array.Copy(p, start, pending_buf, pending, len);
-            pending += len;
+            pending+=len;
         }
 
-        internal void put_byte(byte c)
-        {
-            pending_buf[pending++] = c;
+        internal void put_byte(byte c){
+            pending_buf[pending++]=c;
         }
-        internal void put_short(int w)
-        {
-            pending_buf[pending++] = (byte)(w/*&0xff*/);
-            pending_buf[pending++] = (byte)(w >> 8);
+        internal void put_short(int w) {
+            pending_buf[pending++]=(byte)(w/*&0xff*/);
+            pending_buf[pending++]=(byte)(w>>8);
         }
-        internal void putShortMSB(int b)
-        {
-            pending_buf[pending++] = (byte)(b >> 8);
-            pending_buf[pending++] = (byte)(b/*&0xff*/);
+        internal void putShortMSB(int b){
+            pending_buf[pending++]=(byte)(b>>8);
+            pending_buf[pending++]=(byte)(b/*&0xff*/);
+        }   
+
+        internal void send_code(int c, short[] tree){
+            int c2=c*2;
+            send_bits((tree[c2]&0xffff), (tree[c2+1]&0xffff));
         }
 
-        internal void send_code(int c, short[] tree)
-        {
-            int c2 = c * 2;
-            send_bits((tree[c2] & 0xffff), (tree[c2 + 1] & 0xffff));
-        }
-
-        internal void send_bits(int val, int length)
-        {
-            if (bi_valid > Buf_size - length)
-            {
+        internal void send_bits(int val, int length){
+            if (bi_valid > Buf_size - length) {
                 bi_buf |= (uint)(val << bi_valid);
-                pending_buf[pending++] = (byte)(bi_buf/*&0xff*/);
-                pending_buf[pending++] = (byte)(bi_buf >> 8);
+                pending_buf[pending++]=(byte)(bi_buf/*&0xff*/);
+                pending_buf[pending++]=(byte)(bi_buf>>8);
                 bi_buf = ((uint)val) >> (Buf_size - bi_valid);
                 bi_valid += length - Buf_size;
-            }
-            else
-            {
+            } else {
                 bi_buf |= (uint)(val << bi_valid);
                 bi_valid += length;
             }
-            //            int len = length;
-            //            if (bi_valid > (int)Buf_size - len) {
-            //                int val = value;
-            //                //      bi_buf |= (val << bi_valid);
-            //                bi_buf = (short)((ushort)bi_buf | (ushort)((val << bi_valid)&0xffff));
-            //                put_short(bi_buf);
-            //                bi_buf = (short)(((uint)val) >> (Buf_size - bi_valid));
-            //                bi_valid += len - Buf_size;
-            //            } else {
-            //                //      bi_buf |= (value) << bi_valid;
-            //                bi_buf = (short)((ushort)bi_buf | (ushort)(((value) << bi_valid)&0xffff));
-            //                bi_valid += len;
-            //            }
+//            int len = length;
+//            if (bi_valid > (int)Buf_size - len) {
+//                int val = value;
+//                //      bi_buf |= (val << bi_valid);
+//                bi_buf = (short)((ushort)bi_buf | (ushort)((val << bi_valid)&0xffff));
+//                put_short(bi_buf);
+//                bi_buf = (short)(((uint)val) >> (Buf_size - bi_valid));
+//                bi_valid += len - Buf_size;
+//            } else {
+//                //      bi_buf |= (value) << bi_valid;
+//                bi_buf = (short)((ushort)bi_buf | (ushort)(((value) << bi_valid)&0xffff));
+//                bi_valid += len;
+//            }
         }
 
         // Send one empty static block to give enough lookahead for inflate.
@@ -657,9 +610,8 @@ namespace System.util.zlib
         // of one. (There are no problems if the previous block is stored or fixed.)
         // To simplify the code, we assume the worst case of last real code encoded
         // on one bit only.
-        internal void _tr_align()
-        {
-            send_bits(STATIC_TREES << 1, 3);
+        internal void _tr_align(){
+            send_bits(STATIC_TREES<<1, 3);
             send_code(END_BLOCK, StaticTree.static_ltree);
 
             bi_flush();
@@ -668,9 +620,8 @@ namespace System.util.zlib
             // (10 - bi_valid) bits. The lookahead for the last real code (before
             // the EOB of the previous block) was thus at least one plus the length
             // of the EOB plus what we have just sent of the empty static block.
-            if (1 + last_eob_len + 10 - bi_valid < 9)
-            {
-                send_bits(STATIC_TREES << 1, 3);
+            if (1 + last_eob_len + 10 - bi_valid < 9) {
+                send_bits(STATIC_TREES<<1, 3);
                 send_code(END_BLOCK, StaticTree.static_ltree);
                 bi_flush();
             }
@@ -680,81 +631,70 @@ namespace System.util.zlib
 
         // Save the match info and tally the frequency counts. Return true if
         // the current block must be flushed.
-        internal bool _tr_tally(int dist, // distance of matched string
+        internal bool _tr_tally (int dist, // distance of matched string
             int lc // match length-MIN_MATCH or unmatched char (if dist==0)
-            )
-        {
+            ){
 
-            pending_buf[d_buf + last_lit * 2] = (byte)(dist >> 8);
-            pending_buf[d_buf + last_lit * 2 + 1] = (byte)dist;
+            pending_buf[d_buf+last_lit*2] = (byte)(dist>>8);
+            pending_buf[d_buf+last_lit*2+1] = (byte)dist;
 
-            pending_buf[l_buf + last_lit] = (byte)lc; last_lit++;
+            pending_buf[l_buf+last_lit] = (byte)lc; last_lit++;
 
-            if (dist == 0)
-            {
+            if (dist == 0) {
                 // lc is the unmatched char
-                dyn_ltree[lc * 2]++;
-            }
-            else
-            {
+                dyn_ltree[lc*2]++;
+            } 
+            else {
                 matches++;
                 // Here, lc is the match length - MIN_MATCH
                 dist--;             // dist = match distance - 1
-                dyn_ltree[(Tree._length_code[lc] + LITERALS + 1) * 2]++;
-                dyn_dtree[Tree.d_code(dist) * 2]++;
+                dyn_ltree[(Tree._length_code[lc]+LITERALS+1)*2]++;
+                dyn_dtree[Tree.d_code(dist)*2]++;
             }
 
-            if ((last_lit & 0x1fff) == 0 && level > 2)
-            {
+            if ((last_lit & 0x1fff) == 0 && level > 2) {
                 // Compute an upper bound for the compressed length
-                int out_length = last_lit * 8;
+                int out_length = last_lit*8;
                 int in_length = strstart - block_start;
                 int dcode;
-                for (dcode = 0; dcode < D_CODES; dcode++)
-                {
-                    out_length += (int)((int)dyn_dtree[dcode * 2] *
-                        (5L + Tree.extra_dbits[dcode]));
+                for (dcode = 0; dcode < D_CODES; dcode++) {
+                    out_length += (int)((int)dyn_dtree[dcode*2] *
+                        (5L+Tree.extra_dbits[dcode]));
                 }
                 out_length >>= 3;
-                if ((matches < (last_lit / 2)) && out_length < in_length / 2) return true;
+                if ((matches < (last_lit/2)) && out_length < in_length/2) return true;
             }
 
-            return (last_lit == lit_bufsize - 1);
+            return (last_lit == lit_bufsize-1);
             // We avoid equality with lit_bufsize because of wraparound at 64K
             // on 16 bit machines and because stored blocks are restricted to
             // 64K-1 bytes.
         }
 
         // Send the block data compressed using the given Huffman trees
-        internal void compress_block(short[] ltree, short[] dtree)
-        {
-            int dist;      // distance of matched string
+        internal void compress_block(short[] ltree, short[] dtree){
+            int  dist;      // distance of matched string
             int lc;         // match length or unmatched char (if dist == 0)
             int lx = 0;     // running index in l_buf
             int code;       // the code to send
             int extra;      // number of extra bits to send
 
-            if (last_lit != 0)
-            {
-                do
-                {
-                    dist = ((pending_buf[d_buf + lx * 2] << 8) & 0xff00) |
-                        (pending_buf[d_buf + lx * 2 + 1] & 0xff);
-                    lc = (pending_buf[l_buf + lx]) & 0xff; lx++;
+            if (last_lit != 0){
+                do{
+                    dist=((pending_buf[d_buf+lx*2]<<8)&0xff00)|
+                        (pending_buf[d_buf+lx*2+1]&0xff);
+                    lc=(pending_buf[l_buf+lx])&0xff; lx++;
 
-                    if (dist == 0)
-                    {
+                    if(dist == 0){
                         send_code(lc, ltree); // send a literal byte
-                    }
-                    else
-                    {
+                    } 
+                    else{
                         // Here, lc is the match length - MIN_MATCH
                         code = Tree._length_code[lc];
 
-                        send_code(code + LITERALS + 1, ltree); // send the length code
+                        send_code(code+LITERALS+1, ltree); // send the length code
                         extra = Tree.extra_lbits[code];
-                        if (extra != 0)
-                        {
+                        if(extra != 0){
                             lc -= Tree.base_length[code];
                             send_bits(lc, extra);       // send the extra length bits
                         }
@@ -763,8 +703,7 @@ namespace System.util.zlib
 
                         send_code(code, dtree);       // send the distance code
                         extra = Tree.extra_dbits[code];
-                        if (extra != 0)
-                        {
+                        if (extra != 0) {
                             dist -= Tree.base_dist[code];
                             send_bits(dist, extra);   // send the extra distance bits
                         }
@@ -776,54 +715,46 @@ namespace System.util.zlib
             }
 
             send_code(END_BLOCK, ltree);
-            last_eob_len = ltree[END_BLOCK * 2 + 1];
+            last_eob_len = ltree[END_BLOCK*2+1];
         }
 
         // Set the data type to ASCII or BINARY, using a crude approximation:
         // binary if more than 20% of the bytes are <= 6 or >= 128, ascii otherwise.
         // IN assertion: the fields freq of dyn_ltree are set and the total of all
         // frequencies does not exceed 64K (to fit in an int on 16 bit machines).
-        internal void set_data_type()
-        {
+        internal void set_data_type(){
             int n = 0;
-            int ascii_freq = 0;
-            int bin_freq = 0;
-            while (n < 7) { bin_freq += dyn_ltree[n * 2]; n++; }
-            while (n < 128) { ascii_freq += dyn_ltree[n * 2]; n++; }
-            while (n < LITERALS) { bin_freq += dyn_ltree[n * 2]; n++; }
-            data_type = (byte)(bin_freq > (ascii_freq >> 2) ? Z_BINARY : Z_ASCII);
+            int  ascii_freq = 0;
+            int  bin_freq = 0;
+            while(n<7){ bin_freq += dyn_ltree[n*2]; n++;}
+            while(n<128){ ascii_freq += dyn_ltree[n*2]; n++;}
+            while(n<LITERALS){ bin_freq += dyn_ltree[n*2]; n++;}
+            data_type=(byte)(bin_freq > (ascii_freq >> 2) ? Z_BINARY : Z_ASCII);
         }
 
         // Flush the bit buffer, keeping at most 7 bits in it.
-        internal void bi_flush()
-        {
-            if (bi_valid == 16)
-            {
-                pending_buf[pending++] = (byte)(bi_buf/*&0xff*/);
-                pending_buf[pending++] = (byte)(bi_buf >> 8);
-                bi_buf = 0;
-                bi_valid = 0;
+        internal void bi_flush(){
+            if (bi_valid == 16) {
+                pending_buf[pending++]=(byte)(bi_buf/*&0xff*/);
+                pending_buf[pending++]=(byte)(bi_buf>>8);
+                bi_buf=0;
+                bi_valid=0;
             }
-            else if (bi_valid >= 8)
-            {
-                pending_buf[pending++] = (byte)(bi_buf);
-                bi_buf >>= 8;
+            else if (bi_valid >= 8) {
+                pending_buf[pending++]=(byte)(bi_buf);
+                bi_buf>>=8;
                 bi_buf &= 0x00ff;
-                bi_valid -= 8;
+                bi_valid-=8;
             }
         }
 
         // Flush the bit buffer and align the output on a byte boundary
-        internal void bi_windup()
-        {
-            if (bi_valid > 8)
-            {
-                pending_buf[pending++] = (byte)(bi_buf);
-                pending_buf[pending++] = (byte)(bi_buf >> 8);
-            }
-            else if (bi_valid > 0)
-            {
-                pending_buf[pending++] = (byte)(bi_buf);
+        internal void bi_windup(){
+            if (bi_valid > 8) {
+                pending_buf[pending++]=(byte)(bi_buf);
+                pending_buf[pending++]=(byte)(bi_buf>>8);
+            } else if (bi_valid > 0) {
+                pending_buf[pending++]=(byte)(bi_buf);
             }
             bi_buf = 0;
             bi_valid = 0;
@@ -834,15 +765,13 @@ namespace System.util.zlib
         internal void copy_block(int buf,         // the input data
             int len,         // its length
             bool header   // true if block header must be written
-            )
-        {
+            ){
             //int index=0;
             bi_windup();      // align on byte boundary
             last_eob_len = 8; // enough lookahead for inflate
 
-            if (header)
-            {
-                put_short((short)len);
+            if (header) {
+                put_short((short)len);   
                 put_short((short)~len);
             }
 
@@ -853,12 +782,11 @@ namespace System.util.zlib
             put_byte(window, buf, len);
         }
 
-        internal void flush_block_only(bool eof)
-        {
-            _tr_flush_block(block_start >= 0 ? block_start : -1,
-                strstart - block_start,
+        internal void flush_block_only(bool eof){
+            _tr_flush_block(block_start>=0 ? block_start : -1,
+                strstart-block_start,
                 eof);
-            block_start = strstart;
+            block_start=strstart;
             strm.flush_pending();
         }
 
@@ -869,57 +797,51 @@ namespace System.util.zlib
         // only for the level=0 compression option.
         // NOTE: this function should be optimized to avoid extra copying from
         // window to pending_buf.
-        internal int deflate_stored(int flush)
-        {
+        internal int deflate_stored(int flush){
             // Stored blocks are limited to 0xffff bytes, pending_buf is limited
             // to pending_buf_size, and each stored block has a 5 byte header:
 
             int max_block_size = 0xffff;
             int max_start;
 
-            if (max_block_size > pending_buf_size - 5)
-            {
+            if(max_block_size > pending_buf_size - 5) {
                 max_block_size = pending_buf_size - 5;
             }
 
             // Copy as much as possible from input to output:
-            while (true)
-            {
+            while(true){
                 // Fill the window as much as possible:
-                if (lookahead <= 1)
-                {
+                if(lookahead<=1){
                     fill_window();
-                    if (lookahead == 0 && flush == Z_NO_FLUSH) return NeedMore;
-                    if (lookahead == 0) break; // flush the current block
+                    if(lookahead==0 && flush==Z_NO_FLUSH) return NeedMore;
+                    if(lookahead==0) break; // flush the current block
                 }
 
-                strstart += lookahead;
-                lookahead = 0;
+                strstart+=lookahead;
+                lookahead=0;
 
                 // Emit a stored block if pending_buf will be full:
-                max_start = block_start + max_block_size;
-                if (strstart == 0 || strstart >= max_start)
-                {
+                max_start=block_start+max_block_size;
+                if(strstart==0|| strstart>=max_start) {
                     // strstart == 0 is possible when wraparound on 16-bit machine
-                    lookahead = (int)(strstart - max_start);
+                    lookahead = (int)(strstart-max_start);
                     strstart = (int)max_start;
-
+      
                     flush_block_only(false);
-                    if (strm.avail_out == 0) return NeedMore;
+                    if(strm.avail_out==0) return NeedMore;
 
                 }
 
                 // Flush if we may have to slide, otherwise block_start may become
                 // negative and the data will be gone:
-                if (strstart - block_start >= w_size - MIN_LOOKAHEAD)
-                {
+                if(strstart-block_start >= w_size-MIN_LOOKAHEAD) {
                     flush_block_only(false);
-                    if (strm.avail_out == 0) return NeedMore;
+                    if(strm.avail_out==0) return NeedMore;
                 }
             }
 
             flush_block_only(flush == Z_FINISH);
-            if (strm.avail_out == 0)
+            if(strm.avail_out==0)
                 return (flush == Z_FINISH) ? FinishStarted : NeedMore;
 
             return flush == Z_FINISH ? FinishDone : BlockDone;
@@ -929,9 +851,8 @@ namespace System.util.zlib
         internal void _tr_stored_block(int buf,        // input block
             int stored_len, // length of input block
             bool eof     // true if this is the last block for a file
-            )
-        {
-            send_bits((STORED_BLOCK << 1) + (eof ? 1 : 0), 3);  // send block type
+            ){
+            send_bits((STORED_BLOCK<<1)+(eof?1:0), 3);  // send block type
             copy_block(buf, stored_len, true);          // with header
         }
 
@@ -940,16 +861,14 @@ namespace System.util.zlib
         internal void _tr_flush_block(int buf,        // input block, or NULL if too old
             int stored_len, // length of input block
             bool eof     // true if this is the last block for a file
-            )
-        {
+            ) {
             int opt_lenb, static_lenb;// opt_len and static_len in bytes
             int max_blindex = 0;      // index of last bit length code of non zero freq
 
             // Build the Huffman trees unless a stored block is forced
-            if (level > 0)
-            {
+            if(level > 0) {
                 // Check if the file is ascii or binary
-                if (data_type == Z_UNKNOWN) set_data_type();
+                if(data_type == Z_UNKNOWN) set_data_type();
 
                 // Construct the literal and distance trees
                 l_desc.build_tree(this);
@@ -961,21 +880,19 @@ namespace System.util.zlib
 
                 // Build the bit length tree for the above two trees, and get the index
                 // in bl_order of the last bit length code to send.
-                max_blindex = build_bl_tree();
+                max_blindex=build_bl_tree();
 
                 // Determine the best encoding. Compute first the block length in bytes
-                opt_lenb = (opt_len + 3 + 7) >> 3;
-                static_lenb = (static_len + 3 + 7) >> 3;
+                opt_lenb=(opt_len+3+7)>>3;
+                static_lenb=(static_len+3+7)>>3;
 
-                if (static_lenb <= opt_lenb) opt_lenb = static_lenb;
+                if(static_lenb<=opt_lenb) opt_lenb=static_lenb;
             }
-            else
-            {
-                opt_lenb = static_lenb = stored_len + 5; // force a stored block
+            else {
+                opt_lenb=static_lenb=stored_len+5; // force a stored block
             }
 
-            if (stored_len + 4 <= opt_lenb && buf != -1)
-            {
+            if(stored_len+4<=opt_lenb && buf != -1){
                 // 4: two words for the lengths
                 // The test buf != NULL is only necessary if LIT_BUFSIZE > WSIZE.
                 // Otherwise we can't have processed more than WSIZE input bytes since
@@ -984,15 +901,13 @@ namespace System.util.zlib
                 // transform a block into a stored block.
                 _tr_stored_block(buf, stored_len, eof);
             }
-            else if (static_lenb == opt_lenb)
-            {
-                send_bits((STATIC_TREES << 1) + (eof ? 1 : 0), 3);
+            else if(static_lenb == opt_lenb){
+                send_bits((STATIC_TREES<<1)+(eof?1:0), 3);
                 compress_block(StaticTree.static_ltree, StaticTree.static_dtree);
             }
-            else
-            {
-                send_bits((DYN_TREES << 1) + (eof ? 1 : 0), 3);
-                send_all_trees(l_desc.max_code + 1, d_desc.max_code + 1, max_blindex + 1);
+            else{
+                send_bits((DYN_TREES<<1)+(eof?1:0), 3);
+                send_all_trees(l_desc.max_code+1, d_desc.max_code+1, max_blindex+1);
                 compress_block(dyn_ltree, dyn_dtree);
             }
 
@@ -1001,8 +916,7 @@ namespace System.util.zlib
 
             init_block();
 
-            if (eof)
-            {
+            if(eof){
                 bi_windup();
             }
         }
@@ -1015,23 +929,19 @@ namespace System.util.zlib
         //    At least one byte has been read, or avail_in == 0; reads are
         //    performed for at least two bytes (required for the zip translate_eol
         //    option -- not supported here).
-        internal void fill_window()
-        {
+        internal void fill_window(){
             int n, m;
             int p;
             int more;    // Amount of free space at the end of the window.
 
-            do
-            {
-                more = (window_size - lookahead - strstart);
+            do{
+                more = (window_size-lookahead-strstart);
 
                 // Deal with !@#$% 64K limit:
-                if (more == 0 && strstart == 0 && lookahead == 0)
-                {
+                if(more==0 && strstart==0 && lookahead==0){
                     more = w_size;
-                }
-                else if (more == -1)
-                {
+                } 
+                else if(more==-1) {
                     // Very unlikely, but possible on 16 bit machine if strstart == 0
                     // and lookahead == 1 (input done one byte at time)
                     more--;
@@ -1039,12 +949,11 @@ namespace System.util.zlib
                     // If the window is almost full and there is insufficient lookahead,
                     // move the upper half to the lower one to make room in the upper half.
                 }
-                else if (strstart >= w_size + w_size - MIN_LOOKAHEAD)
-                {
+                else if(strstart >= w_size+ w_size-MIN_LOOKAHEAD) {
                     System.Array.Copy(window, w_size, window, 0, w_size);
-                    match_start -= w_size;
-                    strstart -= w_size; // we now have strstart >= MAX_DIST
-                    block_start -= w_size;
+                    match_start-=w_size;
+                    strstart-=w_size; // we now have strstart >= MAX_DIST
+                    block_start-=w_size;
 
                     // Slide the hash table (could be avoided with 32 bit values
                     // at the expense of memory usage). We slide even when level == 0
@@ -1053,24 +962,22 @@ namespace System.util.zlib
                     // zlib, so we don't care about this pathological case.)
 
                     n = hash_size;
-                    p = n;
-                    do
-                    {
-                        m = (head[--p] & 0xffff);
-                        head[p] = (short)(m >= w_size ? (m - w_size) : 0);
+                    p=n;
+                    do {
+                        m = (head[--p]&0xffff);
+                        head[p]=(short)(m>=w_size ? (m-w_size) : 0);
                     }
                     while (--n != 0);
 
                     n = w_size;
                     p = n;
-                    do
-                    {
-                        m = (prev[--p] & 0xffff);
-                        prev[p] = (short)(m >= w_size ? (m - w_size) : 0);
+                    do {
+                        m = (prev[--p]&0xffff);
+                        prev[p] = (short)(m >= w_size ? (m-w_size) : 0);
                         // If n is not on any hash chain, prev[n] is garbage but
                         // its value will never be used.
                     }
-                    while (--n != 0);
+                    while (--n!=0);
                     more += w_size;
                 }
 
@@ -1091,10 +998,9 @@ namespace System.util.zlib
                 lookahead += n;
 
                 // Initialize the hash value now that we have some input:
-                if (lookahead >= MIN_MATCH)
-                {
-                    ins_h = window[strstart] & 0xff;
-                    ins_h = (((ins_h) << hash_shift) ^ (window[strstart + 1] & 0xff)) & hash_mask;
+                if(lookahead >= MIN_MATCH) {
+                    ins_h = window[strstart]&0xff;
+                    ins_h=(((ins_h)<<hash_shift)^(window[strstart+1]&0xff))&hash_mask;
                 }
                 // If the whole input has less than MIN_MATCH bytes, ins_h is garbage,
                 // but this is not important since only literal bytes will be emitted.
@@ -1107,248 +1013,217 @@ namespace System.util.zlib
         // This function does not perform lazy evaluation of matches and inserts
         // new strings in the dictionary only for unmatched strings or for short
         // matches. It is used only for the fast compression options.
-        internal int deflate_fast(int flush)
-        {
+        internal int deflate_fast(int flush){
             //    short hash_head = 0; // head of the hash chain
             int hash_head = 0; // head of the hash chain
             bool bflush;      // set if current block must be flushed
 
-            while (true)
-            {
+            while(true){
                 // Make sure that we always have enough lookahead, except
                 // at the end of the input file. We need MAX_MATCH bytes
                 // for the next match, plus MIN_MATCH bytes to insert the
                 // string following the next match.
-                if (lookahead < MIN_LOOKAHEAD)
-                {
+                if(lookahead < MIN_LOOKAHEAD){
                     fill_window();
-                    if (lookahead < MIN_LOOKAHEAD && flush == Z_NO_FLUSH)
-                    {
+                    if(lookahead < MIN_LOOKAHEAD && flush == Z_NO_FLUSH){
                         return NeedMore;
                     }
-                    if (lookahead == 0) break; // flush the current block
+                    if(lookahead == 0) break; // flush the current block
                 }
 
                 // Insert the string window[strstart .. strstart+2] in the
                 // dictionary, and set hash_head to the head of the hash chain:
-                if (lookahead >= MIN_MATCH)
-                {
-                    ins_h = (((ins_h) << hash_shift) ^ (window[(strstart) + (MIN_MATCH - 1)] & 0xff)) & hash_mask;
+                if(lookahead >= MIN_MATCH){
+                    ins_h=(((ins_h)<<hash_shift)^(window[(strstart)+(MIN_MATCH-1)]&0xff))&hash_mask;
 
                     //  prev[strstart&w_mask]=hash_head=head[ins_h];
-                    hash_head = (head[ins_h] & 0xffff);
-                    prev[strstart & w_mask] = head[ins_h];
-                    head[ins_h] = (short)strstart;
+                    hash_head=(head[ins_h]&0xffff);
+                    prev[strstart&w_mask]=head[ins_h];
+                    head[ins_h]=(short)strstart;
                 }
 
                 // Find the longest match, discarding those <= prev_length.
                 // At this point we have always match_length < MIN_MATCH
 
-                if (hash_head != 0L &&
-                    ((strstart - hash_head) & 0xffff) <= w_size - MIN_LOOKAHEAD
-                    )
-                {
+                if(hash_head!=0L && 
+                    ((strstart-hash_head)&0xffff) <= w_size-MIN_LOOKAHEAD
+                    ){
                     // To simplify the code, we prevent matches with the string
                     // of window index 0 (in particular we have to avoid a match
                     // of the string with itself at the start of the input file).
-                    if (strategy != Z_HUFFMAN_ONLY)
-                    {
-                        match_length = longest_match(hash_head);
+                    if(strategy != Z_HUFFMAN_ONLY){
+                        match_length=longest_match (hash_head);
                     }
                     // longest_match() sets match_start
                 }
-                if (match_length >= MIN_MATCH)
-                {
+                if(match_length>=MIN_MATCH){
                     //        check_match(strstart, match_start, match_length);
 
-                    bflush = _tr_tally(strstart - match_start, match_length - MIN_MATCH);
+                    bflush=_tr_tally(strstart-match_start, match_length-MIN_MATCH);
 
                     lookahead -= match_length;
 
                     // Insert new strings in the hash table only if the match length
                     // is not too large. This saves time but degrades compression.
-                    if (match_length <= max_lazy_match &&
-                        lookahead >= MIN_MATCH)
-                    {
+                    if(match_length <= max_lazy_match &&
+                        lookahead >= MIN_MATCH) {
                         match_length--; // string at strstart already in hash table
-                        do
-                        {
+                        do{
                             strstart++;
 
-                            ins_h = ((ins_h << hash_shift) ^ (window[(strstart) + (MIN_MATCH - 1)] & 0xff)) & hash_mask;
+                            ins_h=((ins_h<<hash_shift)^(window[(strstart)+(MIN_MATCH-1)]&0xff))&hash_mask;
                             //      prev[strstart&w_mask]=hash_head=head[ins_h];
-                            hash_head = (head[ins_h] & 0xffff);
-                            prev[strstart & w_mask] = head[ins_h];
-                            head[ins_h] = (short)strstart;
+                            hash_head=(head[ins_h]&0xffff);
+                            prev[strstart&w_mask]=head[ins_h];
+                            head[ins_h]=(short)strstart;
 
                             // strstart never exceeds WSIZE-MAX_MATCH, so there are
                             // always MIN_MATCH bytes ahead.
                         }
                         while (--match_length != 0);
-                        strstart++;
+                        strstart++; 
                     }
-                    else
-                    {
+                    else{
                         strstart += match_length;
                         match_length = 0;
-                        ins_h = window[strstart] & 0xff;
+                        ins_h = window[strstart]&0xff;
 
-                        ins_h = (((ins_h) << hash_shift) ^ (window[strstart + 1] & 0xff)) & hash_mask;
+                        ins_h=(((ins_h)<<hash_shift)^(window[strstart+1]&0xff))&hash_mask;
                         // If lookahead < MIN_MATCH, ins_h is garbage, but it does not
                         // matter since it will be recomputed at next deflate call.
                     }
                 }
-                else
-                {
+                else {
                     // No match, output a literal byte
 
-                    bflush = _tr_tally(0, window[strstart] & 0xff);
+                    bflush=_tr_tally(0, window[strstart]&0xff);
                     lookahead--;
-                    strstart++;
+                    strstart++; 
                 }
-                if (bflush)
-                {
+                if (bflush){
 
                     flush_block_only(false);
-                    if (strm.avail_out == 0) return NeedMore;
+                    if(strm.avail_out==0) return NeedMore;
                 }
             }
 
             flush_block_only(flush == Z_FINISH);
-            if (strm.avail_out == 0)
-            {
-                if (flush == Z_FINISH) return FinishStarted;
+            if(strm.avail_out==0){
+                if(flush == Z_FINISH) return FinishStarted;
                 else return NeedMore;
             }
-            return flush == Z_FINISH ? FinishDone : BlockDone;
+            return flush==Z_FINISH ? FinishDone : BlockDone;
         }
 
         // Same as above, but achieves better compression. We use a lazy
         // evaluation for matches: a match is finally adopted only if there is
         // no better match at the next window position.
-        internal int deflate_slow(int flush)
-        {
+        internal int deflate_slow(int flush){
             //    short hash_head = 0;    // head of hash chain
             int hash_head = 0;    // head of hash chain
             bool bflush;         // set if current block must be flushed
 
             // Process the input block.
-            while (true)
-            {
+            while(true){
                 // Make sure that we always have enough lookahead, except
                 // at the end of the input file. We need MAX_MATCH bytes
                 // for the next match, plus MIN_MATCH bytes to insert the
                 // string following the next match.
 
-                if (lookahead < MIN_LOOKAHEAD)
-                {
+                if (lookahead < MIN_LOOKAHEAD) {
                     fill_window();
-                    if (lookahead < MIN_LOOKAHEAD && flush == Z_NO_FLUSH)
-                    {
+                    if(lookahead < MIN_LOOKAHEAD && flush == Z_NO_FLUSH) {
                         return NeedMore;
                     }
-                    if (lookahead == 0) break; // flush the current block
+                    if(lookahead == 0) break; // flush the current block
                 }
 
                 // Insert the string window[strstart .. strstart+2] in the
                 // dictionary, and set hash_head to the head of the hash chain:
 
-                if (lookahead >= MIN_MATCH)
-                {
-                    ins_h = (((ins_h) << hash_shift) ^ (window[(strstart) + (MIN_MATCH - 1)] & 0xff)) & hash_mask;
+                if(lookahead >= MIN_MATCH) {
+                    ins_h=(((ins_h)<<hash_shift)^(window[(strstart)+(MIN_MATCH-1)]&0xff)) & hash_mask;
                     //  prev[strstart&w_mask]=hash_head=head[ins_h];
-                    hash_head = (head[ins_h] & 0xffff);
-                    prev[strstart & w_mask] = head[ins_h];
-                    head[ins_h] = (short)strstart;
+                    hash_head=(head[ins_h]&0xffff);
+                    prev[strstart&w_mask]=head[ins_h];
+                    head[ins_h]=(short)strstart;
                 }
 
                 // Find the longest match, discarding those <= prev_length.
                 prev_length = match_length; prev_match = match_start;
-                match_length = MIN_MATCH - 1;
+                match_length = MIN_MATCH-1;
 
                 if (hash_head != 0 && prev_length < max_lazy_match &&
-                    ((strstart - hash_head) & 0xffff) <= w_size - MIN_LOOKAHEAD
-                    )
-                {
+                    ((strstart-hash_head)&0xffff) <= w_size-MIN_LOOKAHEAD
+                    ){
                     // To simplify the code, we prevent matches with the string
                     // of window index 0 (in particular we have to avoid a match
                     // of the string with itself at the start of the input file).
 
-                    if (strategy != Z_HUFFMAN_ONLY)
-                    {
+                    if(strategy != Z_HUFFMAN_ONLY) {
                         match_length = longest_match(hash_head);
                     }
                     // longest_match() sets match_start
 
                     if (match_length <= 5 && (strategy == Z_FILTERED ||
                         (match_length == MIN_MATCH &&
-                        strstart - match_start > 4096)))
-                    {
+                        strstart - match_start > 4096))) {
 
                         // If prev_match is also MIN_MATCH, match_start is garbage
                         // but we will ignore the current match anyway.
-                        match_length = MIN_MATCH - 1;
+                        match_length = MIN_MATCH-1;
                     }
                 }
 
                 // If there was a match at the previous step and the current
                 // match is not better, output the previous match:
-                if (prev_length >= MIN_MATCH && match_length <= prev_length)
-                {
+                if(prev_length >= MIN_MATCH && match_length <= prev_length) {
                     int max_insert = strstart + lookahead - MIN_MATCH;
                     // Do not insert strings in hash table beyond this.
 
                     //          check_match(strstart-1, prev_match, prev_length);
 
-                    bflush = _tr_tally(strstart - 1 - prev_match, prev_length - MIN_MATCH);
+                    bflush=_tr_tally(strstart-1-prev_match, prev_length - MIN_MATCH);
 
                     // Insert in hash table all strings up to the end of the match.
                     // strstart-1 and strstart are already inserted. If there is not
                     // enough lookahead, the last two strings are not inserted in
                     // the hash table.
-                    lookahead -= prev_length - 1;
+                    lookahead -= prev_length-1;
                     prev_length -= 2;
-                    do
-                    {
-                        if (++strstart <= max_insert)
-                        {
-                            ins_h = (((ins_h) << hash_shift) ^ (window[(strstart) + (MIN_MATCH - 1)] & 0xff)) & hash_mask;
+                    do{
+                        if(++strstart <= max_insert) {
+                            ins_h=(((ins_h)<<hash_shift)^(window[(strstart)+(MIN_MATCH-1)]&0xff))&hash_mask;
                             //prev[strstart&w_mask]=hash_head=head[ins_h];
-                            hash_head = (head[ins_h] & 0xffff);
-                            prev[strstart & w_mask] = head[ins_h];
-                            head[ins_h] = (short)strstart;
+                            hash_head=(head[ins_h]&0xffff);
+                            prev[strstart&w_mask]=head[ins_h];
+                            head[ins_h]=(short)strstart;
                         }
                     }
-                    while (--prev_length != 0);
+                    while(--prev_length != 0);
                     match_available = 0;
-                    match_length = MIN_MATCH - 1;
+                    match_length = MIN_MATCH-1;
                     strstart++;
 
-                    if (bflush)
-                    {
+                    if (bflush){
                         flush_block_only(false);
-                        if (strm.avail_out == 0) return NeedMore;
+                        if(strm.avail_out==0) return NeedMore;
                     }
-                }
-                else if (match_available != 0)
-                {
+                } else if (match_available!=0) {
 
                     // If there was no match at the previous position, output a
                     // single literal. If there was a match but the current match
                     // is longer, truncate the previous match to a single literal.
 
-                    bflush = _tr_tally(0, window[strstart - 1] & 0xff);
+                    bflush=_tr_tally(0, window[strstart-1]&0xff);
 
-                    if (bflush)
-                    {
+                    if (bflush) {
                         flush_block_only(false);
                     }
                     strstart++;
                     lookahead--;
-                    if (strm.avail_out == 0) return NeedMore;
-                }
-                else
-                {
+                    if(strm.avail_out == 0) return NeedMore;
+                } else {
                     // There is no previous match to compare with, wait for
                     // the next step to decide.
 
@@ -1358,32 +1233,29 @@ namespace System.util.zlib
                 }
             }
 
-            if (match_available != 0)
-            {
-                bflush = _tr_tally(0, window[strstart - 1] & 0xff);
+            if(match_available!=0) {
+                bflush=_tr_tally(0, window[strstart-1]&0xff);
                 match_available = 0;
             }
             flush_block_only(flush == Z_FINISH);
 
-            if (strm.avail_out == 0)
-            {
-                if (flush == Z_FINISH) return FinishStarted;
+            if(strm.avail_out==0){
+                if(flush == Z_FINISH) return FinishStarted;
                 else return NeedMore;
             }
 
             return flush == Z_FINISH ? FinishDone : BlockDone;
         }
 
-        internal int longest_match(int cur_match)
-        {
+        internal int longest_match(int cur_match){
             int chain_length = max_chain_length; // max hash chain length
             int scan = strstart;                 // current string
             int match;                           // matched string
             int len;                             // length of current match
             int best_len = prev_length;          // best match length so far
-            int limit = strstart > (w_size - MIN_LOOKAHEAD) ?
-                strstart - (w_size - MIN_LOOKAHEAD) : 0;
-            int nice_match = this.nice_match;
+            int limit = strstart>(w_size-MIN_LOOKAHEAD) ?
+                strstart-(w_size-MIN_LOOKAHEAD) : 0;
+            int nice_match=this.nice_match;
 
             // Stop when cur_match becomes <= limit. To simplify the code,
             // we prevent matches with the string of window index 0.
@@ -1391,15 +1263,14 @@ namespace System.util.zlib
             int wmask = w_mask;
 
             int strend = strstart + MAX_MATCH;
-            byte scan_end1 = window[scan + best_len - 1];
-            byte scan_end = window[scan + best_len];
+            byte scan_end1 = window[scan+best_len-1];
+            byte scan_end = window[scan+best_len];
 
             // The code is optimized for HASH_BITS >= 8 and MAX_MATCH-2 multiple of 16.
             // It is easy to get rid of this optimization if necessary.
 
             // Do not waste too much time if we already have a good match:
-            if (prev_length >= good_match)
-            {
+            if (prev_length >= good_match) {
                 chain_length >>= 2;
             }
 
@@ -1407,16 +1278,15 @@ namespace System.util.zlib
             // to make deflate deterministic.
             if (nice_match > lookahead) nice_match = lookahead;
 
-            do
-            {
+            do {
                 match = cur_match;
 
                 // Skip to next match if the match length cannot increase
                 // or if the match length is less than 2:
-                if (window[match + best_len] != scan_end ||
-                    window[match + best_len - 1] != scan_end1 ||
-                    window[match] != window[scan] ||
-                    window[++match] != window[scan + 1]) continue;
+                if (window[match+best_len]   != scan_end  ||
+                    window[match+best_len-1] != scan_end1 ||
+                    window[match]       != window[scan]     ||
+                    window[++match]     != window[scan+1])      continue;
 
                 // The check at best_len-1 can be removed because it will be made
                 // again later. (This heuristic is not always a win.)
@@ -1427,8 +1297,7 @@ namespace System.util.zlib
 
                 // We check for insufficient lookahead only every 8th comparison;
                 // the 256th check will be made at strstart+258.
-                do
-                {
+                do {
                 } while (window[++scan] == window[++match] &&
                     window[++scan] == window[++match] &&
                     window[++scan] == window[++match] &&
@@ -1442,34 +1311,30 @@ namespace System.util.zlib
                 len = MAX_MATCH - (int)(strend - scan);
                 scan = strend - MAX_MATCH;
 
-                if (len > best_len)
-                {
+                if(len>best_len) {
                     match_start = cur_match;
                     best_len = len;
                     if (len >= nice_match) break;
-                    scan_end1 = window[scan + best_len - 1];
-                    scan_end = window[scan + best_len];
+                    scan_end1  = window[scan+best_len-1];
+                    scan_end   = window[scan+best_len];
                 }
 
-            } while ((cur_match = (prev[cur_match & wmask] & 0xffff)) > limit
+            } while ((cur_match = (prev[cur_match & wmask]&0xffff)) > limit
                 && --chain_length != 0);
 
             if (best_len <= lookahead) return best_len;
             return lookahead;
         }
-
-        internal int deflateInit(ZStream strm, int level, int bits)
-        {
+    
+        internal int deflateInit(ZStream strm, int level, int bits){
             return deflateInit2(strm, level, Z_DEFLATED, bits, DEF_MEM_LEVEL,
                 Z_DEFAULT_STRATEGY);
         }
-        internal int deflateInit(ZStream strm, int level)
-        {
+        internal int deflateInit(ZStream strm, int level){
             return deflateInit(strm, level, MAX_WBITS);
         }
-        internal int deflateInit2(ZStream strm, int level, int method, int windowBits,
-            int memLevel, int strategy)
-        {
+        internal int deflateInit2(ZStream strm, int level, int method,  int windowBits,
+            int memLevel, int strategy){
             int noheader = 0;
             //    byte[] my_version=ZLIB_VERSION;
 
@@ -1483,17 +1348,15 @@ namespace System.util.zlib
 
             if (level == Z_DEFAULT_COMPRESSION) level = 6;
 
-            if (windowBits < 0)
-            { // undocumented feature: suppress zlib header
+            if (windowBits < 0) { // undocumented feature: suppress zlib header
                 noheader = 1;
                 windowBits = -windowBits;
             }
 
-            if (memLevel < 1 || memLevel > MAX_MEM_LEVEL ||
+            if (memLevel < 1 || memLevel > MAX_MEM_LEVEL || 
                 method != Z_DEFLATED ||
                 windowBits < 9 || windowBits > 15 || level < 0 || level > 9 ||
-                strategy < 0 || strategy > Z_HUFFMAN_ONLY)
-            {
+                strategy < 0 || strategy > Z_HUFFMAN_ONLY) {
                 return Z_STREAM_ERROR;
             }
 
@@ -1507,9 +1370,9 @@ namespace System.util.zlib
             hash_bits = memLevel + 7;
             hash_size = 1 << hash_bits;
             hash_mask = hash_size - 1;
-            hash_shift = ((hash_bits + MIN_MATCH - 1) / MIN_MATCH);
+            hash_shift = ((hash_bits+MIN_MATCH-1)/MIN_MATCH);
 
-            window = new byte[w_size * 2];
+            window = new byte[w_size*2];
             prev = new short[w_size];
             head = new short[hash_size];
 
@@ -1517,11 +1380,11 @@ namespace System.util.zlib
 
             // We overlay pending_buf and d_buf+l_buf. This works since the average
             // output size for (length,distance) codes is <= 24 bits.
-            pending_buf = new byte[lit_bufsize * 4];
-            pending_buf_size = lit_bufsize * 4;
+            pending_buf = new byte[lit_bufsize*4];
+            pending_buf_size = lit_bufsize*4;
 
-            d_buf = lit_bufsize / 2;
-            l_buf = (1 + 2) * lit_bufsize;
+            d_buf = lit_bufsize/2;
+            l_buf = (1+2)*lit_bufsize;
 
             this.level = level;
 
@@ -1533,8 +1396,7 @@ namespace System.util.zlib
             return deflateReset(strm);
         }
 
-        internal int deflateReset(ZStream strm)
-        {
+        internal int deflateReset(ZStream strm){
             strm.total_in = strm.total_out = 0;
             strm.msg = null; //
             strm.data_type = Z_UNKNOWN;
@@ -1542,12 +1404,11 @@ namespace System.util.zlib
             pending = 0;
             pending_out = 0;
 
-            if (noheader < 0)
-            {
+            if(noheader < 0) {
                 noheader = 0; // was set to -1 by deflate(..., Z_FINISH);
             }
-            status = (noheader != 0) ? BUSY_STATE : INIT_STATE;
-            strm.adler = strm._adler.adler32(0, null, 0, 0);
+            status = (noheader!=0) ? BUSY_STATE : INIT_STATE;
+            strm.adler=strm._adler.adler32(0, null, 0, 0);
 
             last_flush = Z_NO_FLUSH;
 
@@ -1556,70 +1417,61 @@ namespace System.util.zlib
             return Z_OK;
         }
 
-        internal int deflateEnd()
-        {
-            if (status != INIT_STATE && status != BUSY_STATE && status != FINISH_STATE)
-            {
+        internal int deflateEnd(){
+            if(status!=INIT_STATE && status!=BUSY_STATE && status!=FINISH_STATE){
                 return Z_STREAM_ERROR;
             }
             // Deallocate in reverse order of allocations:
-            pending_buf = null;
-            head = null;
-            prev = null;
-            window = null;
+            pending_buf=null;
+            head=null;
+            prev=null;
+            window=null;
             // free
             // dstate=null;
             return status == BUSY_STATE ? Z_DATA_ERROR : Z_OK;
         }
 
-        internal int deflateParams(ZStream strm, int _level, int _strategy)
-        {
-            int err = Z_OK;
+        internal int deflateParams(ZStream strm, int _level, int _strategy){
+            int err=Z_OK;
 
-            if (_level == Z_DEFAULT_COMPRESSION)
-            {
+            if(_level == Z_DEFAULT_COMPRESSION){
                 _level = 6;
             }
-            if (_level < 0 || _level > 9 ||
-                _strategy < 0 || _strategy > Z_HUFFMAN_ONLY)
-            {
+            if(_level < 0 || _level > 9 || 
+                _strategy < 0 || _strategy > Z_HUFFMAN_ONLY) {
                 return Z_STREAM_ERROR;
             }
 
-            if (config_table[level].func != config_table[_level].func &&
-                strm.total_in != 0)
-            {
+            if(config_table[level].func!=config_table[_level].func &&
+                strm.total_in != 0) {
                 // Flush the last buffer:
                 err = strm.deflate(Z_PARTIAL_FLUSH);
             }
 
-            if (level != _level)
-            {
+            if(level != _level) {
                 level = _level;
-                max_lazy_match = config_table[level].max_lazy;
-                good_match = config_table[level].good_length;
-                nice_match = config_table[level].nice_length;
+                max_lazy_match   = config_table[level].max_lazy;
+                good_match       = config_table[level].good_length;
+                nice_match       = config_table[level].nice_length;
                 max_chain_length = config_table[level].max_chain;
             }
             strategy = _strategy;
             return err;
         }
 
-        internal int deflateSetDictionary(ZStream strm, byte[] dictionary, int dictLength)
-        {
+        internal int deflateSetDictionary (ZStream strm, byte[] dictionary, int dictLength){
             int length = dictLength;
-            int index = 0;
+            int index=0;
 
-            if (dictionary == null || status != INIT_STATE)
+            if(dictionary == null || status != INIT_STATE)
                 return Z_STREAM_ERROR;
 
-            strm.adler = strm._adler.adler32(strm.adler, dictionary, 0, dictLength);
+            strm.adler=strm._adler.adler32(strm.adler, dictionary, 0, dictLength);
 
-            if (length < MIN_MATCH) return Z_OK;
-            if (length > w_size - MIN_LOOKAHEAD)
-            {
-                length = w_size - MIN_LOOKAHEAD;
-                index = dictLength - length; // use the tail of the dictionary
+            if(length < MIN_MATCH) return Z_OK;
+            if(length > w_size-MIN_LOOKAHEAD){
+                length = w_size-MIN_LOOKAHEAD;
+                index=dictLength-length; // use the tail of the dictionary
             }
             System.Array.Copy(dictionary, index, window, 0, length);
             strstart = length;
@@ -1629,37 +1481,32 @@ namespace System.util.zlib
             // s->lookahead stays null, so s->ins_h will be recomputed at the next
             // call of fill_window.
 
-            ins_h = window[0] & 0xff;
-            ins_h = (((ins_h) << hash_shift) ^ (window[1] & 0xff)) & hash_mask;
+            ins_h = window[0]&0xff;
+            ins_h=(((ins_h)<<hash_shift)^(window[1]&0xff))&hash_mask;
 
-            for (int n = 0; n <= length - MIN_MATCH; n++)
-            {
-                ins_h = (((ins_h) << hash_shift) ^ (window[(n) + (MIN_MATCH - 1)] & 0xff)) & hash_mask;
-                prev[n & w_mask] = head[ins_h];
-                head[ins_h] = (short)n;
+            for(int n=0; n<=length-MIN_MATCH; n++){
+                ins_h=(((ins_h)<<hash_shift)^(window[(n)+(MIN_MATCH-1)]&0xff))&hash_mask;
+                prev[n&w_mask]=head[ins_h];
+                head[ins_h]=(short)n;
             }
             return Z_OK;
         }
 
-        internal int deflate(ZStream strm, int flush)
-        {
+        internal int deflate(ZStream strm, int flush){
             int old_flush;
 
-            if (flush > Z_FINISH || flush < 0)
-            {
+            if(flush>Z_FINISH || flush<0){
                 return Z_STREAM_ERROR;
             }
 
-            if (strm.next_out == null ||
+            if(strm.next_out == null ||
                 (strm.next_in == null && strm.avail_in != 0) ||
-                (status == FINISH_STATE && flush != Z_FINISH))
-            {
-                strm.msg = z_errmsg[Z_NEED_DICT - (Z_STREAM_ERROR)];
+                (status == FINISH_STATE && flush != Z_FINISH)) {
+                strm.msg=z_errmsg[Z_NEED_DICT-(Z_STREAM_ERROR)];
                 return Z_STREAM_ERROR;
             }
-            if (strm.avail_out == 0)
-            {
-                strm.msg = z_errmsg[Z_NEED_DICT - (Z_BUF_ERROR)];
+            if(strm.avail_out == 0){
+                strm.msg=z_errmsg[Z_NEED_DICT-(Z_BUF_ERROR)];
                 return Z_BUF_ERROR;
             }
 
@@ -1668,35 +1515,31 @@ namespace System.util.zlib
             last_flush = flush;
 
             // Write the zlib header
-            if (status == INIT_STATE)
-            {
-                int header = (Z_DEFLATED + ((w_bits - 8) << 4)) << 8;
-                int level_flags = ((level - 1) & 0xff) >> 1;
+            if(status == INIT_STATE) {
+                int header = (Z_DEFLATED+((w_bits-8)<<4))<<8;
+                int level_flags=((level-1)&0xff)>>1;
 
-                if (level_flags > 3) level_flags = 3;
-                header |= (level_flags << 6);
-                if (strstart != 0) header |= PRESET_DICT;
-                header += 31 - (header % 31);
+                if(level_flags>3) level_flags=3;
+                header |= (level_flags<<6);
+                if(strstart!=0) header |= PRESET_DICT;
+                header+=31-(header % 31);
 
-                status = BUSY_STATE;
+                status=BUSY_STATE;
                 putShortMSB(header);
 
 
                 // Save the adler32 of the preset dictionary:
-                if (strstart != 0)
-                {
-                    putShortMSB((int)(strm.adler >> 16));
-                    putShortMSB((int)(strm.adler & 0xffff));
+                if(strstart!=0){
+                    putShortMSB((int)(strm.adler>>16));
+                    putShortMSB((int)(strm.adler&0xffff));
                 }
-                strm.adler = strm._adler.adler32(0, null, 0, 0);
+                strm.adler=strm._adler.adler32(0, null, 0, 0);
             }
 
             // Flush as much pending output as possible
-            if (pending != 0)
-            {
+            if(pending != 0) {
                 strm.flush_pending();
-                if (strm.avail_out == 0)
-                {
+                if(strm.avail_out == 0) {
                     //System.out.println("  avail_out==0");
                     // Since avail_out is 0, deflate will be called again with
                     // more output space, but possibly with both pending and
@@ -1711,48 +1554,41 @@ namespace System.util.zlib
                 // flushes. For repeated and useless calls with Z_FINISH, we keep
                 // returning Z_STREAM_END instead of Z_BUFF_ERROR.
             }
-            else if (strm.avail_in == 0 && flush <= old_flush &&
-                flush != Z_FINISH)
-            {
-                strm.msg = z_errmsg[Z_NEED_DICT - (Z_BUF_ERROR)];
+            else if(strm.avail_in==0 && flush <= old_flush &&
+                flush != Z_FINISH) {
+                strm.msg=z_errmsg[Z_NEED_DICT-(Z_BUF_ERROR)];
                 return Z_BUF_ERROR;
             }
 
             // User must not provide more input after the first FINISH:
-            if (status == FINISH_STATE && strm.avail_in != 0)
-            {
-                strm.msg = z_errmsg[Z_NEED_DICT - (Z_BUF_ERROR)];
+            if(status == FINISH_STATE && strm.avail_in != 0) {
+                strm.msg=z_errmsg[Z_NEED_DICT-(Z_BUF_ERROR)];
                 return Z_BUF_ERROR;
             }
 
             // Start a new block or continue the current one.
-            if (strm.avail_in != 0 || lookahead != 0 ||
-                (flush != Z_NO_FLUSH && status != FINISH_STATE))
-            {
-                int bstate = -1;
-                switch (config_table[level].func)
-                {
-                    case STORED:
+            if(strm.avail_in!=0 || lookahead!=0 ||
+                (flush != Z_NO_FLUSH && status != FINISH_STATE)) {
+                int bstate=-1;
+                switch(config_table[level].func){
+                    case STORED: 
                         bstate = deflate_stored(flush);
                         break;
-                    case FAST:
+                    case FAST: 
                         bstate = deflate_fast(flush);
                         break;
-                    case SLOW:
+                    case SLOW: 
                         bstate = deflate_slow(flush);
                         break;
                     default:
                         break;
                 }
 
-                if (bstate == FinishStarted || bstate == FinishDone)
-                {
+                if (bstate==FinishStarted || bstate==FinishDone) {
                     status = FINISH_STATE;
                 }
-                if (bstate == NeedMore || bstate == FinishStarted)
-                {
-                    if (strm.avail_out == 0)
-                    {
+                if (bstate==NeedMore || bstate==FinishStarted) {
+                    if(strm.avail_out == 0) {
                         last_flush = -1; // avoid BUF_ERROR next call, see above
                     }
                     return Z_OK;
@@ -1764,39 +1600,34 @@ namespace System.util.zlib
                     // one empty block.
                 }
 
-                if (bstate == BlockDone)
-                {
-                    if (flush == Z_PARTIAL_FLUSH)
-                    {
+                if (bstate==BlockDone) {
+                    if(flush == Z_PARTIAL_FLUSH) {
                         _tr_align();
-                    }
-                    else
-                    { // FULL_FLUSH or SYNC_FLUSH
+                    } 
+                    else { // FULL_FLUSH or SYNC_FLUSH
                         _tr_stored_block(0, 0, false);
                         // For a full flush, this empty block will be recognized
                         // as a special marker by inflate_sync().
-                        if (flush == Z_FULL_FLUSH)
-                        {
+                        if(flush == Z_FULL_FLUSH) {
                             //state.head[s.hash_size-1]=0;
-                            for (int i = 0; i < hash_size/*-1*/; i++)  // forget history
-                                head[i] = 0;
+                            for(int i=0; i<hash_size/*-1*/; i++)  // forget history
+                                head[i]=0;
                         }
                     }
                     strm.flush_pending();
-                    if (strm.avail_out == 0)
-                    {
+                    if(strm.avail_out == 0) {
                         last_flush = -1; // avoid BUF_ERROR at next call, see above
                         return Z_OK;
                     }
                 }
             }
 
-            if (flush != Z_FINISH) return Z_OK;
-            if (noheader != 0) return Z_STREAM_END;
+            if(flush!=Z_FINISH) return Z_OK;
+            if(noheader!=0) return Z_STREAM_END;
 
             // Write the zlib trailer (adler32)
-            putShortMSB((int)(strm.adler >> 16));
-            putShortMSB((int)(strm.adler & 0xffff));
+            putShortMSB((int)(strm.adler>>16));
+            putShortMSB((int)(strm.adler&0xffff));
             strm.flush_pending();
 
             // If avail_out is zero, the application will call deflate again

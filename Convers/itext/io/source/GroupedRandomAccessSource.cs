@@ -41,17 +41,15 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using Common.Logging;
 using System;
+using Common.Logging;
 
-namespace iText.IO.Source
-{
+namespace iText.IO.Source {
     /// <summary>
     /// A RandomAccessSource that is based on a set of underlying sources,
     /// treating the sources as if they were a contiguous block of data.
     /// </summary>
-    internal class GroupedRandomAccessSource : IRandomAccessSource
-    {
+    internal class GroupedRandomAccessSource : IRandomAccessSource {
         /// <summary>The underlying sources (along with some meta data to quickly determine where each source begins and ends)
         ///     </summary>
         private readonly GroupedRandomAccessSource.SourceEntry[] sources;
@@ -68,12 +66,10 @@ namespace iText.IO.Source
         /// based on the specified set of sources
         /// </summary>
         /// <param name="sources">the sources used to build this group</param>
-        public GroupedRandomAccessSource(IRandomAccessSource[] sources)
-        {
+        public GroupedRandomAccessSource(IRandomAccessSource[] sources) {
             this.sources = new GroupedRandomAccessSource.SourceEntry[sources.Length];
             long totalSize = 0;
-            for (int i = 0; i < sources.Length; i++)
-            {
+            for (int i = 0; i < sources.Length; i++) {
                 this.sources[i] = new GroupedRandomAccessSource.SourceEntry(i, sources[i], totalSize);
                 totalSize += sources[i].Length();
             }
@@ -95,10 +91,8 @@ namespace iText.IO.Source
         /// </remarks>
         /// <param name="offset">the offset</param>
         /// <returns>the index of the input source that contains the specified offset, or 0 if unknown</returns>
-        protected internal virtual int GetStartingSourceIndex(long offset)
-        {
-            if (offset >= currentSourceEntry.firstByte)
-            {
+        protected internal virtual int GetStartingSourceIndex(long offset) {
+            if (offset >= currentSourceEntry.firstByte) {
                 return currentSourceEntry.index;
             }
             return 0;
@@ -111,23 +105,18 @@ namespace iText.IO.Source
         /// </summary>
         /// <param name="offset">the offset of the byte to look for</param>
         /// <returns>the SourceEntry that contains the byte at the specified offset</returns>
-        private GroupedRandomAccessSource.SourceEntry GetSourceEntryForOffset(long offset)
-        {
-            if (offset >= size)
-            {
+        private GroupedRandomAccessSource.SourceEntry GetSourceEntryForOffset(long offset) {
+            if (offset >= size) {
                 return null;
             }
-            if (offset >= currentSourceEntry.firstByte && offset <= currentSourceEntry.lastByte)
-            {
+            if (offset >= currentSourceEntry.firstByte && offset <= currentSourceEntry.lastByte) {
                 return currentSourceEntry;
             }
             // hook to allow subclasses to release resources if necessary
             SourceReleased(currentSourceEntry.source);
             int startAt = GetStartingSourceIndex(offset);
-            for (int i = startAt; i < sources.Length; i++)
-            {
-                if (offset >= sources[i].firstByte && offset <= sources[i].lastByte)
-                {
+            for (int i = startAt; i < sources.Length; i++) {
+                if (offset >= sources[i].firstByte && offset <= sources[i].lastByte) {
                     currentSourceEntry = sources[i];
                     SourceInUse(currentSourceEntry.source);
                     return currentSourceEntry;
@@ -140,8 +129,7 @@ namespace iText.IO.Source
         /// <remarks>Called when a given source is no longer the active source.  This gives subclasses the abilty to release resources, if appropriate.
         ///     </remarks>
         /// <param name="source">the source that is no longer the active source</param>
-        protected internal virtual void SourceReleased(IRandomAccessSource source)
-        {
+        protected internal virtual void SourceReleased(IRandomAccessSource source) {
         }
 
         // by default, do nothing
@@ -149,8 +137,7 @@ namespace iText.IO.Source
         /// <remarks>Called when a given source is about to become the active source.  This gives subclasses the abilty to retrieve resources, if appropriate.
         ///     </remarks>
         /// <param name="source">the source that is about to become the active source</param>
-        protected internal virtual void SourceInUse(IRandomAccessSource source)
-        {
+        protected internal virtual void SourceInUse(IRandomAccessSource source) {
         }
 
         // by default, do nothing
@@ -159,42 +146,34 @@ namespace iText.IO.Source
         /// The source that contains the byte at position is retrieved, the correct offset into that source computed, then the value
         /// from that offset in the underlying source is returned.
         /// </summary>
-        public virtual int Get(long position)
-        {
+        public virtual int Get(long position) {
             GroupedRandomAccessSource.SourceEntry entry = GetSourceEntryForOffset(position);
             // if true, we have run out of data to read from
-            if (entry == null)
-            {
+            if (entry == null) {
                 return -1;
             }
             return entry.source.Get(entry.OffsetN(position));
         }
 
         /// <summary><inheritDoc/></summary>
-        public virtual int Get(long position, byte[] bytes, int off, int len)
-        {
+        public virtual int Get(long position, byte[] bytes, int off, int len) {
             GroupedRandomAccessSource.SourceEntry entry = GetSourceEntryForOffset(position);
             // if true, we have run out of data to read from
-            if (entry == null)
-            {
+            if (entry == null) {
                 return -1;
             }
             long offN = entry.OffsetN(position);
             int remaining = len;
-            while (remaining > 0)
-            {
+            while (remaining > 0) {
                 // if true, we have run out of data to read from
-                if (entry == null)
-                {
+                if (entry == null) {
                     break;
                 }
-                if (offN > entry.source.Length())
-                {
+                if (offN > entry.source.Length()) {
                     break;
                 }
                 int count = entry.source.Get(offN, bytes, off, remaining);
-                if (count == -1)
-                {
+                if (count == -1) {
                     break;
                 }
                 off += count;
@@ -207,8 +186,7 @@ namespace iText.IO.Source
         }
 
         /// <summary><inheritDoc/></summary>
-        public virtual long Length()
-        {
+        public virtual long Length() {
             return size;
         }
 
@@ -217,42 +195,33 @@ namespace iText.IO.Source
         /// <br/>
         /// Closes all of the underlying sources.
         /// </summary>
-        public virtual void Close()
-        {
+        public virtual void Close() {
             System.IO.IOException firstThrownIOExc = null;
-            foreach (GroupedRandomAccessSource.SourceEntry entry in sources)
-            {
-                try
-                {
+            foreach (GroupedRandomAccessSource.SourceEntry entry in sources) {
+                try {
                     entry.source.Close();
                 }
-                catch (System.IO.IOException ex)
-                {
-                    if (firstThrownIOExc == null)
-                    {
+                catch (System.IO.IOException ex) {
+                    if (firstThrownIOExc == null) {
                         firstThrownIOExc = ex;
                     }
-                    else
-                    {
+                    else {
                         ILog logger = LogManager.GetLogger(typeof(iText.IO.Source.GroupedRandomAccessSource));
                         logger.Error(iText.IO.LogMessageConstant.ONE_OF_GROUPED_SOURCES_CLOSING_FAILED, ex);
                     }
                 }
-                catch (Exception ex)
-                {
+                catch (Exception ex) {
                     ILog logger = LogManager.GetLogger(typeof(iText.IO.Source.GroupedRandomAccessSource));
                     logger.Error(iText.IO.LogMessageConstant.ONE_OF_GROUPED_SOURCES_CLOSING_FAILED, ex);
                 }
             }
-            if (firstThrownIOExc != null)
-            {
+            if (firstThrownIOExc != null) {
                 throw firstThrownIOExc;
             }
         }
 
         /// <summary>Used to track each source, along with useful meta data</summary>
-        private class SourceEntry
-        {
+        private class SourceEntry {
             /// <summary>The underlying source</summary>
             internal readonly IRandomAccessSource source;
 
@@ -269,8 +238,7 @@ namespace iText.IO.Source
             /// <param name="index">the index</param>
             /// <param name="source">the source</param>
             /// <param name="offset">the offset of the source in the GroupedRandomAccessSource</param>
-            public SourceEntry(int index, IRandomAccessSource source, long offset)
-            {
+            public SourceEntry(int index, IRandomAccessSource source, long offset) {
                 this.index = index;
                 this.source = source;
                 this.firstByte = offset;
@@ -281,8 +249,7 @@ namespace iText.IO.Source
             ///     </summary>
             /// <param name="absoluteOffset">the offset in the parent GroupedRandomAccessSource</param>
             /// <returns>the effective offset in the underlying source</returns>
-            public virtual long OffsetN(long absoluteOffset)
-            {
+            public virtual long OffsetN(long absoluteOffset) {
                 return absoluteOffset - firstByte;
             }
         }

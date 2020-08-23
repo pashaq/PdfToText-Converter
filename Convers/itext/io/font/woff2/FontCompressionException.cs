@@ -42,10 +42,8 @@ address: sales@itextpdf.com
 */
 using System;
 
-namespace iText.IO.Font.Woff2
-{
-    public class FontCompressionException : Exception
-    {
+namespace iText.IO.Font.Woff2 {
+    public class FontCompressionException : Exception {
         public const String BUFFER_READ_FAILED = "Reading woff2 exception";
 
         public const String READ_BASE_128_FAILED = "Reading woff2 base 128 number exception";
@@ -76,18 +74,15 @@ namespace iText.IO.Font.Woff2
 
         public const String WRITE_FAILED = "Writing woff2 exception";
 
-        public FontCompressionException()
-        {
+        public FontCompressionException() {
         }
 
         public FontCompressionException(String message)
-            : base(message)
-        {
+            : base(message) {
         }
 
         public FontCompressionException(String message, Exception cause)
-            : base(message, cause)
-        {
+            : base(message, cause) {
         }
     }
 }

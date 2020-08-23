@@ -40,12 +40,11 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Util;
 using System;
 using System.Collections.Generic;
+using iText.IO.Util;
 
-namespace iText.Kernel.Pdf.Tagging
-{
+namespace iText.Kernel.Pdf.Tagging {
     /// <summary>
     /// This class encapsulates information about the standard structure namespaces and provides some utility methods
     /// connected to them.
@@ -57,8 +56,7 @@ namespace iText.Kernel.Pdf.Tagging
     /// <para />
     /// See ISO 32000-2 14.8.6, "Standard structure namespaces"
     /// </remarks>
-    public sealed class StandardNamespaces
-    {
+    public sealed class StandardNamespaces {
         private static readonly ICollection<String> STD_STRUCT_NAMESPACE_1_7_TYPES;
 
         private static readonly ICollection<String> STD_STRUCT_NAMESPACE_2_0_TYPES;
@@ -72,8 +70,7 @@ namespace iText.Kernel.Pdf.Tagging
         /// <summary>Specifies the name of the standard structure namespace for PDF 2.0</summary>
         public const String PDF_2_0 = "http://iso.org/pdf2/ssn";
 
-        static StandardNamespaces()
-        {
+        static StandardNamespaces() {
             STD_STRUCT_NAMESPACE_1_7_TYPES = new HashSet<String>(JavaUtil.ArraysAsList(StandardRoles.DOCUMENT, StandardRoles
                 .PART, StandardRoles.DIV, StandardRoles.P, StandardRoles.H, StandardRoles.H1, StandardRoles.H2, StandardRoles
                 .H3, StandardRoles.H4, StandardRoles.H5, StandardRoles.H6, StandardRoles.LBL, StandardRoles.SPAN, StandardRoles
@@ -103,8 +100,7 @@ namespace iText.Kernel.Pdf.Tagging
         /// <see cref="PDF_1_7"/>.
         /// </remarks>
         /// <returns>the name of the default standard structure namespace.</returns>
-        public static String GetDefault()
-        {
+        public static String GetDefault() {
             return PDF_1_7;
         }
 
@@ -119,8 +115,7 @@ namespace iText.Kernel.Pdf.Tagging
         /// <see cref="PdfNamespace"/>
         /// belongs to the domain-specific namespace, false otherwise.
         /// </returns>
-        public static bool IsKnownDomainSpecificNamespace(PdfNamespace @namespace)
-        {
+        public static bool IsKnownDomainSpecificNamespace(PdfNamespace @namespace) {
             return MATH_ML.Equals(@namespace.GetNamespaceName());
         }
 
@@ -136,16 +131,12 @@ namespace iText.Kernel.Pdf.Tagging
         /// false if the given role doesn't belong to the standard roles of the given standard structure namespace or
         /// if the given namespace name is not standard; true otherwise.
         /// </returns>
-        public static bool RoleBelongsToStandardNamespace(String role, String standardNamespaceName)
-        {
-            if (PDF_1_7.Equals(standardNamespaceName))
-            {
+        public static bool RoleBelongsToStandardNamespace(String role, String standardNamespaceName) {
+            if (PDF_1_7.Equals(standardNamespaceName)) {
                 return STD_STRUCT_NAMESPACE_1_7_TYPES.Contains(role);
             }
-            else
-            {
-                if (PDF_2_0.Equals(standardNamespaceName))
-                {
+            else {
+                if (PDF_2_0.Equals(standardNamespaceName)) {
                     return STD_STRUCT_NAMESPACE_2_0_TYPES.Contains(role) || IsHnRole(role);
                 }
             }
@@ -164,17 +155,13 @@ namespace iText.Kernel.Pdf.Tagging
         /// that specifies a role to be checked against Hn role pattern.
         /// </param>
         /// <returns>true if the role matches, false otherwise.</returns>
-        public static bool IsHnRole(String role)
-        {
-            if (role.StartsWith("H") && role.Length > 1 && role[1] != '0')
-            {
-                try
-                {
+        public static bool IsHnRole(String role) {
+            if (role.StartsWith("H") && role.Length > 1 && role[1] != '0') {
+                try {
                     return Convert.ToInt32(role.JSubstring(1, role.Length), System.Globalization.CultureInfo.InvariantCulture)
                          > 0;
                 }
-                catch (Exception)
-                {
+                catch (Exception) {
                 }
             }
             // ignored

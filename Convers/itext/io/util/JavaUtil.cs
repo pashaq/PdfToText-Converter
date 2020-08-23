@@ -43,95 +43,79 @@ address: sales@itextpdf.com
 */
 
 using System;
+using System.Globalization;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace iText.IO.Util
-{
+namespace iText.IO.Util {
     /// <summary>
     /// This file is a helper class for internal usage only.
     /// Be aware that its API and functionality may be changed in future.
     /// </summary>
-    public static class JavaUtil
-    {
-        public static String GetStringForChars(char[] chars)
-        {
+    public static class JavaUtil {
+        public static String GetStringForChars(char[] chars) {
             return new String(chars);
         }
 
-        public static String GetStringForChars(char[] chars, int offset, int length)
-        {
+        public static String GetStringForChars(char[] chars, int offset, int length) {
             return new String(chars, offset, length);
         }
 
-        public static String GetStringForBytes(byte[] bytes, int offset, int length)
-        {
+        public static String GetStringForBytes(byte[] bytes, int offset, int length) {
             return Encoding.UTF8.GetString(bytes, offset, length);
         }
 
-        public static String GetStringForBytes(byte[] bytes, int offset, int length, String encoding)
-        {
+        public static String GetStringForBytes(byte[] bytes, int offset, int length, String encoding) {
             return EncodingUtil.GetEncoding(encoding).GetString(bytes, offset, length);
         }
-
-        public static String GetStringForBytes(byte[] bytes, int offset, int length, Encoding encoding)
-        {
+        
+        public static String GetStringForBytes(byte[] bytes, int offset, int length, Encoding encoding) {
             return encoding.GetString(bytes, offset, length);
         }
 
-        public static String GetStringForBytes(byte[] bytes, String encoding)
-        {
+        public static String GetStringForBytes(byte[] bytes, String encoding) {
             return GetStringForBytes(bytes, 0, bytes.Length, encoding);
         }
 
-        public static String GetStringForBytes(byte[] bytes, Encoding encoding)
-        {
+        public static String GetStringForBytes(byte[] bytes, Encoding encoding) {
             return encoding.GetString(bytes);
         }
 
-        public static String GetStringForBytes(byte[] bytes)
-        {
+        public static String GetStringForBytes(byte[] bytes) {
             return GetStringForBytes(bytes, 0, bytes.Length);
         }
 
-        public static int FloatToIntBits(float value)
-        {
+        public static int FloatToIntBits(float value) {
             byte[] bytes = BitConverter.GetBytes(value);
             return BitConverter.ToInt32(bytes, 0);
         }
 
-        public static long DoubleToLongBits(double value)
-        {
+        public static long DoubleToLongBits(double value) {
             byte[] bytes = BitConverter.GetBytes(value);
             return BitConverter.ToInt64(bytes, 0);
         }
 
-        public static float IntBitsToFloat(int bits)
-        {
+        public static float IntBitsToFloat(int bits) {
             byte[] bytes = BitConverter.GetBytes(bits);
             return BitConverter.ToSingle(bytes, 0);
         }
 
-        public static double LongBitsToDouble(long bits)
-        {
+        public static double LongBitsToDouble(long bits) {
             byte[] bytes = BitConverter.GetBytes(bits);
             return BitConverter.ToDouble(bytes, 0);
         }
 
-        public static String IntegerToHexString(int i)
-        {
+        public static String IntegerToHexString(int i) {
             return Convert.ToString(i, 16);
         }
 
-        public static String IntegerToOctalString(int i)
-        {
+        public static String IntegerToOctalString(int i) {
             return Convert.ToString(i, 8);
         }
 
-        public static bool DictionariesEquals<TKey, TValue>(IDictionary<TKey, TValue> that, IDictionary<TKey, TValue> other)
-        {
+        public static bool DictionariesEquals<TKey, TValue>(IDictionary<TKey, TValue> that, IDictionary<TKey, TValue> other) {
             if (other == that)
                 return true;
             if (that == null || other == null)
@@ -140,21 +124,17 @@ namespace iText.IO.Util
             return !that.Except(other).Any();
         }
 
-        public static int DictionaryHashCode<TKey, TValue>(IDictionary<TKey, TValue> dict)
-        {
+        public static int DictionaryHashCode<TKey, TValue>(IDictionary<TKey, TValue> dict) {
             int result = 0;
-            if (dict != null)
-            {
-                foreach (KeyValuePair<TKey, TValue> entry in dict)
-                {
+            if (dict != null) {
+                foreach (KeyValuePair<TKey, TValue> entry in dict) {
                     result += entry.GetHashCode();
                 }
             }
             return result;
         }
 
-        public static bool SetEquals<T>(ISet<T> that, ISet<T> other)
-        {
+        public static bool SetEquals<T>(ISet<T> that, ISet<T> other) {
             if (other == that)
                 return true;
             if (that == null || other == null)
@@ -163,27 +143,23 @@ namespace iText.IO.Util
             return that.SetEquals(other);
         }
 
-        public static int SetHashCode<T>(ISet<T> set)
-        {
+        public static int SetHashCode<T>(ISet<T> set) {
             int result = 0;
-            if (set != null)
-            {
-                foreach (T value in set)
-                {
+            if (set != null) {
+                foreach (T value in set) {
                     result += value.GetHashCode();
                 }
             }
             return result;
         }
 
-        public static bool ArraysEquals<T>(T[] a, T[] a2)
-        {
+        public static bool ArraysEquals<T>(T[] a, T[] a2) {
             if (a == a2)
                 return true;
             if (a == null || a2 == null)
                 return false;
 
-            if (a.Length != a2.Length)
+            if (a.Length != a2.Length) 
                 return false;
 
             for (int i = 0; i < a.Length; i++)
@@ -193,20 +169,17 @@ namespace iText.IO.Util
             return true;
         }
 
-        public static int ArraysHashCode<T>(params T[] a)
-        {
+        public static int ArraysHashCode<T>(params T[] a) {
             if (a == null)
                 return 0;
             int result = 1;
-            foreach (T element in a)
-            {
-                result = 31 * result + element.GetHashCode();
+            foreach (T element in a) {
+                result = 31*result + element.GetHashCode();
             }
             return result;
         }
 
-        public static String ArraysToString<T>(T[] a)
-        {
+        public static String ArraysToString<T>(T[] a) {
             if (a == null)
                 return "null";
             if (a.Length == 0)
@@ -214,8 +187,7 @@ namespace iText.IO.Util
 
             StringBuilder b = new StringBuilder();
             b.Append('[');
-            for (int i = 0; ; i++)
-            {
+            for (int i = 0;; i++) {
                 b.Append(a[i]);
                 if (i == a.Length - 1)
                     return b.Append(']').ToString();
@@ -223,8 +195,7 @@ namespace iText.IO.Util
             }
         }
 
-        public static bool IsValidCodePoint(int codePoint)
-        {
+        public static bool IsValidCodePoint(int codePoint) {
             // see http://www.unicode.org/glossary/#code_point
             return codePoint >= 0 && codePoint <= 0x10FFFF;
         }
@@ -233,8 +204,7 @@ namespace iText.IO.Util
         public static readonly char MIN_HIGH_SURROGATE = '\uD800';
         public static readonly char MIN_LOW_SURROGATE = '\uDC00';
 
-        public static int ToCodePoint(char high, char low)
-        {
+        public static int ToCodePoint(char high, char low) {
             // Optimized form of:
             // return ((high - MIN_HIGH_SURROGATE) << 10)
             //         + (low - MIN_LOW_SURROGATE)
@@ -244,98 +214,80 @@ namespace iText.IO.Util
                                            - MIN_LOW_SURROGATE);
         }
 
-        public static IList<T> ArraysAsList<T>(params T[] a)
-        {
+        public static IList<T> ArraysAsList<T>(params T[] a) {
             return new List<T>(a);
         }
 
-        public static int ArraysBinarySearch<T>(T[] a, T key)
-        {
+        public static int ArraysBinarySearch<T>(T[] a, T key) {
             return Array.BinarySearch(a, key);
         }
 
-        public static String IntegerToString(int i)
-        {
+        public static String IntegerToString(int i) {
             return i.ToString();
         }
 
-        public static double Random()
-        {
+        public static double Random() {
             return new Random().NextDouble();
         }
 
-        public static void Fill(short[] a, short val)
-        {
+        public static void Fill(short[] a, short val) {
             for (int i = 0, len = a.Length; i < len; i++)
                 a[i] = val;
         }
 
-        public static void Fill(float[] a, float val)
-        {
+        public static void Fill(float[] a, float val) {
             for (int i = 0, len = a.Length; i < len; i++)
                 a[i] = val;
         }
 
-        public static void Fill(byte[] a, byte val)
-        {
+        public static void Fill(byte[] a, byte val) {
             for (int i = 0, len = a.Length; i < len; i++)
                 a[i] = val;
         }
 
-        public static void Sort<T>(T[] array)
-        {
+        public static void Sort<T>(T[] array) {
             Sort(array, null);
         }
 
-        public static void Sort<T>(T[] array, IComparer<T> comparer)
-        {
+        public static void Sort<T>(T[] array, IComparer<T> comparer) {
             Sort(array, 0, array.Length, comparer);
         }
 
-        public static void Sort<T>(T[] array, int from, int to)
-        {
+        public static void Sort<T>(T[] array, int from, int to) {
             Sort(array, from, to, null);
         }
 
-        public static void Sort<T>(T[] array, int from, int to, IComparer<T> comparer)
-        {
+        public static void Sort<T>(T[] array, int from, int to, IComparer<T> comparer) {
             SortUtil.MergeSort(array, from, to, comparer);
         }
 
-        public static void Sort(String[] array)
-        {
+        public static void Sort(String[] array) {
             Sort(array, null);
         }
 
-        public static void Sort(String[] array, IComparer<String> comparer)
-        {
+        public static void Sort(String[] array, IComparer<String> comparer) {
             SortUtil.MergeSort(array, comparer);
         }
 
-        public static int IntegerCompare(int a, int b)
-        {
+        public static int IntegerCompare(int a, int b) {
             return a.CompareTo(b);
         }
 
-        public static int FloatCompare(float a, float b)
-        {
+        public static int FloatCompare(float a, float b) {
             return a.CompareTo(b);
         }
 
-        public static int DoubleCompare(double a, double b)
-        {
+        public static int DoubleCompare(double a, double b) {
             return a.CompareTo(b);
         }
 
-        public static T[] ArraysCopyOf<T>(T[] original, int newLength)
-        {
+        public static T[] ArraysCopyOf<T>(T[] original, int newLength) {
             T[] copy = new T[newLength];
             System.Array.Copy(original, 0, copy, 0, Math.Min(original.Length, newLength));
             return copy;
         }
 
-        public static T[] ArraysCopyOfRange<T>(T[] original, int from, int to)
-        {
+        public static T[] ArraysCopyOfRange<T>(T[] original, int from, int to) {
             int newLength = to - from;
             if (newLength < 0)
                 throw new ArgumentException(from + " > " + to);
@@ -344,29 +296,24 @@ namespace iText.IO.Util
             return copy;
         }
 
-        public static Stream CorrectWavFile(Stream stream)
-        {
+        public static Stream CorrectWavFile(Stream stream) {
             String header = "";
-            for (int i = 0; i < 4; i++)
-            {
-                header = header + (char)stream.Read();
+            for (int i = 0; i < 4; i++) {
+                header = header + (char) stream.Read();
             }
             stream.Position = 0;
-            if (header.Equals("RIFF"))
-            {
+            if (header.Equals("RIFF")) {
                 stream.Read();
             }
 
             return stream;
         }
 
-        public static int CharacterDigit(char ch, int radix)
-        {
-            return Convert.ToInt32(new String(new[] { ch }), radix);
+        public static int CharacterDigit(char ch, int radix) {
+            return Convert.ToInt32(new String(new[] {ch}), radix);
         }
 
-        public static String CharToString(char ch)
-        {
+        public static String CharToString(char ch) {
             return ch.ToString();
         }
     }

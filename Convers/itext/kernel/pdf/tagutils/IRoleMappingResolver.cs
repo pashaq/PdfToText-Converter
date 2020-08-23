@@ -40,11 +40,10 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.Kernel.Pdf.Tagging;
 using System;
+using iText.Kernel.Pdf.Tagging;
 
-namespace iText.Kernel.Pdf.Tagutils
-{
+namespace iText.Kernel.Pdf.Tagutils {
     /// <summary>
     /// A helper interface that facilitates roles mapping resolving for the tag structures that are defined for different
     /// PDF document specification versions.
@@ -55,8 +54,7 @@ namespace iText.Kernel.Pdf.Tagutils
     /// <para />
     /// Be aware, that it is explicitly allowed for the document by the specification to have circular or transitive mappings.
     /// </remarks>
-    public interface IRoleMappingResolver
-    {
+    public interface IRoleMappingResolver {
         /// <summary>Defines the current role of the resolver.</summary>
         /// <remarks>
         /// Defines the current role of the resolver. On every successful resolving "step" the role returned by this method

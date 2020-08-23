@@ -41,38 +41,32 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using Common.Logging;
-using iText.IO.Util;
 using System;
 using System.Collections.Generic;
+using Common.Logging;
+using iText.IO.Util;
 
-namespace iText.IO.Font.Cmap
-{
+namespace iText.IO.Font.Cmap {
     /// <summary>This class represents a CMap file.</summary>
     /// <author>Ben Litchfield (ben@benlitchfield.com)</author>
-    public class CMapToUnicode : AbstractCMap
-    {
+    public class CMapToUnicode : AbstractCMap {
         public static iText.IO.Font.Cmap.CMapToUnicode EmptyCMapToUnicodeMap = new iText.IO.Font.Cmap.CMapToUnicode
             (true);
 
         private IDictionary<int, char[]> byteMappings;
 
-        private CMapToUnicode(bool emptyCMap)
-        {
+        private CMapToUnicode(bool emptyCMap) {
             byteMappings = JavaCollectionsUtil.EmptyMap<int, char[]>();
         }
 
         /// <summary>Creates a new instance of CMap.</summary>
-        public CMapToUnicode()
-        {
+        public CMapToUnicode() {
             byteMappings = new Dictionary<int, char[]>();
         }
 
-        public static iText.IO.Font.Cmap.CMapToUnicode GetIdentity()
-        {
+        public static iText.IO.Font.Cmap.CMapToUnicode GetIdentity() {
             iText.IO.Font.Cmap.CMapToUnicode uni = new iText.IO.Font.Cmap.CMapToUnicode();
-            for (int i = 0; i < 65537; i++)
-            {
+            for (int i = 0; i < 65537; i++) {
                 uni.AddChar(i, iText.IO.Util.TextUtil.ConvertFromUtf32(i));
             }
             return uni;
@@ -80,8 +74,7 @@ namespace iText.IO.Font.Cmap
 
         /// <summary>This will tell if this cmap has any two byte mappings.</summary>
         /// <returns>true If there are any two byte mappings, false otherwise.</returns>
-        public virtual bool HasByteMappings()
-        {
+        public virtual bool HasByteMappings() {
             return byteMappings.Count != 0;
         }
 
@@ -90,19 +83,15 @@ namespace iText.IO.Font.Cmap
         /// <param name="offset">The offset into the byte array.</param>
         /// <param name="length">The length of the data we are getting.</param>
         /// <returns>The string that matches the lookup.</returns>
-        public virtual char[] Lookup(byte[] code, int offset, int length)
-        {
+        public virtual char[] Lookup(byte[] code, int offset, int length) {
             char[] result = null;
             int key;
-            if (length == 1)
-            {
+            if (length == 1) {
                 key = code[offset] & 0xff;
                 result = byteMappings.Get(key);
             }
-            else
-            {
-                if (length == 2)
-                {
+            else {
+                if (length == 2) {
                     int intKey = code[offset] & 0xff;
                     intKey <<= 8;
                     intKey += code[offset + 1] & 0xff;
@@ -113,52 +102,41 @@ namespace iText.IO.Font.Cmap
             return result;
         }
 
-        public virtual char[] Lookup(byte[] code)
-        {
+        public virtual char[] Lookup(byte[] code) {
             return Lookup(code, 0, code.Length);
         }
 
-        public virtual char[] Lookup(int code)
-        {
+        public virtual char[] Lookup(int code) {
             return byteMappings.Get(code);
         }
 
-        public virtual ICollection<int> GetCodes()
-        {
+        public virtual ICollection<int> GetCodes() {
             return byteMappings.Keys;
         }
 
-        public virtual IntHashtable CreateDirectMapping()
-        {
+        public virtual IntHashtable CreateDirectMapping() {
             IntHashtable result = new IntHashtable();
-            foreach (KeyValuePair<int, char[]> entry in byteMappings)
-            {
-                if (entry.Value.Length == 1)
-                {
+            foreach (KeyValuePair<int, char[]> entry in byteMappings) {
+                if (entry.Value.Length == 1) {
                     result.Put((int)entry.Key, ConvertToInt(entry.Value));
                 }
             }
             return result;
         }
 
-        public virtual IDictionary<int, int?> CreateReverseMapping()
-        {
+        public virtual IDictionary<int, int?> CreateReverseMapping() {
             IDictionary<int, int?> result = new Dictionary<int, int?>();
-            foreach (KeyValuePair<int, char[]> entry in byteMappings)
-            {
-                if (entry.Value.Length == 1)
-                {
+            foreach (KeyValuePair<int, char[]> entry in byteMappings) {
+                if (entry.Value.Length == 1) {
                     result.Put(ConvertToInt(entry.Value), entry.Key);
                 }
             }
             return result;
         }
 
-        private int ConvertToInt(char[] s)
-        {
+        private int ConvertToInt(char[] s) {
             int value = 0;
-            for (int i = 0; i < s.Length - 1; i++)
-            {
+            for (int i = 0; i < s.Length - 1; i++) {
                 value += s[i];
                 value <<= 8;
             }
@@ -166,55 +144,43 @@ namespace iText.IO.Font.Cmap
             return value;
         }
 
-        internal virtual void AddChar(int cid, char[] uni)
-        {
+        internal virtual void AddChar(int cid, char[] uni) {
             byteMappings.Put(cid, uni);
         }
 
-        internal override void AddChar(String mark, CMapObject code)
-        {
-            if (mark.Length == 1)
-            {
+        internal override void AddChar(String mark, CMapObject code) {
+            if (mark.Length == 1) {
                 char[] dest = CreateCharsFromDoubleBytes((byte[])code.GetValue());
                 byteMappings.Put((int)mark[0], dest);
             }
-            else
-            {
-                if (mark.Length == 2)
-                {
+            else {
+                if (mark.Length == 2) {
                     char[] dest = CreateCharsFromDoubleBytes((byte[])code.GetValue());
                     byteMappings.Put((mark[0] << 8) + mark[1], dest);
                 }
-                else
-                {
+                else {
                     ILog logger = LogManager.GetLogger(typeof(iText.IO.Font.Cmap.CMapToUnicode));
                     logger.Warn(iText.IO.LogMessageConstant.TOUNICODE_CMAP_MORE_THAN_2_BYTES_NOT_SUPPORTED);
                 }
             }
         }
 
-        private char[] CreateCharsFromSingleBytes(byte[] bytes)
-        {
-            if (bytes.Length == 1)
-            {
+        private char[] CreateCharsFromSingleBytes(byte[] bytes) {
+            if (bytes.Length == 1) {
                 return new char[] { (char)(bytes[0] & 0xff) };
             }
-            else
-            {
+            else {
                 char[] chars = new char[bytes.Length];
-                for (int i = 0; i < bytes.Length; i++)
-                {
+                for (int i = 0; i < bytes.Length; i++) {
                     chars[i] = (char)(bytes[i] & 0xff);
                 }
                 return chars;
             }
         }
 
-        private char[] CreateCharsFromDoubleBytes(byte[] bytes)
-        {
+        private char[] CreateCharsFromDoubleBytes(byte[] bytes) {
             char[] chars = new char[bytes.Length / 2];
-            for (int i = 0; i < bytes.Length; i += 2)
-            {
+            for (int i = 0; i < bytes.Length; i += 2) {
                 chars[i / 2] = (char)(((bytes[i] & 0xff) << 8) + (bytes[i + 1] & 0xff));
             }
             return chars;

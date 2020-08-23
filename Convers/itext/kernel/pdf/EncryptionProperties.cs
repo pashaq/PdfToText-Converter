@@ -41,14 +41,12 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using Org.BouncyCastle.X509;
 using System.Security.Cryptography;
+using Org.BouncyCastle.X509;
 
-namespace iText.Kernel.Pdf
-{
+namespace iText.Kernel.Pdf {
     /// <summary>Allows configuration of output PDF encryption.</summary>
-    public class EncryptionProperties
-    {
+    public class EncryptionProperties {
         protected internal int encryptionAlgorithm;
 
         // StandardEncryption properties
@@ -123,16 +121,13 @@ namespace iText.Kernel.Pdf
         /// <see cref="EncryptionProperties"/>
         /// </returns>
         public virtual EncryptionProperties SetStandardEncryption(byte[] userPassword, byte[] ownerPassword, int permissions
-            , int encryptionAlgorithm)
-        {
+            , int encryptionAlgorithm) {
             ClearEncryption();
             this.userPassword = userPassword;
-            if (ownerPassword != null)
-            {
+            if (ownerPassword != null) {
                 this.ownerPassword = ownerPassword;
             }
-            else
-            {
+            else {
                 this.ownerPassword = new byte[16];
                 RandomBytes(this.ownerPassword);
             }
@@ -200,8 +195,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="EncryptionProperties"/>
         /// </returns>
         public virtual EncryptionProperties SetPublicKeyEncryption(X509Certificate[] certs, int[] permissions, int
-             encryptionAlgorithm)
-        {
+             encryptionAlgorithm) {
             ClearEncryption();
             this.publicCertificates = certs;
             this.publicKeyEncryptPermissions = permissions;
@@ -209,26 +203,22 @@ namespace iText.Kernel.Pdf
             return this;
         }
 
-        internal virtual bool IsStandardEncryptionUsed()
-        {
+        internal virtual bool IsStandardEncryptionUsed() {
             return ownerPassword != null;
         }
 
-        internal virtual bool IsPublicKeyEncryptionUsed()
-        {
+        internal virtual bool IsPublicKeyEncryptionUsed() {
             return publicCertificates != null;
         }
 
-        private void ClearEncryption()
-        {
+        private void ClearEncryption() {
             this.publicCertificates = null;
             this.publicKeyEncryptPermissions = null;
             this.userPassword = null;
             this.ownerPassword = null;
         }
 
-        private static void RandomBytes(byte[] bytes)
-        {
+        private static void RandomBytes(byte[] bytes) {
             RandomNumberGenerator.Create().GetBytes(bytes);
         }
     }

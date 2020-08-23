@@ -43,58 +43,45 @@ address: sales@itextpdf.com
 */
 using System;
 using System.Collections.Generic;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Navigation
-{
-    public abstract class PdfDestination : PdfObjectWrapper<PdfObject>
-    {
+namespace iText.Kernel.Pdf.Navigation {
+    public abstract class PdfDestination : PdfObjectWrapper<PdfObject> {
         protected internal PdfDestination(PdfObject pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
         public abstract PdfObject GetDestinationPage(IDictionary<String, PdfObject> names);
 
-        public static iText.Kernel.Pdf.Navigation.PdfDestination MakeDestination(PdfObject pdfObject)
-        {
-            if (pdfObject.GetObjectType() == PdfObject.STRING)
-            {
+        public static iText.Kernel.Pdf.Navigation.PdfDestination MakeDestination(PdfObject pdfObject) {
+            if (pdfObject.GetObjectType() == PdfObject.STRING) {
                 return new PdfStringDestination((PdfString)pdfObject);
             }
-            else
-            {
-                if (pdfObject.GetObjectType() == PdfObject.NAME)
-                {
+            else {
+                if (pdfObject.GetObjectType() == PdfObject.NAME) {
                     return new PdfNamedDestination((PdfName)pdfObject);
                 }
-                else
-                {
-                    if (pdfObject.GetObjectType() == PdfObject.ARRAY)
-                    {
+                else {
+                    if (pdfObject.GetObjectType() == PdfObject.ARRAY) {
                         PdfArray destArray = (PdfArray)pdfObject;
-                        if (destArray.Size() == 0)
-                        {
+                        if (destArray.Size() == 0) {
                             throw new ArgumentException();
                         }
-                        else
-                        {
+                        else {
                             PdfObject firstObj = destArray.Get(0);
                             // In case of explicit destination for remote go-to action this is a page number
-                            if (firstObj.IsNumber())
-                            {
+                            if (firstObj.IsNumber()) {
                                 return new PdfExplicitRemoteGoToDestination(destArray);
                             }
                             // In case of explicit destination for not remote go-to action this is a page dictionary
-                            if (firstObj.IsDictionary() && PdfName.Page.Equals(((PdfDictionary)firstObj).GetAsName(PdfName.Type)))
-                            {
+                            if (firstObj.IsDictionary() && PdfName.Page.Equals(((PdfDictionary)firstObj).GetAsName(PdfName.Type))) {
                                 return new PdfExplicitDestination(destArray);
                             }
                             // In case of structure destination this is a struct element dictionary or a string ID. Type is not required for structure elements
                             return new PdfStructureDestination(destArray);
                         }
                     }
-                    else
-                    {
+                    else {
                         throw new NotSupportedException();
                     }
                 }

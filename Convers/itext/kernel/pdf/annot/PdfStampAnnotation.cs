@@ -42,14 +42,12 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Annot
-{
-    public class PdfStampAnnotation : PdfMarkupAnnotation
-    {
+namespace iText.Kernel.Pdf.Annot {
+    public class PdfStampAnnotation : PdfMarkupAnnotation {
         public PdfStampAnnotation(Rectangle rect)
-            : base(rect)
-        {
+            : base(rect) {
         }
 
         /// <summary>
@@ -66,22 +64,18 @@ namespace iText.Kernel.Pdf.Annot
         /// </param>
         /// <seealso cref="PdfAnnotation.MakeAnnotation(iText.Kernel.Pdf.PdfObject)"/>
         protected internal PdfStampAnnotation(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
-        public override PdfName GetSubtype()
-        {
+        public override PdfName GetSubtype() {
             return PdfName.Stamp;
         }
 
-        public virtual iText.Kernel.Pdf.Annot.PdfStampAnnotation SetStampName(PdfName name)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfStampAnnotation SetStampName(PdfName name) {
             return (iText.Kernel.Pdf.Annot.PdfStampAnnotation)Put(PdfName.Name, name);
         }
 
-        public virtual PdfName GetStampName()
-        {
+        public virtual PdfName GetStampName() {
             return GetPdfObject().GetAsName(PdfName.Name);
         }
 
@@ -96,8 +90,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfName"/>
         /// that specifies the icon for displaying annotation, or null if icon name is not specified.
         /// </returns>
-        public virtual PdfName GetIconName()
-        {
+        public virtual PdfName GetIconName() {
             return GetPdfObject().GetAsName(PdfName.Name);
         }
 
@@ -142,8 +135,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfStampAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfStampAnnotation SetIconName(PdfName name)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfStampAnnotation SetIconName(PdfName name) {
             return (iText.Kernel.Pdf.Annot.PdfStampAnnotation)Put(PdfName.Name, name);
         }
     }

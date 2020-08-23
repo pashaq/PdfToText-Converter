@@ -43,12 +43,10 @@ address: sales@itextpdf.com
 */
 using System.Collections.Generic;
 
-namespace iText.IO.Font.Otf
-{
+namespace iText.IO.Font.Otf {
     /// <summary>LookupType 4: Ligature Substitution Subtable</summary>
     /// <author>psoares</author>
-    public class GsubLookupType4 : OpenTableLookup
-    {
+    public class GsubLookupType4 : OpenTableLookup {
         /// <summary>The key is the first character.</summary>
         /// <remarks>
         /// The key is the first character. The first element in the int array is the
@@ -57,87 +55,72 @@ namespace iText.IO.Font.Otf
         private IDictionary<int, IList<int[]>> ligatures;
 
         public GsubLookupType4(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations)
-            : base(openReader, lookupFlag, subTableLocations)
-        {
+            : base(openReader, lookupFlag, subTableLocations) {
             ligatures = new Dictionary<int, IList<int[]>>();
             ReadSubTables();
         }
 
-        public override bool TransformOne(GlyphLine line)
-        {
+        public override bool TransformOne(GlyphLine line) {
             //TODO >
-            if (line.idx >= line.end)
-            {
+            if (line.idx >= line.end) {
                 return false;
             }
             bool changed = false;
             Glyph g = line.Get(line.idx);
             bool match = false;
-            if (ligatures.ContainsKey(g.GetCode()) && !openReader.IsSkip(g.GetCode(), lookupFlag))
-            {
+            if (ligatures.ContainsKey(g.GetCode()) && !openReader.IsSkip(g.GetCode(), lookupFlag)) {
                 OpenTableLookup.GlyphIndexer gidx = new OpenTableLookup.GlyphIndexer();
                 gidx.line = line;
                 IList<int[]> ligs = ligatures.Get(g.GetCode());
-                foreach (int[] lig in ligs)
-                {
+                foreach (int[] lig in ligs) {
                     match = true;
                     gidx.idx = line.idx;
-                    for (int j = 1; j < lig.Length; ++j)
-                    {
+                    for (int j = 1; j < lig.Length; ++j) {
                         gidx.NextGlyph(openReader, lookupFlag);
-                        if (gidx.glyph == null || gidx.glyph.GetCode() != lig[j])
-                        {
+                        if (gidx.glyph == null || gidx.glyph.GetCode() != lig[j]) {
                             match = false;
                             break;
                         }
                     }
-                    if (match)
-                    {
+                    if (match) {
                         line.SubstituteManyToOne(openReader, lookupFlag, lig.Length - 1, lig[0]);
                         break;
                     }
                 }
             }
-            if (match)
-            {
+            if (match) {
                 changed = true;
             }
             line.idx++;
             return changed;
         }
 
-        protected internal override void ReadSubTable(int subTableLocation)
-        {
+        protected internal override void ReadSubTable(int subTableLocation) {
             openReader.rf.Seek(subTableLocation);
             // subformat - always 1
             openReader.rf.ReadShort();
             int coverage = openReader.rf.ReadUnsignedShort() + subTableLocation;
             int ligSetCount = openReader.rf.ReadUnsignedShort();
             int[] ligatureSet = new int[ligSetCount];
-            for (int k = 0; k < ligSetCount; ++k)
-            {
+            for (int k = 0; k < ligSetCount; ++k) {
                 ligatureSet[k] = openReader.rf.ReadUnsignedShort() + subTableLocation;
             }
             IList<int> coverageGlyphIds = openReader.ReadCoverageFormat(coverage);
-            for (int k = 0; k < ligSetCount; ++k)
-            {
+            for (int k = 0; k < ligSetCount; ++k) {
                 openReader.rf.Seek(ligatureSet[k]);
                 int ligatureCount = openReader.rf.ReadUnsignedShort();
                 int[] ligature = new int[ligatureCount];
-                for (int j = 0; j < ligatureCount; ++j)
-                {
+                for (int j = 0; j < ligatureCount; ++j) {
                     ligature[j] = openReader.rf.ReadUnsignedShort() + ligatureSet[k];
                 }
                 IList<int[]> components = new List<int[]>(ligatureCount);
-                for (int j = 0; j < ligatureCount; ++j)
-                {
+                for (int j = 0; j < ligatureCount; ++j) {
                     openReader.rf.Seek(ligature[j]);
                     int ligGlyph = openReader.rf.ReadUnsignedShort();
                     int compCount = openReader.rf.ReadUnsignedShort();
                     int[] component = new int[compCount];
                     component[0] = ligGlyph;
-                    for (int i = 1; i < compCount; ++i)
-                    {
+                    for (int i = 1; i < compCount; ++i) {
                         component[i] = openReader.rf.ReadUnsignedShort();
                     }
                     components.Add(component);

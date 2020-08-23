@@ -40,11 +40,9 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-namespace iText.Kernel.Pdf.Annot.DA
-{
+namespace iText.Kernel.Pdf.Annot.DA {
     /// <summary>Extended annotation fonts that are supported only by Acrobat</summary>
-    public enum ExtendedAnnotationFont
-    {
+    public enum ExtendedAnnotationFont {
         HYSMyeongJoMedium,
         HYGoThicMedium,
         HeiseiKakuGoW5,

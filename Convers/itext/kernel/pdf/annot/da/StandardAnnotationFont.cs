@@ -40,11 +40,9 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-namespace iText.Kernel.Pdf.Annot.DA
-{
+namespace iText.Kernel.Pdf.Annot.DA {
     /// <summary>Standard fonts that can be used in pdf annotation</summary>
-    public enum StandardAnnotationFont
-    {
+    public enum StandardAnnotationFont {
         CourierBoldOblique,
         CourierBold,
         CourierOblique,

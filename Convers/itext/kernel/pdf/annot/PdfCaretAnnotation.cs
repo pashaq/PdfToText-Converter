@@ -42,14 +42,12 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Annot
-{
-    public class PdfCaretAnnotation : PdfMarkupAnnotation
-    {
+namespace iText.Kernel.Pdf.Annot {
+    public class PdfCaretAnnotation : PdfMarkupAnnotation {
         public PdfCaretAnnotation(Rectangle rect)
-            : base(rect)
-        {
+            : base(rect) {
         }
 
         /// <summary>
@@ -66,22 +64,18 @@ namespace iText.Kernel.Pdf.Annot
         /// </param>
         /// <seealso cref="PdfAnnotation.MakeAnnotation(iText.Kernel.Pdf.PdfObject)"/>
         protected internal PdfCaretAnnotation(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
-        public override PdfName GetSubtype()
-        {
+        public override PdfName GetSubtype() {
             return PdfName.Caret;
         }
 
-        public virtual iText.Kernel.Pdf.Annot.PdfCaretAnnotation SetSymbol(PdfString symbol)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfCaretAnnotation SetSymbol(PdfString symbol) {
             return (iText.Kernel.Pdf.Annot.PdfCaretAnnotation)Put(PdfName.Sy, symbol);
         }
 
-        public virtual PdfString GetSymbol()
-        {
+        public virtual PdfString GetSymbol() {
             return GetPdfObject().GetAsString(PdfName.Sy);
         }
 
@@ -96,8 +90,7 @@ namespace iText.Kernel.Pdf.Annot
         /// differences in default user space between the left, top, right, and bottom coordinates of Rect and those
         /// of the inner rectangle, respectively.
         /// </returns>
-        public virtual PdfArray GetRectangleDifferences()
-        {
+        public virtual PdfArray GetRectangleDifferences() {
             return GetPdfObject().GetAsArray(PdfName.RD);
         }
 
@@ -119,8 +112,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfCaretAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfCaretAnnotation SetRectangleDifferences(PdfArray rect)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfCaretAnnotation SetRectangleDifferences(PdfArray rect) {
             return (iText.Kernel.Pdf.Annot.PdfCaretAnnotation)Put(PdfName.RD, rect);
         }
     }

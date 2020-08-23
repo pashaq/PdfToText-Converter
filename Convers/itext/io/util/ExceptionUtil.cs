@@ -42,21 +42,17 @@ address: sales@itextpdf.com
 */
 using System;
 
-namespace iText.IO.Util
-{
+namespace iText.IO.Util {
     /// <summary>This file is a helper class for internal usage only.</summary>
     /// <remarks>
     /// This file is a helper class for internal usage only.
     /// Be aware that its API and functionality may be changed in future.
     /// </remarks>
-    public sealed class ExceptionUtil
-    {
-        private ExceptionUtil()
-        {
+    public sealed class ExceptionUtil {
+        private ExceptionUtil() {
         }
 
-        public static bool IsOutOfRange(Exception e)
-        {
+        public static bool IsOutOfRange(Exception e) {
             return e is IndexOutOfRangeException || e is ArgumentOutOfRangeException;
         }
     }

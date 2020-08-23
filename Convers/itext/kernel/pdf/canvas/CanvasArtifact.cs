@@ -41,9 +41,9 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Canvas
-{
+namespace iText.Kernel.Pdf.Canvas {
     /// <summary>
     /// A subclass of
     /// <see cref="CanvasTag"/>
@@ -58,8 +58,7 @@ namespace iText.Kernel.Pdf.Canvas
     /// Examples are page headers, layout features, etc. Screen readers can choose to
     /// ignore Artifacts.
     /// </remarks>
-    public class CanvasArtifact : CanvasTag
-    {
+    public class CanvasArtifact : CanvasTag {
         /// <summary>
         /// Creates a CanvasArtifact object, which is a
         /// <see cref="CanvasTag"/>
@@ -68,8 +67,7 @@ namespace iText.Kernel.Pdf.Canvas
         /// <see cref="iText.Kernel.Pdf.PdfName.Artifact">Artifact</see>.
         /// </summary>
         public CanvasArtifact()
-            : base(PdfName.Artifact)
-        {
+            : base(PdfName.Artifact) {
         }
     }
 }

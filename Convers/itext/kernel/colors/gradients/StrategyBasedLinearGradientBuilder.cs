@@ -20,17 +20,15 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-using iText.Kernel.Geom;
 using System;
+using iText.Kernel.Geom;
 
-namespace iText.Kernel.Colors.Gradients
-{
+namespace iText.Kernel.Colors.Gradients {
     /// <summary>
     /// The linear gradient builder with automatic coordinates vector evaluation for the target filled
     /// area based on configured strategy
     /// </summary>
-    public class StrategyBasedLinearGradientBuilder : AbstractLinearGradientBuilder
-    {
+    public class StrategyBasedLinearGradientBuilder : AbstractLinearGradientBuilder {
         private double rotateVectorAngle = 0d;
 
         private StrategyBasedLinearGradientBuilder.GradientStrategy gradientStrategy = StrategyBasedLinearGradientBuilder.GradientStrategy
@@ -39,8 +37,7 @@ namespace iText.Kernel.Colors.Gradients
         private bool isCentralRotationAngleStrategy = false;
 
         /// <summary>Create a new instance of the builder</summary>
-        public StrategyBasedLinearGradientBuilder()
-        {
+        public StrategyBasedLinearGradientBuilder() {
         }
 
         /// <summary>
@@ -56,8 +53,7 @@ namespace iText.Kernel.Colors.Gradients
         /// <param name="radians">the radians value to rotate the coordinates vector</param>
         /// <returns>the current builder instance</returns>
         public virtual iText.Kernel.Colors.Gradients.StrategyBasedLinearGradientBuilder SetGradientDirectionAsCentralRotationAngle
-            (double radians)
-        {
+            (double radians) {
             this.rotateVectorAngle = radians;
             this.isCentralRotationAngleStrategy = true;
             return this;
@@ -67,8 +63,7 @@ namespace iText.Kernel.Colors.Gradients
         /// <param name="gradientStrategy">the strategy to set</param>
         /// <returns>the current builder instance</returns>
         public virtual iText.Kernel.Colors.Gradients.StrategyBasedLinearGradientBuilder SetGradientDirectionAsStrategy
-            (StrategyBasedLinearGradientBuilder.GradientStrategy gradientStrategy)
-        {
+            (StrategyBasedLinearGradientBuilder.GradientStrategy gradientStrategy) {
             this.gradientStrategy = gradientStrategy != null ? gradientStrategy : StrategyBasedLinearGradientBuilder.GradientStrategy
                 .TO_BOTTOM;
             this.isCentralRotationAngleStrategy = false;
@@ -77,15 +72,13 @@ namespace iText.Kernel.Colors.Gradients
 
         /// <summary>Get the last set rotate vector angle</summary>
         /// <returns>the last set rotate vector angle</returns>
-        public virtual double GetRotateVectorAngle()
-        {
+        public virtual double GetRotateVectorAngle() {
             return rotateVectorAngle;
         }
 
         /// <summary>Get the last set predefined strategy</summary>
         /// <returns>the last set predefined strategy</returns>
-        public virtual StrategyBasedLinearGradientBuilder.GradientStrategy GetGradientStrategy()
-        {
+        public virtual StrategyBasedLinearGradientBuilder.GradientStrategy GetGradientStrategy() {
             return gradientStrategy;
         }
 
@@ -95,16 +88,13 @@ namespace iText.Kernel.Colors.Gradients
         /// <see langword="true"/>
         /// if the last strategy that has been set is a custom rotation angle
         /// </returns>
-        public virtual bool IsCentralRotationAngleStrategy()
-        {
+        public virtual bool IsCentralRotationAngleStrategy() {
             return isCentralRotationAngleStrategy;
         }
 
         protected internal override Point[] GetGradientVector(Rectangle targetBoundingBox, AffineTransform contextTransform
-            )
-        {
-            if (targetBoundingBox == null)
-            {
+            ) {
+            if (targetBoundingBox == null) {
                 return null;
             }
             return this.isCentralRotationAngleStrategy ? BuildCentralRotationCoordinates(targetBoundingBox, this.rotateVectorAngle
@@ -112,62 +102,51 @@ namespace iText.Kernel.Colors.Gradients
         }
 
         private static Point[] BuildCoordinatesWithGradientStrategy(Rectangle targetBoundingBox, StrategyBasedLinearGradientBuilder.GradientStrategy
-             gradientStrategy)
-        {
+             gradientStrategy) {
             double xCenter = targetBoundingBox.GetX() + targetBoundingBox.GetWidth() / 2;
             double yCenter = targetBoundingBox.GetY() + targetBoundingBox.GetHeight() / 2;
-            switch (gradientStrategy)
-            {
-                case StrategyBasedLinearGradientBuilder.GradientStrategy.TO_TOP:
-                    {
-                        return CreateCoordinates(xCenter, targetBoundingBox.GetBottom(), xCenter, targetBoundingBox.GetTop());
-                    }
+            switch (gradientStrategy) {
+                case StrategyBasedLinearGradientBuilder.GradientStrategy.TO_TOP: {
+                    return CreateCoordinates(xCenter, targetBoundingBox.GetBottom(), xCenter, targetBoundingBox.GetTop());
+                }
 
-                case StrategyBasedLinearGradientBuilder.GradientStrategy.TO_LEFT:
-                    {
-                        return CreateCoordinates(targetBoundingBox.GetRight(), yCenter, targetBoundingBox.GetLeft(), yCenter);
-                    }
+                case StrategyBasedLinearGradientBuilder.GradientStrategy.TO_LEFT: {
+                    return CreateCoordinates(targetBoundingBox.GetRight(), yCenter, targetBoundingBox.GetLeft(), yCenter);
+                }
 
-                case StrategyBasedLinearGradientBuilder.GradientStrategy.TO_RIGHT:
-                    {
-                        return CreateCoordinates(targetBoundingBox.GetLeft(), yCenter, targetBoundingBox.GetRight(), yCenter);
-                    }
+                case StrategyBasedLinearGradientBuilder.GradientStrategy.TO_RIGHT: {
+                    return CreateCoordinates(targetBoundingBox.GetLeft(), yCenter, targetBoundingBox.GetRight(), yCenter);
+                }
 
-                case StrategyBasedLinearGradientBuilder.GradientStrategy.TO_TOP_LEFT:
-                    {
-                        return BuildToCornerCoordinates(targetBoundingBox, new Point(targetBoundingBox.GetRight(), targetBoundingBox
-                            .GetTop()));
-                    }
+                case StrategyBasedLinearGradientBuilder.GradientStrategy.TO_TOP_LEFT: {
+                    return BuildToCornerCoordinates(targetBoundingBox, new Point(targetBoundingBox.GetRight(), targetBoundingBox
+                        .GetTop()));
+                }
 
-                case StrategyBasedLinearGradientBuilder.GradientStrategy.TO_TOP_RIGHT:
-                    {
-                        return BuildToCornerCoordinates(targetBoundingBox, new Point(targetBoundingBox.GetRight(), targetBoundingBox
-                            .GetBottom()));
-                    }
+                case StrategyBasedLinearGradientBuilder.GradientStrategy.TO_TOP_RIGHT: {
+                    return BuildToCornerCoordinates(targetBoundingBox, new Point(targetBoundingBox.GetRight(), targetBoundingBox
+                        .GetBottom()));
+                }
 
-                case StrategyBasedLinearGradientBuilder.GradientStrategy.TO_BOTTOM_RIGHT:
-                    {
-                        return BuildToCornerCoordinates(targetBoundingBox, new Point(targetBoundingBox.GetLeft(), targetBoundingBox
-                            .GetBottom()));
-                    }
+                case StrategyBasedLinearGradientBuilder.GradientStrategy.TO_BOTTOM_RIGHT: {
+                    return BuildToCornerCoordinates(targetBoundingBox, new Point(targetBoundingBox.GetLeft(), targetBoundingBox
+                        .GetBottom()));
+                }
 
-                case StrategyBasedLinearGradientBuilder.GradientStrategy.TO_BOTTOM_LEFT:
-                    {
-                        return BuildToCornerCoordinates(targetBoundingBox, new Point(targetBoundingBox.GetLeft(), targetBoundingBox
-                            .GetTop()));
-                    }
+                case StrategyBasedLinearGradientBuilder.GradientStrategy.TO_BOTTOM_LEFT: {
+                    return BuildToCornerCoordinates(targetBoundingBox, new Point(targetBoundingBox.GetLeft(), targetBoundingBox
+                        .GetTop()));
+                }
 
                 case StrategyBasedLinearGradientBuilder.GradientStrategy.TO_BOTTOM:
-                default:
-                    {
-                        // default case is equal to TO_BOTTOM
-                        return CreateCoordinates(xCenter, targetBoundingBox.GetTop(), xCenter, targetBoundingBox.GetBottom());
-                    }
+                default: {
+                    // default case is equal to TO_BOTTOM
+                    return CreateCoordinates(xCenter, targetBoundingBox.GetTop(), xCenter, targetBoundingBox.GetBottom());
+                }
             }
         }
 
-        private static Point[] BuildCentralRotationCoordinates(Rectangle targetBoundingBox, double angle)
-        {
+        private static Point[] BuildCentralRotationCoordinates(Rectangle targetBoundingBox, double angle) {
             double xCenter = targetBoundingBox.GetX() + targetBoundingBox.GetWidth() / 2;
             AffineTransform rotateInstance = AffineTransform.GetRotateInstance(angle, xCenter, targetBoundingBox.GetY(
                 ) + targetBoundingBox.GetHeight() / 2);
@@ -175,28 +154,23 @@ namespace iText.Kernel.Colors.Gradients
         }
 
         private static Point[] BuildToCornerCoordinates(Rectangle targetBoundingBox, Point gradientCenterLineRightCorner
-            )
-        {
+            ) {
             AffineTransform transform = BuildToCornerTransform(new Point(targetBoundingBox.GetX() + targetBoundingBox.
                 GetWidth() / 2, targetBoundingBox.GetY() + targetBoundingBox.GetHeight() / 2), gradientCenterLineRightCorner
                 );
             return BuildCoordinates(targetBoundingBox, transform);
         }
 
-        private static AffineTransform BuildToCornerTransform(Point center, Point gradientCenterLineRightCorner)
-        {
+        private static AffineTransform BuildToCornerTransform(Point center, Point gradientCenterLineRightCorner) {
             double scale = 1d / (center.Distance(gradientCenterLineRightCorner));
             double sin = (gradientCenterLineRightCorner.GetY() - center.GetY()) * scale;
             double cos = (gradientCenterLineRightCorner.GetX() - center.GetX()) * scale;
-            if (Math.Abs(cos) < ZERO_EPSILON)
-            {
+            if (Math.Abs(cos) < ZERO_EPSILON) {
                 cos = 0d;
                 sin = sin > 0d ? 1d : -1d;
             }
-            else
-            {
-                if (Math.Abs(sin) < ZERO_EPSILON)
-                {
+            else {
+                if (Math.Abs(sin) < ZERO_EPSILON) {
                     sin = 0d;
                     cos = cos > 0d ? 1d : -1d;
                 }
@@ -206,8 +180,7 @@ namespace iText.Kernel.Colors.Gradients
             return new AffineTransform(cos, sin, -sin, cos, m02, m12);
         }
 
-        private static Point[] BuildCoordinates(Rectangle targetBoundingBox, AffineTransform transformation)
-        {
+        private static Point[] BuildCoordinates(Rectangle targetBoundingBox, AffineTransform transformation) {
             double xCenter = targetBoundingBox.GetX() + targetBoundingBox.GetWidth() / 2;
             Point start = transformation.Transform(new Point(xCenter, targetBoundingBox.GetBottom()), null);
             Point end = transformation.Transform(new Point(xCenter, targetBoundingBox.GetTop()), null);
@@ -216,14 +189,12 @@ namespace iText.Kernel.Colors.Gradients
             return CreateCoordinatesForNewDomain(targetDomain, baseVector);
         }
 
-        private static Point[] CreateCoordinates(double x1, double y1, double x2, double y2)
-        {
+        private static Point[] CreateCoordinates(double x1, double y1, double x2, double y2) {
             return new Point[] { new Point(x1, y1), new Point(x2, y2) };
         }
 
         /// <summary>Specifies the predefined strategies</summary>
-        public enum GradientStrategy
-        {
+        public enum GradientStrategy {
             /// <summary>Gradient vector from the middle of the top side to the middle of the bottom side</summary>
             TO_BOTTOM,
             /// <summary>

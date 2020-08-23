@@ -27,12 +27,11 @@
 //        SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //        http://www.adobe.com/devnet/xmp/library/eula-xmp-library-java.html
+using System;
 using iText.Kernel.XMP.Options;
 using iText.Kernel.XMP.Properties;
-using System;
 
-namespace iText.Kernel.XMP
-{
+namespace iText.Kernel.XMP {
     /// <summary>This class represents the set of XMP metadata as a DOM representation.</summary>
     /// <remarks>
     /// This class represents the set of XMP metadata as a DOM representation. It has methods to read and
@@ -44,7 +43,7 @@ namespace iText.Kernel.XMP
 #if !NETSTANDARD1_6
  : ICloneable
 #endif
-    {
+ {
         // ---------------------------------------------------------------------------------------------
         // Basic property manipulation functions
         /// <summary>

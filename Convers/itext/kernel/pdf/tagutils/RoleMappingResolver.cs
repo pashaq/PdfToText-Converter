@@ -40,48 +40,40 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.Kernel.Pdf.Tagging;
 using System;
+using iText.Kernel.Pdf;
+using iText.Kernel.Pdf.Tagging;
 
-namespace iText.Kernel.Pdf.Tagutils
-{
-    internal class RoleMappingResolver : IRoleMappingResolver
-    {
+namespace iText.Kernel.Pdf.Tagutils {
+    internal class RoleMappingResolver : IRoleMappingResolver {
         private PdfName currRole;
 
         private PdfDictionary roleMap;
 
-        internal RoleMappingResolver(String role, PdfDocument document)
-        {
+        internal RoleMappingResolver(String role, PdfDocument document) {
             this.currRole = PdfStructTreeRoot.ConvertRoleToPdfName(role);
             this.roleMap = document.GetStructTreeRoot().GetRoleMap();
         }
 
-        public virtual String GetRole()
-        {
+        public virtual String GetRole() {
             return currRole.GetValue();
         }
 
-        public virtual PdfNamespace GetNamespace()
-        {
+        public virtual PdfNamespace GetNamespace() {
             return null;
         }
 
-        public virtual bool CurrentRoleIsStandard()
-        {
+        public virtual bool CurrentRoleIsStandard() {
             return StandardNamespaces.RoleBelongsToStandardNamespace(currRole.GetValue(), StandardNamespaces.PDF_1_7);
         }
 
-        public virtual bool CurrentRoleShallBeMappedToStandard()
-        {
+        public virtual bool CurrentRoleShallBeMappedToStandard() {
             return !CurrentRoleIsStandard();
         }
 
-        public virtual bool ResolveNextMapping()
-        {
+        public virtual bool ResolveNextMapping() {
             PdfName mappedRole = roleMap.GetAsName(currRole);
-            if (mappedRole == null)
-            {
+            if (mappedRole == null) {
                 return false;
             }
             currRole = mappedRole;

@@ -42,21 +42,20 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using Common.Logging;
+using iText.Kernel;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Filters
-{
+namespace iText.Kernel.Pdf.Filters {
     /// <summary>Handles a DCTDecode filter.</summary>
     /// <remarks>
     /// Handles a DCTDecode filter. For now no modification applies and the data would be return as is
     /// (in JPEG baseline format).
     /// </remarks>
-    public class DctDecodeFilter : IFilterHandler
-    {
+    public class DctDecodeFilter : IFilterHandler {
         private static readonly ILog LOGGER = LogManager.GetLogger(typeof(DctDecodeFilter));
 
         public virtual byte[] Decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary
-            )
-        {
+            ) {
             LOGGER.Info(KernelLogMessageConstant.DCTDECODE_FILTER_DECODING);
             return b;
         }

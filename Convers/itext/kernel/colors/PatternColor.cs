@@ -41,50 +41,42 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.Kernel.Pdf.Colorspace;
 using System;
+using iText.Kernel.Pdf.Colorspace;
 
-namespace iText.Kernel.Colors
-{
-    public class PatternColor : Color
-    {
+namespace iText.Kernel.Colors {
+    public class PatternColor : Color {
         private PdfPattern pattern;
 
         // The underlying color for uncolored patterns. Will be null for colored ones.
         private Color underlyingColor;
 
         public PatternColor(PdfPattern coloredPattern)
-            : base(new PdfSpecialCs.Pattern(), null)
-        {
+            : base(new PdfSpecialCs.Pattern(), null) {
             this.pattern = coloredPattern;
         }
 
         public PatternColor(PdfPattern.Tiling uncoloredPattern, Color color)
-            : this(uncoloredPattern, color.GetColorSpace(), color.GetColorValue())
-        {
+            : this(uncoloredPattern, color.GetColorSpace(), color.GetColorValue()) {
         }
 
         public PatternColor(PdfPattern.Tiling uncoloredPattern, PdfColorSpace underlyingCS, float[] colorValue)
             : this(uncoloredPattern, new PdfSpecialCs.UncoloredTilingPattern(EnsureNotPatternCs(underlyingCS)), colorValue
-                )
-        {
+                ) {
         }
 
         public PatternColor(PdfPattern.Tiling uncoloredPattern, PdfSpecialCs.UncoloredTilingPattern uncoloredTilingCS
             , float[] colorValue)
-            : base(uncoloredTilingCS, colorValue)
-        {
+            : base(uncoloredTilingCS, colorValue) {
             this.pattern = uncoloredPattern;
             this.underlyingColor = MakeColor(uncoloredTilingCS.GetUnderlyingColorSpace(), colorValue);
         }
 
-        public virtual PdfPattern GetPattern()
-        {
+        public virtual PdfPattern GetPattern() {
             return pattern;
         }
 
-        public override void SetColorValue(float[] value)
-        {
+        public override void SetColorValue(float[] value) {
             base.SetColorValue(value);
             underlyingColor.SetColorValue(value);
         }
@@ -105,15 +97,12 @@ namespace iText.Kernel.Colors
         /// <param name="pattern">a pattern to be set for this instance.</param>
         [System.ObsoleteAttribute(@"To be removed in iText 7.2. In order to change pattern one shall create a new PatternColor ."
             )]
-        public virtual void SetPattern(PdfPattern pattern)
-        {
+        public virtual void SetPattern(PdfPattern pattern) {
             this.pattern = pattern;
         }
 
-        public override bool Equals(Object o)
-        {
-            if (!base.Equals(o))
-            {
+        public override bool Equals(Object o) {
+            if (!base.Equals(o)) {
                 return false;
             }
             iText.Kernel.Colors.PatternColor color = (iText.Kernel.Colors.PatternColor)o;
@@ -121,10 +110,8 @@ namespace iText.Kernel.Colors
                 ) : color.underlyingColor == null);
         }
 
-        private static PdfColorSpace EnsureNotPatternCs(PdfColorSpace underlyingCS)
-        {
-            if (underlyingCS is PdfSpecialCs.Pattern)
-            {
+        private static PdfColorSpace EnsureNotPatternCs(PdfColorSpace underlyingCS) {
+            if (underlyingCS is PdfSpecialCs.Pattern) {
                 throw new ArgumentException("underlyingCS");
             }
             return underlyingCS;

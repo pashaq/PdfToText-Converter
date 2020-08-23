@@ -43,11 +43,10 @@ address: sales@itextpdf.com
 */
 using System;
 using System.IO;
+using iText.Kernel;
 
-namespace iText.Kernel.Crypto
-{
-    public class OutputStreamAesEncryption : OutputStreamEncryption
-    {
+namespace iText.Kernel.Crypto {
+    public class OutputStreamAesEncryption : OutputStreamEncryption {
         protected internal AESCipher cipher;
 
         private bool finished;
@@ -65,18 +64,15 @@ namespace iText.Kernel.Crypto
         /// <param name="off">offset of the key in the byte array</param>
         /// <param name="len">the length of the key in the byte array</param>
         public OutputStreamAesEncryption(Stream @out, byte[] key, int off, int len)
-            : base(@out)
-        {
+            : base(@out) {
             byte[] iv = IVGenerator.GetIV();
             byte[] nkey = new byte[len];
             Array.Copy(key, off, nkey, 0, len);
             cipher = new AESCipher(true, nkey, iv);
-            try
-            {
+            try {
                 Write(iv);
             }
-            catch (System.IO.IOException e)
-            {
+            catch (System.IO.IOException e) {
                 throw new PdfException(PdfException.PdfEncryption, e);
             }
         }
@@ -92,8 +88,7 @@ namespace iText.Kernel.Crypto
         /// </param>
         /// <param name="key">the byte array which is the key for encryption</param>
         public OutputStreamAesEncryption(Stream @out, byte[] key)
-            : this(@out, key, 0, key.Length)
-        {
+            : this(@out, key, 0, key.Length) {
         }
 
         /// <summary>
@@ -155,28 +150,22 @@ namespace iText.Kernel.Crypto
         /// <param name="b">the data.</param>
         /// <param name="off">the start offset in the data.</param>
         /// <param name="len">the number of bytes to write.</param>
-        public override void Write(byte[] b, int off, int len)
-        {
+        public override void Write(byte[] b, int off, int len) {
             byte[] b2 = cipher.Update(b, off, len);
-            if (b2 == null || b2.Length == 0)
-            {
+            if (b2 == null || b2.Length == 0) {
                 return;
             }
             @out.Write(b2, 0, b2.Length);
         }
 
-        public override void Finish()
-        {
-            if (!finished)
-            {
+        public override void Finish() {
+            if (!finished) {
                 finished = true;
                 byte[] b = cipher.DoFinal();
-                try
-                {
+                try {
                     @out.Write(b, 0, b.Length);
                 }
-                catch (System.IO.IOException e)
-                {
+                catch (System.IO.IOException e) {
                     throw new PdfException(PdfException.PdfEncryption, e);
                 }
             }

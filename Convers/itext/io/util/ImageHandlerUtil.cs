@@ -43,10 +43,8 @@ address: sales@itextpdf.com
 */
 using System;
 
-namespace iText.IO.Util
-{
-    public sealed class ImageHandlerUtil
-    {
+namespace iText.IO.Util {
+    public sealed class ImageHandlerUtil {
         /// <summary>The name of the environment variable with the command to execute Ghostscript operations.</summary>
         public const String GHOSTSCRIPT_ENVIRONMENT_VARIABLE = "ITEXT_GS_EXEC";
 
@@ -82,37 +80,30 @@ namespace iText.IO.Util
 
         private String compareExec;
 
-        public ImageHandlerUtil()
-        {
+        public ImageHandlerUtil() {
             gsExec = SystemUtil.GetEnvironmentVariable(GHOSTSCRIPT_ENVIRONMENT_VARIABLE);
             compareExec = SystemUtil.GetEnvironmentVariable(MAGICK_COMPARE_ENVIRONMENT_VARIABLE);
-            if (gsExec == null)
-            {
+            if (gsExec == null) {
                 gsExec = SystemUtil.GetEnvironmentVariable(GHOSTSCRIPT_ENVIRONMENT_VARIABLE_LEGACY);
             }
-            if (compareExec == null)
-            {
+            if (compareExec == null) {
                 compareExec = SystemUtil.GetEnvironmentVariable(MAGICK_COMPARE_ENVIRONMENT_VARIABLE_LEGACY);
             }
         }
 
-        public void SetGsExec(String newGsExec)
-        {
+        public void SetGsExec(String newGsExec) {
             gsExec = newGsExec;
         }
 
-        public void SetCompareExec(String newCompareExec)
-        {
+        public void SetCompareExec(String newCompareExec) {
             compareExec = newCompareExec;
         }
 
-        public String GetGsExec()
-        {
+        public String GetGsExec() {
             return gsExec;
         }
 
-        public String GetCompareExec()
-        {
+        public String GetCompareExec() {
             return compareExec;
         }
 
@@ -120,8 +111,7 @@ namespace iText.IO.Util
         /// <param name="pdf">Path to the pdf file.</param>
         /// <param name="outDir">Path to the output directory</param>
         /// <param name="image">Path to the generated image</param>
-        public void RunGhostScriptImageGeneration(String pdf, String outDir, String image)
-        {
+        public void RunGhostScriptImageGeneration(String pdf, String outDir, String image) {
             RunGhostScriptImageGeneration(pdf, outDir, image, null);
         }
 
@@ -133,22 +123,18 @@ namespace iText.IO.Util
         /// Number of the required page of pdf to extract as image. Can be null,
         /// if it is required to extract all pages as images
         /// </param>
-        public void RunGhostScriptImageGeneration(String pdf, String outDir, String image, String pageNumber)
-        {
-            if (!IsVersionCommandExecutable(GHOSTSCRIPT_KEYWORD))
-            {
+        public void RunGhostScriptImageGeneration(String pdf, String outDir, String image, String pageNumber) {
+            if (!IsVersionCommandExecutable(GHOSTSCRIPT_KEYWORD)) {
                 throw new ImageHandlerUtil.ImageHandlerExecutionException(this, GS_ENVIRONMENT_VARIABLE_IS_NOT_SPECIFIED);
             }
-            if (!FileUtil.DirectoryExists(outDir))
-            {
+            if (!FileUtil.DirectoryExists(outDir)) {
                 throw new ImageHandlerUtil.ImageHandlerExecutionException(this, CANNOT_OPEN_OUTPUT_DIRECTORY.Replace("<filename>"
                     , pdf));
             }
             pageNumber = (pageNumber == null) ? "" : "-sPageList=<pagelist>".Replace("<pagelist>", pageNumber);
-            String currGsParams = GHOSTSCRIPT_PARAMS.Replace("<pageNumberParam>", pageNumber).Replace("<outputfile>",
+            String currGsParams = GHOSTSCRIPT_PARAMS.Replace("<pageNumberParam>", pageNumber).Replace("<outputfile>", 
                 outDir + image).Replace("<inputfile>", pdf);
-            if (!SystemUtil.RunProcessAndWait(gsExec, currGsParams))
-            {
+            if (!SystemUtil.RunProcessAndWait(gsExec, currGsParams)) {
                 throw new ImageHandlerUtil.ImageHandlerExecutionException(this, GHOSTSCRIPT_FAILED.Replace("<filename>", pdf
                     ));
             }
@@ -160,8 +146,7 @@ namespace iText.IO.Util
         /// <param name="diffImageName">Path to the difference output image file</param>
         /// <returns>boolean result of comparing: true - images are visually equal</returns>
         public bool RunImageMagickImageCompare(String outImageFilePath, String cmpImageFilePath, String diffImageName
-            )
-        {
+            ) {
             return RunImageMagickImageCompare(outImageFilePath, cmpImageFilePath, diffImageName, null);
         }
 
@@ -174,10 +159,8 @@ namespace iText.IO.Util
         ///     </param>
         /// <returns>boolean result of comparing: true - images are visually equal</returns>
         public bool RunImageMagickImageCompare(String outImageFilePath, String cmpImageFilePath, String diffImageName
-            , String fuzzValue)
-        {
-            if (!IsVersionCommandExecutable(MAGICK_COMPARE_KEYWORD))
-            {
+            , String fuzzValue) {
+            if (!IsVersionCommandExecutable(MAGICK_COMPARE_KEYWORD)) {
                 throw new ImageHandlerUtil.ImageHandlerExecutionException(this, UNABLE_TO_CREATE_DIFF_FILES_ERROR_MESSAGE);
             }
             fuzzValue = (fuzzValue == null) ? "" : " -metric AE -fuzz <fuzzValue>%".Replace("<fuzzValue>", fuzzValue);
@@ -195,34 +178,27 @@ namespace iText.IO.Util
         /// boolean result of checking: true - System variable is correctly specified
         /// and the specified tool can be executed
         /// </returns>
-        public bool IsVersionCommandExecutable(String keyWord)
-        {
-            if (keyWord == null)
-            {
+        public bool IsVersionCommandExecutable(String keyWord) {
+            if (keyWord == null) {
                 return false;
             }
             String command = null;
-            switch (keyWord)
-            {
-                case GHOSTSCRIPT_KEYWORD:
-                    {
-                        command = gsExec;
-                        break;
-                    }
+            switch (keyWord) {
+                case GHOSTSCRIPT_KEYWORD: {
+                    command = gsExec;
+                    break;
+                }
 
-                case MAGICK_COMPARE_KEYWORD:
-                    {
-                        command = compareExec;
-                        break;
-                    }
+                case MAGICK_COMPARE_KEYWORD: {
+                    command = compareExec;
+                    break;
+                }
             }
-            try
-            {
+            try {
                 String result = SystemUtil.RunProcessAndGetOutput(command, "-version");
                 return result.Contains(keyWord);
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 return false;
             }
         }
@@ -231,16 +207,14 @@ namespace iText.IO.Util
         /// Exceptions thrown when errors occur during generation and comparison of images obtained on the basis of pdf
         /// files.
         /// </summary>
-        public class ImageHandlerExecutionException : Exception
-        {
+        public class ImageHandlerExecutionException : Exception {
             /// <summary>
             /// Creates a new
             /// <see cref="ImageHandlerExecutionException"/>.
             /// </summary>
             /// <param name="msg">the detail message.</param>
             public ImageHandlerExecutionException(ImageHandlerUtil _enclosing, String msg)
-                : base(msg)
-            {
+                : base(msg) {
                 this._enclosing = _enclosing;
             }
 

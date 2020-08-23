@@ -44,10 +44,8 @@ address: sales@itextpdf.com
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.X509;
 
-namespace iText.Kernel.Pdf
-{
-    public class ReaderProperties
-    {
+namespace iText.Kernel.Pdf {
+    public class ReaderProperties {
         //added by ujihara for decryption
         protected internal byte[] password;
 
@@ -71,8 +69,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="ReaderProperties"/>
         /// instance
         /// </returns>
-        public virtual ReaderProperties SetPassword(byte[] password)
-        {
+        public virtual ReaderProperties SetPassword(byte[] password) {
             ClearEncryptionParams();
             this.password = password;
             return this;
@@ -98,9 +95,8 @@ namespace iText.Kernel.Pdf
         /// <see cref="ReaderProperties"/>
         /// instance
         /// </returns>
-        public virtual ReaderProperties SetPublicKeySecurityParams(X509Certificate certificate, ICipherParameters
-            certificateKey)
-        {
+        public virtual ReaderProperties SetPublicKeySecurityParams(X509Certificate certificate, ICipherParameters 
+            certificateKey) {
             ClearEncryptionParams();
             this.certificate = certificate;
             this.certificateKey = certificateKey;
@@ -122,15 +118,13 @@ namespace iText.Kernel.Pdf
         /// <see cref="ReaderProperties"/>
         /// instance
         /// </returns>
-        public virtual ReaderProperties SetPublicKeySecurityParams(X509Certificate certificate)
-        {
+        public virtual ReaderProperties SetPublicKeySecurityParams(X509Certificate certificate) {
             ClearEncryptionParams();
             this.certificate = certificate;
             return this;
         }
 
-        private void ClearEncryptionParams()
-        {
+        private void ClearEncryptionParams() {
             this.password = null;
             this.certificate = null;
             this.certificateKey = null;
@@ -145,8 +139,7 @@ namespace iText.Kernel.Pdf
         /// instance
         /// </returns>
         public virtual ReaderProperties SetMemoryLimitsAwareHandler(MemoryLimitsAwareHandler memoryLimitsAwareHandler
-            )
-        {
+            ) {
             this.memoryLimitsAwareHandler = memoryLimitsAwareHandler;
             return this;
         }

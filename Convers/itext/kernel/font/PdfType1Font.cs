@@ -41,93 +41,74 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
 using iText.IO.Font;
 using iText.IO.Font.Otf;
 using iText.Kernel.Pdf;
-using System;
 
-namespace iText.Kernel.Font
-{
-    public class PdfType1Font : PdfSimpleFont<Type1Font>
-    {
+namespace iText.Kernel.Font {
+    public class PdfType1Font : PdfSimpleFont<Type1Font> {
         internal PdfType1Font(Type1Font type1Font, String encoding, bool embedded)
-            : base()
-        {
+            : base() {
             SetFontProgram(type1Font);
             this.embedded = embedded && !type1Font.IsBuiltInFont();
-            if ((encoding == null || encoding.Length == 0) && type1Font.IsFontSpecific())
-            {
+            if ((encoding == null || encoding.Length == 0) && type1Font.IsFontSpecific()) {
                 encoding = FontEncoding.FONT_SPECIFIC;
             }
-            if (encoding != null && FontEncoding.FONT_SPECIFIC.ToLowerInvariant().Equals(encoding.ToLowerInvariant()))
-            {
+            if (encoding != null && FontEncoding.FONT_SPECIFIC.ToLowerInvariant().Equals(encoding.ToLowerInvariant())) {
                 fontEncoding = FontEncoding.CreateFontSpecificEncoding();
             }
-            else
-            {
+            else {
                 fontEncoding = FontEncoding.CreateFontEncoding(encoding);
             }
         }
 
         internal PdfType1Font(Type1Font type1Font, String encoding)
-            : this(type1Font, encoding, false)
-        {
+            : this(type1Font, encoding, false) {
         }
 
         internal PdfType1Font(PdfDictionary fontDictionary)
-            : base(fontDictionary)
-        {
+            : base(fontDictionary) {
             newFont = false;
             // if there is no FontDescriptor, it is most likely one of the Standard Font with StandardEncoding as base encoding.
             // unused variable.
             // boolean fillStandardEncoding = !fontDictionary.containsKey(PdfName.FontDescriptor);
             fontEncoding = DocFontEncoding.CreateDocFontEncoding(fontDictionary.Get(PdfName.Encoding), toUnicode);
             fontProgram = DocType1Font.CreateFontProgram(fontDictionary, fontEncoding, toUnicode);
-            if (fontProgram is IDocFontProgram)
-            {
+            if (fontProgram is IDocFontProgram) {
                 embedded = ((IDocFontProgram)fontProgram).GetFontFile() != null;
             }
             subset = false;
         }
 
-        public override bool IsSubset()
-        {
+        public override bool IsSubset() {
             return subset;
         }
 
-        public override void SetSubset(bool subset)
-        {
+        public override void SetSubset(bool subset) {
             this.subset = subset;
         }
 
-        public override void Flush()
-        {
-            if (IsFlushed())
-            {
+        public override void Flush() {
+            if (IsFlushed()) {
                 return;
             }
             EnsureUnderlyingObjectHasIndirectReference();
-            if (newFont)
-            {
+            if (newFont) {
                 FlushFontData(fontProgram.GetFontNames().GetFontName(), PdfName.Type1);
             }
             base.Flush();
         }
 
-        public override Glyph GetGlyph(int unicode)
-        {
-            if (fontEncoding.CanEncode(unicode))
-            {
+        public override Glyph GetGlyph(int unicode) {
+            if (fontEncoding.CanEncode(unicode)) {
                 Glyph glyph;
-                if (fontEncoding.IsFontSpecific())
-                {
+                if (fontEncoding.IsFontSpecific()) {
                     glyph = GetFontProgram().GetGlyphByCode(unicode);
                 }
-                else
-                {
+                else {
                     glyph = GetFontProgram().GetGlyph(fontEncoding.GetUnicodeDifference(unicode));
-                    if (glyph == null && (glyph = notdefGlyphs.Get(unicode)) == null)
-                    {
+                    if (glyph == null && (glyph = notdefGlyphs.Get(unicode)) == null) {
                         // Handle special layout characters like sfthyphen (00AD).
                         // This glyphs will be skipped while converting to bytes
                         glyph = new Glyph(-1, 0, unicode);
@@ -139,27 +120,21 @@ namespace iText.Kernel.Font
             return null;
         }
 
-        public override bool ContainsGlyph(int unicode)
-        {
-            if (fontEncoding.CanEncode(unicode))
-            {
-                if (fontEncoding.IsFontSpecific())
-                {
+        public override bool ContainsGlyph(int unicode) {
+            if (fontEncoding.CanEncode(unicode)) {
+                if (fontEncoding.IsFontSpecific()) {
                     return GetFontProgram().GetGlyphByCode(unicode) != null;
                 }
-                else
-                {
+                else {
                     return GetFontProgram().GetGlyph(fontEncoding.GetUnicodeDifference(unicode)) != null;
                 }
             }
-            else
-            {
+            else {
                 return false;
             }
         }
 
-        protected internal override bool IsBuiltInFont()
-        {
+        protected internal override bool IsBuiltInFont() {
             return ((Type1Font)GetFontProgram()).IsBuiltInFont();
         }
 
@@ -171,34 +146,26 @@ namespace iText.Kernel.Font
         /// ,
         /// otherwise the font is read and output in a PdfStream object.
         /// </summary>
-        protected internal override void AddFontStream(PdfDictionary fontDescriptor)
-        {
-            if (embedded)
-            {
-                if (fontProgram is IDocFontProgram)
-                {
+        protected internal override void AddFontStream(PdfDictionary fontDescriptor) {
+            if (embedded) {
+                if (fontProgram is IDocFontProgram) {
                     IDocFontProgram docType1Font = (IDocFontProgram)fontProgram;
                     fontDescriptor.Put(docType1Font.GetFontFileName(), docType1Font.GetFontFile());
                     docType1Font.GetFontFile().Flush();
-                    if (docType1Font.GetSubtype() != null)
-                    {
+                    if (docType1Font.GetSubtype() != null) {
                         fontDescriptor.Put(PdfName.Subtype, docType1Font.GetSubtype());
                     }
                 }
-                else
-                {
+                else {
                     byte[] fontStreamBytes = ((Type1Font)GetFontProgram()).GetFontStreamBytes();
-                    if (fontStreamBytes != null)
-                    {
+                    if (fontStreamBytes != null) {
                         PdfStream fontStream = new PdfStream(fontStreamBytes);
                         int[] fontStreamLengths = ((Type1Font)GetFontProgram()).GetFontStreamLengths();
-                        for (int k = 0; k < fontStreamLengths.Length; ++k)
-                        {
+                        for (int k = 0; k < fontStreamLengths.Length; ++k) {
                             fontStream.Put(new PdfName("Length" + (k + 1)), new PdfNumber(fontStreamLengths[k]));
                         }
                         fontDescriptor.Put(PdfName.FontFile, fontStream);
-                        if (MakeObjectIndirect(fontStream))
-                        {
+                        if (MakeObjectIndirect(fontStream)) {
                             fontStream.Flush();
                         }
                     }

@@ -43,11 +43,9 @@ address: sales@itextpdf.com
 */
 using System;
 
-namespace iText.Kernel.Counter.Event
-{
+namespace iText.Kernel.Counter.Event {
     /// <summary>Interface representing the counted event</summary>
-    public interface IEvent
-    {
+    public interface IEvent {
         String GetEventType();
     }
 }

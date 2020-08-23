@@ -41,19 +41,16 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Tagging
-{
-    public class PdfMcrDictionary : PdfMcr
-    {
+namespace iText.Kernel.Pdf.Tagging {
+    public class PdfMcrDictionary : PdfMcr {
         public PdfMcrDictionary(PdfDictionary pdfObject, PdfStructElem parent)
-            : base(pdfObject, parent)
-        {
+            : base(pdfObject, parent) {
         }
 
         public PdfMcrDictionary(PdfPage page, PdfStructElem parent)
-            : base(new PdfDictionary(), parent)
-        {
+            : base(new PdfDictionary(), parent) {
             PdfDictionary dict = (PdfDictionary)GetPdfObject();
             dict.Put(PdfName.Type, PdfName.MCR);
             // Explicitly using object indirect reference here in order to correctly process released objects.
@@ -61,14 +58,12 @@ namespace iText.Kernel.Pdf.Tagging
             dict.Put(PdfName.MCID, new PdfNumber(page.GetNextMcid()));
         }
 
-        public override int GetMcid()
-        {
+        public override int GetMcid() {
             PdfNumber mcidNumber = ((PdfDictionary)GetPdfObject()).GetAsNumber(PdfName.MCID);
             return mcidNumber != null ? mcidNumber.IntValue() : -1;
         }
 
-        public override PdfDictionary GetPageObject()
-        {
+        public override PdfDictionary GetPageObject() {
             return base.GetPageObject();
         }
     }

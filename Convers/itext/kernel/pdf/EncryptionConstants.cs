@@ -41,14 +41,12 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-namespace iText.Kernel.Pdf
-{
+namespace iText.Kernel.Pdf {
     /// <summary>
     /// Encryption constants for
     /// <see cref="WriterProperties.SetStandardEncryption(byte[], byte[], int, int)"/>.
     /// </summary>
-    public class EncryptionConstants
-    {
+    public class EncryptionConstants {
         /// <summary>Type of encryption.</summary>
         /// <remarks>Type of encryption. RC4 encryption algorithm will be used with the key length of 40 bits.</remarks>
         public const int STANDARD_ENCRYPTION_40 = 0;

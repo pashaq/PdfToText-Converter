@@ -43,16 +43,14 @@ address: sales@itextpdf.com
 using System;
 using System.IO;
 using System.util.zlib;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Filters
-{
+namespace iText.Kernel.Pdf.Filters {
     /// <summary>Handles strict FlateDecode filter.</summary>
-    public class FlateDecodeStrictFilter : FlateDecodeFilter
-    {
+    public class FlateDecodeStrictFilter : FlateDecodeFilter {
         /// <summary><inheritDoc/></summary>
         public override byte[] Decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary
-            )
-        {
+            ) {
             MemoryStream outputStream = EnableMemoryLimitsAwareHandler(streamDictionary);
             byte[] res = FlateDecode(b, outputStream);
             b = DecodePredictor(res, decodeParams);
@@ -63,28 +61,23 @@ namespace iText.Kernel.Pdf.Filters
         /// <param name="in">the input data</param>
         /// <param name="out">the out stream which will be used to write the bytes.</param>
         /// <returns>the decoded data</returns>
-        private static byte[] FlateDecode(byte[] @in, MemoryStream @out)
-        {
+        private static byte[] FlateDecode(byte[] @in, MemoryStream @out) {
             MemoryStream stream = new MemoryStream(@in);
             ZInflaterInputStream zip = new ZInflaterInputStream(stream);
             byte[] b = new byte[4092];
-            try
-            {
+            try {
                 int n;
-                while ((n = zip.Read(b)) >= 0)
-                {
+                while ((n = zip.Read(b)) >= 0) {
                     @out.Write(b, 0, n);
                 }
                 zip.Dispose();
                 @out.Dispose();
                 return @out.ToArray();
             }
-            catch (MemoryLimitsAwareException e)
-            {
+            catch (MemoryLimitsAwareException e) {
                 throw;
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 return null;
             }
         }

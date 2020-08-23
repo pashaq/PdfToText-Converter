@@ -42,8 +42,7 @@ address: sales@itextpdf.com
 */
 using System;
 
-namespace iText.IO.Font.Constants
-{
+namespace iText.IO.Font.Constants {
     /// <summary>
     /// Class containing families for
     /// <see cref="StandardFonts"/>.
@@ -53,10 +52,8 @@ namespace iText.IO.Font.Constants
     /// <see cref="StandardFonts"/>.
     /// This class was made for com.itextpdf.io.font.FontRegisterProvider.
     /// </remarks>
-    public sealed class StandardFontFamilies
-    {
-        private StandardFontFamilies()
-        {
+    public sealed class StandardFontFamilies {
+        private StandardFontFamilies() {
         }
 
         /// <summary>

@@ -32,108 +32,93 @@ using System.IO;
 
 namespace iText.Kernel.XMP.Impl
 {
-    /// <summary>
-    /// An <code>OutputStream</code> that counts the written bytes.
-    /// 
-    /// @since   08.11.2006
-    /// </summary>
-    public sealed class CountOutputStream : Stream
-    {
-        /// <summary>
-        /// the decorated output stream </summary>
-        private readonly Stream output;
+	/// <summary>
+	/// An <code>OutputStream</code> that counts the written bytes.
+	/// 
+	/// @since   08.11.2006
+	/// </summary>
+	public sealed class CountOutputStream : Stream {
+		/// <summary>
+		/// the decorated output stream </summary>
+		private readonly Stream output;
 
-        /// <summary>
-        /// the byte counter </summary>
-        private int bytesWritten;
+		/// <summary>
+		/// the byte counter </summary>
+		private int bytesWritten;
 
-        /// <summary>
-        /// Constructor with providing the output stream to decorate. </summary>
-        /// <param name="output"> an <code>OutputStream</code> </param>
-        internal CountOutputStream(Stream output)
-        {
-            this.output = output;
-        }
+		/// <summary>
+		/// Constructor with providing the output stream to decorate. </summary>
+		/// <param name="output"> an <code>OutputStream</code> </param>
+		internal CountOutputStream(Stream output) {
+			this.output = output;
+		}
 
 
-        /// <returns> the bytesWritten </returns>
-        public int GetBytesWritten()
-        {
-            return bytesWritten;
-        }
+		/// <returns> the bytesWritten </returns>
+		public int GetBytesWritten() {
+			return bytesWritten;
+		}
 
-        public override bool CanRead
-        {
-            get { return false; }
-        }
+		public override bool CanRead {
+			get { return false; }
+		}
 
-        public override bool CanSeek
-        {
-            get { return false; }
-        }
+		public override bool CanSeek {
+			get { return false; }
+		}
 
-        public override bool CanWrite
-        {
-            get { return true; }
-        }
+		public override bool CanWrite {
+			get { return true; }
+		}
 
-        public override long Length
-        {
-            get { return GetBytesWritten(); }
-        }
+		public override long Length {
+			get { return GetBytesWritten(); }
+		}
 
-        public override long Position
-        {
-            get { return Length; }
-            set { throw new Exception("The method or operation is not implemented."); }
-        }
+		public override long Position {
+			get { return Length; }
+			set { throw new Exception("The method or operation is not implemented."); }
+		}
 
-        /// <summary>
-        /// Counts the written bytes. </summary>
-        /// <seealso cref="Stream.Write" />
-        public override void Write(byte[] buf, int off, int len)
-        {
-            output.Write(buf, off, len);
-            bytesWritten += len;
-        }
+		/// <summary>
+		/// Counts the written bytes. </summary>
+		/// <seealso cref="Stream.Write" />
+		public override void Write(byte[] buf, int off, int len) {
+			output.Write(buf, off, len);
+			bytesWritten += len;
+		}
 
 
-        /// <summary>
-        /// Counts the written bytes. </summary>
-        /// <seealso cref="Stream.Write" />
-        public void Write(byte[] buf)
-        {
-            Write(buf, 0, buf.Length);
-        }
+		/// <summary>
+		/// Counts the written bytes. </summary>
+		/// <seealso cref="Stream.Write" />
+		public void Write(byte[] buf) {
+			Write(buf, 0, buf.Length);
+		}
 
 
-        /// <summary>
-        /// Counts the written bytes. </summary>
-        /// <seealso cref="Stream.Write" />
-        public void Write(int b)
-        {
-            output.WriteByte((byte)b);
-            bytesWritten++;
-        }
+		/// <summary>
+		/// Counts the written bytes. </summary>
+		/// <seealso cref="Stream.Write" />
+		public void Write(int b) {
+			output.WriteByte((byte) b);
+			bytesWritten++;
+		}
 
-        public override void Flush()
-        {
-            output.Flush();
-        }
+		public override void Flush() {
+			output.Flush();
+		}
 
-        public override long Seek(long offset, SeekOrigin origin)
-        {
-            throw new Exception("The method or operation is not implemented.");
-        }
+		public override long Seek(long offset, SeekOrigin origin) {
+			throw new Exception("The method or operation is not implemented.");
+		}
 
-        public override void SetLength(long value)
-        {
-            throw new Exception("The method or operation is not implemented.");
-        }
+		public override void SetLength(long value) {
+			throw new Exception("The method or operation is not implemented.");
+		}
 
-        public override int Read(byte[] buffer, int offset, int count)
-        {
-            throw new Exception("The method or operation is not implemented.");
-        }
-    }
+		public override int Read(byte[] buffer, int offset, int count) {
+			throw new Exception("The method or operation is not implemented.");
+		}
+	}
 }

@@ -43,15 +43,13 @@ address: sales@itextpdf.com
 */
 using System;
 
-namespace iText.Kernel
-{
+namespace iText.Kernel {
     /// <summary>Describes an iText 7 add on.</summary>
     /// <remarks>
     /// Describes an iText 7 add on. An add on should register itself to a PdfDocument object if it
     /// wants to be included in the debugging information.
     /// </remarks>
-    public class ProductInfo
-    {
+    public class ProductInfo {
         private String name;
 
         private int major;
@@ -68,8 +66,7 @@ namespace iText.Kernel
         /// <param name="minor">minor version of the add on</param>
         /// <param name="patch">patch number of the add on</param>
         /// <param name="snapshot">whether the version of this add on is a snapshot build or not</param>
-        public ProductInfo(String name, int major, int minor, int patch, bool snapshot)
-        {
+        public ProductInfo(String name, int major, int minor, int patch, bool snapshot) {
             this.name = name;
             this.major = major;
             this.minor = minor;
@@ -77,33 +74,27 @@ namespace iText.Kernel
             this.snapshot = snapshot;
         }
 
-        public virtual String GetName()
-        {
+        public virtual String GetName() {
             return name;
         }
 
-        public virtual int GetMajor()
-        {
+        public virtual int GetMajor() {
             return major;
         }
 
-        public virtual int GetMinor()
-        {
+        public virtual int GetMinor() {
             return minor;
         }
 
-        public virtual int GetPatch()
-        {
+        public virtual int GetPatch() {
             return patch;
         }
 
-        public virtual bool IsSnapshot()
-        {
+        public virtual bool IsSnapshot() {
             return snapshot;
         }
 
-        public override String ToString()
-        {
+        public override String ToString() {
             return name + "-" + major + "." + minor + "." + patch + (snapshot ? "-SNAPSHOT" : "");
         }
     }

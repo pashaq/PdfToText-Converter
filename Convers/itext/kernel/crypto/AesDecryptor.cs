@@ -43,10 +43,8 @@ address: sales@itextpdf.com
 */
 using System;
 
-namespace iText.Kernel.Crypto
-{
-    public class AesDecryptor : IDecryptor
-    {
+namespace iText.Kernel.Crypto {
+    public class AesDecryptor : IDecryptor {
         private AESCipher cipher;
 
         private byte[] key;
@@ -64,31 +62,25 @@ namespace iText.Kernel.Crypto
         /// <param name="key">the byte array containing the key for decryption</param>
         /// <param name="off">offset of the key in the byte array</param>
         /// <param name="len">the length of the key in the byte array</param>
-        public AesDecryptor(byte[] key, int off, int len)
-        {
+        public AesDecryptor(byte[] key, int off, int len) {
             this.key = new byte[len];
             Array.Copy(key, off, this.key, 0, len);
         }
 
-        public virtual byte[] Update(byte[] b, int off, int len)
-        {
-            if (initiated)
-            {
+        public virtual byte[] Update(byte[] b, int off, int len) {
+            if (initiated) {
                 return cipher.Update(b, off, len);
             }
-            else
-            {
+            else {
                 int left = Math.Min(iv.Length - ivptr, len);
                 Array.Copy(b, off, iv, ivptr, left);
                 off += left;
                 len -= left;
                 ivptr += left;
-                if (ivptr == iv.Length)
-                {
+                if (ivptr == iv.Length) {
                     cipher = new AESCipher(false, key, iv);
                     initiated = true;
-                    if (len > 0)
-                    {
+                    if (len > 0) {
                         return cipher.Update(b, off, len);
                     }
                 }
@@ -96,14 +88,11 @@ namespace iText.Kernel.Crypto
             }
         }
 
-        public virtual byte[] Finish()
-        {
-            if (cipher != null)
-            {
+        public virtual byte[] Finish() {
+            if (cipher != null) {
                 return cipher.DoFinal();
             }
-            else
-            {
+            else {
                 return null;
             }
         }

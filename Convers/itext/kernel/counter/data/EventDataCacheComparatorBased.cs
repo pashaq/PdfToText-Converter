@@ -43,8 +43,7 @@ address: sales@itextpdf.com
 */
 using System.Collections.Generic;
 
-namespace iText.Kernel.Counter.Data
-{
+namespace iText.Kernel.Counter.Data {
     /// <summary>
     /// Comparator-based implementation of
     /// <see cref="IEventDataCache{T, V}"/>.
@@ -59,41 +58,32 @@ namespace iText.Kernel.Counter.Data
     /// <typeparam name="T">the data signature type</typeparam>
     /// <typeparam name="V">the data type</typeparam>
     public class EventDataCacheComparatorBased<T, V> : IEventDataCache<T, V>
-        where V : EventData<T>
-    {
+        where V : EventData<T> {
         private IDictionary<T, V> map = new Dictionary<T, V>();
 
         private ICollection<V> orderedCache;
 
-        public EventDataCacheComparatorBased(IComparer<V> comparator)
-        {
+        public EventDataCacheComparatorBased(IComparer<V> comparator) {
             orderedCache = new SortedSet<V>(comparator);
         }
 
-        public virtual void Put(V data)
-        {
-            if (data != null)
-            {
+        public virtual void Put(V data) {
+            if (data != null) {
                 V old = map.Put(data.GetSignature(), data);
-                if (old != null)
-                {
+                if (old != null) {
                     orderedCache.Remove(old);
                     data.MergeWith(old);
                     orderedCache.Add(data);
                 }
-                else
-                {
+                else {
                     orderedCache.Add(data);
                 }
             }
         }
 
-        public virtual V RetrieveNext()
-        {
-            foreach (V data in orderedCache)
-            {
-                if (data != null)
-                {
+        public virtual V RetrieveNext() {
+            foreach (V data in orderedCache) {
+                if (data != null) {
                     map.JRemove(data.GetSignature());
                     orderedCache.Remove(data);
                     return data;
@@ -102,8 +92,7 @@ namespace iText.Kernel.Counter.Data
             return null;
         }
 
-        public virtual IList<V> Clear()
-        {
+        public virtual IList<V> Clear() {
             List<V> result = new List<V>(map.Values);
             map.Clear();
             orderedCache.Clear();

@@ -41,26 +41,22 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Font;
 using System;
 using System.Collections.Generic;
+using iText.IO.Font;
 
-namespace iText.Kernel.Pdf
-{
-    public class PdfDocumentInfo
-    {
-        internal static readonly PdfName[] PDF20_DEPRECATED_KEYS = new PdfName[] { PdfName.Title, PdfName.Author,
+namespace iText.Kernel.Pdf {
+    public class PdfDocumentInfo {
+        internal static readonly PdfName[] PDF20_DEPRECATED_KEYS = new PdfName[] { PdfName.Title, PdfName.Author, 
             PdfName.Subject, PdfName.Keywords, PdfName.Creator, PdfName.Producer, PdfName.Trapped };
 
         private PdfDictionary infoDictionary;
 
         /// <summary>Create a PdfDocumentInfo based on the passed PdfDictionary.</summary>
         /// <param name="pdfObject">PdfDictionary containing PdfDocumentInfo</param>
-        internal PdfDocumentInfo(PdfDictionary pdfObject, PdfDocument pdfDocument)
-        {
+        internal PdfDocumentInfo(PdfDictionary pdfObject, PdfDocument pdfDocument) {
             infoDictionary = pdfObject;
-            if (pdfDocument.GetWriter() != null)
-            {
+            if (pdfDocument.GetWriter() != null) {
                 infoDictionary.MakeIndirect(pdfDocument);
             }
         }
@@ -68,91 +64,72 @@ namespace iText.Kernel.Pdf
         /// <summary>Create a default, empty PdfDocumentInfo and link it to the passed PdfDocument</summary>
         /// <param name="pdfDocument">document the info will belong to</param>
         internal PdfDocumentInfo(PdfDocument pdfDocument)
-            : this(new PdfDictionary(), pdfDocument)
-        {
+            : this(new PdfDictionary(), pdfDocument) {
         }
 
-        public virtual iText.Kernel.Pdf.PdfDocumentInfo SetTitle(String title)
-        {
+        public virtual iText.Kernel.Pdf.PdfDocumentInfo SetTitle(String title) {
             return Put(PdfName.Title, new PdfString(title, PdfEncodings.UNICODE_BIG));
         }
 
-        public virtual iText.Kernel.Pdf.PdfDocumentInfo SetAuthor(String author)
-        {
+        public virtual iText.Kernel.Pdf.PdfDocumentInfo SetAuthor(String author) {
             return Put(PdfName.Author, new PdfString(author, PdfEncodings.UNICODE_BIG));
         }
 
-        public virtual iText.Kernel.Pdf.PdfDocumentInfo SetSubject(String subject)
-        {
+        public virtual iText.Kernel.Pdf.PdfDocumentInfo SetSubject(String subject) {
             return Put(PdfName.Subject, new PdfString(subject, PdfEncodings.UNICODE_BIG));
         }
 
-        public virtual iText.Kernel.Pdf.PdfDocumentInfo SetKeywords(String keywords)
-        {
+        public virtual iText.Kernel.Pdf.PdfDocumentInfo SetKeywords(String keywords) {
             return Put(PdfName.Keywords, new PdfString(keywords, PdfEncodings.UNICODE_BIG));
         }
 
-        public virtual iText.Kernel.Pdf.PdfDocumentInfo SetCreator(String creator)
-        {
+        public virtual iText.Kernel.Pdf.PdfDocumentInfo SetCreator(String creator) {
             return Put(PdfName.Creator, new PdfString(creator, PdfEncodings.UNICODE_BIG));
         }
 
-        public virtual iText.Kernel.Pdf.PdfDocumentInfo SetTrapped(PdfName trapped)
-        {
+        public virtual iText.Kernel.Pdf.PdfDocumentInfo SetTrapped(PdfName trapped) {
             return Put(PdfName.Trapped, trapped);
         }
 
-        public virtual String GetTitle()
-        {
+        public virtual String GetTitle() {
             return GetStringValue(PdfName.Title);
         }
 
-        public virtual String GetAuthor()
-        {
+        public virtual String GetAuthor() {
             return GetStringValue(PdfName.Author);
         }
 
-        public virtual String GetSubject()
-        {
+        public virtual String GetSubject() {
             return GetStringValue(PdfName.Subject);
         }
 
-        public virtual String GetKeywords()
-        {
+        public virtual String GetKeywords() {
             return GetStringValue(PdfName.Keywords);
         }
 
-        public virtual String GetCreator()
-        {
+        public virtual String GetCreator() {
             return GetStringValue(PdfName.Creator);
         }
 
-        public virtual String GetProducer()
-        {
+        public virtual String GetProducer() {
             return GetStringValue(PdfName.Producer);
         }
 
-        public virtual PdfName GetTrapped()
-        {
+        public virtual PdfName GetTrapped() {
             return infoDictionary.GetAsName(PdfName.Trapped);
         }
 
-        public virtual iText.Kernel.Pdf.PdfDocumentInfo AddCreationDate()
-        {
+        public virtual iText.Kernel.Pdf.PdfDocumentInfo AddCreationDate() {
             return Put(PdfName.CreationDate, new PdfDate().GetPdfObject());
         }
 
-        public virtual iText.Kernel.Pdf.PdfDocumentInfo AddModDate()
-        {
+        public virtual iText.Kernel.Pdf.PdfDocumentInfo AddModDate() {
             return Put(PdfName.ModDate, new PdfDate().GetPdfObject());
         }
 
-        public virtual void SetMoreInfo(IDictionary<String, String> moreInfo)
-        {
-            if (moreInfo != null)
-            {
-                foreach (KeyValuePair<String, String> entry in moreInfo)
-                {
+        public virtual void SetMoreInfo(IDictionary<String, String> moreInfo) {
+            if (moreInfo != null) {
+                foreach (KeyValuePair<String, String> entry in moreInfo) {
                     String key = entry.Key;
                     String value = entry.Value;
                     SetMoreInfo(key, value);
@@ -160,39 +137,32 @@ namespace iText.Kernel.Pdf
             }
         }
 
-        public virtual void SetMoreInfo(String key, String value)
-        {
+        public virtual void SetMoreInfo(String key, String value) {
             PdfName keyName = new PdfName(key);
-            if (value == null)
-            {
+            if (value == null) {
                 infoDictionary.Remove(keyName);
                 infoDictionary.SetModified();
             }
-            else
-            {
+            else {
                 Put(keyName, new PdfString(value, PdfEncodings.UNICODE_BIG));
             }
         }
 
-        public virtual String GetMoreInfo(String key)
-        {
+        public virtual String GetMoreInfo(String key) {
             return GetStringValue(new PdfName(key));
         }
 
-        internal virtual PdfDictionary GetPdfObject()
-        {
+        internal virtual PdfDictionary GetPdfObject() {
             return infoDictionary;
         }
 
-        internal virtual iText.Kernel.Pdf.PdfDocumentInfo Put(PdfName key, PdfObject value)
-        {
+        internal virtual iText.Kernel.Pdf.PdfDocumentInfo Put(PdfName key, PdfObject value) {
             GetPdfObject().Put(key, value);
             GetPdfObject().SetModified();
             return this;
         }
 
-        private String GetStringValue(PdfName name)
-        {
+        private String GetStringValue(PdfName name) {
             PdfString pdfString = infoDictionary.GetAsString(name);
             return pdfString != null ? pdfString.ToUnicodeString() : null;
         }

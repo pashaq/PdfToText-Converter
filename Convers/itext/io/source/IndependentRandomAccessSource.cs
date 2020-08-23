@@ -41,46 +41,39 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-namespace iText.IO.Source
-{
+namespace iText.IO.Source {
     /// <summary>A RandomAccessSource that is wraps another RandomAccessSource but does not propagate close().</summary>
     /// <remarks>
     /// A RandomAccessSource that is wraps another RandomAccessSource but does not propagate close().  This is useful when
     /// passing a RandomAccessSource to a method that would normally close the source.
     /// </remarks>
-    public class IndependentRandomAccessSource : IRandomAccessSource
-    {
+    public class IndependentRandomAccessSource : IRandomAccessSource {
         /// <summary>The source</summary>
         private readonly IRandomAccessSource source;
 
         /// <summary>Constructs a new IndependentRandomAccessSource object</summary>
         /// <param name="source">the source</param>
-        public IndependentRandomAccessSource(IRandomAccessSource source)
-        {
+        public IndependentRandomAccessSource(IRandomAccessSource source) {
             this.source = source;
         }
 
         /// <summary><inheritDoc/></summary>
-        public virtual int Get(long position)
-        {
+        public virtual int Get(long position) {
             return source.Get(position);
         }
 
         /// <summary><inheritDoc/></summary>
-        public virtual int Get(long position, byte[] bytes, int off, int len)
-        {
+        public virtual int Get(long position, byte[] bytes, int off, int len) {
             return source.Get(position, bytes, off, len);
         }
 
         /// <summary><inheritDoc/></summary>
-        public virtual long Length()
-        {
+        public virtual long Length() {
             return source.Length();
         }
 
         /// <summary>Does nothing - the underlying source is not closed</summary>
-        public virtual void Close()
-        {
+        public virtual void Close() {
         }
         // do not close the source
     }

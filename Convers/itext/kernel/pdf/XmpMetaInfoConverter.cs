@@ -40,177 +40,132 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
+using System.Text;
 using iText.IO.Font;
 using iText.Kernel.XMP;
 using iText.Kernel.XMP.Options;
 using iText.Kernel.XMP.Properties;
-using System;
-using System.Text;
 
-namespace iText.Kernel.Pdf
-{
-    internal class XmpMetaInfoConverter
-    {
-        private XmpMetaInfoConverter()
-        {
+namespace iText.Kernel.Pdf {
+    internal class XmpMetaInfoConverter {
+        private XmpMetaInfoConverter() {
         }
 
-        internal static void AppendMetadataToInfo(byte[] xmpMetadata, PdfDocumentInfo info)
-        {
-            if (xmpMetadata != null)
-            {
-                try
-                {
+        internal static void AppendMetadataToInfo(byte[] xmpMetadata, PdfDocumentInfo info) {
+            if (xmpMetadata != null) {
+                try {
                     XMPMeta meta = XMPMetaFactory.ParseFromBuffer(xmpMetadata);
                     XMPProperty title = meta.GetLocalizedText(XMPConst.NS_DC, PdfConst.Title, XMPConst.X_DEFAULT, XMPConst.X_DEFAULT
                         );
-                    if (title != null)
-                    {
+                    if (title != null) {
                         info.SetTitle(title.GetValue());
                     }
                     String author = FetchArrayIntoString(meta, XMPConst.NS_DC, PdfConst.Creator);
-                    if (author != null)
-                    {
+                    if (author != null) {
                         info.SetAuthor(author);
                     }
                     // We assume that pdf:keywords has precedence over dc:subject
                     XMPProperty keywords = meta.GetProperty(XMPConst.NS_PDF, PdfConst.Keywords);
-                    if (keywords != null)
-                    {
+                    if (keywords != null) {
                         info.SetKeywords(keywords.GetValue());
                     }
-                    else
-                    {
+                    else {
                         String keywordsStr = FetchArrayIntoString(meta, XMPConst.NS_DC, PdfConst.Subject);
-                        if (keywordsStr != null)
-                        {
+                        if (keywordsStr != null) {
                             info.SetKeywords(keywordsStr);
                         }
                     }
                     XMPProperty subject = meta.GetLocalizedText(XMPConst.NS_DC, PdfConst.Description, XMPConst.X_DEFAULT, XMPConst
                         .X_DEFAULT);
-                    if (subject != null)
-                    {
+                    if (subject != null) {
                         info.SetSubject(subject.GetValue());
                     }
                     XMPProperty creator = meta.GetProperty(XMPConst.NS_XMP, PdfConst.CreatorTool);
-                    if (creator != null)
-                    {
+                    if (creator != null) {
                         info.SetCreator(creator.GetValue());
                     }
                     XMPProperty producer = meta.GetProperty(XMPConst.NS_PDF, PdfConst.Producer);
-                    if (producer != null)
-                    {
+                    if (producer != null) {
                         info.Put(PdfName.Producer, new PdfString(producer.GetValue(), PdfEncodings.UNICODE_BIG));
                     }
                     XMPProperty trapped = meta.GetProperty(XMPConst.NS_PDF, PdfConst.Trapped);
-                    if (trapped != null)
-                    {
+                    if (trapped != null) {
                         info.SetTrapped(new PdfName(trapped.GetValue()));
                     }
                 }
-                catch (XMPException)
-                {
+                catch (XMPException) {
                 }
             }
         }
 
-        internal static void AppendDocumentInfoToMetadata(PdfDocumentInfo info, XMPMeta xmpMeta)
-        {
+        internal static void AppendDocumentInfoToMetadata(PdfDocumentInfo info, XMPMeta xmpMeta) {
             PdfDictionary docInfo = info.GetPdfObject();
-            if (docInfo != null)
-            {
+            if (docInfo != null) {
                 PdfName key;
                 PdfObject obj;
                 String value;
-                foreach (PdfName pdfName in docInfo.KeySet())
-                {
+                foreach (PdfName pdfName in docInfo.KeySet()) {
                     key = pdfName;
                     obj = docInfo.Get(key);
-                    if (obj == null)
-                    {
+                    if (obj == null) {
                         continue;
                     }
-                    if (obj.IsString())
-                    {
+                    if (obj.IsString()) {
                         value = ((PdfString)obj).ToUnicodeString();
                     }
-                    else
-                    {
-                        if (obj.IsName())
-                        {
+                    else {
+                        if (obj.IsName()) {
                             value = ((PdfName)obj).GetValue();
                         }
-                        else
-                        {
+                        else {
                             continue;
                         }
                     }
-                    if (PdfName.Title.Equals(key))
-                    {
+                    if (PdfName.Title.Equals(key)) {
                         xmpMeta.SetLocalizedText(XMPConst.NS_DC, PdfConst.Title, XMPConst.X_DEFAULT, XMPConst.X_DEFAULT, value);
                     }
-                    else
-                    {
-                        if (PdfName.Author.Equals(key))
-                        {
-                            foreach (String v in iText.IO.Util.StringUtil.Split(value, ",|;"))
-                            {
-                                if (v.Trim().Length > 0)
-                                {
+                    else {
+                        if (PdfName.Author.Equals(key)) {
+                            foreach (String v in iText.IO.Util.StringUtil.Split(value, ",|;")) {
+                                if (v.Trim().Length > 0) {
                                     AppendArrayItemIfDoesNotExist(xmpMeta, XMPConst.NS_DC, PdfConst.Creator, v.Trim(), PropertyOptions.ARRAY_ORDERED
                                         );
                                 }
                             }
                         }
-                        else
-                        {
-                            if (PdfName.Subject.Equals(key))
-                            {
+                        else {
+                            if (PdfName.Subject.Equals(key)) {
                                 xmpMeta.SetLocalizedText(XMPConst.NS_DC, PdfConst.Description, XMPConst.X_DEFAULT, XMPConst.X_DEFAULT, value
                                     );
                             }
-                            else
-                            {
-                                if (PdfName.Keywords.Equals(key))
-                                {
-                                    foreach (String v in iText.IO.Util.StringUtil.Split(value, ",|;"))
-                                    {
-                                        if (v.Trim().Length > 0)
-                                        {
+                            else {
+                                if (PdfName.Keywords.Equals(key)) {
+                                    foreach (String v in iText.IO.Util.StringUtil.Split(value, ",|;")) {
+                                        if (v.Trim().Length > 0) {
                                             AppendArrayItemIfDoesNotExist(xmpMeta, XMPConst.NS_DC, PdfConst.Subject, v.Trim(), PropertyOptions.ARRAY);
                                         }
                                     }
                                     xmpMeta.SetProperty(XMPConst.NS_PDF, PdfConst.Keywords, value);
                                 }
-                                else
-                                {
-                                    if (PdfName.Creator.Equals(key))
-                                    {
+                                else {
+                                    if (PdfName.Creator.Equals(key)) {
                                         xmpMeta.SetProperty(XMPConst.NS_XMP, PdfConst.CreatorTool, value);
                                     }
-                                    else
-                                    {
-                                        if (PdfName.Producer.Equals(key))
-                                        {
+                                    else {
+                                        if (PdfName.Producer.Equals(key)) {
                                             xmpMeta.SetProperty(XMPConst.NS_PDF, PdfConst.Producer, value);
                                         }
-                                        else
-                                        {
-                                            if (PdfName.CreationDate.Equals(key))
-                                            {
+                                        else {
+                                            if (PdfName.CreationDate.Equals(key)) {
                                                 xmpMeta.SetProperty(XMPConst.NS_XMP, PdfConst.CreateDate, PdfDate.GetW3CDate(value));
                                             }
-                                            else
-                                            {
-                                                if (PdfName.ModDate.Equals(key))
-                                                {
+                                            else {
+                                                if (PdfName.ModDate.Equals(key)) {
                                                     xmpMeta.SetProperty(XMPConst.NS_XMP, PdfConst.ModifyDate, PdfDate.GetW3CDate(value));
                                                 }
-                                                else
-                                                {
-                                                    if (PdfName.Trapped.Equals(key))
-                                                    {
+                                                else {
+                                                    if (PdfName.Trapped.Equals(key)) {
                                                         xmpMeta.SetProperty(XMPConst.NS_PDF, PdfConst.Trapped, value);
                                                     }
                                                 }
@@ -225,36 +180,28 @@ namespace iText.Kernel.Pdf
             }
         }
 
-        private static void AppendArrayItemIfDoesNotExist(XMPMeta meta, String ns, String arrayName, String value,
-            int arrayOption)
-        {
+        private static void AppendArrayItemIfDoesNotExist(XMPMeta meta, String ns, String arrayName, String value, 
+            int arrayOption) {
             int currentCnt = meta.CountArrayItems(ns, arrayName);
-            for (int i = 0; i < currentCnt; i++)
-            {
+            for (int i = 0; i < currentCnt; i++) {
                 XMPProperty item = meta.GetArrayItem(ns, arrayName, i + 1);
-                if (value.Equals(item.GetValue()))
-                {
+                if (value.Equals(item.GetValue())) {
                     return;
                 }
             }
             meta.AppendArrayItem(ns, arrayName, new PropertyOptions(arrayOption), value, null);
         }
 
-        private static String FetchArrayIntoString(XMPMeta meta, String ns, String arrayName)
-        {
+        private static String FetchArrayIntoString(XMPMeta meta, String ns, String arrayName) {
             int keywordsCnt = meta.CountArrayItems(ns, arrayName);
             StringBuilder sb = null;
-            for (int i = 0; i < keywordsCnt; i++)
-            {
+            for (int i = 0; i < keywordsCnt; i++) {
                 XMPProperty curKeyword = meta.GetArrayItem(ns, arrayName, i + 1);
-                if (sb == null)
-                {
+                if (sb == null) {
                     sb = new StringBuilder();
                 }
-                else
-                {
-                    if (sb.Length > 0)
-                    {
+                else {
+                    if (sb.Length > 0) {
                         sb.Append("; ");
                     }
                 }

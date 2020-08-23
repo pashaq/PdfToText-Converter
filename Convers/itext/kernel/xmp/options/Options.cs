@@ -27,21 +27,20 @@
 //        SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //        http://www.adobe.com/devnet/xmp/library/eula-xmp-library-java.html
-using iText.IO.Util;
 using System;
 using System.Collections;
 using System.Text;
+using iText.IO.Util;
+using iText.Kernel.XMP;
 
-namespace iText.Kernel.XMP.Options
-{
+namespace iText.Kernel.XMP.Options {
     /// <summary>The base class for a collection of 32 flag bits.</summary>
     /// <remarks>
     /// The base class for a collection of 32 flag bits. Individual flags are defined as enum value bit
     /// masks. Inheriting classes add convenience accessor methods.
     /// </remarks>
     /// <since>24.01.2006</since>
-    public abstract class Options
-    {
+    public abstract class Options {
         /// <summary>the internal int containing all options</summary>
         private int options = 0;
 
@@ -49,83 +48,71 @@ namespace iText.Kernel.XMP.Options
         private IDictionary optionNames = null;
 
         /// <summary>The default constructor.</summary>
-        public Options()
-        {
+        public Options() {
         }
 
         // EMTPY
         /// <summary>Constructor with the options bit mask.</summary>
         /// <param name="options">the options bit mask</param>
-        public Options(int options)
-        {
+        public Options(int options) {
             AssertOptionsValid(options);
             SetOptions(options);
         }
 
         /// <summary>Resets the options.</summary>
-        public virtual void Clear()
-        {
+        public virtual void Clear() {
             options = 0;
         }
 
         /// <param name="optionBits">an option bitmask</param>
         /// <returns>Returns true, if this object is equal to the given options.</returns>
-        public virtual bool IsExactly(int optionBits)
-        {
+        public virtual bool IsExactly(int optionBits) {
             return GetOptions() == optionBits;
         }
 
         /// <param name="optionBits">an option bitmask</param>
         /// <returns>Returns true, if this object contains all given options.</returns>
-        public virtual bool ContainsAllOptions(int optionBits)
-        {
+        public virtual bool ContainsAllOptions(int optionBits) {
             return (GetOptions() & optionBits) == optionBits;
         }
 
         /// <param name="optionBits">an option bitmask</param>
         /// <returns>Returns true, if this object contain at least one of the given options.</returns>
-        public virtual bool ContainsOneOf(int optionBits)
-        {
+        public virtual bool ContainsOneOf(int optionBits) {
             return ((GetOptions()) & optionBits) != 0;
         }
 
         /// <param name="optionBit">the binary bit or bits that are requested</param>
         /// <returns>Returns if <b>all</b> of the requested bits are set or not.</returns>
-        protected internal virtual bool GetOption(int optionBit)
-        {
+        protected internal virtual bool GetOption(int optionBit) {
             return (options & optionBit) != 0;
         }
 
         /// <param name="optionBits">the binary bit or bits that shall be set to the given value</param>
         /// <param name="value">the boolean value to set</param>
-        public virtual void SetOption(int optionBits, bool value)
-        {
+        public virtual void SetOption(int optionBits, bool value) {
             options = value ? options | optionBits : options & ~optionBits;
         }
 
         /// <summary>Is friendly to access it during the tests.</summary>
         /// <returns>Returns the options.</returns>
-        public virtual int GetOptions()
-        {
+        public virtual int GetOptions() {
             return options;
         }
 
         /// <param name="options">The options to set.</param>
-        public virtual void SetOptions(int options)
-        {
+        public virtual void SetOptions(int options) {
             AssertOptionsValid(options);
             this.options = options;
         }
 
         /// <seealso cref="System.Object.Equals(System.Object)"/>
-        public override bool Equals(Object obj)
-        {
+        public override bool Equals(Object obj) {
             return GetOptions() == ((iText.Kernel.XMP.Options.Options)obj).GetOptions();
         }
 
         /// <seealso cref="System.Object.GetHashCode()"/>
-        public override int GetHashCode()
-        {
+        public override int GetHashCode() {
             return GetOptions();
         }
 
@@ -138,35 +125,29 @@ namespace iText.Kernel.XMP.Options
         /// Returns a String listing all options that are set to <c>true</c> by their name,
         /// like &amp;quot;option1 | option4&amp;quot;.
         /// </returns>
-        public virtual String GetOptionsString()
-        {
-            if (options != 0)
-            {
+        public virtual String GetOptionsString() {
+            if (options != 0) {
                 StringBuilder sb = new StringBuilder();
                 int theBits = options;
-                while (theBits != 0)
-                {
+                while (theBits != 0) {
                     int oneLessBit = theBits & (theBits - 1);
                     int singleBit = theBits ^ oneLessBit;
                     String bitName = GetOptionName(singleBit);
                     sb.Append(bitName);
-                    if (oneLessBit != 0)
-                    {
+                    if (oneLessBit != 0) {
                         sb.Append(" | ");
                     }
                     theBits = oneLessBit;
                 }
                 return sb.ToString();
             }
-            else
-            {
+            else {
                 return "<none>";
             }
         }
 
         /// <returns>Returns the options as hex bitmask.</returns>
-        public override String ToString()
-        {
+        public override String ToString() {
             return "0x" + JavaUtil.IntegerToHexString(options);
         }
 
@@ -189,8 +170,7 @@ namespace iText.Kernel.XMP.Options
         /// (it has to be made public therefore).
         /// </remarks>
         /// <param name="options">the bitmask to check.</param>
-        protected internal virtual void AssertConsistency(int options)
-        {
+        protected internal virtual void AssertConsistency(int options) {
         }
 
         // empty, no checks
@@ -203,15 +183,12 @@ namespace iText.Kernel.XMP.Options
         /// -method is called.
         /// </remarks>
         /// <param name="options">the options to check</param>
-        private void AssertOptionsValid(int options)
-        {
+        private void AssertOptionsValid(int options) {
             int invalidOptions = options & ~GetValidOptions();
-            if (invalidOptions == 0)
-            {
+            if (invalidOptions == 0) {
                 AssertConsistency(options);
             }
-            else
-            {
+            else {
                 throw new XMPException("The option bit(s) 0x" + JavaUtil.IntegerToHexString(invalidOptions) + " are invalid!"
                     , XMPError.BADOPTIONS);
             }
@@ -224,20 +201,16 @@ namespace iText.Kernel.XMP.Options
         /// </remarks>
         /// <param name="option">a single option bit</param>
         /// <returns>Returns the option name or undefined.</returns>
-        private String GetOptionName(int option)
-        {
+        private String GetOptionName(int option) {
             Hashtable optionsNames = ProcureOptionNames();
             int? key = option;
             String result = null;
-            if (optionsNames.Contains(key))
-            {
+            if (optionsNames.Contains(key)) {
                 result = DefineOptionName(option);
-                if (result != null)
-                {
+                if (result != null) {
                     optionsNames.Put(key, result);
                 }
-                else
-                {
+                else {
                     result = "<option name not defined>";
                 }
             }
@@ -245,10 +218,8 @@ namespace iText.Kernel.XMP.Options
         }
 
         /// <returns>Returns the optionNames map and creates it if required.</returns>
-        private Hashtable ProcureOptionNames()
-        {
-            if (optionNames == null)
-            {
+        private Hashtable ProcureOptionNames() {
+            if (optionNames == null) {
                 optionNames = new Hashtable();
             }
             return (Hashtable)optionNames;

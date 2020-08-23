@@ -42,17 +42,16 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using System.Collections.Generic;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Action
-{
+namespace iText.Kernel.Pdf.Action {
     /// <summary>This is a helper class for optional content states use in Set-OCG-State actions.</summary>
     /// <remarks>
     /// This is a helper class for optional content states use in Set-OCG-State actions.
     /// See
     /// <see cref="PdfAction.CreateSetOcgState(System.Collections.Generic.IList{E})"/>.
     /// </remarks>
-    public class PdfActionOcgState
-    {
+    public class PdfActionOcgState {
         /// <summary>
         /// Can be:
         /// <see cref="iText.Kernel.Pdf.PdfName.OFF"/>
@@ -78,8 +77,7 @@ namespace iText.Kernel.Pdf.Action
         /// <see cref="iText.Kernel.Pdf.PdfName.Toggle"/>
         /// </param>
         /// <param name="ocgs">a list of the OCG dictionaries</param>
-        public PdfActionOcgState(PdfName state, IList<PdfDictionary> ocgs)
-        {
+        public PdfActionOcgState(PdfName state, IList<PdfDictionary> ocgs) {
             this.state = state;
             this.ocgs = ocgs;
         }
@@ -93,15 +91,13 @@ namespace iText.Kernel.Pdf.Action
         /// ,
         /// <see cref="iText.Kernel.Pdf.PdfName.Toggle"/>
         /// </returns>
-        public virtual PdfName GetState()
-        {
+        public virtual PdfName GetState() {
             return state;
         }
 
         /// <summary>Gets a list of optional content groups that shall have the state changed</summary>
         /// <returns>the list of optional content groups</returns>
-        public virtual IList<PdfDictionary> GetOcgs()
-        {
+        public virtual IList<PdfDictionary> GetOcgs() {
             return ocgs;
         }
 
@@ -116,8 +112,7 @@ namespace iText.Kernel.Pdf.Action
         /// for construction of a
         /// <see cref="iText.Kernel.Pdf.PdfArray"/>
         /// </returns>
-        public virtual IList<PdfObject> GetObjectList()
-        {
+        public virtual IList<PdfObject> GetObjectList() {
             IList<PdfObject> states = new List<PdfObject>();
             states.Add(state);
             states.AddAll(ocgs);

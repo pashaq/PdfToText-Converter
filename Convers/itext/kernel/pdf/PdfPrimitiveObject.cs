@@ -41,102 +41,82 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
 using Common.Logging;
 using iText.IO.Util;
-using System;
 
-namespace iText.Kernel.Pdf
-{
-    public abstract class PdfPrimitiveObject : PdfObject
-    {
+namespace iText.Kernel.Pdf {
+    public abstract class PdfPrimitiveObject : PdfObject {
         protected internal byte[] content = null;
 
         protected internal bool directOnly;
 
         protected internal PdfPrimitiveObject()
-            : base()
-        {
+            : base() {
         }
 
         protected internal PdfPrimitiveObject(bool directOnly)
-            : base()
-        {
+            : base() {
             this.directOnly = directOnly;
         }
 
         /// <summary>Initialize PdfPrimitiveObject from the passed bytes.</summary>
         /// <param name="content">byte content, shall not be null.</param>
         protected internal PdfPrimitiveObject(byte[] content)
-            : this()
-        {
+            : this() {
             System.Diagnostics.Debug.Assert(content != null);
             this.content = content;
         }
 
-        protected internal byte[] GetInternalContent()
-        {
-            if (content == null)
-            {
+        protected internal byte[] GetInternalContent() {
+            if (content == null) {
                 GenerateContent();
             }
             return content;
         }
 
-        protected internal virtual bool HasContent()
-        {
+        protected internal virtual bool HasContent() {
             return content != null;
         }
 
         protected internal abstract void GenerateContent();
 
-        public override PdfObject MakeIndirect(PdfDocument document, PdfIndirectReference reference)
-        {
-            if (!directOnly)
-            {
+        public override PdfObject MakeIndirect(PdfDocument document, PdfIndirectReference reference) {
+            if (!directOnly) {
                 return base.MakeIndirect(document, reference);
             }
-            else
-            {
+            else {
                 ILog logger = LogManager.GetLogger(typeof(PdfObject));
                 logger.Warn(iText.IO.LogMessageConstant.DIRECTONLY_OBJECT_CANNOT_BE_INDIRECT);
             }
             return this;
         }
 
-        protected internal override PdfObject SetIndirectReference(PdfIndirectReference indirectReference)
-        {
-            if (!directOnly)
-            {
+        protected internal override PdfObject SetIndirectReference(PdfIndirectReference indirectReference) {
+            if (!directOnly) {
                 base.SetIndirectReference(indirectReference);
             }
-            else
-            {
+            else {
                 ILog logger = LogManager.GetLogger(typeof(PdfObject));
                 logger.Warn(iText.IO.LogMessageConstant.DIRECTONLY_OBJECT_CANNOT_BE_INDIRECT);
             }
             return this;
         }
 
-        protected internal override void CopyContent(PdfObject from, PdfDocument document)
-        {
+        protected internal override void CopyContent(PdfObject from, PdfDocument document) {
             base.CopyContent(from, document);
             iText.Kernel.Pdf.PdfPrimitiveObject @object = (iText.Kernel.Pdf.PdfPrimitiveObject)from;
-            if (@object.content != null)
-            {
+            if (@object.content != null) {
                 content = JavaUtil.ArraysCopyOf(@object.content, @object.content.Length);
             }
         }
 
-        protected internal virtual int CompareContent(iText.Kernel.Pdf.PdfPrimitiveObject o)
-        {
-            for (int i = 0; i < Math.Min(content.Length, o.content.Length); i++)
-            {
-                if (content[i] > o.content[i])
-                {
+        protected internal virtual int CompareContent(iText.Kernel.Pdf.PdfPrimitiveObject o) {
+            for (int i = 0; i < Math.Min(content.Length, o.content.Length); i++) {
+                if (content[i] > o.content[i]) {
                     return 1;
                 }
-                if (content[i] < o.content[i])
-                {
+                if (content[i] < o.content[i]) {
                     return -1;
                 }
             }

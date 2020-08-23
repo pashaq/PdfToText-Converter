@@ -41,16 +41,14 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Util;
 using System;
 using System.IO;
 using System.Text;
+using iText.IO.Util;
 
-namespace iText.IO.Source
-{
+namespace iText.IO.Source {
     /// <summary>Class that is used to unify reading from random access files and arrays.</summary>
-    public class RandomAccessFileOrArray
-    {
+    public class RandomAccessFileOrArray {
         /// <summary>When true the file access is not done through a memory mapped file.</summary>
         /// <remarks>
         /// When true the file access is not done through a memory mapped file. Use it if the file
@@ -76,8 +74,7 @@ namespace iText.IO.Source
         /// this RandomAccessFileOrArray is closed.
         /// </remarks>
         /// <param name="byteSource">the byte source to wrap</param>
-        public RandomAccessFileOrArray(IRandomAccessSource byteSource)
-        {
+        public RandomAccessFileOrArray(IRandomAccessSource byteSource) {
             this.byteSource = byteSource;
         }
 
@@ -87,8 +84,7 @@ namespace iText.IO.Source
         /// Closing this object will have adverse effect on the view.
         /// </remarks>
         /// <returns>the new view</returns>
-        public virtual iText.IO.Source.RandomAccessFileOrArray CreateView()
-        {
+        public virtual iText.IO.Source.RandomAccessFileOrArray CreateView() {
             EnsureByteSourceIsThreadSafe();
             return new iText.IO.Source.RandomAccessFileOrArray(new IndependentRandomAccessSource(byteSource));
         }
@@ -99,8 +95,7 @@ namespace iText.IO.Source
         /// Closing source will have adverse effect on the view.
         /// </remarks>
         /// <returns>the byte source view.</returns>
-        public virtual IRandomAccessSource CreateSourceView()
-        {
+        public virtual IRandomAccessSource CreateSourceView() {
             EnsureByteSourceIsThreadSafe();
             return new IndependentRandomAccessSource(byteSource);
         }
@@ -109,18 +104,15 @@ namespace iText.IO.Source
         /// <remarks>Pushes a byte back.  The next get() will return this byte instead of the value from the underlying data source
         ///     </remarks>
         /// <param name="b">the byte to push</param>
-        public virtual void PushBack(byte b)
-        {
+        public virtual void PushBack(byte b) {
             back = b;
             isBack = true;
         }
 
         /// <summary>Reads a single byte</summary>
         /// <returns>the byte, or -1 if EOF is reached</returns>
-        public virtual int Read()
-        {
-            if (isBack)
-            {
+        public virtual int Read() {
+            if (isBack) {
                 isBack = false;
                 return back & 0xff;
             }
@@ -132,31 +124,25 @@ namespace iText.IO.Source
         /// <param name="off">offset at which to start storing characters</param>
         /// <param name="len">maximum number of characters to read</param>
         /// <returns>the number of bytes actually read or -1 in case of EOF</returns>
-        public virtual int Read(byte[] b, int off, int len)
-        {
-            if (len == 0)
-            {
+        public virtual int Read(byte[] b, int off, int len) {
+            if (len == 0) {
                 return 0;
             }
             int count = 0;
-            if (isBack && len > 0)
-            {
+            if (isBack && len > 0) {
                 isBack = false;
                 b[off++] = back;
                 --len;
                 count++;
             }
-            if (len > 0)
-            {
+            if (len > 0) {
                 int byteSourceCount = byteSource.Get(byteSourcePosition, b, off, len);
-                if (byteSourceCount > 0)
-                {
+                if (byteSourceCount > 0) {
                     count += byteSourceCount;
                     byteSourcePosition += byteSourceCount;
                 }
             }
-            if (count == 0)
-            {
+            if (count == 0) {
                 return -1;
             }
             return count;
@@ -167,26 +153,21 @@ namespace iText.IO.Source
         ///     </remarks>
         /// <param name="b">the destination buffer</param>
         /// <returns>the number of bytes actually read</returns>
-        public virtual int Read(byte[] b)
-        {
+        public virtual int Read(byte[] b) {
             return Read(b, 0, b.Length);
         }
 
         /// <summary><inheritDoc/></summary>
-        public virtual void ReadFully(byte[] b)
-        {
+        public virtual void ReadFully(byte[] b) {
             ReadFully(b, 0, b.Length);
         }
 
         /// <summary><inheritDoc/></summary>
-        public virtual void ReadFully(byte[] b, int off, int len)
-        {
+        public virtual void ReadFully(byte[] b, int off, int len) {
             int n = 0;
-            do
-            {
+            do {
                 int count = Read(b, off + n, len - n);
-                if (count < 0)
-                {
+                if (count < 0) {
                     throw new EndOfStreamException();
                 }
                 n += count;
@@ -201,22 +182,17 @@ namespace iText.IO.Source
         /// </remarks>
         /// <param name="n">the number of bytes to skip</param>
         /// <returns>the actual number of bytes skipped</returns>
-        public virtual long Skip(long n)
-        {
-            if (n <= 0)
-            {
+        public virtual long Skip(long n) {
+            if (n <= 0) {
                 return 0;
             }
             int adj = 0;
-            if (isBack)
-            {
+            if (isBack) {
                 isBack = false;
-                if (n == 1)
-                {
+                if (n == 1) {
                     return 1;
                 }
-                else
-                {
+                else {
                     --n;
                     adj = 1;
                 }
@@ -227,8 +203,7 @@ namespace iText.IO.Source
             pos = GetPosition();
             len = Length();
             newpos = pos + n;
-            if (newpos > len)
-            {
+            if (newpos > len) {
                 newpos = len;
             }
             Seek(newpos);
@@ -236,29 +211,25 @@ namespace iText.IO.Source
         }
 
         /// <summary><inheritDoc/></summary>
-        public virtual int SkipBytes(int n)
-        {
+        public virtual int SkipBytes(int n) {
             return (int)Skip(n);
         }
 
         /// <summary>Closes the underlying source.</summary>
-        public virtual void Close()
-        {
+        public virtual void Close() {
             isBack = false;
             byteSource.Close();
         }
 
         /// <summary>Gets the total amount of bytes in the source.</summary>
         /// <returns>source's size.</returns>
-        public virtual long Length()
-        {
+        public virtual long Length() {
             return byteSource.Length();
         }
 
         /// <summary>Sets the current position in the source to the specified index.</summary>
         /// <param name="pos">the position to set</param>
-        public virtual void Seek(long pos)
-        {
+        public virtual void Seek(long pos) {
             byteSourcePosition = pos;
             isBack = false;
         }
@@ -268,51 +239,42 @@ namespace iText.IO.Source
         /// the index of last read byte in the source in
         /// or the index of last read byte in source - 1 in case byte was pushed.
         /// </returns>
-        public virtual long GetPosition()
-        {
+        public virtual long GetPosition() {
             return byteSourcePosition - (isBack ? 1 : 0);
         }
 
         /// <summary><inheritDoc/></summary>
-        public virtual bool ReadBoolean()
-        {
+        public virtual bool ReadBoolean() {
             int ch = this.Read();
-            if (ch < 0)
-            {
+            if (ch < 0) {
                 throw new EndOfStreamException();
             }
             return (ch != 0);
         }
 
         /// <summary><inheritDoc/></summary>
-        public virtual byte ReadByte()
-        {
+        public virtual byte ReadByte() {
             int ch = this.Read();
-            if (ch < 0)
-            {
+            if (ch < 0) {
                 throw new EndOfStreamException();
             }
             return (byte)(ch);
         }
 
         /// <summary><inheritDoc/></summary>
-        public virtual int ReadUnsignedByte()
-        {
+        public virtual int ReadUnsignedByte() {
             int ch = this.Read();
-            if (ch < 0)
-            {
+            if (ch < 0) {
                 throw new EndOfStreamException();
             }
             return ch;
         }
 
         /// <summary><inheritDoc/></summary>
-        public virtual short ReadShort()
-        {
+        public virtual short ReadShort() {
             int ch1 = this.Read();
             int ch2 = this.Read();
-            if ((ch1 | ch2) < 0)
-            {
+            if ((ch1 | ch2) < 0) {
                 throw new EndOfStreamException();
             }
             return (short)((ch1 << 8) + ch2);
@@ -345,24 +307,20 @@ namespace iText.IO.Source
         /// the next two bytes of this stream, interpreted as a signed
         /// 16-bit number.
         /// </returns>
-        public short ReadShortLE()
-        {
+        public short ReadShortLE() {
             int ch1 = this.Read();
             int ch2 = this.Read();
-            if ((ch1 | ch2) < 0)
-            {
+            if ((ch1 | ch2) < 0) {
                 throw new EndOfStreamException();
             }
             return (short)((ch2 << 8) + ch1);
         }
 
         /// <summary><inheritDoc/></summary>
-        public virtual int ReadUnsignedShort()
-        {
+        public virtual int ReadUnsignedShort() {
             int ch1 = this.Read();
             int ch2 = this.Read();
-            if ((ch1 | ch2) < 0)
-            {
+            if ((ch1 | ch2) < 0) {
                 throw new EndOfStreamException();
             }
             return (ch1 << 8) + ch2;
@@ -392,24 +350,20 @@ namespace iText.IO.Source
         /// the next two bytes of this stream, interpreted as an
         /// unsigned 16-bit integer.
         /// </returns>
-        public int ReadUnsignedShortLE()
-        {
+        public int ReadUnsignedShortLE() {
             int ch1 = this.Read();
             int ch2 = this.Read();
-            if ((ch1 | ch2) < 0)
-            {
+            if ((ch1 | ch2) < 0) {
                 throw new EndOfStreamException();
             }
             return (ch2 << 8) + ch1;
         }
 
         /// <summary><inheritDoc/></summary>
-        public virtual char ReadChar()
-        {
+        public virtual char ReadChar() {
             int ch1 = this.Read();
             int ch2 = this.Read();
-            if ((ch1 | ch2) < 0)
-            {
+            if ((ch1 | ch2) < 0) {
                 throw new EndOfStreamException();
             }
             return (char)((ch1 << 8) + ch2);
@@ -436,26 +390,22 @@ namespace iText.IO.Source
         /// stream is detected, or an exception is thrown.
         /// </remarks>
         /// <returns>the next two bytes of this stream as a Unicode character.</returns>
-        public char ReadCharLE()
-        {
+        public char ReadCharLE() {
             int ch1 = this.Read();
             int ch2 = this.Read();
-            if ((ch1 | ch2) < 0)
-            {
+            if ((ch1 | ch2) < 0) {
                 throw new EndOfStreamException();
             }
             return (char)((ch2 << 8) + ch2);
         }
 
         /// <summary><inheritDoc/></summary>
-        public virtual int ReadInt()
-        {
+        public virtual int ReadInt() {
             int ch1 = this.Read();
             int ch2 = this.Read();
             int ch3 = this.Read();
             int ch4 = this.Read();
-            if ((ch1 | ch2 | ch3 | ch4) < 0)
-            {
+            if ((ch1 | ch2 | ch3 | ch4) < 0) {
                 throw new EndOfStreamException();
             }
             return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + ch4);
@@ -489,14 +439,12 @@ namespace iText.IO.Source
         /// the next four bytes of this stream, interpreted as an
         /// <c>int</c>.
         /// </returns>
-        public int ReadIntLE()
-        {
+        public int ReadIntLE() {
             int ch1 = this.Read();
             int ch2 = this.Read();
             int ch3 = this.Read();
             int ch4 = this.Read();
-            if ((ch1 | ch2 | ch3 | ch4) < 0)
-            {
+            if ((ch1 | ch2 | ch3 | ch4) < 0) {
                 throw new EndOfStreamException();
             }
             return ((ch4 << 24) + (ch3 << 16) + (ch2 << 8) + ch1);
@@ -529,104 +477,86 @@ namespace iText.IO.Source
         /// the next four bytes of this stream, interpreted as a
         /// <c>long</c>.
         /// </returns>
-        public long ReadUnsignedInt()
-        {
+        public long ReadUnsignedInt() {
             long ch1 = this.Read();
             long ch2 = this.Read();
             long ch3 = this.Read();
             long ch4 = this.Read();
-            if ((ch1 | ch2 | ch3 | ch4) < 0)
-            {
+            if ((ch1 | ch2 | ch3 | ch4) < 0) {
                 throw new EndOfStreamException();
             }
             return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + ch4);
         }
 
-        public long ReadUnsignedIntLE()
-        {
+        public long ReadUnsignedIntLE() {
             long ch1 = this.Read();
             long ch2 = this.Read();
             long ch3 = this.Read();
             long ch4 = this.Read();
-            if ((ch1 | ch2 | ch3 | ch4) < 0)
-            {
+            if ((ch1 | ch2 | ch3 | ch4) < 0) {
                 throw new EndOfStreamException();
             }
             return ((ch4 << 24) + (ch3 << 16) + (ch2 << 8) + ch1);
         }
 
         /// <summary><inheritDoc/></summary>
-        public virtual long ReadLong()
-        {
+        public virtual long ReadLong() {
             return ((long)(ReadInt()) << 32) + (ReadInt() & 0xFFFFFFFFL);
         }
 
-        public long ReadLongLE()
-        {
+        public long ReadLongLE() {
             int i1 = ReadIntLE();
             int i2 = ReadIntLE();
             return ((long)i2 << 32) + (i1 & 0xFFFFFFFFL);
         }
 
         /// <summary><inheritDoc/></summary>
-        public virtual float ReadFloat()
-        {
+        public virtual float ReadFloat() {
             return JavaUtil.IntBitsToFloat(ReadInt());
         }
 
-        public float ReadFloatLE()
-        {
+        public float ReadFloatLE() {
             return JavaUtil.IntBitsToFloat(ReadIntLE());
         }
 
         /// <summary><inheritDoc/></summary>
-        public virtual double ReadDouble()
-        {
+        public virtual double ReadDouble() {
             return JavaUtil.LongBitsToDouble(ReadLong());
         }
 
-        public double ReadDoubleLE()
-        {
+        public double ReadDoubleLE() {
             return JavaUtil.LongBitsToDouble(ReadLongLE());
         }
 
         /// <summary><inheritDoc/></summary>
-        public virtual String ReadLine()
-        {
+        public virtual String ReadLine() {
             StringBuilder input = new StringBuilder();
             int c = -1;
             bool eol = false;
-            while (!eol)
-            {
-                switch (c = Read())
-                {
+            while (!eol) {
+                switch (c = Read()) {
                     case -1:
-                    case '\n':
-                        {
-                            eol = true;
-                            break;
-                        }
+                    case '\n': {
+                        eol = true;
+                        break;
+                    }
 
-                    case '\r':
-                        {
-                            eol = true;
-                            long cur = GetPosition();
-                            if ((Read()) != '\n')
-                            {
-                                Seek(cur);
-                            }
-                            break;
+                    case '\r': {
+                        eol = true;
+                        long cur = GetPosition();
+                        if ((Read()) != '\n') {
+                            Seek(cur);
                         }
+                        break;
+                    }
 
-                    default:
-                        {
-                            input.Append((char)c);
-                            break;
-                        }
+                    default: {
+                        input.Append((char)c);
+                        break;
+                    }
                 }
             }
-            if ((c == -1) && (input.Length == 0))
-            {
+            if ((c == -1) && (input.Length == 0)) {
                 return null;
             }
             return input.ToString();
@@ -644,17 +574,14 @@ namespace iText.IO.Source
         /// <c>String</c>
         /// read
         /// </returns>
-        public virtual String ReadString(int length, String encoding)
-        {
+        public virtual String ReadString(int length, String encoding) {
             byte[] buf = new byte[length];
             ReadFully(buf);
             return iText.IO.Util.JavaUtil.GetStringForBytes(buf, encoding);
         }
 
-        private void EnsureByteSourceIsThreadSafe()
-        {
-            if (!(byteSource is ThreadSafeRandomAccessSource))
-            {
+        private void EnsureByteSourceIsThreadSafe() {
+            if (!(byteSource is ThreadSafeRandomAccessSource)) {
                 byteSource = new ThreadSafeRandomAccessSource(byteSource);
             }
         }

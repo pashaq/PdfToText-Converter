@@ -41,23 +41,19 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
+using System.IO;
 using iText.IO.Font.Constants;
 using iText.IO.Source;
 using iText.IO.Util;
-using System;
-using System.IO;
 
-namespace iText.IO.Font.Cmap
-{
+namespace iText.IO.Font.Cmap {
     /// <author>psoares</author>
-    public class CMapLocationResource : ICMapLocation
-    {
-        public virtual PdfTokenizer GetLocation(String location)
-        {
+    public class CMapLocationResource : ICMapLocation {
+        public virtual PdfTokenizer GetLocation(String location) {
             String fullName = FontResources.CMAPS + location;
             Stream inp = ResourceUtil.GetResourceStream(fullName);
-            if (inp == null)
-            {
+            if (inp == null) {
                 throw new iText.IO.IOException(iText.IO.IOException.Cmap1WasNotFound).SetMessageParams(fullName);
             }
             return new PdfTokenizer(new RandomAccessFileOrArray(new RandomAccessSourceFactory().CreateSource(inp)));

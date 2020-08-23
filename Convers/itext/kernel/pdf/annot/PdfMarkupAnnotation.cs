@@ -41,11 +41,12 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
 using Common.Logging;
 using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Annot
-{
+namespace iText.Kernel.Pdf.Annot {
     /// <summary>
     /// This is a super class for the annotations which are defined as markup annotations
     /// because they are used primarily to mark up PDF documents.
@@ -57,15 +58,13 @@ namespace iText.Kernel.Pdf.Annot
     /// by a conforming reader, such as in a Comments pane.
     /// See also ISO-320001 12.5.6.2 "Markup Annotations".
     /// </remarks>
-    public abstract class PdfMarkupAnnotation : PdfAnnotation
-    {
+    public abstract class PdfMarkupAnnotation : PdfAnnotation {
         protected internal PdfAnnotation inReplyTo = null;
 
         protected internal PdfPopupAnnotation popup = null;
 
         protected internal PdfMarkupAnnotation(Rectangle rect)
-            : base(rect)
-        {
+            : base(rect) {
         }
 
         /// <summary>
@@ -82,8 +81,7 @@ namespace iText.Kernel.Pdf.Annot
         /// </param>
         /// <seealso cref="PdfAnnotation.MakeAnnotation(iText.Kernel.Pdf.PdfObject)"/>
         protected internal PdfMarkupAnnotation(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
         /// <summary>
@@ -100,8 +98,7 @@ namespace iText.Kernel.Pdf.Annot
         /// which value is an annotation text label content
         /// or null if text is not specified.
         /// </returns>
-        public virtual PdfString GetText()
-        {
+        public virtual PdfString GetText() {
             return GetPdfObject().GetAsString(PdfName.T);
         }
 
@@ -123,8 +120,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfMarkupAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfMarkupAnnotation SetText(PdfString text)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfMarkupAnnotation SetText(PdfString text) {
             return (iText.Kernel.Pdf.Annot.PdfMarkupAnnotation)Put(PdfName.T, text);
         }
 
@@ -142,8 +138,7 @@ namespace iText.Kernel.Pdf.Annot
         /// level of opacity. This method returns null if opacity is not specified; in this case default
         /// value is used, which is 1.
         /// </returns>
-        public virtual PdfNumber GetOpacity()
-        {
+        public virtual PdfNumber GetOpacity() {
             return GetPdfObject().GetAsNumber(PdfName.CA);
         }
 
@@ -160,8 +155,7 @@ namespace iText.Kernel.Pdf.Annot
         /// instance.
         /// </returns>
         /// <seealso cref="GetOpacity()"/>
-        public virtual iText.Kernel.Pdf.Annot.PdfMarkupAnnotation SetOpacity(PdfNumber ca)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfMarkupAnnotation SetOpacity(PdfNumber ca) {
             return (iText.Kernel.Pdf.Annot.PdfMarkupAnnotation)Put(PdfName.CA, ca);
         }
 
@@ -173,8 +167,7 @@ namespace iText.Kernel.Pdf.Annot
         /// text string or text stream that specifies rich text or null if
         /// rich text is not specified.
         /// </returns>
-        public virtual PdfObject GetRichText()
-        {
+        public virtual PdfObject GetRichText() {
             return GetPdfObject().Get(PdfName.RC);
         }
 
@@ -188,8 +181,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfMarkupAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfMarkupAnnotation SetRichText(PdfObject richText)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfMarkupAnnotation SetRichText(PdfObject richText) {
             return (iText.Kernel.Pdf.Annot.PdfMarkupAnnotation)Put(PdfName.RC, richText);
         }
 
@@ -199,8 +191,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfString"/>
         /// which value should be in the date format specified in (ISO-320001 7.9.4, "Dates").
         /// </returns>
-        public virtual PdfString GetCreationDate()
-        {
+        public virtual PdfString GetCreationDate() {
             return GetPdfObject().GetAsString(PdfName.CreationDate);
         }
 
@@ -216,8 +207,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfMarkupAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfMarkupAnnotation SetCreationDate(PdfString creationDate)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfMarkupAnnotation SetCreationDate(PdfString creationDate) {
             return (iText.Kernel.Pdf.Annot.PdfMarkupAnnotation)Put(PdfName.CreationDate, creationDate);
         }
 
@@ -238,8 +228,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfDictionary"/>
         /// that represents an annotation that this annotation is "in reply to."
         /// </returns>
-        public virtual PdfDictionary GetInReplyToObject()
-        {
+        public virtual PdfDictionary GetInReplyToObject() {
             return GetPdfObject().GetAsDictionary(PdfName.IRT);
         }
 
@@ -260,10 +249,8 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfAnnotation"/>
         /// that this annotation is "in reply to."
         /// </returns>
-        public virtual PdfAnnotation GetInReplyTo()
-        {
-            if (inReplyTo == null)
-            {
+        public virtual PdfAnnotation GetInReplyTo() {
+            if (inReplyTo == null) {
                 inReplyTo = MakeAnnotation(GetInReplyToObject());
             }
             return inReplyTo;
@@ -291,8 +278,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfMarkupAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfMarkupAnnotation SetInReplyTo(PdfAnnotation inReplyTo)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfMarkupAnnotation SetInReplyTo(PdfAnnotation inReplyTo) {
             this.inReplyTo = inReplyTo;
             return (iText.Kernel.Pdf.Annot.PdfMarkupAnnotation)Put(PdfName.IRT, inReplyTo.GetPdfObject());
         }
@@ -316,8 +302,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfMarkupAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfMarkupAnnotation SetPopup(PdfPopupAnnotation popup)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfMarkupAnnotation SetPopup(PdfPopupAnnotation popup) {
             this.popup = popup;
             popup.SetParent(this);
             return (iText.Kernel.Pdf.Annot.PdfMarkupAnnotation)Put(PdfName.Popup, popup.GetPdfObject());
@@ -335,8 +320,7 @@ namespace iText.Kernel.Pdf.Annot
         /// that represents an associated pop-up annotation,
         /// or null if popup annotation is not specified.
         /// </returns>
-        public virtual PdfDictionary GetPopupObject()
-        {
+        public virtual PdfDictionary GetPopupObject() {
             return GetPdfObject().GetAsDictionary(PdfName.Popup);
         }
 
@@ -355,16 +339,12 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfPopupAnnotation"/>
         /// that is associated with this annotation, or null if there is none.
         /// </returns>
-        public virtual PdfPopupAnnotation GetPopup()
-        {
-            if (popup == null)
-            {
+        public virtual PdfPopupAnnotation GetPopup() {
+            if (popup == null) {
                 PdfDictionary popupObject = GetPopupObject();
-                if (popupObject != null)
-                {
+                if (popupObject != null) {
                     PdfAnnotation annotation = MakeAnnotation(popupObject);
-                    if (!(annotation is PdfPopupAnnotation))
-                    {
+                    if (!(annotation is PdfPopupAnnotation)) {
                         ILog logger = LogManager.GetLogger(typeof(iText.Kernel.Pdf.Annot.PdfMarkupAnnotation));
                         logger.Warn(iText.IO.LogMessageConstant.POPUP_ENTRY_IS_NOT_POPUP_ANNOTATION);
                         return null;
@@ -381,8 +361,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfString"/>
         /// which value is a annotation subject.
         /// </returns>
-        public virtual PdfString GetSubject()
-        {
+        public virtual PdfString GetSubject() {
             return GetPdfObject().GetAsString(PdfName.Subj);
         }
 
@@ -397,8 +376,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfMarkupAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfMarkupAnnotation SetSubject(PdfString subject)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfMarkupAnnotation SetSubject(PdfString subject) {
             return (iText.Kernel.Pdf.Annot.PdfMarkupAnnotation)Put(PdfName.Subj, subject);
         }
 
@@ -433,8 +411,7 @@ namespace iText.Kernel.Pdf.Annot
         /// type is not specified, in this case the default value is
         /// <see cref="iText.Kernel.Pdf.PdfName.R"/>.
         /// </returns>
-        public virtual PdfName GetReplyType()
-        {
+        public virtual PdfName GetReplyType() {
             return GetPdfObject().GetAsName(PdfName.RT);
         }
 
@@ -461,8 +438,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfMarkupAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfMarkupAnnotation SetReplyType(PdfName replyType)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfMarkupAnnotation SetReplyType(PdfName replyType) {
             return (iText.Kernel.Pdf.Annot.PdfMarkupAnnotation)Put(PdfName.RT, replyType);
         }
 
@@ -478,8 +454,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfName"/>
         /// describing the intent of the markup annotation, or null if not specified.
         /// </returns>
-        public virtual PdfName GetIntent()
-        {
+        public virtual PdfName GetIntent() {
             return GetPdfObject().GetAsName(PdfName.IT);
         }
 
@@ -503,8 +478,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfMarkupAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfMarkupAnnotation SetIntent(PdfName intent)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfMarkupAnnotation SetIntent(PdfName intent) {
             return (iText.Kernel.Pdf.Annot.PdfMarkupAnnotation)Put(PdfName.IT, intent);
         }
 
@@ -535,8 +509,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfDictionary"/>
         /// , or null if not specified.
         /// </returns>
-        public virtual PdfDictionary GetExternalData()
-        {
+        public virtual PdfDictionary GetExternalData() {
             return GetPdfObject().GetAsDictionary(PdfName.ExData);
         }
 
@@ -569,8 +542,7 @@ namespace iText.Kernel.Pdf.Annot
         /// instance
         /// </returns>
         [System.ObsoleteAttribute(@"use SetExternalData(iText.Kernel.Pdf.PdfDictionary) instead")]
-        public virtual iText.Kernel.Pdf.Annot.PdfMarkupAnnotation SetExternalData(PdfName exData)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfMarkupAnnotation SetExternalData(PdfName exData) {
             return (iText.Kernel.Pdf.Annot.PdfMarkupAnnotation)Put(PdfName.ExData, exData);
         }
 
@@ -602,8 +574,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfMarkupAnnotation"/>
         /// instance
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfMarkupAnnotation SetExternalData(PdfDictionary exData)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfMarkupAnnotation SetExternalData(PdfDictionary exData) {
             return (iText.Kernel.Pdf.Annot.PdfMarkupAnnotation)Put(PdfName.ExData, exData);
         }
     }

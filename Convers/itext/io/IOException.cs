@@ -41,15 +41,13 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Util;
 using System;
 using System.Collections.Generic;
+using iText.IO.Util;
 
-namespace iText.IO
-{
+namespace iText.IO {
     /// <summary>Exception class for exceptions in io module.</summary>
-    public class IOException : Exception
-    {
+    public class IOException : Exception {
         public const String AllFillBitsPrecedingEolCodeMustBe0 = "All fill bits preceding eol code must be 0.";
 
         public const String BadEndiannessTag0x4949Or0x4d4d = "Bad endianness tag: 0x4949 or 0x4d4d.";
@@ -256,8 +254,7 @@ namespace iText.IO
         /// <summary>Creates a new IOException.</summary>
         /// <param name="message">the detail message.</param>
         public IOException(String message)
-            : base(message)
-        {
+            : base(message) {
         }
 
         /// <summary>Creates a new IOException.</summary>
@@ -267,16 +264,14 @@ namespace iText.IO
         /// method).
         /// </param>
         public IOException(Exception cause)
-            : this(UnknownIOException, cause)
-        {
+            : this(UnknownIOException, cause) {
         }
 
         /// <summary>Creates a new IOException.</summary>
         /// <param name="message">the detail message.</param>
         /// <param name="obj">an object for more details.</param>
         public IOException(String message, Object obj)
-            : this(message)
-        {
+            : this(message) {
             this.obj = obj;
         }
 
@@ -288,8 +283,7 @@ namespace iText.IO
         /// method).
         /// </param>
         public IOException(String message, Exception cause)
-            : base(message, cause)
-        {
+            : base(message, cause) {
         }
 
         /// <summary>Creates a new instance of IOException.</summary>
@@ -301,33 +295,26 @@ namespace iText.IO
         /// </param>
         /// <param name="obj">an object for more details.</param>
         public IOException(String message, Exception cause, Object obj)
-            : this(message, cause)
-        {
+            : this(message, cause) {
             this.obj = obj;
         }
 
         /// <summary><inheritDoc/></summary>
-        public override String Message
-        {
-            get
-            {
-                if (messageParams == null || messageParams.Count == 0)
-                {
+        public override String Message {
+            get {
+                if (messageParams == null || messageParams.Count == 0) {
                     return base.Message;
                 }
-                else
-                {
+                else {
                     return MessageFormatUtil.Format(base.Message, GetMessageParams());
                 }
             }
         }
 
         /// <summary>Gets additional params for Exception message.</summary>
-        protected internal virtual Object[] GetMessageParams()
-        {
+        protected internal virtual Object[] GetMessageParams() {
             Object[] parameters = new Object[messageParams.Count];
-            for (int i = 0; i < messageParams.Count; i++)
-            {
+            for (int i = 0; i < messageParams.Count; i++) {
                 parameters[i] = messageParams[i];
             }
             return parameters;
@@ -336,8 +323,7 @@ namespace iText.IO
         /// <summary>Sets additional params for Exception message.</summary>
         /// <param name="messageParams">additional params.</param>
         /// <returns>object itself.</returns>
-        public virtual iText.IO.IOException SetMessageParams(params Object[] messageParams)
-        {
+        public virtual iText.IO.IOException SetMessageParams(params Object[] messageParams) {
             this.messageParams = new List<Object>();
             this.messageParams.AddAll(messageParams);
             return this;

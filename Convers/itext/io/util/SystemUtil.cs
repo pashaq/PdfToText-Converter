@@ -48,31 +48,26 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace iText.IO.Util
-{
+namespace iText.IO.Util {
     /// <summary>
     /// This file is a helper class for internal usage only.
     /// Be aware that its API and functionality may be changed in future.
     /// </summary>
-    public class SystemUtil
-    {
+    public class SystemUtil {
         private const String SPLIT_REGEX = "((\".+?\"|[^'\\s]|'.+?')+)\\s*";
 
         [System.ObsoleteAttribute(
             @"To be removed in iText version 7.2. For time-based seed, please use {@link #getTimeBasedSeed()} instead.")]
-        public static long GetSystemTimeTicks()
-        {
+        public static long GetSystemTimeTicks() {
             return DateTime.Now.Ticks / 10000 + Environment.TickCount;
         }
 
-        public static long GetTimeBasedSeed()
-        {
+        public static long GetTimeBasedSeed() {
             return DateTime.Now.Ticks + Environment.TickCount;
         }
 
-        public static int GetTimeBasedIntSeed()
-        {
-            return unchecked((int)DateTime.Now.Ticks) + Environment.TickCount;
+        public static int GetTimeBasedIntSeed() {
+            return unchecked((int) DateTime.Now.Ticks) + Environment.TickCount;
         }
 
         /// <summary>
@@ -80,13 +75,11 @@ namespace iText.IO.Util
         /// Shouldn't be used in the DateTime creation since the nanoseconds are expected there.
         /// </summary>
         /// <returns>relative time in milliseconds</returns>
-        public static long GetRelativeTimeMillis()
-        {
+        public static long GetRelativeTimeMillis() {
             return DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
         }
 
-        public static long GetFreeMemory()
-        {
+        public static long GetFreeMemory() {
             return GC.GetTotalMemory(false);
         }
 
@@ -95,30 +88,25 @@ namespace iText.IO.Util
         /// </summary>
         /// <param name="name">the name of environment variable.</param>
         /// <returns>variable value or null if there is no such.</returns>
-        public static String GetEnvironmentVariable(String name)
-        {
+        public static String GetEnvironmentVariable(String name) {
             return Environment.GetEnvironmentVariable(name);
         }
 
-        public static bool RunProcessAndWait(String exec, String @params)
-        {
+        public static bool RunProcessAndWait(String exec, String @params) {
             return RunProcessAndWait(exec, @params, null);
         }
-
-        public static bool RunProcessAndWait(String exec, String @params, String workingDirPath)
-        {
+        
+        public static bool RunProcessAndWait(String exec, String @params, String workingDirPath) {
             return RunProcessAndGetExitCode(exec, @params, workingDirPath) == 0;
         }
-
+        
         public static int RunProcessAndGetExitCode(String exec, String @params)
         {
             return RunProcessAndGetExitCode(exec, @params, null);
         }
-
-        public static int RunProcessAndGetExitCode(String exec, String @params, String workingDirPath)
-        {
-            using (Process proc = new Process())
-            {
+        
+        public static int RunProcessAndGetExitCode(String exec, String @params, String workingDirPath) {
+            using (Process proc = new Process()) {
                 SetProcessStartInfo(proc, exec, @params, workingDirPath);
                 proc.Start();
                 Console.WriteLine(GetProcessOutput(proc));
@@ -127,11 +115,9 @@ namespace iText.IO.Util
             }
         }
 
-        public static String RunProcessAndGetOutput(String exec, String @params)
-        {
+        public static String RunProcessAndGetOutput(String exec, String @params) {
             String processOutput;
-            using (Process proc = new Process())
-            {
+            using (Process proc = new Process()) {
                 SetProcessStartInfo(proc, exec, @params, null);
                 proc.Start();
                 processOutput = GetProcessOutput(proc);
@@ -141,11 +127,9 @@ namespace iText.IO.Util
             return processOutput;
         }
 
-        public static StringBuilder RunProcessAndCollectErrors(String exec, String @params)
-        {
+        public static StringBuilder RunProcessAndCollectErrors(String exec, String @params) {
             StringBuilder errorsBuilder;
-            using (Process proc = new Process())
-            {
+            using (Process proc = new Process()) {
                 SetProcessStartInfo(proc, exec, @params, null);
                 proc.Start();
                 errorsBuilder = GetProcessErrorsOutput(proc);
@@ -156,13 +140,11 @@ namespace iText.IO.Util
             return errorsBuilder;
         }
 
-        internal static void SetProcessStartInfo(Process proc, String exec, String @params)
-        {
+        internal static void SetProcessStartInfo(Process proc, String exec, String @params) {
             SetProcessStartInfo(proc, exec, @params, null);
         }
-
-        internal static void SetProcessStartInfo(Process proc, String exec, String @params, String workingDir)
-        {
+        
+        internal static void SetProcessStartInfo(Process proc, String exec, String @params, String workingDir) {
             String[] processArguments = PrepareProcessArguments(exec, @params);
             proc.StartInfo = new ProcessStartInfo(processArguments[0], processArguments[1]);
             proc.StartInfo.UseShellExecute = false;
@@ -172,8 +154,7 @@ namespace iText.IO.Util
             proc.StartInfo.WorkingDirectory = workingDir;
         }
 
-        internal static String[] PrepareProcessArguments(String exec, String @params)
-        {
+        internal static String[] PrepareProcessArguments(String exec, String @params) {
             bool isExcitingFile;
             try
             {
@@ -185,12 +166,11 @@ namespace iText.IO.Util
             }
 
             return isExcitingFile
-                ? new[] { exec, @params.Replace("'", "\"") }
+                ? new[] {exec, @params.Replace("'", "\"")}
                 : SplitIntoProcessArguments(exec, @params);
         }
 
-        internal static String[] SplitIntoProcessArguments(String command, String @params)
-        {
+        internal static String[] SplitIntoProcessArguments(String command, String @params) {
             Regex regex = new Regex(SPLIT_REGEX);
             MatchCollection matches = regex.Matches(command);
             String processCommand = "";
@@ -208,11 +188,10 @@ namespace iText.IO.Util
                 processArguments = processArguments.Replace("'", "\"").Trim();
             }
 
-            return new[] { processCommand, processArguments };
+            return new[] {processCommand, processArguments};
         }
 
-        internal static String GetProcessOutput(Process p)
-        {
+        internal static String GetProcessOutput(Process p) {
             StringBuilder bri = new StringBuilder();
             StringBuilder bre = new StringBuilder();
             do
@@ -224,8 +203,7 @@ namespace iText.IO.Util
             return bri.ToString() + '\n' + bre.ToString();
         }
 
-        internal static StringBuilder GetProcessErrorsOutput(Process p)
-        {
+        internal static StringBuilder GetProcessErrorsOutput(Process p) {
             StringBuilder bre = new StringBuilder();
             do
             {

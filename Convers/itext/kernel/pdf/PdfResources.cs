@@ -41,16 +41,15 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
+using System.Collections.Generic;
 using iText.IO.Util;
 using iText.Kernel.Font;
 using iText.Kernel.Pdf.Colorspace;
 using iText.Kernel.Pdf.Extgstate;
 using iText.Kernel.Pdf.Xobject;
-using System;
-using System.Collections.Generic;
 
-namespace iText.Kernel.Pdf
-{
+namespace iText.Kernel.Pdf {
     /// <summary>
     /// Wrapper class that represent resource dictionary - that define named resources
     /// used by content streams operators.
@@ -59,8 +58,7 @@ namespace iText.Kernel.Pdf
     /// Wrapper class that represent resource dictionary - that define named resources
     /// used by content streams operators. (ISO 32000-1, 7.8.3 Resource Dictionaries)
     /// </remarks>
-    public class PdfResources : PdfObjectWrapper<PdfDictionary>
-    {
+    public class PdfResources : PdfObjectWrapper<PdfDictionary> {
         private const String F = "F";
 
         private const String Im = "Im";
@@ -114,15 +112,13 @@ namespace iText.Kernel.Pdf
         /// object from which the resource object will be created.
         /// </param>
         public PdfResources(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
             BuildResources(pdfObject);
         }
 
         /// <summary>Creates new instance from empty dictionary.</summary>
         public PdfResources()
-            : this(new PdfDictionary())
-        {
+            : this(new PdfDictionary()) {
         }
 
         /// <summary>Adds font to resources and registers PdfFont in the document for further flushing.</summary>
@@ -137,8 +133,7 @@ namespace iText.Kernel.Pdf
         /// instance to be added
         /// </param>
         /// <returns>added font resource name.</returns>
-        public virtual PdfName AddFont(PdfDocument pdfDocument, PdfFont font)
-        {
+        public virtual PdfName AddFont(PdfDocument pdfDocument, PdfFont font) {
             pdfDocument.AddFont(font);
             return AddResource(font, fontNamesGen);
         }
@@ -154,8 +149,7 @@ namespace iText.Kernel.Pdf
         /// to add.
         /// </param>
         /// <returns>added image resource name.</returns>
-        public virtual PdfName AddImage(PdfImageXObject image)
-        {
+        public virtual PdfName AddImage(PdfImageXObject image) {
             return AddResource(image, imageNamesGen);
         }
 
@@ -170,13 +164,11 @@ namespace iText.Kernel.Pdf
         /// to add.
         /// </param>
         /// <returns>added image resources name.</returns>
-        public virtual PdfName AddImage(PdfStream image)
-        {
+        public virtual PdfName AddImage(PdfStream image) {
             return AddResource(image, imageNamesGen);
         }
 
-        public virtual PdfImageXObject GetImage(PdfName name)
-        {
+        public virtual PdfImageXObject GetImage(PdfName name) {
             PdfStream image = GetResource(PdfName.XObject).GetAsStream(name);
             return image != null && PdfName.Image.Equals(image.GetAsName(PdfName.Subtype)) ? new PdfImageXObject(image
                 ) : null;
@@ -193,8 +185,7 @@ namespace iText.Kernel.Pdf
         /// to add.
         /// </param>
         /// <returns>added form resource name.</returns>
-        public virtual PdfName AddForm(PdfFormXObject form)
-        {
+        public virtual PdfName AddForm(PdfFormXObject form) {
             return AddResource(form, formNamesGen);
         }
 
@@ -209,8 +200,7 @@ namespace iText.Kernel.Pdf
         /// to add.
         /// </param>
         /// <returns>added form resources name.</returns>
-        public virtual PdfName AddForm(PdfStream form)
-        {
+        public virtual PdfName AddForm(PdfStream form) {
             return AddResource(form, formNamesGen);
         }
 
@@ -225,21 +215,17 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfName"/>
         /// of the newly added resource
         /// </returns>
-        public virtual PdfName AddForm(PdfFormXObject form, PdfName name)
-        {
-            if (GetResourceNames(PdfName.XObject).Contains(name))
-            {
+        public virtual PdfName AddForm(PdfFormXObject form, PdfName name) {
+            if (GetResourceNames(PdfName.XObject).Contains(name)) {
                 name = AddResource(form, formNamesGen);
             }
-            else
-            {
+            else {
                 AddResource(form.GetPdfObject(), PdfName.XObject, name);
             }
             return name;
         }
 
-        public virtual PdfFormXObject GetForm(PdfName name)
-        {
+        public virtual PdfFormXObject GetForm(PdfName name) {
             PdfStream form = GetResource(PdfName.XObject).GetAsStream(name);
             return form != null && PdfName.Form.Equals(form.GetAsName(PdfName.Subtype)) ? new PdfFormXObject(form) : null;
         }
@@ -255,8 +241,7 @@ namespace iText.Kernel.Pdf
         /// to add.
         /// </param>
         /// <returns>added graphics state parameter dictionary resource name.</returns>
-        public virtual PdfName AddExtGState(PdfExtGState extGState)
-        {
+        public virtual PdfName AddExtGState(PdfExtGState extGState) {
             return AddResource(extGState, egsNamesGen);
         }
 
@@ -271,13 +256,11 @@ namespace iText.Kernel.Pdf
         /// to add.
         /// </param>
         /// <returns>added graphics state parameter dictionary resources name.</returns>
-        public virtual PdfName AddExtGState(PdfDictionary extGState)
-        {
+        public virtual PdfName AddExtGState(PdfDictionary extGState) {
             return AddResource(extGState, egsNamesGen);
         }
 
-        public virtual PdfExtGState GetPdfExtGState(PdfName name)
-        {
+        public virtual PdfExtGState GetPdfExtGState(PdfName name) {
             PdfDictionary dic = GetResource(PdfName.ExtGState).GetAsDictionary(name);
             return dic != null ? new PdfExtGState(dic) : null;
         }
@@ -293,13 +276,11 @@ namespace iText.Kernel.Pdf
         /// to add.
         /// </param>
         /// <returns>added properties list resources name.</returns>
-        public virtual PdfName AddProperties(PdfDictionary properties)
-        {
+        public virtual PdfName AddProperties(PdfDictionary properties) {
             return AddResource(properties, propNamesGen);
         }
 
-        public virtual PdfObject GetProperties(PdfName name)
-        {
+        public virtual PdfObject GetProperties(PdfName name) {
             return GetResourceObject(PdfName.Properties, name);
         }
 
@@ -314,8 +295,7 @@ namespace iText.Kernel.Pdf
         /// to add.
         /// </param>
         /// <returns>added color space resource name.</returns>
-        public virtual PdfName AddColorSpace(PdfColorSpace cs)
-        {
+        public virtual PdfName AddColorSpace(PdfColorSpace cs) {
             return AddResource(cs, csNamesGen);
         }
 
@@ -330,13 +310,11 @@ namespace iText.Kernel.Pdf
         /// to add.
         /// </param>
         /// <returns>added color space resources name.</returns>
-        public virtual PdfName AddColorSpace(PdfObject colorSpace)
-        {
+        public virtual PdfName AddColorSpace(PdfObject colorSpace) {
             return AddResource(colorSpace, csNamesGen);
         }
 
-        public virtual PdfColorSpace GetColorSpace(PdfName name)
-        {
+        public virtual PdfColorSpace GetColorSpace(PdfName name) {
             PdfObject colorSpace = GetResourceObject(PdfName.ColorSpace, name);
             return colorSpace != null ? PdfColorSpace.MakeColorSpace(colorSpace) : null;
         }
@@ -352,8 +330,7 @@ namespace iText.Kernel.Pdf
         /// to add.
         /// </param>
         /// <returns>added pattern resource name.</returns>
-        public virtual PdfName AddPattern(PdfPattern pattern)
-        {
+        public virtual PdfName AddPattern(PdfPattern pattern) {
             return AddResource(pattern, patternNamesGen);
         }
 
@@ -368,13 +345,11 @@ namespace iText.Kernel.Pdf
         /// to add.
         /// </param>
         /// <returns>added pattern resources name.</returns>
-        public virtual PdfName AddPattern(PdfDictionary pattern)
-        {
+        public virtual PdfName AddPattern(PdfDictionary pattern) {
             return AddResource(pattern, patternNamesGen);
         }
 
-        public virtual PdfPattern GetPattern(PdfName name)
-        {
+        public virtual PdfPattern GetPattern(PdfName name) {
             PdfObject pattern = GetResourceObject(PdfName.Pattern, name);
             return pattern is PdfDictionary ? PdfPattern.GetPatternInstance((PdfDictionary)pattern) : null;
         }
@@ -390,8 +365,7 @@ namespace iText.Kernel.Pdf
         /// to add.
         /// </param>
         /// <returns>added shading resource name.</returns>
-        public virtual PdfName AddShading(PdfShading shading)
-        {
+        public virtual PdfName AddShading(PdfShading shading) {
             return AddResource(shading, shadingNamesGen);
         }
 
@@ -406,29 +380,24 @@ namespace iText.Kernel.Pdf
         /// to add.
         /// </param>
         /// <returns>added shading dictionary resources name.</returns>
-        public virtual PdfName AddShading(PdfDictionary shading)
-        {
+        public virtual PdfName AddShading(PdfDictionary shading) {
             return AddResource(shading, shadingNamesGen);
         }
 
-        public virtual PdfShading GetShading(PdfName name)
-        {
+        public virtual PdfShading GetShading(PdfName name) {
             PdfObject shading = GetResourceObject(PdfName.Shading, name);
             return shading is PdfDictionary ? PdfShading.MakeShading((PdfDictionary)shading) : null;
         }
 
-        protected internal virtual bool IsReadOnly()
-        {
+        protected internal virtual bool IsReadOnly() {
             return readOnly;
         }
 
-        protected internal virtual void SetReadOnly(bool readOnly)
-        {
+        protected internal virtual void SetReadOnly(bool readOnly) {
             this.readOnly = readOnly;
         }
 
-        protected internal virtual bool IsModified()
-        {
+        protected internal virtual bool IsModified() {
             return isModified;
         }
 
@@ -454,36 +423,31 @@ namespace iText.Kernel.Pdf
         /// </param>
         /// <seealso cref="PdfObject.SetModified()"/>
         [System.ObsoleteAttribute(@"Please use SetModified() .")]
-        protected internal virtual void SetModified(bool isModified)
-        {
+        protected internal virtual void SetModified(bool isModified) {
             this.isModified = isModified;
         }
 
         /// <summary><inheritDoc/></summary>
-        public override PdfObjectWrapper<PdfDictionary> SetModified()
-        {
+        public override PdfObjectWrapper<PdfDictionary> SetModified() {
             this.isModified = true;
             return base.SetModified();
         }
 
         /// <summary>Sets the value of default Gray Color Space (see ISO-320001 Paragraph 8.6.5.6).</summary>
         /// <param name="defaultCs">the color space to set.</param>
-        public virtual void SetDefaultGray(PdfColorSpace defaultCs)
-        {
+        public virtual void SetDefaultGray(PdfColorSpace defaultCs) {
             AddResource(defaultCs.GetPdfObject(), PdfName.ColorSpace, PdfName.DefaultGray);
         }
 
         /// <summary>Sets the value of default RGB Color Space (see ISO-320001 Paragraph 8.6.5.6).</summary>
         /// <param name="defaultCs">the color space to set.</param>
-        public virtual void SetDefaultRgb(PdfColorSpace defaultCs)
-        {
+        public virtual void SetDefaultRgb(PdfColorSpace defaultCs) {
             AddResource(defaultCs.GetPdfObject(), PdfName.ColorSpace, PdfName.DefaultRGB);
         }
 
         /// <summary>Sets the value of default CMYK Color Space (see ISO-320001 Paragraph 8.6.5.6).</summary>
         /// <param name="defaultCs">the color space to set.</param>
-        public virtual void SetDefaultCmyk(PdfColorSpace defaultCs)
-        {
+        public virtual void SetDefaultCmyk(PdfColorSpace defaultCs) {
             AddResource(defaultCs.GetPdfObject(), PdfName.ColorSpace, PdfName.DefaultCMYK);
         }
 
@@ -516,8 +480,7 @@ namespace iText.Kernel.Pdf
         /// if object isn't added to resources.
         /// </returns>
         public virtual PdfName GetResourceName<T>(PdfObjectWrapper<T> resource)
-            where T : PdfObject
-        {
+            where T : PdfObject {
             return GetResourceName(resource.GetPdfObject());
         }
 
@@ -538,11 +501,9 @@ namespace iText.Kernel.Pdf
         /// <see langword="null"/>
         /// if object isn't added to resources.
         /// </returns>
-        public virtual PdfName GetResourceName(PdfObject resource)
-        {
+        public virtual PdfName GetResourceName(PdfObject resource) {
             PdfName resName = resourceToName.Get(resource);
-            if (resName == null)
-            {
+            if (resName == null) {
                 resName = resourceToName.Get(resource.GetIndirectReference());
             }
             return resName;
@@ -550,11 +511,9 @@ namespace iText.Kernel.Pdf
 
         /// <summary>Gets the names of all the added resources.</summary>
         /// <returns>the name of all the added resources.</returns>
-        public virtual ICollection<PdfName> GetResourceNames()
-        {
+        public virtual ICollection<PdfName> GetResourceNames() {
             ICollection<PdfName> names = new SortedSet<PdfName>();
-            foreach (PdfName resType in GetPdfObject().KeySet())
-            {
+            foreach (PdfName resType in GetPdfObject().KeySet()) {
                 names.AddAll(GetResourceNames(resType));
             }
             return names;
@@ -566,8 +525,7 @@ namespace iText.Kernel.Pdf
         /// Deprecated in PDF 2.0.
         /// </remarks>
         /// <returns>the array of predefined procedure set names.</returns>
-        public virtual PdfArray GetProcSet()
-        {
+        public virtual PdfArray GetProcSet() {
             return GetPdfObject().GetAsArray(PdfName.ProcSet);
         }
 
@@ -577,8 +535,7 @@ namespace iText.Kernel.Pdf
         /// Deprecated in PDF 2.0.
         /// </remarks>
         /// <param name="array">the array of predefined procedure set names to be set.</param>
-        public virtual void SetProcSet(PdfArray array)
-        {
+        public virtual void SetProcSet(PdfArray array) {
             GetPdfObject().Put(PdfName.ProcSet, array);
         }
 
@@ -601,8 +558,7 @@ namespace iText.Kernel.Pdf
         /// set of resources name of corresponding type. May be empty.
         /// Will be empty in case of incorrect resource type.
         /// </returns>
-        public virtual ICollection<PdfName> GetResourceNames(PdfName resType)
-        {
+        public virtual ICollection<PdfName> GetResourceNames(PdfName resType) {
             PdfDictionary resourceCategory = GetPdfObject().GetAsDictionary(resType);
             return resourceCategory == null ? JavaCollectionsUtil.EmptySet<PdfName>() : resourceCategory.KeySet();
         }
@@ -634,8 +590,7 @@ namespace iText.Kernel.Pdf
         /// <see langword="null"/>
         /// in case of incorrect resource type.
         /// </returns>
-        public virtual PdfDictionary GetResource(PdfName resType)
-        {
+        public virtual PdfDictionary GetResource(PdfName resType) {
             return GetPdfObject().GetAsDictionary(resType);
         }
 
@@ -666,93 +621,75 @@ namespace iText.Kernel.Pdf
         /// <see langword="null"/>
         /// in case of incorrect type or missing resource with such name.
         /// </returns>
-        public virtual PdfObject GetResourceObject(PdfName resType, PdfName resName)
-        {
+        public virtual PdfObject GetResourceObject(PdfName resType, PdfName resName) {
             PdfDictionary resource = GetResource(resType);
-            if (resource != null)
-            {
+            if (resource != null) {
                 return resource.Get(resName);
             }
             return null;
         }
 
-        protected internal override bool IsWrappedObjectMustBeIndirect()
-        {
+        protected internal override bool IsWrappedObjectMustBeIndirect() {
             return false;
         }
 
         internal virtual PdfName AddResource<T>(PdfObjectWrapper<T> resource, PdfResources.ResourceNameGenerator nameGen
             )
-            where T : PdfObject
-        {
+            where T : PdfObject {
             return AddResource(resource.GetPdfObject(), nameGen);
         }
 
-        protected internal virtual void AddResource(PdfObject resource, PdfName resType, PdfName resName)
-        {
-            if (resType.Equals(PdfName.XObject))
-            {
+        protected internal virtual void AddResource(PdfObject resource, PdfName resType, PdfName resName) {
+            if (resType.Equals(PdfName.XObject)) {
                 CheckAndResolveCircularReferences(resource);
             }
-            if (readOnly)
-            {
+            if (readOnly) {
                 SetPdfObject(GetPdfObject().Clone(JavaCollectionsUtil.EmptyList<PdfName>()));
                 BuildResources(GetPdfObject());
                 isModified = true;
                 readOnly = false;
             }
-            if (GetPdfObject().ContainsKey(resType) && GetPdfObject().GetAsDictionary(resType).ContainsKey(resName))
-            {
+            if (GetPdfObject().ContainsKey(resType) && GetPdfObject().GetAsDictionary(resType).ContainsKey(resName)) {
                 return;
             }
             resourceToName.Put(resource, resName);
             PdfDictionary resourceCategory = GetPdfObject().GetAsDictionary(resType);
-            if (resourceCategory == null)
-            {
+            if (resourceCategory == null) {
                 GetPdfObject().Put(resType, resourceCategory = new PdfDictionary());
             }
-            else
-            {
+            else {
                 resourceCategory.SetModified();
             }
             resourceCategory.Put(resName, resource);
             SetModified();
         }
 
-        internal virtual PdfName AddResource(PdfObject resource, PdfResources.ResourceNameGenerator nameGen)
-        {
+        internal virtual PdfName AddResource(PdfObject resource, PdfResources.ResourceNameGenerator nameGen) {
             PdfName resName = GetResourceName(resource);
-            if (resName == null)
-            {
+            if (resName == null) {
                 resName = nameGen.Generate(this);
                 AddResource(resource, nameGen.GetResourceType(), resName);
             }
             return resName;
         }
 
-        protected internal virtual void BuildResources(PdfDictionary dictionary)
-        {
-            foreach (PdfName resourceType in dictionary.KeySet())
-            {
-                if (GetPdfObject().Get(resourceType) == null)
-                {
+        protected internal virtual void BuildResources(PdfDictionary dictionary) {
+            foreach (PdfName resourceType in dictionary.KeySet()) {
+                if (GetPdfObject().Get(resourceType) == null) {
                     GetPdfObject().Put(resourceType, new PdfDictionary());
                 }
                 PdfDictionary resources = dictionary.GetAsDictionary(resourceType);
-                if (resources == null)
-                {
+                if (resources == null) {
                     continue;
                 }
-                foreach (PdfName resourceName in resources.KeySet())
-                {
+                foreach (PdfName resourceName in resources.KeySet()) {
                     PdfObject resource = resources.Get(resourceName, false);
                     resourceToName.Put(resource, resourceName);
                 }
             }
         }
 
-        private void CheckAndResolveCircularReferences(PdfObject pdfObject)
-        {
+        private void CheckAndResolveCircularReferences(PdfObject pdfObject) {
             // Consider the situation when an XObject references the resources of the first page.
             // We add this XObject to the first page, there is no need to resolve any circular references
             // and then we flush this object and try to add it to the second page.
@@ -760,14 +697,11 @@ namespace iText.Kernel.Pdf
             // and we cannot get resources.
             // On the other hand, this situation may occur any time when object is already flushed and we
             // try to add it to resources and it seems difficult to overcome this without keeping /Resources key value.
-            if (pdfObject is PdfDictionary && !pdfObject.IsFlushed())
-            {
+            if (pdfObject is PdfDictionary && !pdfObject.IsFlushed()) {
                 PdfDictionary pdfXObject = (PdfDictionary)pdfObject;
                 PdfObject pdfXObjectResources = pdfXObject.Get(PdfName.Resources);
-                if (pdfXObjectResources != null && pdfXObjectResources.GetIndirectReference() != null)
-                {
-                    if (pdfXObjectResources.GetIndirectReference().Equals(GetPdfObject().GetIndirectReference()))
-                    {
+                if (pdfXObjectResources != null && pdfXObjectResources.GetIndirectReference() != null) {
+                    if (pdfXObjectResources.GetIndirectReference().Equals(GetPdfObject().GetIndirectReference())) {
                         PdfObject cloneResources = GetPdfObject().Clone();
                         cloneResources.MakeIndirect(GetPdfObject().GetIndirectReference().GetDocument());
                         pdfXObject.Put(PdfName.Resources, cloneResources.GetIndirectReference());
@@ -782,8 +716,7 @@ namespace iText.Kernel.Pdf
         /// the names of already existing resources thus providing us a unique name.
         /// The name consists of the following parts: prefix (literal) and number.
         /// </remarks>
-        internal class ResourceNameGenerator
-        {
+        internal class ResourceNameGenerator {
             private PdfName resourceType;
 
             private int counter;
@@ -814,8 +747,7 @@ namespace iText.Kernel.Pdf
             /// Seed for the value which is appended to the number each time
             /// new name is generated.
             /// </param>
-            public ResourceNameGenerator(PdfName resourceType, String prefix, int seed)
-            {
+            public ResourceNameGenerator(PdfName resourceType, String prefix, int seed) {
                 this.prefix = prefix;
                 this.resourceType = resourceType;
                 this.counter = seed;
@@ -842,8 +774,7 @@ namespace iText.Kernel.Pdf
             /// </param>
             /// <param name="prefix">Prefix used for generating names.</param>
             public ResourceNameGenerator(PdfName resourceType, String prefix)
-                : this(resourceType, prefix, 1)
-            {
+                : this(resourceType, prefix, 1) {
             }
 
             /// <summary>Gets the resource type of generator.</summary>
@@ -861,8 +792,7 @@ namespace iText.Kernel.Pdf
             /// ,
             /// <see cref="PdfName.Font"/>.
             /// </returns>
-            public virtual PdfName GetResourceType()
-            {
+            public virtual PdfName GetResourceType() {
                 return resourceType;
             }
 
@@ -873,14 +803,11 @@ namespace iText.Kernel.Pdf
             /// object for which name will be generated.
             /// </param>
             /// <returns>new (unique) resource name.</returns>
-            public virtual PdfName Generate(PdfResources resources)
-            {
+            public virtual PdfName Generate(PdfResources resources) {
                 PdfName newName = new PdfName(prefix + counter++);
                 PdfDictionary r = resources.GetPdfObject();
-                if (r.ContainsKey(resourceType))
-                {
-                    while (r.GetAsDictionary(resourceType).ContainsKey(newName))
-                    {
+                if (r.ContainsKey(resourceType)) {
+                    while (r.GetAsDictionary(resourceType).ContainsKey(newName)) {
                         newName = new PdfName(prefix + counter++);
                     }
                 }

@@ -41,8 +41,11 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
+using System.Collections.Generic;
 using Common.Logging;
 using iText.IO.Util;
+using iText.Kernel;
 using iText.Kernel.Events;
 using iText.Kernel.Geom;
 using iText.Kernel.Pdf.Action;
@@ -53,12 +56,9 @@ using iText.Kernel.Pdf.Tagutils;
 using iText.Kernel.Pdf.Xobject;
 using iText.Kernel.XMP;
 using iText.Kernel.XMP.Options;
-using System;
-using System.Collections.Generic;
 
-namespace iText.Kernel.Pdf
-{
-    public class PdfPage : PdfObjectWrapper<PdfDictionary>
+namespace iText.Kernel.Pdf {
+    public class PdfPage : PdfObjectWrapper<PdfDictionary> 
     {
         private PdfResources resources = null;
 
@@ -66,15 +66,15 @@ namespace iText.Kernel.Pdf
 
         internal PdfPages parentPages;
 
-        private static readonly IList<PdfName> PAGE_EXCLUDED_KEYS =
-            new List<PdfName>(JavaUtil.ArraysAsList(PdfName.Parent, PdfName.Annots,
+        private static readonly IList<PdfName> PAGE_EXCLUDED_KEYS = 
+            new List<PdfName>(JavaUtil.ArraysAsList(PdfName.Parent, PdfName.Annots, 
                 PdfName.StructParents, PdfName.B));
 
         // This key contains reference to all articles, while this articles could reference to lots of pages.
         // See DEVSIX-191
         private static readonly IList<PdfName> XOBJECT_EXCLUDED_KEYS;
 
-        static PdfPage()
+        static PdfPage() 
         {
             XOBJECT_EXCLUDED_KEYS = new List<PdfName>(
                 JavaUtil.ArraysAsList(PdfName.MediaBox, PdfName.CropBox, PdfName
@@ -92,29 +92,25 @@ namespace iText.Kernel.Pdf
         private bool pageRotationInverseMatrixWritten = false;
 
         protected internal PdfPage(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
             SetForbidRelease();
             EnsureObjectIsAddedToDocument(pdfObject);
         }
 
         protected internal PdfPage(PdfDocument pdfDocument, PageSize pageSize)
-            : this((PdfDictionary)new PdfDictionary().MakeIndirect(pdfDocument))
-        {
+            : this((PdfDictionary)new PdfDictionary().MakeIndirect(pdfDocument)) {
             PdfStream contentStream = (PdfStream)new PdfStream().MakeIndirect(pdfDocument);
             GetPdfObject().Put(PdfName.Contents, contentStream);
             GetPdfObject().Put(PdfName.Type, PdfName.Page);
             GetPdfObject().Put(PdfName.MediaBox, new PdfArray(pageSize));
             GetPdfObject().Put(PdfName.TrimBox, new PdfArray(pageSize));
-            if (pdfDocument.IsTagged())
-            {
+            if (pdfDocument.IsTagged()) {
                 SetTabOrder(PdfName.S);
             }
         }
 
         protected internal PdfPage(PdfDocument pdfDocument)
-            : this(pdfDocument, pdfDocument.GetDefaultPageSize())
-        {
+            : this(pdfDocument, pdfDocument.GetDefaultPageSize()) {
         }
 
         /// <summary>Gets page size, defined by media box object.</summary>
@@ -125,8 +121,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="iText.Kernel.Geom.Rectangle"/>
         /// that specify page size.
         /// </returns>
-        public virtual Rectangle GetPageSize()
-        {
+        public virtual Rectangle GetPageSize() {
             return GetMediaBox();
         }
 
@@ -136,12 +131,10 @@ namespace iText.Kernel.Pdf
         /// <see cref="iText.Kernel.Geom.Rectangle"/>
         /// that specify size of rotated page.
         /// </returns>
-        public virtual Rectangle GetPageSizeWithRotation()
-        {
+        public virtual Rectangle GetPageSizeWithRotation() {
             PageSize rect = new PageSize(GetPageSize());
             int rotation = GetRotation();
-            while (rotation > 0)
-            {
+            while (rotation > 0) {
                 rect = rect.Rotate();
                 rotation -= 90;
             }
@@ -159,16 +152,13 @@ namespace iText.Kernel.Pdf
         /// <c>int</c>
         /// number of degrees. Default value: 0
         /// </returns>
-        public virtual int GetRotation()
-        {
+        public virtual int GetRotation() {
             PdfNumber rotate = GetPdfObject().GetAsNumber(PdfName.Rotate);
             int rotateValue = 0;
-            if (rotate == null)
-            {
+            if (rotate == null) {
                 rotate = (PdfNumber)GetInheritedValue(PdfName.Rotate, PdfObject.NUMBER);
             }
-            if (rotate != null)
-            {
+            if (rotate != null) {
                 rotateValue = rotate.IntValue();
             }
             rotateValue %= 360;
@@ -187,8 +177,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfPage"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.PdfPage SetRotation(int degAngle)
-        {
+        public virtual iText.Kernel.Pdf.PdfPage SetRotation(int degAngle) {
             Put(PdfName.Rotate, new PdfNumber(degAngle));
             return this;
         }
@@ -216,27 +205,21 @@ namespace iText.Kernel.Pdf
         /// object at specified index;
         /// will return null in case page dictionary doesn't adhere to the specification, meaning that the document is an invalid PDF.
         /// </returns>
-        public virtual PdfStream GetContentStream(int index)
-        {
+        public virtual PdfStream GetContentStream(int index) {
             int count = GetContentStreamCount();
-            if (index >= count || index < 0)
-            {
+            if (index >= count || index < 0) {
                 throw new IndexOutOfRangeException(MessageFormatUtil.Format("Index: {0}, Size: {1}", index, count));
             }
             PdfObject contents = GetPdfObject().Get(PdfName.Contents);
-            if (contents is PdfStream)
-            {
+            if (contents is PdfStream) {
                 return (PdfStream)contents;
             }
-            else
-            {
-                if (contents is PdfArray)
-                {
+            else {
+                if (contents is PdfArray) {
                     PdfArray a = (PdfArray)contents;
                     return a.GetAsStream(index);
                 }
-                else
-                {
+                else {
                     return null;
                 }
             }
@@ -259,21 +242,16 @@ namespace iText.Kernel.Pdf
         /// size of Contents object, or 1 if Contents object is a
         /// <see cref="PdfStream"/>.
         /// </returns>
-        public virtual int GetContentStreamCount()
-        {
+        public virtual int GetContentStreamCount() {
             PdfObject contents = GetPdfObject().Get(PdfName.Contents);
-            if (contents is PdfStream)
-            {
+            if (contents is PdfStream) {
                 return 1;
             }
-            else
-            {
-                if (contents is PdfArray)
-                {
+            else {
+                if (contents is PdfArray) {
                     return ((PdfArray)contents).Size();
                 }
-                else
-                {
+                else {
                     return 0;
                 }
             }
@@ -292,10 +270,8 @@ namespace iText.Kernel.Pdf
         /// <see langword="null"/>
         /// if Contents is empty.
         /// </returns>
-        public virtual PdfStream GetFirstContentStream()
-        {
-            if (GetContentStreamCount() > 0)
-            {
+        public virtual PdfStream GetFirstContentStream() {
+            if (GetContentStreamCount() > 0) {
                 return GetContentStream(0);
             }
             return null;
@@ -314,11 +290,9 @@ namespace iText.Kernel.Pdf
         /// <see langword="null"/>
         /// if Contents is empty.
         /// </returns>
-        public virtual PdfStream GetLastContentStream()
-        {
+        public virtual PdfStream GetLastContentStream() {
             int count = GetContentStreamCount();
-            if (count > 0)
-            {
+            if (count > 0) {
                 return GetContentStream(count - 1);
             }
             return null;
@@ -337,8 +311,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfStream"/>
         /// object.
         /// </returns>
-        public virtual PdfStream NewContentStreamBefore()
-        {
+        public virtual PdfStream NewContentStreamBefore() {
             return NewContentStream(true);
         }
 
@@ -355,8 +328,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfStream"/>
         /// object.
         /// </returns>
-        public virtual PdfStream NewContentStreamAfter()
-        {
+        public virtual PdfStream NewContentStreamAfter() {
             return NewContentStream(false);
         }
 
@@ -385,40 +357,32 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfResources"/>
         /// wrapper of the page.
         /// </returns>
-        public virtual PdfResources GetResources()
-        {
+        public virtual PdfResources GetResources() {
             return GetResources(true);
         }
 
-        internal virtual PdfResources GetResources(bool initResourcesField)
-        {
-            if (this.resources == null && initResourcesField)
-            {
+        internal virtual PdfResources GetResources(bool initResourcesField) {
+            if (this.resources == null && initResourcesField) {
                 InitResources(true);
             }
             return this.resources;
         }
 
-        internal virtual PdfDictionary InitResources(bool initResourcesField)
-        {
+        internal virtual PdfDictionary InitResources(bool initResourcesField) {
             bool readOnly = false;
             PdfDictionary resources = GetPdfObject().GetAsDictionary(PdfName.Resources);
-            if (resources == null)
-            {
+            if (resources == null) {
                 resources = (PdfDictionary)GetInheritedValue(PdfName.Resources, PdfObject.DICTIONARY);
-                if (resources != null)
-                {
+                if (resources != null) {
                     readOnly = true;
                 }
             }
-            if (resources == null)
-            {
+            if (resources == null) {
                 resources = new PdfDictionary();
                 // not marking page as modified because of this change
                 GetPdfObject().Put(PdfName.Resources, resources);
             }
-            if (initResourcesField)
-            {
+            if (initResourcesField) {
                 this.resources = new PdfResources(resources);
                 this.resources.SetReadOnly(readOnly);
             }
@@ -440,8 +404,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfPage"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.PdfPage SetResources(PdfResources pdfResources)
-        {
+        public virtual iText.Kernel.Pdf.PdfPage SetResources(PdfResources pdfResources) {
             Put(PdfName.Resources, pdfResources.GetPdfObject());
             this.resources = pdfResources;
             return this;
@@ -458,8 +421,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfPage"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.PdfPage SetXmpMetadata(byte[] xmpMetadata)
-        {
+        public virtual iText.Kernel.Pdf.PdfPage SetXmpMetadata(byte[] xmpMetadata) {
             PdfStream xmp = (PdfStream)new PdfStream().MakeIndirect(GetDocument());
             xmp.GetOutputStream().Write(xmpMetadata);
             xmp.Put(PdfName.Type, PdfName.Metadata);
@@ -484,8 +446,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfPage"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.PdfPage SetXmpMetadata(XMPMeta xmpMeta, SerializeOptions serializeOptions)
-        {
+        public virtual iText.Kernel.Pdf.PdfPage SetXmpMetadata(XMPMeta xmpMeta, SerializeOptions serializeOptions) {
             return SetXmpMetadata(XMPMetaFactory.SerializeToBuffer(xmpMeta, serializeOptions));
         }
 
@@ -501,8 +462,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfPage"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.PdfPage SetXmpMetadata(XMPMeta xmpMeta)
-        {
+        public virtual iText.Kernel.Pdf.PdfPage SetXmpMetadata(XMPMeta xmpMeta) {
             SerializeOptions serializeOptions = new SerializeOptions();
             serializeOptions.SetPadding(2000);
             return SetXmpMetadata(xmpMeta, serializeOptions);
@@ -514,8 +474,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfStream"/>
         /// object, that represent XMP Metadata.
         /// </returns>
-        public virtual PdfStream GetXmpMetadata()
-        {
+        public virtual PdfStream GetXmpMetadata() {
             return GetPdfObject().GetAsStream(PdfName.Metadata);
         }
 
@@ -530,8 +489,7 @@ namespace iText.Kernel.Pdf
         /// copied
         /// <see cref="PdfPage"/>.
         /// </returns>
-        public virtual iText.Kernel.Pdf.PdfPage CopyTo(PdfDocument toDocument)
-        {
+        public virtual iText.Kernel.Pdf.PdfPage CopyTo(PdfDocument toDocument) {
             return CopyTo(toDocument, null);
         }
 
@@ -552,37 +510,29 @@ namespace iText.Kernel.Pdf
         /// copied
         /// <see cref="PdfPage"/>.
         /// </returns>
-        public virtual iText.Kernel.Pdf.PdfPage CopyTo(PdfDocument toDocument, IPdfPageExtraCopier copier)
-        {
+        public virtual iText.Kernel.Pdf.PdfPage CopyTo(PdfDocument toDocument, IPdfPageExtraCopier copier) {
             PdfDictionary dictionary = GetPdfObject().CopyTo(toDocument, PAGE_EXCLUDED_KEYS, true);
             iText.Kernel.Pdf.PdfPage page = GetDocument().GetPageFactory().CreatePdfPage(dictionary);
             CopyInheritedProperties(page, toDocument);
-            foreach (PdfAnnotation annot in GetAnnotations())
-            {
-                if (annot.GetSubtype().Equals(PdfName.Link))
-                {
+            foreach (PdfAnnotation annot in GetAnnotations()) {
+                if (annot.GetSubtype().Equals(PdfName.Link)) {
                     GetDocument().StoreLinkAnnotation(page, (PdfLinkAnnotation)annot);
                 }
-                else
-                {
+                else {
                     PdfAnnotation newAnnot = PdfAnnotation.MakeAnnotation(annot.GetPdfObject().CopyTo(toDocument, JavaUtil.ArraysAsList
                         (PdfName.P, PdfName.Parent), true));
-                    if (PdfName.Widget.Equals(annot.GetSubtype()))
-                    {
+                    if (PdfName.Widget.Equals(annot.GetSubtype())) {
                         RebuildFormFieldParent(annot.GetPdfObject(), newAnnot.GetPdfObject(), toDocument);
                     }
                     // P will be set in PdfPage#addAnnotation; Parent will be regenerated in PdfPageExtraCopier.
                     page.AddAnnotation(-1, newAnnot, false);
                 }
             }
-            if (copier != null)
-            {
+            if (copier != null) {
                 copier.Copy(this, page);
             }
-            else
-            {
-                if (!toDocument.GetWriter().isUserWarnedAboutAcroFormCopying && GetDocument().HasAcroForm())
-                {
+            else {
+                if (!toDocument.GetWriter().isUserWarnedAboutAcroFormCopying && GetDocument().HasAcroForm()) {
                     ILog logger = LogManager.GetLogger(typeof(iText.Kernel.Pdf.PdfPage));
                     logger.Warn(iText.IO.LogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY);
                     toDocument.GetWriter().isUserWarnedAboutAcroFormCopying = true;
@@ -598,26 +548,21 @@ namespace iText.Kernel.Pdf
         /// <see cref="iText.Kernel.Pdf.Xobject.PdfFormXObject"/>
         /// object.
         /// </returns>
-        public virtual PdfFormXObject CopyAsFormXObject(PdfDocument toDocument)
-        {
+        public virtual PdfFormXObject CopyAsFormXObject(PdfDocument toDocument) {
             PdfFormXObject xObject = new PdfFormXObject(GetCropBox());
-            foreach (PdfName key in GetPdfObject().KeySet())
-            {
-                if (XOBJECT_EXCLUDED_KEYS.Contains(key))
-                {
+            foreach (PdfName key in GetPdfObject().KeySet()) {
+                if (XOBJECT_EXCLUDED_KEYS.Contains(key)) {
                     continue;
                 }
                 PdfObject obj = GetPdfObject().Get(key);
-                if (!xObject.GetPdfObject().ContainsKey(key))
-                {
+                if (!xObject.GetPdfObject().ContainsKey(key)) {
                     PdfObject copyObj = obj.CopyTo(toDocument, false);
                     xObject.GetPdfObject().Put(key, copyObj);
                 }
             }
             xObject.GetPdfObject().GetOutputStream().Write(GetContentBytes());
             //Copy inherited resources
-            if (!xObject.GetPdfObject().ContainsKey(PdfName.Resources))
-            {
+            if (!xObject.GetPdfObject().ContainsKey(PdfName.Resources)) {
                 PdfObject copyResource = GetResources().GetPdfObject().CopyTo(toDocument, true);
                 xObject.GetPdfObject().Put(PdfName.Resources, copyResource);
             }
@@ -638,10 +583,8 @@ namespace iText.Kernel.Pdf
         /// <see langword="null"/>
         /// if such document isn't exist.
         /// </returns>
-        public virtual PdfDocument GetDocument()
-        {
-            if (GetPdfObject().GetIndirectReference() != null)
-            {
+        public virtual PdfDocument GetDocument() {
+            if (GetPdfObject().GetIndirectReference() != null) {
                 return GetPdfObject().GetIndirectReference().GetDocument();
             }
             return null;
@@ -658,8 +601,7 @@ namespace iText.Kernel.Pdf
         /// to belong to the page. If tag has descendants from several pages - it is flushed, if all other pages except the
         /// current one are flushed.
         /// </remarks>
-        public override void Flush()
-        {
+        public override void Flush() {
             Flush(false);
         }
 
@@ -685,61 +627,47 @@ namespace iText.Kernel.Pdf
         /// annotation appearance streams, patterns) and also all images associated with this page
         /// will be flushed.
         /// </param>
-        public virtual void Flush(bool flushResourcesContentStreams)
-        {
-            if (IsFlushed())
-            {
+        public virtual void Flush(bool flushResourcesContentStreams) {
+            if (IsFlushed()) {
                 return;
             }
             GetDocument().DispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.END_PAGE, this));
-            if (GetDocument().IsTagged() && !GetDocument().GetStructTreeRoot().IsFlushed())
-            {
+            if (GetDocument().IsTagged() && !GetDocument().GetStructTreeRoot().IsFlushed()) {
                 TryFlushPageTags();
             }
-            if (resources == null)
-            {
+            if (resources == null) {
                 // ensure that either resources are inherited or add empty resources dictionary
                 InitResources(false);
             }
-            else
-            {
-                if (resources.IsModified() && !resources.IsReadOnly())
-                {
+            else {
+                if (resources.IsModified() && !resources.IsReadOnly()) {
                     Put(PdfName.Resources, resources.GetPdfObject());
                 }
             }
-            if (flushResourcesContentStreams)
-            {
+            if (flushResourcesContentStreams) {
                 GetDocument().CheckIsoConformance(this, IsoKey.PAGE);
                 FlushResourcesContentStreams();
             }
             PdfArray annots = GetAnnots(false);
-            if (annots != null && !annots.IsFlushed())
-            {
-                for (int i = 0; i < annots.Size(); ++i)
-                {
+            if (annots != null && !annots.IsFlushed()) {
+                for (int i = 0; i < annots.Size(); ++i) {
                     PdfObject a = annots.Get(i);
-                    if (a != null)
-                    {
+                    if (a != null) {
                         a.MakeIndirect(GetDocument()).Flush();
                     }
                 }
             }
             PdfStream thumb = GetPdfObject().GetAsStream(PdfName.Thumb);
-            if (thumb != null)
-            {
+            if (thumb != null) {
                 thumb.Flush();
             }
             PdfObject contentsObj = GetPdfObject().Get(PdfName.Contents);
             // avoid trying to operate with flushed /Contents array
-            if (contentsObj != null && !contentsObj.IsFlushed())
-            {
+            if (contentsObj != null && !contentsObj.IsFlushed()) {
                 int contentStreamCount = GetContentStreamCount();
-                for (int i = 0; i < contentStreamCount; i++)
-                {
+                for (int i = 0; i < contentStreamCount; i++) {
                     PdfStream contentStream = GetContentStream(i);
-                    if (contentStream != null)
-                    {
+                    if (contentStream != null) {
                         contentStream.Flush(false);
                     }
                 }
@@ -759,31 +687,24 @@ namespace iText.Kernel.Pdf
         /// <see cref="iText.Kernel.Geom.Rectangle"/>
         /// object specified by page Media Box, expressed in default user space units.
         /// </returns>
-        public virtual Rectangle GetMediaBox()
-        {
+        public virtual Rectangle GetMediaBox() {
             PdfArray mediaBox = GetPdfObject().GetAsArray(PdfName.MediaBox);
-            if (mediaBox == null)
-            {
+            if (mediaBox == null) {
                 mediaBox = (PdfArray)GetInheritedValue(PdfName.MediaBox, PdfObject.ARRAY);
             }
-            if (mediaBox == null)
-            {
+            if (mediaBox == null) {
                 throw new PdfException(PdfException.CannotRetrieveMediaBoxAttribute);
             }
             int mediaBoxSize;
-            if ((mediaBoxSize = mediaBox.Size()) != 4)
-            {
-                if (mediaBoxSize > 4)
-                {
+            if ((mediaBoxSize = mediaBox.Size()) != 4) {
+                if (mediaBoxSize > 4) {
                     ILog logger = LogManager.GetLogger(typeof(iText.Kernel.Pdf.PdfPage));
-                    if (logger.IsErrorEnabled)
-                    {
-                        logger.Error(MessageFormatUtil.Format(iText.IO.LogMessageConstant.WRONG_MEDIABOX_SIZE_TOO_MANY_ARGUMENTS,
+                    if (logger.IsErrorEnabled) {
+                        logger.Error(MessageFormatUtil.Format(iText.IO.LogMessageConstant.WRONG_MEDIABOX_SIZE_TOO_MANY_ARGUMENTS, 
                             mediaBoxSize));
                     }
                 }
-                if (mediaBoxSize < 4)
-                {
+                if (mediaBoxSize < 4) {
                     throw new PdfException(PdfException.WRONGMEDIABOXSIZETOOFEWARGUMENTS).SetMessageParams(mediaBox.Size());
                 }
             }
@@ -791,8 +712,7 @@ namespace iText.Kernel.Pdf
             PdfNumber lly = mediaBox.GetAsNumber(1);
             PdfNumber urx = mediaBox.GetAsNumber(2);
             PdfNumber ury = mediaBox.GetAsNumber(3);
-            if (llx == null || lly == null || urx == null || ury == null)
-            {
+            if (llx == null || lly == null || urx == null || ury == null) {
                 throw new PdfException(PdfException.InvalidMediaBoxValue);
             }
             return new Rectangle(Math.Min(llx.FloatValue(), urx.FloatValue()), Math.Min(lly.FloatValue(), ury.FloatValue
@@ -813,8 +733,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfPage"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.PdfPage SetMediaBox(Rectangle rectangle)
-        {
+        public virtual iText.Kernel.Pdf.PdfPage SetMediaBox(Rectangle rectangle) {
             Put(PdfName.MediaBox, new PdfArray(rectangle));
             return this;
         }
@@ -837,14 +756,11 @@ namespace iText.Kernel.Pdf
         /// object specified by pages's CropBox, expressed in default user space units.
         /// MediaBox by default.
         /// </returns>
-        public virtual Rectangle GetCropBox()
-        {
+        public virtual Rectangle GetCropBox() {
             PdfArray cropBox = GetPdfObject().GetAsArray(PdfName.CropBox);
-            if (cropBox == null)
-            {
+            if (cropBox == null) {
                 cropBox = (PdfArray)GetInheritedValue(PdfName.CropBox, PdfObject.ARRAY);
-                if (cropBox == null)
-                {
+                if (cropBox == null) {
                     return GetMediaBox();
                 }
             }
@@ -867,8 +783,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfPage"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.PdfPage SetCropBox(Rectangle rectangle)
-        {
+        public virtual iText.Kernel.Pdf.PdfPage SetCropBox(Rectangle rectangle) {
             Put(PdfName.CropBox, new PdfArray(rectangle));
             return this;
         }
@@ -887,8 +802,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfPage"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.PdfPage SetBleedBox(Rectangle rectangle)
-        {
+        public virtual iText.Kernel.Pdf.PdfPage SetBleedBox(Rectangle rectangle) {
             Put(PdfName.BleedBox, new PdfArray(rectangle));
             return this;
         }
@@ -905,8 +819,7 @@ namespace iText.Kernel.Pdf
         /// object specified by page's BleedBox, expressed in default user space units.
         /// CropBox by default.
         /// </returns>
-        public virtual Rectangle GetBleedBox()
-        {
+        public virtual Rectangle GetBleedBox() {
             Rectangle bleedBox = GetPdfObject().GetAsRectangle(PdfName.BleedBox);
             return bleedBox == null ? GetCropBox() : bleedBox;
         }
@@ -925,10 +838,8 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfPage"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.PdfPage SetArtBox(Rectangle rectangle)
-        {
-            if (GetPdfObject().GetAsRectangle(PdfName.TrimBox) != null)
-            {
+        public virtual iText.Kernel.Pdf.PdfPage SetArtBox(Rectangle rectangle) {
+            if (GetPdfObject().GetAsRectangle(PdfName.TrimBox) != null) {
                 GetPdfObject().Remove(PdfName.TrimBox);
                 ILog logger = LogManager.GetLogger(typeof(iText.Kernel.Pdf.PdfPage));
                 logger.Warn(iText.IO.LogMessageConstant.ONLY_ONE_OF_ARTBOX_OR_TRIMBOX_CAN_EXIST_IN_THE_PAGE);
@@ -949,8 +860,7 @@ namespace iText.Kernel.Pdf
         /// object specified by page's ArtBox, expressed in default user space units.
         /// CropBox by default.
         /// </returns>
-        public virtual Rectangle GetArtBox()
-        {
+        public virtual Rectangle GetArtBox() {
             Rectangle artBox = GetPdfObject().GetAsRectangle(PdfName.ArtBox);
             return artBox == null ? GetCropBox() : artBox;
         }
@@ -967,10 +877,8 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfPage"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.PdfPage SetTrimBox(Rectangle rectangle)
-        {
-            if (GetPdfObject().GetAsRectangle(PdfName.ArtBox) != null)
-            {
+        public virtual iText.Kernel.Pdf.PdfPage SetTrimBox(Rectangle rectangle) {
+            if (GetPdfObject().GetAsRectangle(PdfName.ArtBox) != null) {
                 GetPdfObject().Remove(PdfName.ArtBox);
                 ILog logger = LogManager.GetLogger(typeof(iText.Kernel.Pdf.PdfPage));
                 logger.Warn(iText.IO.LogMessageConstant.ONLY_ONE_OF_ARTBOX_OR_TRIMBOX_CAN_EXIST_IN_THE_PAGE);
@@ -991,42 +899,35 @@ namespace iText.Kernel.Pdf
         /// object specified by page's TrimBox, expressed in default user space units.
         /// CropBox by default.
         /// </returns>
-        public virtual Rectangle GetTrimBox()
-        {
+        public virtual Rectangle GetTrimBox() {
             Rectangle trimBox = GetPdfObject().GetAsRectangle(PdfName.TrimBox);
             return trimBox == null ? GetCropBox() : trimBox;
         }
 
         /// <summary>Get decoded bytes for the whole page content.</summary>
         /// <returns>byte array.</returns>
-        public virtual byte[] GetContentBytes()
-        {
-            try
-            {
+        public virtual byte[] GetContentBytes() {
+            try {
                 MemoryLimitsAwareHandler handler = GetDocument().memoryLimitsAwareHandler;
                 long usedMemory = null == handler ? -1 : handler.GetAllMemoryUsedForDecompression();
                 MemoryLimitsAwareOutputStream baos = new MemoryLimitsAwareOutputStream();
                 int streamCount = GetContentStreamCount();
                 byte[] streamBytes;
-                for (int i = 0; i < streamCount; i++)
-                {
+                for (int i = 0; i < streamCount; i++) {
                     streamBytes = GetStreamBytes(i);
                     // usedMemory has changed, that means that some of currently processed pdf streams are suspicious
-                    if (null != handler && usedMemory < handler.GetAllMemoryUsedForDecompression())
-                    {
+                    if (null != handler && usedMemory < handler.GetAllMemoryUsedForDecompression()) {
                         baos.SetMaxStreamSize(handler.GetMaxSizeOfSingleDecompressedPdfStream());
                     }
                     baos.Write(streamBytes);
                     if (0 != streamBytes.Length && !iText.IO.Util.TextUtil.IsWhiteSpace((char)streamBytes[streamBytes.Length -
-                         1]))
-                    {
+                         1])) {
                         baos.Write('\n');
                     }
                 }
                 return baos.ToArray();
             }
-            catch (System.IO.IOException ioe)
-            {
+            catch (System.IO.IOException ioe) {
                 throw new PdfException(PdfException.CannotGetContentBytes, ioe, this);
             }
         }
@@ -1034,21 +935,17 @@ namespace iText.Kernel.Pdf
         /// <summary>Gets decoded bytes of a certain stream of a page content.</summary>
         /// <param name="index">index of stream inside Content.</param>
         /// <returns>byte array.</returns>
-        public virtual byte[] GetStreamBytes(int index)
-        {
+        public virtual byte[] GetStreamBytes(int index) {
             return GetContentStream(index).GetBytes();
         }
 
         /// <summary>Calculates and returns the next available for this page's content stream MCID reference.</summary>
         /// <returns>calculated MCID reference.</returns>
-        public virtual int GetNextMcid()
-        {
-            if (!GetDocument().IsTagged())
-            {
+        public virtual int GetNextMcid() {
+            if (!GetDocument().IsTagged()) {
                 throw new PdfException(PdfException.MustBeATaggedDocument);
             }
-            if (mcid == -1)
-            {
+            if (mcid == -1) {
                 PdfStructTreeRoot structTreeRoot = GetDocument().GetStructTreeRoot();
                 mcid = structTreeRoot.GetNextMcidForPage(this);
             }
@@ -1060,8 +957,7 @@ namespace iText.Kernel.Pdf
         /// the key of the page’s entry in the structural parent tree.
         /// If page has no entry in the structural parent tree, returned value is -1.
         /// </returns>
-        public virtual int GetStructParentIndex()
-        {
+        public virtual int GetStructParentIndex() {
             return GetPdfObject().GetAsNumber(PdfName.StructParents) != null ? GetPdfObject().GetAsNumber(PdfName.StructParents
                 ).IntValue() : -1;
         }
@@ -1086,8 +982,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfPage"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.PdfPage SetAdditionalAction(PdfName key, PdfAction action)
-        {
+        public virtual iText.Kernel.Pdf.PdfPage SetAdditionalAction(PdfName key, PdfAction action) {
             PdfAction.SetAdditionalAction(this, key, action);
             return this;
         }
@@ -1103,29 +998,23 @@ namespace iText.Kernel.Pdf
         /// <see cref="iText.Kernel.Pdf.Annot.PdfAnnotation"/>
         /// &gt; containing all page's annotations.
         /// </returns>
-        public virtual IList<PdfAnnotation> GetAnnotations()
-        {
+        public virtual IList<PdfAnnotation> GetAnnotations() {
             IList<PdfAnnotation> annotations = new List<PdfAnnotation>();
             PdfArray annots = GetPdfObject().GetAsArray(PdfName.Annots);
-            if (annots != null)
-            {
-                for (int i = 0; i < annots.Size(); i++)
-                {
+            if (annots != null) {
+                for (int i = 0; i < annots.Size(); i++) {
                     PdfDictionary annot = annots.GetAsDictionary(i);
-                    if (annot == null)
-                    {
+                    if (annot == null) {
                         continue;
                     }
                     PdfAnnotation annotation = PdfAnnotation.MakeAnnotation(annot);
-                    if (annotation == null)
-                    {
+                    if (annotation == null) {
                         continue;
                     }
                     bool hasBeenNotModified = annot.GetIndirectReference() != null && !annot.GetIndirectReference().CheckState
                         (PdfObject.MODIFIED);
                     annotations.Add(annotation.SetPage(this));
-                    if (hasBeenNotModified)
-                    {
+                    if (hasBeenNotModified) {
                         annot.GetIndirectReference().ClearState(PdfObject.MODIFIED);
                         annot.ClearState(PdfObject.FORBID_RELEASE);
                     }
@@ -1147,12 +1036,9 @@ namespace iText.Kernel.Pdf
         /// <see langword="false"/>
         /// otherwise.
         /// </returns>
-        public virtual bool ContainsAnnotation(PdfAnnotation annotation)
-        {
-            foreach (PdfAnnotation a in GetAnnotations())
-            {
-                if (a.GetPdfObject().Equals(annotation.GetPdfObject()))
-                {
+        public virtual bool ContainsAnnotation(PdfAnnotation annotation) {
+            foreach (PdfAnnotation a in GetAnnotations()) {
+                if (a.GetPdfObject().Equals(annotation.GetPdfObject())) {
                     return true;
                 }
             }
@@ -1174,8 +1060,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfPage"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.PdfPage AddAnnotation(PdfAnnotation annotation)
-        {
+        public virtual iText.Kernel.Pdf.PdfPage AddAnnotation(PdfAnnotation annotation) {
             return AddAnnotation(-1, annotation, true);
         }
 
@@ -1215,41 +1100,32 @@ namespace iText.Kernel.Pdf
         /// instance.
         /// </returns>
         public virtual iText.Kernel.Pdf.PdfPage AddAnnotation(int index, PdfAnnotation annotation, bool tagAnnotation
-            )
-        {
-            if (GetDocument().IsTagged())
-            {
-                if (tagAnnotation)
-                {
+            ) {
+            if (GetDocument().IsTagged()) {
+                if (tagAnnotation) {
                     TagTreePointer tagPointer = GetDocument().GetTagStructureContext().GetAutoTaggingPointer();
                     iText.Kernel.Pdf.PdfPage prevPage = tagPointer.GetCurrentPage();
                     tagPointer.SetPageForTagging(this).AddAnnotationTag(annotation);
-                    if (prevPage != null)
-                    {
+                    if (prevPage != null) {
                         tagPointer.SetPageForTagging(prevPage);
                     }
                 }
-                if (GetTabOrder() == null)
-                {
+                if (GetTabOrder() == null) {
                     SetTabOrder(PdfName.S);
                 }
             }
             PdfArray annots = GetAnnots(true);
-            if (index == -1)
-            {
+            if (index == -1) {
                 annots.Add(annotation.SetPage(this).GetPdfObject());
             }
-            else
-            {
+            else {
                 annots.Add(index, annotation.SetPage(this).GetPdfObject());
             }
-            if (annots.GetIndirectReference() == null)
-            {
+            if (annots.GetIndirectReference() == null) {
                 //Annots are not indirect so page needs to be marked as modified
                 SetModified();
             }
-            else
-            {
+            else {
                 //Annots are indirect so need to be marked as modified
                 annots.SetModified();
             }
@@ -1268,34 +1144,26 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfPage"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.PdfPage RemoveAnnotation(PdfAnnotation annotation)
-        {
+        public virtual iText.Kernel.Pdf.PdfPage RemoveAnnotation(PdfAnnotation annotation) {
             PdfArray annots = GetAnnots(false);
-            if (annots != null)
-            {
+            if (annots != null) {
                 annots.Remove(annotation.GetPdfObject());
-                if (annots.IsEmpty())
-                {
+                if (annots.IsEmpty()) {
                     GetPdfObject().Remove(PdfName.Annots);
                     SetModified();
                 }
-                else
-                {
-                    if (annots.GetIndirectReference() == null)
-                    {
+                else {
+                    if (annots.GetIndirectReference() == null) {
                         SetModified();
                     }
                 }
             }
-            if (GetDocument().IsTagged())
-            {
+            if (GetDocument().IsTagged()) {
                 TagTreePointer tagPointer = GetDocument().GetTagStructureContext().RemoveAnnotationTag(annotation);
-                if (tagPointer != null)
-                {
+                if (tagPointer != null) {
                     bool standardAnnotTagRole = StandardRoles.ANNOT.Equals(tagPointer.GetRole()) || StandardRoles.FORM.Equals(
                         tagPointer.GetRole());
-                    if (tagPointer.GetKidsRoles().Count == 0 && standardAnnotTagRole)
-                    {
+                    if (tagPointer.GetKidsRoles().Count == 0 && standardAnnotTagRole) {
                         tagPointer.RemoveTag();
                     }
                 }
@@ -1315,11 +1183,9 @@ namespace iText.Kernel.Pdf
         /// <see cref="iText.Kernel.Pdf.Annot.PdfAnnotation"/>
         /// associated with this page.
         /// </returns>
-        public virtual int GetAnnotsSize()
-        {
+        public virtual int GetAnnotsSize() {
             PdfArray annots = GetAnnots(false);
-            if (annots == null)
-            {
+            if (annots == null) {
                 return 0;
             }
             return annots.Size();
@@ -1336,8 +1202,7 @@ namespace iText.Kernel.Pdf
         /// (if it was cached via calling getOutlines method before).
         /// </param>
         /// <returns>return all outlines of a current page</returns>
-        public virtual IList<PdfOutline> GetOutlines(bool updateOutlines)
-        {
+        public virtual IList<PdfOutline> GetOutlines(bool updateOutlines) {
             GetDocument().GetOutlines(updateOutlines);
             return GetDocument().GetCatalog().GetPagesWithOutlines().Get(GetPdfObject());
         }
@@ -1346,8 +1211,7 @@ namespace iText.Kernel.Pdf
         /// true - if in case the page has a rotation, then new content will be automatically rotated in the
         /// opposite direction. On the rotated page this would look like if new content ignores page rotation.
         /// </returns>
-        public virtual bool IsIgnorePageRotationForContent()
-        {
+        public virtual bool IsIgnorePageRotationForContent() {
             return ignorePageRotationForContent;
         }
 
@@ -1368,8 +1232,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfPage"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.PdfPage SetIgnorePageRotationForContent(bool ignorePageRotationForContent)
-        {
+        public virtual iText.Kernel.Pdf.PdfPage SetIgnorePageRotationForContent(bool ignorePageRotationForContent) {
             this.ignorePageRotationForContent = ignorePageRotationForContent;
             return this;
         }
@@ -1386,8 +1249,7 @@ namespace iText.Kernel.Pdf
         /// instance.
         /// </returns>
         public virtual iText.Kernel.Pdf.PdfPage SetPageLabel(PageLabelNumberingStyle? numberingStyle, String labelPrefix
-            )
-        {
+            ) {
             return SetPageLabel(numberingStyle, labelPrefix, 1);
         }
 
@@ -1407,59 +1269,47 @@ namespace iText.Kernel.Pdf
         /// instance.
         /// </returns>
         public virtual iText.Kernel.Pdf.PdfPage SetPageLabel(PageLabelNumberingStyle? numberingStyle, String labelPrefix
-            , int firstPage)
-        {
-            if (firstPage < 1)
-            {
+            , int firstPage) {
+            if (firstPage < 1) {
                 throw new PdfException(PdfException.InAPageLabelThePageNumbersMustBeGreaterOrEqualTo1);
             }
             PdfDictionary pageLabel = new PdfDictionary();
-            if (numberingStyle != null)
-            {
-                switch (numberingStyle)
-                {
-                    case PageLabelNumberingStyle.DECIMAL_ARABIC_NUMERALS:
-                        {
-                            pageLabel.Put(PdfName.S, PdfName.D);
-                            break;
-                        }
+            if (numberingStyle != null) {
+                switch (numberingStyle) {
+                    case PageLabelNumberingStyle.DECIMAL_ARABIC_NUMERALS: {
+                        pageLabel.Put(PdfName.S, PdfName.D);
+                        break;
+                    }
 
-                    case PageLabelNumberingStyle.UPPERCASE_ROMAN_NUMERALS:
-                        {
-                            pageLabel.Put(PdfName.S, PdfName.R);
-                            break;
-                        }
+                    case PageLabelNumberingStyle.UPPERCASE_ROMAN_NUMERALS: {
+                        pageLabel.Put(PdfName.S, PdfName.R);
+                        break;
+                    }
 
-                    case PageLabelNumberingStyle.LOWERCASE_ROMAN_NUMERALS:
-                        {
-                            pageLabel.Put(PdfName.S, PdfName.r);
-                            break;
-                        }
+                    case PageLabelNumberingStyle.LOWERCASE_ROMAN_NUMERALS: {
+                        pageLabel.Put(PdfName.S, PdfName.r);
+                        break;
+                    }
 
-                    case PageLabelNumberingStyle.UPPERCASE_LETTERS:
-                        {
-                            pageLabel.Put(PdfName.S, PdfName.A);
-                            break;
-                        }
+                    case PageLabelNumberingStyle.UPPERCASE_LETTERS: {
+                        pageLabel.Put(PdfName.S, PdfName.A);
+                        break;
+                    }
 
-                    case PageLabelNumberingStyle.LOWERCASE_LETTERS:
-                        {
-                            pageLabel.Put(PdfName.S, PdfName.a);
-                            break;
-                        }
+                    case PageLabelNumberingStyle.LOWERCASE_LETTERS: {
+                        pageLabel.Put(PdfName.S, PdfName.a);
+                        break;
+                    }
 
-                    default:
-                        {
-                            break;
-                        }
+                    default: {
+                        break;
+                    }
                 }
             }
-            if (labelPrefix != null)
-            {
+            if (labelPrefix != null) {
                 pageLabel.Put(PdfName.P, new PdfString(labelPrefix));
             }
-            if (firstPage != 1)
-            {
+            if (firstPage != 1) {
                 pageLabel.Put(PdfName.St, new PdfNumber(firstPage));
             }
             GetDocument().GetCatalog().GetPageLabelsTree(true).AddEntry(GetDocument().GetPageNumber(this) - 1, pageLabel
@@ -1494,8 +1344,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfPage"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.PdfPage SetTabOrder(PdfName tabOrder)
-        {
+        public virtual iText.Kernel.Pdf.PdfPage SetTabOrder(PdfName tabOrder) {
             Put(PdfName.Tabs, tabOrder);
             return this;
         }
@@ -1522,8 +1371,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfName"/>
         /// specifying the annotations tab order or null if tab order is not defined.
         /// </returns>
-        public virtual PdfName GetTabOrder()
-        {
+        public virtual PdfName GetTabOrder() {
             return GetPdfObject().GetAsName(PdfName.Tabs);
         }
 
@@ -1538,8 +1386,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfPage"/>
         /// object
         /// </returns>
-        public virtual iText.Kernel.Pdf.PdfPage SetThumbnailImage(PdfImageXObject thumb)
-        {
+        public virtual iText.Kernel.Pdf.PdfPage SetThumbnailImage(PdfImageXObject thumb) {
             return Put(PdfName.Thumb, thumb.GetPdfObject());
         }
 
@@ -1549,8 +1396,7 @@ namespace iText.Kernel.Pdf
         /// its pages in miniature form
         /// </remarks>
         /// <returns>the thumbnail image, or <c>null</c> if it is not present</returns>
-        public virtual PdfImageXObject GetThumbnailImage()
-        {
+        public virtual PdfImageXObject GetThumbnailImage() {
             PdfStream thumbStream = GetPdfObject().GetAsStream(PdfName.Thumb);
             return thumbStream != null ? new PdfImageXObject(thumbStream) : null;
         }
@@ -1572,15 +1418,12 @@ namespace iText.Kernel.Pdf
         /// object
         /// </returns>
         /// <seealso cref="PdfOutputIntent"/>
-        public virtual iText.Kernel.Pdf.PdfPage AddOutputIntent(PdfOutputIntent outputIntent)
-        {
-            if (outputIntent == null)
-            {
+        public virtual iText.Kernel.Pdf.PdfPage AddOutputIntent(PdfOutputIntent outputIntent) {
+            if (outputIntent == null) {
                 return this;
             }
             PdfArray outputIntents = GetPdfObject().GetAsArray(PdfName.OutputIntents);
-            if (outputIntents == null)
-            {
+            if (outputIntents == null) {
                 outputIntents = new PdfArray();
                 Put(PdfName.OutputIntents, outputIntents);
             }
@@ -1612,8 +1455,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfPage"/>
         /// object.
         /// </returns>
-        public virtual iText.Kernel.Pdf.PdfPage Put(PdfName key, PdfObject value)
-        {
+        public virtual iText.Kernel.Pdf.PdfPage Put(PdfName key, PdfObject value) {
             GetPdfObject().Put(key, value);
             SetModified();
             return this;
@@ -1633,8 +1475,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="SetIgnorePageRotationForContent(bool)"/>
         /// </remarks>
         /// <returns>true, if inverse matrix is already applied, false otherwise.</returns>
-        public virtual bool IsPageRotationInverseMatrixWritten()
-        {
+        public virtual bool IsPageRotationInverseMatrixWritten() {
             return pageRotationInverseMatrixWritten;
         }
 
@@ -1647,8 +1488,7 @@ namespace iText.Kernel.Pdf
         /// See
         /// <see cref="SetIgnorePageRotationForContent(bool)"/>
         /// </remarks>
-        public virtual void SetPageRotationInverseMatrixWritten()
-        {
+        public virtual void SetPageRotationInverseMatrixWritten() {
             // this method specifically return void to discourage it's unintended usage
             pageRotationInverseMatrixWritten = true;
         }
@@ -1665,20 +1505,16 @@ namespace iText.Kernel.Pdf
         /// </remarks>
         /// <param name="description">the file description</param>
         /// <param name="fs">file specification dictionary of associated file</param>
-        public virtual void AddAssociatedFile(String description, PdfFileSpec fs)
-        {
-            if (null == ((PdfDictionary)fs.GetPdfObject()).Get(PdfName.AFRelationship))
-            {
+        public virtual void AddAssociatedFile(String description, PdfFileSpec fs) {
+            if (null == ((PdfDictionary)fs.GetPdfObject()).Get(PdfName.AFRelationship)) {
                 ILog logger = LogManager.GetLogger(typeof(iText.Kernel.Pdf.PdfPage));
                 logger.Error(iText.IO.LogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
             }
-            if (null != description)
-            {
+            if (null != description) {
                 GetDocument().GetCatalog().AddNameToNameTree(description, fs.GetPdfObject(), PdfName.EmbeddedFiles);
             }
             PdfArray afArray = GetPdfObject().GetAsArray(PdfName.AF);
-            if (afArray == null)
-            {
+            if (afArray == null) {
                 afArray = new PdfArray();
                 Put(PdfName.AF, afArray);
             }
@@ -1699,184 +1535,144 @@ namespace iText.Kernel.Pdf
         /// For associated files their associated file specification dictionaries shall include the AFRelationship key
         /// </remarks>
         /// <param name="fs">file specification dictionary of associated file</param>
-        public virtual void AddAssociatedFile(PdfFileSpec fs)
-        {
+        public virtual void AddAssociatedFile(PdfFileSpec fs) {
             AddAssociatedFile(null, fs);
         }
 
         /// <summary>Returns files associated with PDF page.</summary>
         /// <param name="create">defines whether AF arrays will be created if it doesn't exist</param>
         /// <returns>associated files array</returns>
-        public virtual PdfArray GetAssociatedFiles(bool create)
-        {
+        public virtual PdfArray GetAssociatedFiles(bool create) {
             PdfArray afArray = GetPdfObject().GetAsArray(PdfName.AF);
-            if (afArray == null && create)
-            {
+            if (afArray == null && create) {
                 afArray = new PdfArray();
                 Put(PdfName.AF, afArray);
             }
             return afArray;
         }
 
-        internal virtual void TryFlushPageTags()
-        {
-            try
-            {
-                if (!GetDocument().isClosing)
-                {
+        internal virtual void TryFlushPageTags() {
+            try {
+                if (!GetDocument().isClosing) {
                     GetDocument().GetTagStructureContext().FlushPageTags(this);
                 }
                 GetDocument().GetStructTreeRoot().SavePageStructParentIndexIfNeeded(this);
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 throw new PdfException(PdfException.TagStructureFlushingFailedItMightBeCorrupted, ex);
             }
         }
 
-        internal virtual void ReleaseInstanceFields()
-        {
+        internal virtual void ReleaseInstanceFields() {
             resources = null;
             parentPages = null;
         }
 
-        protected internal override bool IsWrappedObjectMustBeIndirect()
-        {
+        protected internal override bool IsWrappedObjectMustBeIndirect() {
             return true;
         }
 
-        private PdfArray GetAnnots(bool create)
-        {
+        private PdfArray GetAnnots(bool create) {
             PdfArray annots = GetPdfObject().GetAsArray(PdfName.Annots);
-            if (annots == null && create)
-            {
+            if (annots == null && create) {
                 annots = new PdfArray();
                 Put(PdfName.Annots, annots);
             }
             return annots;
         }
 
-        private PdfObject GetInheritedValue(PdfName pdfName, int type)
-        {
-            if (this.parentPages == null)
-            {
+        private PdfObject GetInheritedValue(PdfName pdfName, int type) {
+            if (this.parentPages == null) {
                 this.parentPages = GetDocument().GetCatalog().GetPageTree().FindPageParent(this);
             }
             PdfObject val = GetInheritedValue(this.parentPages, pdfName);
             return val != null && val.GetObjectType() == type ? val : null;
         }
 
-        private static PdfObject GetInheritedValue(PdfPages parentPages, PdfName pdfName)
-        {
-            if (parentPages != null)
-            {
+        private static PdfObject GetInheritedValue(PdfPages parentPages, PdfName pdfName) {
+            if (parentPages != null) {
                 PdfDictionary parentDictionary = parentPages.GetPdfObject();
                 PdfObject value = parentDictionary.Get(pdfName);
-                if (value != null)
-                {
+                if (value != null) {
                     return value;
                 }
-                else
-                {
+                else {
                     return GetInheritedValue(parentPages.GetParent(), pdfName);
                 }
             }
             return null;
         }
 
-        private PdfStream NewContentStream(bool before)
-        {
+        private PdfStream NewContentStream(bool before) {
             PdfObject contents = GetPdfObject().Get(PdfName.Contents);
             PdfArray array;
-            if (contents is PdfStream)
-            {
+            if (contents is PdfStream) {
                 array = new PdfArray();
-                if (contents.GetIndirectReference() != null)
-                {
+                if (contents.GetIndirectReference() != null) {
                     // Explicitly using object indirect reference here in order to correctly process released objects.
                     array.Add(contents.GetIndirectReference());
                 }
-                else
-                {
+                else {
                     array.Add(contents);
                 }
                 Put(PdfName.Contents, array);
             }
-            else
-            {
-                if (contents is PdfArray)
-                {
+            else {
+                if (contents is PdfArray) {
                     array = (PdfArray)contents;
                 }
-                else
-                {
+                else {
                     array = null;
                 }
             }
             PdfStream contentStream = (PdfStream)new PdfStream().MakeIndirect(GetDocument());
-            if (array != null)
-            {
-                if (before)
-                {
+            if (array != null) {
+                if (before) {
                     array.Add(0, contentStream);
                 }
-                else
-                {
+                else {
                     array.Add(contentStream);
                 }
-                if (array.GetIndirectReference() != null)
-                {
+                if (array.GetIndirectReference() != null) {
                     array.SetModified();
                 }
-                else
-                {
+                else {
                     SetModified();
                 }
             }
-            else
-            {
+            else {
                 Put(PdfName.Contents, contentStream);
             }
             return contentStream;
         }
 
-        private void FlushResourcesContentStreams()
-        {
+        private void FlushResourcesContentStreams() {
             FlushResourcesContentStreams(GetResources().GetPdfObject());
             PdfArray annots = GetAnnots(false);
-            if (annots != null && !annots.IsFlushed())
-            {
-                for (int i = 0; i < annots.Size(); ++i)
-                {
+            if (annots != null && !annots.IsFlushed()) {
+                for (int i = 0; i < annots.Size(); ++i) {
                     PdfDictionary apDict = annots.GetAsDictionary(i).GetAsDictionary(PdfName.AP);
-                    if (apDict != null)
-                    {
+                    if (apDict != null) {
                         FlushAppearanceStreams(apDict);
                     }
                 }
             }
         }
 
-        private void FlushResourcesContentStreams(PdfDictionary resources)
-        {
-            if (resources != null && !resources.IsFlushed())
-            {
+        private void FlushResourcesContentStreams(PdfDictionary resources) {
+            if (resources != null && !resources.IsFlushed()) {
                 FlushWithResources(resources.GetAsDictionary(PdfName.XObject));
                 FlushWithResources(resources.GetAsDictionary(PdfName.Pattern));
                 FlushWithResources(resources.GetAsDictionary(PdfName.Shading));
             }
         }
 
-        private void FlushWithResources(PdfDictionary objsCollection)
-        {
-            if (objsCollection == null || objsCollection.IsFlushed())
-            {
+        private void FlushWithResources(PdfDictionary objsCollection) {
+            if (objsCollection == null || objsCollection.IsFlushed()) {
                 return;
             }
-            foreach (PdfObject obj in objsCollection.Values())
-            {
-                if (obj.IsFlushed())
-                {
+            foreach (PdfObject obj in objsCollection.Values()) {
+                if (obj.IsFlushed()) {
                     continue;
                 }
                 FlushResourcesContentStreams(((PdfDictionary)obj).GetAsDictionary(PdfName.Resources));
@@ -1884,25 +1680,18 @@ namespace iText.Kernel.Pdf
             }
         }
 
-        private void FlushAppearanceStreams(PdfDictionary appearanceStreamsDict)
-        {
-            if (appearanceStreamsDict.IsFlushed())
-            {
+        private void FlushAppearanceStreams(PdfDictionary appearanceStreamsDict) {
+            if (appearanceStreamsDict.IsFlushed()) {
                 return;
             }
-            foreach (PdfObject val in appearanceStreamsDict.Values())
-            {
-                if (val is PdfDictionary)
-                {
+            foreach (PdfObject val in appearanceStreamsDict.Values()) {
+                if (val is PdfDictionary) {
                     PdfDictionary ap = (PdfDictionary)val;
-                    if (ap.IsDictionary())
-                    {
+                    if (ap.IsDictionary()) {
                         FlushAppearanceStreams(ap);
                     }
-                    else
-                    {
-                        if (ap.IsStream())
-                        {
+                    else {
+                        if (ap.IsStream()) {
                             FlushMustBeIndirectObject(ap);
                         }
                     }
@@ -1910,67 +1699,54 @@ namespace iText.Kernel.Pdf
             }
         }
 
-        private void FlushMustBeIndirectObject(PdfObject obj)
-        {
+        private void FlushMustBeIndirectObject(PdfObject obj) {
             // TODO DEVSIX-744
             obj.MakeIndirect(GetDocument()).Flush();
         }
 
-        private void CopyInheritedProperties(iText.Kernel.Pdf.PdfPage copyPdfPage, PdfDocument pdfDocument)
-        {
-            if (copyPdfPage.GetPdfObject().Get(PdfName.Resources) == null)
-            {
+        private void CopyInheritedProperties(iText.Kernel.Pdf.PdfPage copyPdfPage, PdfDocument pdfDocument) {
+            if (copyPdfPage.GetPdfObject().Get(PdfName.Resources) == null) {
                 PdfObject copyResource = pdfDocument.GetWriter().CopyObject(GetResources().GetPdfObject(), pdfDocument, false
                     );
                 copyPdfPage.GetPdfObject().Put(PdfName.Resources, copyResource);
             }
-            if (copyPdfPage.GetPdfObject().Get(PdfName.MediaBox) == null)
-            {
+            if (copyPdfPage.GetPdfObject().Get(PdfName.MediaBox) == null) {
                 //media box shall be in any case
                 copyPdfPage.SetMediaBox(GetMediaBox());
             }
-            if (copyPdfPage.GetPdfObject().Get(PdfName.CropBox) == null)
-            {
+            if (copyPdfPage.GetPdfObject().Get(PdfName.CropBox) == null) {
                 //original pdfObject don't have CropBox, otherwise copyPdfPage will contain it
                 PdfArray cropBox = (PdfArray)GetInheritedValue(PdfName.CropBox, PdfObject.ARRAY);
                 //crop box is optional, we shall not set default value.
-                if (cropBox != null)
-                {
+                if (cropBox != null) {
                     copyPdfPage.Put(PdfName.CropBox, cropBox.CopyTo(pdfDocument));
                 }
             }
-            if (copyPdfPage.GetPdfObject().Get(PdfName.Rotate) == null)
-            {
+            if (copyPdfPage.GetPdfObject().Get(PdfName.Rotate) == null) {
                 //original pdfObject don't have Rotate, otherwise copyPdfPage will contain it
                 PdfNumber rotate = (PdfNumber)GetInheritedValue(PdfName.Rotate, PdfObject.NUMBER);
                 //rotate is optional, we shall not set default value.
-                if (rotate != null)
-                {
+                if (rotate != null) {
                     copyPdfPage.Put(PdfName.Rotate, rotate.CopyTo(pdfDocument));
                 }
             }
         }
 
-        private void RebuildFormFieldParent(PdfDictionary field, PdfDictionary newField, PdfDocument toDocument)
-        {
-            if (newField.ContainsKey(PdfName.Parent))
-            {
+        private void RebuildFormFieldParent(PdfDictionary field, PdfDictionary newField, PdfDocument toDocument) {
+            if (newField.ContainsKey(PdfName.Parent)) {
                 return;
             }
             PdfDictionary oldParent = field.GetAsDictionary(PdfName.Parent);
-            if (oldParent != null)
-            {
+            if (oldParent != null) {
                 PdfDictionary newParent = oldParent.CopyTo(toDocument, JavaUtil.ArraysAsList(PdfName.P, PdfName.Kids, PdfName
                     .Parent), false);
-                if (newParent.IsFlushed())
-                {
+                if (newParent.IsFlushed()) {
                     newParent = oldParent.CopyTo(toDocument, JavaUtil.ArraysAsList(PdfName.P, PdfName.Kids, PdfName.Parent), true
                         );
                 }
                 RebuildFormFieldParent(oldParent, newParent, toDocument);
                 PdfArray kids = newParent.GetAsArray(PdfName.Kids);
-                if (kids == null)
-                {
+                if (kids == null) {
                     newParent.Put(PdfName.Kids, new PdfArray());
                 }
                 newField.Put(PdfName.Parent, newParent);

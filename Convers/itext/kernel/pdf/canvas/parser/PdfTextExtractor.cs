@@ -41,16 +41,14 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.Kernel.Pdf.Canvas.Parser.Listener;
 using System;
 using System.Collections.Generic;
+using iText.Kernel.Pdf;
+using iText.Kernel.Pdf.Canvas.Parser.Listener;
 
-namespace iText.Kernel.Pdf.Canvas.Parser
-{
-    public sealed class PdfTextExtractor
-    {
-        private PdfTextExtractor()
-        {
+namespace iText.Kernel.Pdf.Canvas.Parser {
+    public sealed class PdfTextExtractor {
+        private PdfTextExtractor() {
         }
 
         /// <summary>Extract text from a specified page using an extraction strategy.</summary>
@@ -69,8 +67,7 @@ namespace iText.Kernel.Pdf.Canvas.Parser
         /// </param>
         /// <returns>the extracted text</returns>
         public static String GetTextFromPage(PdfPage page, ITextExtractionStrategy strategy, IDictionary<String, IContentOperator
-            > additionalContentOperators)
-        {
+            > additionalContentOperators) {
             PdfCanvasProcessor parser = new PdfCanvasProcessor(strategy, additionalContentOperators);
             parser.ProcessPageContent(page);
             return strategy.GetResultantText();
@@ -84,8 +81,7 @@ namespace iText.Kernel.Pdf.Canvas.Parser
         /// <param name="page">the page for the text to be extracted from</param>
         /// <param name="strategy">the strategy to use for extracting text</param>
         /// <returns>the extracted text</returns>
-        public static String GetTextFromPage(PdfPage page, ITextExtractionStrategy strategy)
-        {
+        public static String GetTextFromPage(PdfPage page, ITextExtractionStrategy strategy) {
             return GetTextFromPage(page, strategy, new Dictionary<String, IContentOperator>());
         }
 
@@ -99,8 +95,7 @@ namespace iText.Kernel.Pdf.Canvas.Parser
         /// </remarks>
         /// <param name="page">the page for the text to be extracted from</param>
         /// <returns>the extracted text</returns>
-        public static String GetTextFromPage(PdfPage page)
-        {
+        public static String GetTextFromPage(PdfPage page) {
             return GetTextFromPage(page, new LocationTextExtractionStrategy());
         }
     }

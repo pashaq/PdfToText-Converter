@@ -43,8 +43,7 @@ address: sales@itextpdf.com
 */
 using iText.Kernel.Counter.Event;
 
-namespace iText.Kernel.Counter.Data
-{
+namespace iText.Kernel.Counter.Data {
     /// <summary>
     /// Interface that is responsible for creating new instance of
     /// <see cref="EventData{T}"/>.
@@ -58,8 +57,7 @@ namespace iText.Kernel.Counter.Data
     /// <typeparam name="T">data signature type</typeparam>
     /// <typeparam name="V">data type</typeparam>
     public interface IEventDataFactory<T, V>
-        where V : EventData<T>
-    {
+        where V : EventData<T> {
         V Create(IEvent @event, IMetaInfo metaInfo);
     }
 }

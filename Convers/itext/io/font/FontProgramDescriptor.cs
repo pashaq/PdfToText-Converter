@@ -40,15 +40,13 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Font.Constants;
 using System;
 using System.Collections.Generic;
+using iText.IO.Font.Constants;
 
-namespace iText.IO.Font
-{
+namespace iText.IO.Font {
     /// <summary>Base font descriptor.</summary>
-    public class FontProgramDescriptor
-    {
+    public class FontProgramDescriptor {
         private readonly String fontName;
 
         private readonly String fullNameLowerCase;
@@ -77,15 +75,14 @@ namespace iText.IO.Font
         // The following sequence represents four triplets.
         // In each triplet items sequentially stand for platformID encodingID languageID (see open type naming table spec).
         // Each triplet is used further to determine whether the font name item is represented in English
-        private static readonly String[] TT_FAMILY_ORDER = new String[] { "3", "1", "1033", "3", "0", "1033", "1",
+        private static readonly String[] TT_FAMILY_ORDER = new String[] { "3", "1", "1033", "3", "0", "1033", "1", 
             "0", "0", "0", "3", "0" };
 
-        internal FontProgramDescriptor(FontNames fontNames, float italicAngle, bool isMonospace)
-        {
+        internal FontProgramDescriptor(FontNames fontNames, float italicAngle, bool isMonospace) {
             this.fontName = fontNames.GetFontName();
             this.fontNameLowerCase = this.fontName.ToLowerInvariant();
             this.fullNameLowerCase = fontNames.GetFullName()[0][3].ToLowerInvariant();
-            this.familyNameLowerCase = fontNames.GetFamilyName() != null && fontNames.GetFamilyName()[0][3] != null ?
+            this.familyNameLowerCase = fontNames.GetFamilyName() != null && fontNames.GetFamilyName()[0][3] != null ? 
                 fontNames.GetFamilyName()[0][3].ToLowerInvariant() : null;
             this.style = fontNames.GetStyle();
             this.weight = fontNames.GetFontWeight();
@@ -98,96 +95,75 @@ namespace iText.IO.Font
         }
 
         internal FontProgramDescriptor(FontNames fontNames, FontMetrics fontMetrics)
-            : this(fontNames, fontMetrics.GetItalicAngle(), fontMetrics.IsFixedPitch())
-        {
+            : this(fontNames, fontMetrics.GetItalicAngle(), fontMetrics.IsFixedPitch()) {
         }
 
-        public virtual String GetFontName()
-        {
+        public virtual String GetFontName() {
             return fontName;
         }
 
-        public virtual String GetStyle()
-        {
+        public virtual String GetStyle() {
             return style;
         }
 
-        public virtual int GetFontWeight()
-        {
+        public virtual int GetFontWeight() {
             return weight;
         }
 
-        public virtual float GetItalicAngle()
-        {
+        public virtual float GetItalicAngle() {
             return italicAngle;
         }
 
-        public virtual bool IsMonospace()
-        {
+        public virtual bool IsMonospace() {
             return isMonospace;
         }
 
-        public virtual bool IsBold()
-        {
+        public virtual bool IsBold() {
             return (macStyle & FontMacStyleFlags.BOLD) != 0;
         }
 
-        public virtual bool IsItalic()
-        {
+        public virtual bool IsItalic() {
             return (macStyle & FontMacStyleFlags.ITALIC) != 0;
         }
 
-        public virtual String GetFullNameLowerCase()
-        {
+        public virtual String GetFullNameLowerCase() {
             return fullNameLowerCase;
         }
 
-        public virtual String GetFontNameLowerCase()
-        {
+        public virtual String GetFontNameLowerCase() {
             return fontNameLowerCase;
         }
 
-        public virtual String GetFamilyNameLowerCase()
-        {
+        public virtual String GetFamilyNameLowerCase() {
             return familyNameLowerCase;
         }
 
-        public virtual ICollection<String> GetFullNameAllLangs()
-        {
+        public virtual ICollection<String> GetFullNameAllLangs() {
             return fullNamesAllLangs;
         }
 
-        public virtual ICollection<String> GetFullNamesEnglishOpenType()
-        {
+        public virtual ICollection<String> GetFullNamesEnglishOpenType() {
             return fullNamesEnglishOpenType;
         }
 
-        internal virtual String GetFamilyNameEnglishOpenType()
-        {
+        internal virtual String GetFamilyNameEnglishOpenType() {
             return familyNameEnglishOpenType;
         }
 
-        private ICollection<String> ExtractFullFontNames(FontNames fontNames)
-        {
+        private ICollection<String> ExtractFullFontNames(FontNames fontNames) {
             ICollection<String> uniqueFullNames = new HashSet<String>();
-            foreach (String[] fullName in fontNames.GetFullName())
-            {
+            foreach (String[] fullName in fontNames.GetFullName()) {
                 uniqueFullNames.Add(fullName[3].ToLowerInvariant());
             }
             return uniqueFullNames;
         }
 
-        private String ExtractFamilyNameEnglishOpenType(FontNames fontNames)
-        {
-            if (fontNames.GetFamilyName() != null)
-            {
-                for (int k = 0; k < TT_FAMILY_ORDER.Length; k += 3)
-                {
-                    foreach (String[] name in fontNames.GetFamilyName())
-                    {
+        private String ExtractFamilyNameEnglishOpenType(FontNames fontNames) {
+            if (fontNames.GetFamilyName() != null) {
+                for (int k = 0; k < TT_FAMILY_ORDER.Length; k += 3) {
+                    foreach (String[] name in fontNames.GetFamilyName()) {
                         if (TT_FAMILY_ORDER[k].Equals(name[0]) && TT_FAMILY_ORDER[k + 1].Equals(name[1]) && TT_FAMILY_ORDER[k + 2]
-                            .Equals(name[2]))
-                        {
+                            .Equals(name[2])) {
                             return name[3].ToLowerInvariant();
                         }
                     }
@@ -196,19 +172,14 @@ namespace iText.IO.Font
             return null;
         }
 
-        private ICollection<String> ExtractFullNamesEnglishOpenType(FontNames fontNames)
-        {
-            if (familyNameEnglishOpenType != null)
-            {
+        private ICollection<String> ExtractFullNamesEnglishOpenType(FontNames fontNames) {
+            if (familyNameEnglishOpenType != null) {
                 ICollection<String> uniqueTtfSuitableFullNames = new HashSet<String>();
                 String[][] names = fontNames.GetFullName();
-                foreach (String[] name in names)
-                {
-                    for (int k = 0; k < TT_FAMILY_ORDER.Length; k += 3)
-                    {
+                foreach (String[] name in names) {
+                    for (int k = 0; k < TT_FAMILY_ORDER.Length; k += 3) {
                         if (TT_FAMILY_ORDER[k].Equals(name[0]) && TT_FAMILY_ORDER[k + 1].Equals(name[1]) && TT_FAMILY_ORDER[k + 2]
-                            .Equals(name[2]))
-                        {
+                            .Equals(name[2])) {
                             uniqueTtfSuitableFullNames.Add(name[3]);
                             break;
                         }

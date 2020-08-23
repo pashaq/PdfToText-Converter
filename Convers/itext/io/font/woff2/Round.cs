@@ -13,26 +13,20 @@
 // limitations under the License.
 //
 // This is part of java port of project hosted at https://github.com/google/woff2
-namespace iText.IO.Font.Woff2
-{
+namespace iText.IO.Font.Woff2 {
     // Helper for rounding
-    internal class Round
-    {
+    internal class Round {
         // Round a value up to the nearest multiple of 4. Don't round the value in the
         // case that rounding up overflows.
-        public static int Round4(int value)
-        {
-            if (int.MaxValue - value < 3)
-            {
+        public static int Round4(int value) {
+            if (int.MaxValue - value < 3) {
                 return value;
             }
             return (value + 3) & ~3;
         }
 
-        public static long Round4(long value)
-        {
-            if (long.MaxValue - value < 3)
-            {
+        public static long Round4(long value) {
+            if (long.MaxValue - value < 3) {
                 return value;
             }
             return (value + 3) & ~3;

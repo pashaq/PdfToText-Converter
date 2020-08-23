@@ -41,15 +41,13 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using Common.Logging;
-using iText.IO.Source;
 using System;
 using System.Collections.Generic;
+using Common.Logging;
+using iText.IO.Source;
 
-namespace iText.IO.Font.Cmap
-{
-    public class CMapParser
-    {
+namespace iText.IO.Font.Cmap {
+    public class CMapParser {
         private const String def = "def";
 
         private const String endcidrange = "endcidrange";
@@ -74,117 +72,84 @@ namespace iText.IO.Font.Cmap
 
         private const int MAX_LEVEL = 10;
 
-        public static void ParseCid(String cmapName, AbstractCMap cmap, ICMapLocation location)
-        {
+        public static void ParseCid(String cmapName, AbstractCMap cmap, ICMapLocation location) {
             ParseCid(cmapName, cmap, location, 0);
         }
 
-        private static void ParseCid(String cmapName, AbstractCMap cmap, ICMapLocation location, int level)
-        {
-            if (level >= MAX_LEVEL)
-            {
+        private static void ParseCid(String cmapName, AbstractCMap cmap, ICMapLocation location, int level) {
+            if (level >= MAX_LEVEL) {
                 return;
             }
             PdfTokenizer inp = location.GetLocation(cmapName);
-            try
-            {
+            try {
                 IList<CMapObject> list = new List<CMapObject>();
                 CMapContentParser cp = new CMapContentParser(inp);
                 int maxExc = 50;
-                while (true)
-                {
-                    try
-                    {
+                while (true) {
+                    try {
                         cp.Parse(list);
                     }
-                    catch (Exception)
-                    {
-                        if (--maxExc < 0)
-                        {
+                    catch (Exception) {
+                        if (--maxExc < 0) {
                             break;
                         }
                         continue;
                     }
-                    if (list.Count == 0)
-                    {
+                    if (list.Count == 0) {
                         break;
                     }
                     String last = list[list.Count - 1].ToString();
-                    if (level == 0 && list.Count == 3 && last.Equals(def))
-                    {
+                    if (level == 0 && list.Count == 3 && last.Equals(def)) {
                         CMapObject cmapObject = list[0];
-                        if (Registry.Equals(cmapObject.ToString()))
-                        {
+                        if (Registry.Equals(cmapObject.ToString())) {
                             cmap.SetRegistry(list[1].ToString());
                         }
-                        else
-                        {
-                            if (Ordering.Equals(cmapObject.ToString()))
-                            {
+                        else {
+                            if (Ordering.Equals(cmapObject.ToString())) {
                                 cmap.SetOrdering(list[1].ToString());
                             }
-                            else
-                            {
-                                if (CMapName.Equals(cmapObject.ToString()))
-                                {
+                            else {
+                                if (CMapName.Equals(cmapObject.ToString())) {
                                     cmap.SetName(list[1].ToString());
                                 }
-                                else
-                                {
-                                    if (Supplement.Equals(cmapObject.ToString()))
-                                    {
-                                        try
-                                        {
+                                else {
+                                    if (Supplement.Equals(cmapObject.ToString())) {
+                                        try {
                                             cmap.SetSupplement((int)list[1].GetValue());
                                         }
-                                        catch (Exception)
-                                        {
+                                        catch (Exception) {
                                         }
                                     }
                                 }
                             }
                         }
                     }
-                    else
-                    {
-                        if ((last.Equals(endcidchar) || last.Equals(endbfchar)) && list.Count >= 3)
-                        {
+                    else {
+                        if ((last.Equals(endcidchar) || last.Equals(endbfchar)) && list.Count >= 3) {
                             int lMax = list.Count - 2;
-                            for (int k = 0; k < lMax; k += 2)
-                            {
-                                if (list[k].IsString())
-                                {
+                            for (int k = 0; k < lMax; k += 2) {
+                                if (list[k].IsString()) {
                                     cmap.AddChar(list[k].ToString(), list[k + 1]);
                                 }
                             }
                         }
-                        else
-                        {
-                            if ((last.Equals(endcidrange) || last.Equals(endbfrange)) && list.Count >= 4)
-                            {
+                        else {
+                            if ((last.Equals(endcidrange) || last.Equals(endbfrange)) && list.Count >= 4) {
                                 int lMax = list.Count - 3;
-                                for (int k = 0; k < lMax; k += 3)
-                                {
-                                    if (list[k].IsString() && list[k + 1].IsString())
-                                    {
+                                for (int k = 0; k < lMax; k += 3) {
+                                    if (list[k].IsString() && list[k + 1].IsString()) {
                                         cmap.AddRange(list[k].ToString(), list[k + 1].ToString(), list[k + 2]);
                                     }
                                 }
                             }
-                            else
-                            {
-                                if (last.Equals(usecmap) && list.Count == 2 && list[0].IsName())
-                                {
+                            else {
+                                if (last.Equals(usecmap) && list.Count == 2 && list[0].IsName()) {
                                     ParseCid(list[0].ToString(), cmap, location, level + 1);
                                 }
-                                else
-                                {
-                                    if (last.Equals(endcodespacerange))
-                                    {
-                                        for (int i = 0; i < list.Count + 1; i += 2)
-                                        {
-                                            if (list[i].IsHexString() && list[i + 1].IsHexString())
-                                            {
+                                else {
+                                    if (last.Equals(endcodespacerange)) {
+                                        for (int i = 0; i < list.Count + 1; i += 2) {
+                                            if (list[i].IsHexString() && list[i + 1].IsHexString()) {
                                                 byte[] low = list[i].ToHexByteArray();
                                                 byte[] high = list[i + 1].ToHexByteArray();
                                                 cmap.AddCodeSpaceRange(low, high);
@@ -197,13 +162,11 @@ namespace iText.IO.Font.Cmap
                     }
                 }
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 ILog logger = LogManager.GetLogger(typeof(CMapParser));
                 logger.Error(iText.IO.LogMessageConstant.UNKNOWN_ERROR_WHILE_PROCESSING_CMAP);
             }
-            finally
-            {
+            finally {
                 inp.Close();
             }
         }

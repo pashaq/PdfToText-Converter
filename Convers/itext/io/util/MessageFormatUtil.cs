@@ -45,17 +45,14 @@ using System;
 using System.Globalization;
 using System.Text;
 
-namespace iText.IO.Util
-{
+namespace iText.IO.Util {
     /// <summary>This file is a helper class for internal usage only.</summary>
     /// <remarks>
     /// This file is a helper class for internal usage only.
     /// Be aware that its API and functionality may be changed in future.
     /// </remarks>
-    public class MessageFormatUtil
-    {
-        public static String Format(String pattern, params Object[] arguments)
-        {
+    public class MessageFormatUtil {
+        public static String Format(String pattern, params Object[] arguments) {
             StringBuilder sb = new StringBuilder(pattern.Length + arguments.Length * 8);
             sb.AppendFormat(CultureInfo.InvariantCulture, pattern, arguments);
             return sb.ToString();

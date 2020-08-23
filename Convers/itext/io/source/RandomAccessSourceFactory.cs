@@ -51,16 +51,16 @@ using iText.IO.Util;
 
 namespace iText.IO.Source
 {
-    /// <summary>
-    /// Factory to create
-    /// <see cref="RandomAccessSource"/>
-    /// objects based on various types of sources
-    /// </summary>
-    public sealed class RandomAccessSourceFactory
-    {
-        /// <summary>Whether the full content of the source should be read into memory at construction
-        /// 	</summary>
-        private bool forceRead = false;
+	/// <summary>
+	/// Factory to create
+	/// <see cref="RandomAccessSource"/>
+	/// objects based on various types of sources
+	/// </summary>
+	public sealed class RandomAccessSourceFactory
+	{
+		/// <summary>Whether the full content of the source should be read into memory at construction
+		/// 	</summary>
+		private bool forceRead = false;
 
         /// <summary>
         /// Whether
@@ -72,26 +72,26 @@ namespace iText.IO.Source
         [System.ObsoleteAttribute(@"Will be removed in iText 7.2. The field makes sense only in Java.")]
         private bool usePlainRandomAccess = false;
 
-        /// <summary>Whether the underlying file should have a RW lock on it or just an R lock
-        /// 	</summary>
-        private bool exclusivelyLockFile = false;
+		/// <summary>Whether the underlying file should have a RW lock on it or just an R lock
+		/// 	</summary>
+		private bool exclusivelyLockFile = false;
 
-        /// <summary>Creates a factory that will give preference to accessing the underling data source using memory mapped files
-        /// 	</summary>
-        public RandomAccessSourceFactory()
-        {
-        }
+		/// <summary>Creates a factory that will give preference to accessing the underling data source using memory mapped files
+		/// 	</summary>
+		public RandomAccessSourceFactory()
+		{
+		}
 
-        /// <summary>Determines whether the full content of the source will be read into memory
-        /// 	</summary>
-        /// <param name="forceRead">true if the full content will be read, false otherwise</param>
-        /// <returns>this object (this allows chaining of method calls)</returns>
-        public RandomAccessSourceFactory SetForceRead(bool forceRead
-            )
-        {
-            this.forceRead = forceRead;
-            return this;
-        }
+		/// <summary>Determines whether the full content of the source will be read into memory
+		/// 	</summary>
+		/// <param name="forceRead">true if the full content will be read, false otherwise</param>
+		/// <returns>this object (this allows chaining of method calls)</returns>
+		public RandomAccessSourceFactory SetForceRead(bool forceRead
+			)
+		{
+			this.forceRead = forceRead;
+			return this;
+		}
 
         /// <summary>
         /// Determines whether
@@ -106,57 +106,56 @@ namespace iText.IO.Source
         /// <returns>this object (this allows chaining of method calls)</returns>
         [System.ObsoleteAttribute(@"Will be removed in iText 7.2. The method makes sense only in Java.")]
         public RandomAccessSourceFactory SetUsePlainRandomAccess(bool
-             usePlainRandomAccess)
-        {
-            this.usePlainRandomAccess = usePlainRandomAccess;
-            return this;
-        }
+			 usePlainRandomAccess)
+		{
+			this.usePlainRandomAccess = usePlainRandomAccess;
+			return this;
+		}
 
-        public RandomAccessSourceFactory SetExclusivelyLockFile(bool
-             exclusivelyLockFile)
-        {
-            this.exclusivelyLockFile = exclusivelyLockFile;
-            return this;
-        }
+		public RandomAccessSourceFactory SetExclusivelyLockFile(bool
+			 exclusivelyLockFile)
+		{
+			this.exclusivelyLockFile = exclusivelyLockFile;
+			return this;
+		}
 
-        /// <summary>
-        /// Creates a
-        /// <see cref="RandomAccessSource"/>
-        /// based on a byte array
-        /// </summary>
-        /// <param name="data">the byte array</param>
-        /// <returns>
-        /// the newly created
-        /// <see cref="RandomAccessSource"/>
-        /// </returns>
+		/// <summary>
+		/// Creates a
+		/// <see cref="RandomAccessSource"/>
+		/// based on a byte array
+		/// </summary>
+		/// <param name="data">the byte array</param>
+		/// <returns>
+		/// the newly created
+		/// <see cref="RandomAccessSource"/>
+		/// </returns>
         public IRandomAccessSource CreateSource(byte[] data)
-        {
-            return new ArrayRandomAccessSource(data);
-        }
+		{
+			return new ArrayRandomAccessSource(data);
+		}
 
         public IRandomAccessSource CreateSource(FileStream raf)
-        {
-            return new RAFRandomAccessSource(raf);
-        }
+		{
+			return new RAFRandomAccessSource(raf);
+		}
 
-        /// <summary>
-        /// Creates a
-        /// <see cref="RandomAccessSource"/>
-        /// based on a URL.  The data available at the URL is read into memory and used
-        /// as the source for the
-        /// <see cref="RandomAccessSource"/>
-        /// </summary>
-        /// <param name="url">the url to read from</param>
-        /// <returns>
-        /// the newly created
-        /// <see cref="RandomAccessSource"/>
-        /// </returns>
-        public IRandomAccessSource CreateSource(Uri url)
-        {
+		/// <summary>
+		/// Creates a
+		/// <see cref="RandomAccessSource"/>
+		/// based on a URL.  The data available at the URL is read into memory and used
+		/// as the source for the
+		/// <see cref="RandomAccessSource"/>
+		/// </summary>
+		/// <param name="url">the url to read from</param>
+		/// <returns>
+		/// the newly created
+		/// <see cref="RandomAccessSource"/>
+		/// </returns>
+        public IRandomAccessSource CreateSource(Uri url) {
 #if !NETSTANDARD1_6
-            // Creation of web request via url.AbsoluteUri breaks UNC pathes (like \\computer-name\\img.jpg),
-            // url.LocalPath and url.AbsolutePath - break http links (like https://website.com/img.jpg).
-            // It seems enough to simply pass Uri instance as is, WebRequest seems to handle both escaping and UNC issues.
+			// Creation of web request via url.AbsoluteUri breaks UNC pathes (like \\computer-name\\img.jpg),
+			// url.LocalPath and url.AbsolutePath - break http links (like https://website.com/img.jpg).
+			// It seems enough to simply pass Uri instance as is, WebRequest seems to handle both escaping and UNC issues.
             WebRequest wr = WebRequest.Create(url);
             wr.Credentials = CredentialCache.DefaultCredentials;
             Stream isp = wr.GetResponse().GetResponseStream();
@@ -178,54 +177,54 @@ namespace iText.IO.Source
                 try { isp.Dispose(); }
                 catch { }
             }
-        }
+		}
 
-        /// <summary>
-        /// Creates a
-        /// <see cref="RandomAccessSource"/>
-        /// based on an
-        /// <see cref="System.IO.Stream"/>
-        /// .  The full content of the InputStream is read into memory and used
-        /// as the source for the
-        /// <see cref="RandomAccessSource"/>
-        /// </summary>
-        /// <param name="inputStream">the stream to read from</param>
-        /// <returns>
-        /// the newly created
-        /// <see cref="RandomAccessSource"/>
-        /// </returns>
+		/// <summary>
+		/// Creates a
+		/// <see cref="RandomAccessSource"/>
+		/// based on an
+		/// <see cref="System.IO.Stream"/>
+		/// .  The full content of the InputStream is read into memory and used
+		/// as the source for the
+		/// <see cref="RandomAccessSource"/>
+		/// </summary>
+		/// <param name="inputStream">the stream to read from</param>
+		/// <returns>
+		/// the newly created
+		/// <see cref="RandomAccessSource"/>
+		/// </returns>
         public IRandomAccessSource CreateSource(Stream inputStream)
-        {
-            return CreateSource(StreamUtil.InputStreamToArray(inputStream));
-        }
+		{
+			return CreateSource(StreamUtil.InputStreamToArray(inputStream));
+		}
 
-        /// <summary>
-        /// Creates a
-        /// <see cref="RandomAccessSource"/>
-        /// based on a filename string.
-        /// If the filename describes a URL, a URL based source is created
-        /// If the filename describes a file on disk, the contents may be read into memory (if
-        /// <c>forceRead</c>
-        /// is true),
-        /// opened using memory mapped file channel (if usePlainRandomAccess is false), or
-        /// opened using
-        /// <see cref="System.IO.FileStream"/>
-        /// access (if usePlainRandomAccess is true)
-        /// This call will automatically fail over to using
-        /// <see cref="System.IO.FileStream"/>
-        /// if the memory map operation fails
-        /// </summary>
-        /// <param name="filename">
-        /// the name of the file or resource to create the
-        /// <see cref="RandomAccessSource"/>
-        /// for
-        /// </param>
-        /// <returns>
-        /// the newly created
-        /// <see cref="RandomAccessSource"/>
-        /// </returns>
+		/// <summary>
+		/// Creates a
+		/// <see cref="RandomAccessSource"/>
+		/// based on a filename string.
+		/// If the filename describes a URL, a URL based source is created
+		/// If the filename describes a file on disk, the contents may be read into memory (if
+		/// <c>forceRead</c>
+		/// is true),
+		/// opened using memory mapped file channel (if usePlainRandomAccess is false), or
+		/// opened using
+		/// <see cref="System.IO.FileStream"/>
+		/// access (if usePlainRandomAccess is true)
+		/// This call will automatically fail over to using
+		/// <see cref="System.IO.FileStream"/>
+		/// if the memory map operation fails
+		/// </summary>
+		/// <param name="filename">
+		/// the name of the file or resource to create the
+		/// <see cref="RandomAccessSource"/>
+		/// for
+		/// </param>
+		/// <returns>
+		/// the newly created
+		/// <see cref="RandomAccessSource"/>
+		/// </returns>
         public IRandomAccessSource CreateBestSource(String filename)
-        {
+		{
             if (!File.Exists(filename))
             {
                 if (filename.StartsWith("file:/")
@@ -244,65 +243,65 @@ namespace iText.IO.Source
                 return CreateByReadingToMemory(new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read));
             }
             return new RAFRandomAccessSource(new FileStream(filename, FileMode.Open, FileAccess.Read, exclusivelyLockFile ? FileShare.None : FileShare.Read));
-        }
+		}
 
         public IRandomAccessSource CreateRanged(IRandomAccessSource source, long[] ranges)
-        {
+		{
             IRandomAccessSource[] sources = new IRandomAccessSource[ranges.Length / 2];
-            for (int i = 0; i < ranges.Length; i += 2)
-            {
-                sources[i / 2] = new WindowRandomAccessSource(source, ranges[i], ranges[i + 1]);
-            }
-            return new GroupedRandomAccessSource(sources);
-        }
+			for (int i = 0; i < ranges.Length; i += 2)
+			{
+				sources[i / 2] = new WindowRandomAccessSource(source, ranges[i], ranges[i + 1]);
+			}
+			return new GroupedRandomAccessSource(sources);
+		}
 
-        /// <summary>
-        /// Creates a new
-        /// <see cref="RandomAccessSource"/>
-        /// by reading the specified file/resource into memory
-        /// </summary>
-        /// <param name="filename">the name of the resource to read</param>
-        /// <returns>
-        /// the newly created
-        /// <see cref="RandomAccessSource"/>
-        /// </returns>
+		/// <summary>
+		/// Creates a new
+		/// <see cref="RandomAccessSource"/>
+		/// by reading the specified file/resource into memory
+		/// </summary>
+		/// <param name="filename">the name of the resource to read</param>
+		/// <returns>
+		/// the newly created
+		/// <see cref="RandomAccessSource"/>
+		/// </returns>
         private IRandomAccessSource CreateByReadingToMemory(String filename)
-        {
-            Stream stream = ResourceUtil.GetResourceStream(filename);
-            if (stream == null)
-            {
-                throw new System.IO.IOException(MessageFormatUtil.Format(IOException._1NotFoundAsFileOrResource
-                    , filename));
-            }
-            return CreateByReadingToMemory(stream);
-        }
+		{
+			Stream stream = ResourceUtil.GetResourceStream(filename);
+			if (stream == null)
+			{
+				throw new System.IO.IOException(MessageFormatUtil.Format(IOException._1NotFoundAsFileOrResource
+					, filename));
+			}
+			return CreateByReadingToMemory(stream);
+		}
 
-        /// <summary>
-        /// Creates a new
-        /// <see cref="RandomAccessSource"/>
-        /// by reading the specified file/resource into memory
-        /// </summary>
-        /// <param name="stream">the name of the resource to read</param>
-        /// <returns>
-        /// the newly created
-        /// <see cref="RandomAccessSource"/>
-        /// </returns>
+		/// <summary>
+		/// Creates a new
+		/// <see cref="RandomAccessSource"/>
+		/// by reading the specified file/resource into memory
+		/// </summary>
+		/// <param name="stream">the name of the resource to read</param>
+		/// <returns>
+		/// the newly created
+		/// <see cref="RandomAccessSource"/>
+		/// </returns>
         private IRandomAccessSource CreateByReadingToMemory(Stream stream)
-        {
-            try
-            {
-                return new ArrayRandomAccessSource(StreamUtil.InputStreamToArray(stream));
-            }
-            finally
-            {
-                try
-                {
-                    stream.Dispose();
-                }
-                catch (System.IO.IOException)
-                {
-                }
-            }
-        }
-    }
+		{
+			try
+			{
+				return new ArrayRandomAccessSource(StreamUtil.InputStreamToArray(stream));
+			}
+			finally
+			{
+				try
+				{
+					stream.Dispose();
+				}
+				catch (System.IO.IOException)
+				{
+				}
+			}
+		}
+	}
 }

@@ -40,13 +40,11 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.Kernel.Geom;
 using System;
+using iText.Kernel.Geom;
 
-namespace iText.Kernel.Pdf.Canvas.Parser.Listener
-{
-    internal class TextChunkLocationDefaultImp : ITextChunkLocation
-    {
+namespace iText.Kernel.Pdf.Canvas.Parser.Listener {
+    internal class TextChunkLocationDefaultImp : ITextChunkLocation {
         private const float DIACRITICAL_MARKS_ALLOWED_VERTICAL_DEVIATION = 2;
 
         /// <summary>The starting location of the chunk.</summary>
@@ -80,14 +78,12 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
         /// <summary>The width of a single space character in the font of the chunk.</summary>
         private readonly float charSpaceWidth;
 
-        public TextChunkLocationDefaultImp(Vector startLocation, Vector endLocation, float charSpaceWidth)
-        {
+        public TextChunkLocationDefaultImp(Vector startLocation, Vector endLocation, float charSpaceWidth) {
             this.startLocation = startLocation;
             this.endLocation = endLocation;
             this.charSpaceWidth = charSpaceWidth;
             Vector oVector = endLocation.Subtract(startLocation);
-            if (oVector.Length() == 0)
-            {
+            if (oVector.Length() == 0) {
                 oVector = new Vector(1, 0, 0);
             }
             orientationVector = oVector.Normalize();
@@ -102,55 +98,45 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
             distParallelEnd = orientationVector.Dot(endLocation);
         }
 
-        public virtual int OrientationMagnitude()
-        {
+        public virtual int OrientationMagnitude() {
             return orientationMagnitude;
         }
 
-        public virtual int DistPerpendicular()
-        {
+        public virtual int DistPerpendicular() {
             return distPerpendicular;
         }
 
-        public virtual float DistParallelStart()
-        {
+        public virtual float DistParallelStart() {
             return distParallelStart;
         }
 
-        public virtual float DistParallelEnd()
-        {
+        public virtual float DistParallelEnd() {
             return distParallelEnd;
         }
 
         /// <returns>the start location of the text</returns>
-        public virtual Vector GetStartLocation()
-        {
+        public virtual Vector GetStartLocation() {
             return startLocation;
         }
 
         /// <returns>the end location of the text</returns>
-        public virtual Vector GetEndLocation()
-        {
+        public virtual Vector GetEndLocation() {
             return endLocation;
         }
 
         /// <returns>the width of a single space character as rendered by this chunk</returns>
-        public virtual float GetCharSpaceWidth()
-        {
+        public virtual float GetCharSpaceWidth() {
             return charSpaceWidth;
         }
 
         /// <param name="as">the location to compare to</param>
         /// <returns>true is this location is on the the same line as the other</returns>
-        public virtual bool SameLine(ITextChunkLocation @as)
-        {
-            if (OrientationMagnitude() != @as.OrientationMagnitude())
-            {
+        public virtual bool SameLine(ITextChunkLocation @as) {
+            if (OrientationMagnitude() != @as.OrientationMagnitude()) {
                 return false;
             }
             float distPerpendicularDiff = DistPerpendicular() - @as.DistPerpendicular();
-            if (distPerpendicularDiff == 0)
-            {
+            if (distPerpendicularDiff == 0) {
                 return true;
             }
             LineSegment mySegment = new LineSegment(startLocation, endLocation);
@@ -171,34 +157,28 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
         /// </remarks>
         /// <param name="other"/>
         /// <returns>the number of spaces between the end of 'other' and the beginning of this chunk</returns>
-        public virtual float DistanceFromEndOf(ITextChunkLocation other)
-        {
+        public virtual float DistanceFromEndOf(ITextChunkLocation other) {
             return DistParallelStart() - other.DistParallelEnd();
         }
 
-        public virtual bool IsAtWordBoundary(ITextChunkLocation previous)
-        {
+        public virtual bool IsAtWordBoundary(ITextChunkLocation previous) {
             // In case a text chunk is of zero length, this probably means this is a mark character,
             // and we do not actually want to insert a space in such case
-            if (startLocation.Equals(endLocation) || previous.GetEndLocation().Equals(previous.GetStartLocation()))
-            {
+            if (startLocation.Equals(endLocation) || previous.GetEndLocation().Equals(previous.GetStartLocation())) {
                 return false;
             }
             float dist = DistanceFromEndOf(previous);
-            if (dist < 0)
-            {
+            if (dist < 0) {
                 dist = previous.DistanceFromEndOf(this);
                 //The situation when the chunks intersect. We don't need to add space in this case
-                if (dist < 0)
-                {
+                if (dist < 0) {
                     return false;
                 }
             }
             return dist > GetCharSpaceWidth() / 2.0f;
         }
 
-        internal static bool ContainsMark(ITextChunkLocation baseLocation, ITextChunkLocation markLocation)
-        {
+        internal static bool ContainsMark(ITextChunkLocation baseLocation, ITextChunkLocation markLocation) {
             return baseLocation.GetStartLocation().Get(Vector.I1) <= markLocation.GetStartLocation().Get(Vector.I1) &&
                  baseLocation.GetEndLocation().Get(Vector.I1) >= markLocation.GetEndLocation().Get(Vector.I1) && Math.
                 Abs(baseLocation.DistPerpendicular() - markLocation.DistPerpendicular()) <= DIACRITICAL_MARKS_ALLOWED_VERTICAL_DEVIATION;

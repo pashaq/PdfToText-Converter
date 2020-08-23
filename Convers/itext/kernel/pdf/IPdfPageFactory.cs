@@ -42,14 +42,12 @@ address: sales@itextpdf.com
 */
 using iText.Kernel.Geom;
 
-namespace iText.Kernel.Pdf
-{
+namespace iText.Kernel.Pdf {
     /// <summary>
     /// Interface used to create instances of
     /// <see cref="PdfPage"/>.
     /// </summary>
-    public interface IPdfPageFactory
-    {
+    public interface IPdfPageFactory {
         /// <summary>
         /// Create
         /// <see cref="PdfPage"/>

@@ -41,15 +41,13 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Util;
-using iText.Kernel.Pdf.Tagging;
 using System;
 using System.Collections.Generic;
+using iText.IO.Util;
+using iText.Kernel.Pdf.Tagging;
 
-namespace iText.Kernel.Pdf.Tagutils
-{
-    public class DefaultAccessibilityProperties : AccessibilityProperties
-    {
+namespace iText.Kernel.Pdf.Tagutils {
+    public class DefaultAccessibilityProperties : AccessibilityProperties {
         protected internal String role;
 
         protected internal String language;
@@ -70,144 +68,117 @@ namespace iText.Kernel.Pdf.Tagutils
 
         protected internal IList<TagTreePointer> refs = new List<TagTreePointer>();
 
-        public DefaultAccessibilityProperties(String role)
-        {
+        public DefaultAccessibilityProperties(String role) {
             this.role = role;
         }
 
-        public override String GetRole()
-        {
+        public override String GetRole() {
             return role;
         }
 
-        public override AccessibilityProperties SetRole(String role)
-        {
+        public override AccessibilityProperties SetRole(String role) {
             this.role = role;
             return this;
         }
 
-        public override String GetLanguage()
-        {
+        public override String GetLanguage() {
             return language;
         }
 
-        public override AccessibilityProperties SetLanguage(String language)
-        {
+        public override AccessibilityProperties SetLanguage(String language) {
             this.language = language;
             return this;
         }
 
-        public override String GetActualText()
-        {
+        public override String GetActualText() {
             return actualText;
         }
 
-        public override AccessibilityProperties SetActualText(String actualText)
-        {
+        public override AccessibilityProperties SetActualText(String actualText) {
             this.actualText = actualText;
             return this;
         }
 
-        public override String GetAlternateDescription()
-        {
+        public override String GetAlternateDescription() {
             return alternateDescription;
         }
 
-        public override AccessibilityProperties SetAlternateDescription(String alternateDescription)
-        {
+        public override AccessibilityProperties SetAlternateDescription(String alternateDescription) {
             this.alternateDescription = alternateDescription;
             return this;
         }
 
-        public override String GetExpansion()
-        {
+        public override String GetExpansion() {
             return expansion;
         }
 
-        public override AccessibilityProperties SetExpansion(String expansion)
-        {
+        public override AccessibilityProperties SetExpansion(String expansion) {
             this.expansion = expansion;
             return this;
         }
 
-        public override AccessibilityProperties AddAttributes(PdfStructureAttributes attributes)
-        {
+        public override AccessibilityProperties AddAttributes(PdfStructureAttributes attributes) {
             return AddAttributes(-1, attributes);
         }
 
-        public override AccessibilityProperties AddAttributes(int index, PdfStructureAttributes attributes)
-        {
-            if (attributes != null)
-            {
-                if (index > 0)
-                {
+        public override AccessibilityProperties AddAttributes(int index, PdfStructureAttributes attributes) {
+            if (attributes != null) {
+                if (index > 0) {
                     attributesList.Add(index, attributes);
                 }
-                else
-                {
+                else {
                     attributesList.Add(attributes);
                 }
             }
             return this;
         }
 
-        public override AccessibilityProperties ClearAttributes()
-        {
+        public override AccessibilityProperties ClearAttributes() {
             attributesList.Clear();
             return this;
         }
 
-        public override IList<PdfStructureAttributes> GetAttributesList()
-        {
+        public override IList<PdfStructureAttributes> GetAttributesList() {
             return attributesList;
         }
 
-        public override String GetPhoneme()
-        {
+        public override String GetPhoneme() {
             return this.phoneme;
         }
 
-        public override AccessibilityProperties SetPhoneme(String phoneme)
-        {
+        public override AccessibilityProperties SetPhoneme(String phoneme) {
             this.phoneme = phoneme;
             return this;
         }
 
-        public override String GetPhoneticAlphabet()
-        {
+        public override String GetPhoneticAlphabet() {
             return this.phoneticAlphabet;
         }
 
-        public override AccessibilityProperties SetPhoneticAlphabet(String phoneticAlphabet)
-        {
+        public override AccessibilityProperties SetPhoneticAlphabet(String phoneticAlphabet) {
             this.phoneticAlphabet = phoneticAlphabet;
             return this;
         }
 
-        public override PdfNamespace GetNamespace()
-        {
+        public override PdfNamespace GetNamespace() {
             return this.@namespace;
         }
 
-        public override AccessibilityProperties SetNamespace(PdfNamespace @namespace)
-        {
+        public override AccessibilityProperties SetNamespace(PdfNamespace @namespace) {
             this.@namespace = @namespace;
             return this;
         }
 
-        public override AccessibilityProperties AddRef(TagTreePointer treePointer)
-        {
+        public override AccessibilityProperties AddRef(TagTreePointer treePointer) {
             refs.Add(new TagTreePointer(treePointer));
             return this;
         }
 
-        public override IList<TagTreePointer> GetRefsList()
-        {
+        public override IList<TagTreePointer> GetRefsList() {
             return JavaCollectionsUtil.UnmodifiableList(refs);
         }
 
-        public override AccessibilityProperties ClearRefs()
-        {
+        public override AccessibilityProperties ClearRefs() {
             refs.Clear();
             return this;
         }

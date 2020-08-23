@@ -40,12 +40,9 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-namespace iText.IO.Font.Constants
-{
-    public sealed class FontStyles
-    {
-        private FontStyles()
-        {
+namespace iText.IO.Font.Constants {
+    public sealed class FontStyles {
+        private FontStyles() {
         }
 
         /// <summary>Undefined font style.</summary>

@@ -40,44 +40,38 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.Kernel.Pdf.Tagging;
 using System;
+using iText.Kernel.Pdf;
+using iText.Kernel.Pdf.Tagging;
 
-namespace iText.Kernel.Pdf.Tagutils
-{
-    internal class RoleMappingResolverPdf2 : IRoleMappingResolver
-    {
+namespace iText.Kernel.Pdf.Tagutils {
+    internal class RoleMappingResolverPdf2 : IRoleMappingResolver {
         private PdfName currRole;
 
         private PdfNamespace currNamespace;
 
         private PdfNamespace defaultNamespace;
 
-        internal RoleMappingResolverPdf2(String role, PdfNamespace @namespace, PdfDocument document)
-        {
+        internal RoleMappingResolverPdf2(String role, PdfNamespace @namespace, PdfDocument document) {
             this.currRole = PdfStructTreeRoot.ConvertRoleToPdfName(role);
             this.currNamespace = @namespace;
             String defaultNsName = StandardNamespaces.GetDefault();
             PdfDictionary defaultNsRoleMap = document.GetStructTreeRoot().GetRoleMap();
             this.defaultNamespace = new PdfNamespace(defaultNsName).SetNamespaceRoleMap(defaultNsRoleMap);
-            if (currNamespace == null)
-            {
+            if (currNamespace == null) {
                 currNamespace = defaultNamespace;
             }
         }
 
-        public virtual String GetRole()
-        {
+        public virtual String GetRole() {
             return currRole.GetValue();
         }
 
-        public virtual PdfNamespace GetNamespace()
-        {
+        public virtual PdfNamespace GetNamespace() {
             return currNamespace;
         }
 
-        public virtual bool CurrentRoleIsStandard()
-        {
+        public virtual bool CurrentRoleIsStandard() {
             String roleStrVal = currRole.GetValue();
             bool stdRole17 = StandardNamespaces.PDF_1_7.Equals(currNamespace.GetNamespaceName()) && StandardNamespaces
                 .RoleBelongsToStandardNamespace(roleStrVal, StandardNamespaces.PDF_1_7);
@@ -86,45 +80,36 @@ namespace iText.Kernel.Pdf.Tagutils
             return stdRole17 || stdRole20;
         }
 
-        public virtual bool CurrentRoleShallBeMappedToStandard()
-        {
+        public virtual bool CurrentRoleShallBeMappedToStandard() {
             return !CurrentRoleIsStandard() && !StandardNamespaces.IsKnownDomainSpecificNamespace(currNamespace);
         }
 
-        public virtual bool ResolveNextMapping()
-        {
+        public virtual bool ResolveNextMapping() {
             PdfObject mapping = null;
             PdfDictionary currNsRoleMap = currNamespace.GetNamespaceRoleMap();
-            if (currNsRoleMap != null)
-            {
+            if (currNsRoleMap != null) {
                 mapping = currNsRoleMap.Get(currRole);
             }
-            if (mapping == null)
-            {
+            if (mapping == null) {
                 return false;
             }
             bool mappingWasResolved = false;
-            if (mapping.IsName())
-            {
+            if (mapping.IsName()) {
                 currRole = (PdfName)mapping;
                 currNamespace = defaultNamespace;
                 mappingWasResolved = true;
             }
-            else
-            {
-                if (mapping.IsArray())
-                {
+            else {
+                if (mapping.IsArray()) {
                     PdfName mappedRole = null;
                     PdfDictionary mappedNsDict = null;
                     PdfArray mappingArr = (PdfArray)mapping;
-                    if (mappingArr.Size() > 1)
-                    {
+                    if (mappingArr.Size() > 1) {
                         mappedRole = mappingArr.GetAsName(0);
                         mappedNsDict = mappingArr.GetAsDictionary(1);
                     }
                     mappingWasResolved = mappedRole != null && mappedNsDict != null;
-                    if (mappingWasResolved)
-                    {
+                    if (mappingWasResolved) {
                         currRole = mappedRole;
                         currNamespace = new PdfNamespace(mappedNsDict);
                     }

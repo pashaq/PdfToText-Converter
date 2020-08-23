@@ -41,61 +41,50 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Source;
 using System;
+using iText.IO.Source;
 
-namespace iText.Kernel.Pdf
-{
+namespace iText.Kernel.Pdf {
     /// <summary>Representation of the null object in the PDF specification.</summary>
-    public class PdfNull : PdfPrimitiveObject
-    {
+    public class PdfNull : PdfPrimitiveObject {
         public static readonly iText.Kernel.Pdf.PdfNull PDF_NULL = new iText.Kernel.Pdf.PdfNull(true);
 
         private static readonly byte[] NullContent = ByteUtils.GetIsoBytes("null");
 
         /// <summary>Creates a PdfNull instance.</summary>
         public PdfNull()
-            : base()
-        {
+            : base() {
         }
 
         private PdfNull(bool directOnly)
-            : base(directOnly)
-        {
+            : base(directOnly) {
         }
 
-        public override byte GetObjectType()
-        {
+        public override byte GetObjectType() {
             return NULL;
         }
 
-        public override String ToString()
-        {
+        public override String ToString() {
             return "null";
         }
 
-        protected internal override void GenerateContent()
-        {
+        protected internal override void GenerateContent() {
             content = NullContent;
         }
 
         //Here we create new object, because if we use static object it can cause unpredictable behavior during copy objects
-        protected internal override PdfObject NewInstance()
-        {
+        protected internal override PdfObject NewInstance() {
             return new iText.Kernel.Pdf.PdfNull();
         }
 
-        protected internal override void CopyContent(PdfObject from, PdfDocument document)
-        {
+        protected internal override void CopyContent(PdfObject from, PdfDocument document) {
         }
 
-        public override bool Equals(Object obj)
-        {
+        public override bool Equals(Object obj) {
             return this == obj || obj != null && GetType() == obj.GetType();
         }
 
-        public override int GetHashCode()
-        {
+        public override int GetHashCode() {
             return 0;
         }
     }

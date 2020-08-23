@@ -42,11 +42,10 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using System;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Collection
-{
-    public class PdfCollection : PdfObjectWrapper<PdfDictionary>
-    {
+namespace iText.Kernel.Pdf.Collection {
+    public class PdfCollection : PdfObjectWrapper<PdfDictionary> {
         /// <summary>A type of initial view</summary>
         public const int DETAILS = 0;
 
@@ -57,29 +56,25 @@ namespace iText.Kernel.Pdf.Collection
         public const int HIDDEN = 2;
 
         public PdfCollection(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
         /// <summary>Constructs a PDF Collection.</summary>
         public PdfCollection()
-            : this(new PdfDictionary())
-        {
+            : this(new PdfDictionary()) {
         }
 
         /// <summary>Sets the Collection schema dictionary.</summary>
         /// <param name="schema">an overview of the collection fields</param>
         /// <returns>this instance to support fluent interface</returns>
-        public virtual iText.Kernel.Pdf.Collection.PdfCollection SetSchema(PdfCollectionSchema schema)
-        {
+        public virtual iText.Kernel.Pdf.Collection.PdfCollection SetSchema(PdfCollectionSchema schema) {
             GetPdfObject().Put(PdfName.Schema, schema.GetPdfObject());
             return this;
         }
 
         /// <summary>Gets the Collection schema dictionary.</summary>
         /// <returns>the Collection schema dictionary</returns>
-        public virtual PdfCollectionSchema GetSchema()
-        {
+        public virtual PdfCollectionSchema GetSchema() {
             return new PdfCollectionSchema(GetPdfObject().GetAsDictionary(PdfName.Schema));
         }
 
@@ -89,8 +84,7 @@ namespace iText.Kernel.Pdf.Collection
         /// </summary>
         /// <param name="documentName">a string that identifies an entry in the EmbeddedFiles name tree</param>
         /// <returns>this instance to support fluent interface</returns>
-        public virtual iText.Kernel.Pdf.Collection.PdfCollection SetInitialDocument(String documentName)
-        {
+        public virtual iText.Kernel.Pdf.Collection.PdfCollection SetInitialDocument(String documentName) {
             GetPdfObject().Put(PdfName.D, new PdfString(documentName));
             return this;
         }
@@ -100,35 +94,29 @@ namespace iText.Kernel.Pdf.Collection
         /// in the user interface.
         /// </summary>
         /// <returns>a pdf string that identifies an entry in the EmbeddedFiles name tree</returns>
-        public virtual PdfString GetInitialDocument()
-        {
+        public virtual PdfString GetInitialDocument() {
             return GetPdfObject().GetAsString(PdfName.D);
         }
 
         /// <summary>Sets the initial view.</summary>
         /// <param name="viewType">is a type of view</param>
         /// <returns>this instance to support fluent interface</returns>
-        public virtual iText.Kernel.Pdf.Collection.PdfCollection SetView(int viewType)
-        {
-            switch (viewType)
-            {
-                default:
-                    {
-                        GetPdfObject().Put(PdfName.View, PdfName.D);
-                        break;
-                    }
+        public virtual iText.Kernel.Pdf.Collection.PdfCollection SetView(int viewType) {
+            switch (viewType) {
+                default: {
+                    GetPdfObject().Put(PdfName.View, PdfName.D);
+                    break;
+                }
 
-                case TILE:
-                    {
-                        GetPdfObject().Put(PdfName.View, PdfName.T);
-                        break;
-                    }
+                case TILE: {
+                    GetPdfObject().Put(PdfName.View, PdfName.T);
+                    break;
+                }
 
-                case HIDDEN:
-                    {
-                        GetPdfObject().Put(PdfName.View, PdfName.H);
-                        break;
-                    }
+                case HIDDEN: {
+                    GetPdfObject().Put(PdfName.View, PdfName.H);
+                    break;
+                }
             }
             return this;
         }
@@ -140,51 +128,44 @@ namespace iText.Kernel.Pdf.Collection
         /// <returns>the view</returns>
         [System.ObsoleteAttribute(@"Will always return null. The return will be changed to PdfName in 7.2. Use getPdfObject().getAsName(PdfName.View) , or one of IsViewDetails() , IsViewTile() , IsViewHidden() ."
             )]
-        public virtual PdfNumber GetView()
-        {
+        public virtual PdfNumber GetView() {
             return GetPdfObject().GetAsNumber(PdfName.View);
         }
 
         /// <summary>Check if view is in details mode.</summary>
         /// <returns>true if view is in details mode and false otherwise</returns>
-        public virtual bool IsViewDetails()
-        {
+        public virtual bool IsViewDetails() {
             PdfName view = GetPdfObject().GetAsName(PdfName.View);
             return view == null || view.Equals(PdfName.D);
         }
 
         /// <summary>Check if view is in tile mode.</summary>
         /// <returns>true if view is in tile mode and false otherwise</returns>
-        public virtual bool IsViewTile()
-        {
+        public virtual bool IsViewTile() {
             return PdfName.T.Equals(GetPdfObject().GetAsName(PdfName.View));
         }
 
         /// <summary>Check if view is hidden.</summary>
         /// <returns>true if view is hidden and false otherwise</returns>
-        public virtual bool IsViewHidden()
-        {
+        public virtual bool IsViewHidden() {
             return PdfName.H.Equals(GetPdfObject().GetAsName(PdfName.View));
         }
 
         /// <summary>Sets the Collection sort dictionary.</summary>
         /// <param name="sort">is the Collection sort dictionary</param>
         /// <returns>this instance to support fluent interface</returns>
-        public virtual iText.Kernel.Pdf.Collection.PdfCollection SetSort(PdfCollectionSort sort)
-        {
+        public virtual iText.Kernel.Pdf.Collection.PdfCollection SetSort(PdfCollectionSort sort) {
             GetPdfObject().Put(PdfName.Sort, sort.GetPdfObject());
             return this;
         }
 
         /// <summary>Getter for the Collection sort dictionary.</summary>
         /// <returns>the Collection sort</returns>
-        public virtual PdfCollectionSort GetSort()
-        {
+        public virtual PdfCollectionSort GetSort() {
             return new PdfCollectionSort(GetPdfObject().GetAsDictionary(PdfName.Sort));
         }
 
-        protected internal override bool IsWrappedObjectMustBeIndirect()
-        {
+        protected internal override bool IsWrappedObjectMustBeIndirect() {
             return false;
         }
     }

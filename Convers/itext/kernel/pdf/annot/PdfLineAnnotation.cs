@@ -43,17 +43,16 @@ address: sales@itextpdf.com
 */
 using iText.Kernel.Colors;
 using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Annot
-{
+namespace iText.Kernel.Pdf.Annot {
     /// <summary>The purpose of a line annotation is to display a single straight line on the page.</summary>
     /// <remarks>
     /// The purpose of a line annotation is to display a single straight line on the page.
     /// When opened, it displays a pop-up window containing the text of the associated note.
     /// See also ISO-320001 12.5.6.7 "Line Annotations".
     /// </remarks>
-    public class PdfLineAnnotation : PdfMarkupAnnotation
-    {
+    public class PdfLineAnnotation : PdfMarkupAnnotation {
         /// <summary>
         /// Creates a
         /// <see cref="PdfLineAnnotation"/>
@@ -70,8 +69,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="GetLine()"/>.
         /// </param>
         public PdfLineAnnotation(Rectangle rect, float[] line)
-            : base(rect)
-        {
+            : base(rect) {
             Put(PdfName.L, new PdfArray(line));
         }
 
@@ -89,13 +87,11 @@ namespace iText.Kernel.Pdf.Annot
         /// </param>
         /// <seealso cref="PdfAnnotation.MakeAnnotation(iText.Kernel.Pdf.PdfObject)"/>
         protected internal PdfLineAnnotation(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
         /// <summary><inheritDoc/></summary>
-        public override PdfName GetSubtype()
-        {
+        public override PdfName GetSubtype() {
             return PdfName.Line;
         }
 
@@ -112,8 +108,7 @@ namespace iText.Kernel.Pdf.Annot
         /// </remarks>
         /// <returns>An array of four numbers specifying the starting and ending coordinates of the line in default user space.
         ///     </returns>
-        public virtual PdfArray GetLine()
-        {
+        public virtual PdfArray GetLine() {
             return GetPdfObject().GetAsArray(PdfName.L);
         }
 
@@ -135,8 +130,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfDictionary"/>
         /// which is a border style dictionary or null if it is not specified.
         /// </returns>
-        public virtual PdfDictionary GetBorderStyle()
-        {
+        public virtual PdfDictionary GetBorderStyle() {
             return GetPdfObject().GetAsDictionary(PdfName.BS);
         }
 
@@ -162,8 +156,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfLineAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfLineAnnotation SetBorderStyle(PdfDictionary borderStyle)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfLineAnnotation SetBorderStyle(PdfDictionary borderStyle) {
             return (iText.Kernel.Pdf.Annot.PdfLineAnnotation)Put(PdfName.BS, borderStyle);
         }
 
@@ -201,8 +194,7 @@ namespace iText.Kernel.Pdf.Annot
         /// instance.
         /// </returns>
         /// <seealso cref="GetBorderStyle()"/>
-        public virtual iText.Kernel.Pdf.Annot.PdfLineAnnotation SetBorderStyle(PdfName style)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfLineAnnotation SetBorderStyle(PdfName style) {
             return SetBorderStyle(BorderStyleUtil.SetStyle(GetBorderStyle(), style));
         }
 
@@ -223,8 +215,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfLineAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfLineAnnotation SetDashPattern(PdfArray dashPattern)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfLineAnnotation SetDashPattern(PdfArray dashPattern) {
             return SetBorderStyle(BorderStyleUtil.SetDashPattern(GetBorderStyle(), dashPattern));
         }
 
@@ -244,8 +235,7 @@ namespace iText.Kernel.Pdf.Annot
         /// An array of two names specifying the line ending styles that is used in drawing the line; or null if line
         /// endings style is not explicitly defined, default value is [/None /None].
         /// </returns>
-        public virtual PdfArray GetLineEndingStyles()
-        {
+        public virtual PdfArray GetLineEndingStyles() {
             return GetPdfObject().GetAsArray(PdfName.LE);
         }
 
@@ -317,8 +307,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfLineAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfLineAnnotation SetLineEndingStyles(PdfArray lineEndingStyles)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfLineAnnotation SetLineEndingStyles(PdfArray lineEndingStyles) {
             return (iText.Kernel.Pdf.Annot.PdfLineAnnotation)Put(PdfName.LE, lineEndingStyles);
         }
 
@@ -335,8 +324,7 @@ namespace iText.Kernel.Pdf.Annot
         /// type which defines
         /// interior color of the annotation, or null if interior color is not specified.
         /// </returns>
-        public virtual Color GetInteriorColor()
-        {
+        public virtual Color GetInteriorColor() {
             return InteriorColorUtil.ParseInteriorColor(GetPdfObject().GetAsArray(PdfName.IC));
         }
 
@@ -359,8 +347,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfLineAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfLineAnnotation SetInteriorColor(PdfArray interiorColor)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfLineAnnotation SetInteriorColor(PdfArray interiorColor) {
             return (iText.Kernel.Pdf.Annot.PdfLineAnnotation)Put(PdfName.IC, interiorColor);
         }
 
@@ -374,8 +361,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfLineAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfLineAnnotation SetInteriorColor(float[] interiorColor)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfLineAnnotation SetInteriorColor(float[] interiorColor) {
             return SetInteriorColor(new PdfArray(interiorColor));
         }
 
@@ -394,8 +380,7 @@ namespace iText.Kernel.Pdf.Annot
         /// a negative value indicates the opposite direction.
         /// </remarks>
         /// <returns>a float specifying the length of leader lines in default user space.</returns>
-        public virtual float GetLeaderLineLength()
-        {
+        public virtual float GetLeaderLineLength() {
             PdfNumber n = GetPdfObject().GetAsNumber(PdfName.LL);
             return n == null ? 0 : n.FloatValue();
         }
@@ -420,8 +405,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfLineAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfLineAnnotation SetLeaderLineLength(float leaderLineLength)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfLineAnnotation SetLeaderLineLength(float leaderLineLength) {
             return (iText.Kernel.Pdf.Annot.PdfLineAnnotation)Put(PdfName.LL, new PdfNumber(leaderLineLength));
         }
 
@@ -433,8 +417,7 @@ namespace iText.Kernel.Pdf.Annot
         /// a non-negative float that represents the length of leader line extensions; or if the leader line extension
         /// is not explicitly set, returns the default value, which is 0.
         /// </returns>
-        public virtual float GetLeaderLineExtension()
-        {
+        public virtual float GetLeaderLineExtension() {
             PdfNumber n = GetPdfObject().GetAsNumber(PdfName.LLE);
             return n == null ? 0 : n.FloatValue();
         }
@@ -454,8 +437,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfLineAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfLineAnnotation SetLeaderLineExtension(float leaderLineExtension)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfLineAnnotation SetLeaderLineExtension(float leaderLineExtension) {
             return (iText.Kernel.Pdf.Annot.PdfLineAnnotation)Put(PdfName.LLE, new PdfNumber(leaderLineExtension));
         }
 
@@ -467,8 +449,7 @@ namespace iText.Kernel.Pdf.Annot
         /// a non-negative number that represents the length of the leader line offset,
         /// or null if leader line offset is not set.
         /// </returns>
-        public virtual float GetLeaderLineOffset()
-        {
+        public virtual float GetLeaderLineOffset() {
             PdfNumber n = GetPdfObject().GetAsNumber(PdfName.LLO);
             return n == null ? 0 : n.FloatValue();
         }
@@ -484,8 +465,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfLineAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfLineAnnotation SetLeaderLineOffset(float leaderLineOffset)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfLineAnnotation SetLeaderLineOffset(float leaderLineOffset) {
             return (iText.Kernel.Pdf.Annot.PdfLineAnnotation)Put(PdfName.LLO, new PdfNumber(leaderLineOffset));
         }
 
@@ -506,8 +486,7 @@ namespace iText.Kernel.Pdf.Annot
         /// true, if the annotation text is replicated as a caption, false otherwise. If this property is
         /// not set, default value is used which is <i>false</i>.
         /// </returns>
-        public virtual bool GetContentsAsCaption()
-        {
+        public virtual bool GetContentsAsCaption() {
             PdfBoolean b = GetPdfObject().GetAsBoolean(PdfName.Cap);
             return b != null && b.GetValue();
         }
@@ -532,8 +511,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfLineAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfLineAnnotation SetContentsAsCaption(bool contentsAsCaption)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfLineAnnotation SetContentsAsCaption(bool contentsAsCaption) {
             return (iText.Kernel.Pdf.Annot.PdfLineAnnotation)Put(PdfName.Cap, PdfBoolean.ValueOf(contentsAsCaption));
         }
 
@@ -552,8 +530,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfName.Inline"/>
         /// ).
         /// </returns>
-        public virtual PdfName GetCaptionPosition()
-        {
+        public virtual PdfName GetCaptionPosition() {
             return GetPdfObject().GetAsName(PdfName.CP);
         }
 
@@ -572,8 +549,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfLineAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfLineAnnotation SetCaptionPosition(PdfName captionPosition)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfLineAnnotation SetCaptionPosition(PdfName captionPosition) {
             return (iText.Kernel.Pdf.Annot.PdfLineAnnotation)Put(PdfName.CP, captionPosition);
         }
 
@@ -584,8 +560,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfDictionary"/>
         /// that represents a measure dictionary.
         /// </returns>
-        public virtual PdfDictionary GetMeasure()
-        {
+        public virtual PdfDictionary GetMeasure() {
             return GetPdfObject().GetAsDictionary(PdfName.Measure);
         }
 
@@ -601,8 +576,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfLineAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfLineAnnotation SetMeasure(PdfDictionary measure)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfLineAnnotation SetMeasure(PdfDictionary measure) {
             return (iText.Kernel.Pdf.Annot.PdfLineAnnotation)Put(PdfName.Measure, measure);
         }
 
@@ -620,8 +594,7 @@ namespace iText.Kernel.Pdf.Annot
         /// of two numbers that specifies the offset of the caption text from its normal position,
         /// or null if caption offset is not explicitly specified (in this case a default value is used, which is [0, 0]).
         /// </returns>
-        public virtual PdfArray GetCaptionOffset()
-        {
+        public virtual PdfArray GetCaptionOffset() {
             return GetPdfObject().GetAsArray(PdfName.CO);
         }
 
@@ -640,8 +613,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfLineAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfLineAnnotation SetCaptionOffset(PdfArray captionOffset)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfLineAnnotation SetCaptionOffset(PdfArray captionOffset) {
             return (iText.Kernel.Pdf.Annot.PdfLineAnnotation)Put(PdfName.CO, captionOffset);
         }
 
@@ -658,8 +630,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfLineAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfLineAnnotation SetCaptionOffset(float[] captionOffset)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfLineAnnotation SetCaptionOffset(float[] captionOffset) {
             return SetCaptionOffset(new PdfArray(captionOffset));
         }
     }

@@ -41,13 +41,12 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Font;
-using iText.IO.Font.Otf;
 using System;
 using System.Collections.Generic;
+using iText.IO.Font;
+using iText.IO.Font.Otf;
 
-namespace iText.Kernel.Font
-{
+namespace iText.Kernel.Font {
     /// <summary>FontProgram class for Type 3 font.</summary>
     /// <remarks>
     /// FontProgram class for Type 3 font. Contains map of
@@ -55,8 +54,7 @@ namespace iText.Kernel.Font
     /// Type3Glyphs belong to a particular pdf document.
     /// Note, an instance of Type3Font can not be reused for multiple pdf documents.
     /// </remarks>
-    public class Type3Font : FontProgram
-    {
+    public class Type3Font : FontProgram {
         private readonly IDictionary<int, Type3Glyph> type3Glyphs = new Dictionary<int, Type3Glyph>();
 
         private bool colorized = false;
@@ -66,40 +64,33 @@ namespace iText.Kernel.Font
         /// <summary>Creates a Type 3 font program.</summary>
         /// <param name="colorized">defines whether the glyph color is specified in the glyph descriptions in the font.
         ///     </param>
-        internal Type3Font(bool colorized)
-        {
+        internal Type3Font(bool colorized) {
             this.colorized = colorized;
             this.fontNames = new FontNames();
             GetFontMetrics().SetBbox(0, 0, 0, 0);
         }
 
-        public virtual Type3Glyph GetType3Glyph(int unicode)
-        {
+        public virtual Type3Glyph GetType3Glyph(int unicode) {
             return type3Glyphs.Get(unicode);
         }
 
-        public override int GetPdfFontFlags()
-        {
+        public override int GetPdfFontFlags() {
             return flags;
         }
 
-        public override bool IsFontSpecific()
-        {
+        public override bool IsFontSpecific() {
             return false;
         }
 
-        public virtual bool IsColorized()
-        {
+        public virtual bool IsColorized() {
             return colorized;
         }
 
-        public override int GetKerning(Glyph glyph1, Glyph glyph2)
-        {
+        public override int GetKerning(Glyph glyph1, Glyph glyph2) {
             return 0;
         }
 
-        public virtual int GetNumberOfGlyphs()
-        {
+        public virtual int GetNumberOfGlyphs() {
             return type3Glyphs.Count;
         }
 
@@ -110,16 +101,14 @@ namespace iText.Kernel.Font
         /// If full name is null, it will be set as well.
         /// </remarks>
         /// <param name="fontName">the PostScript name of the font, shall not be null or empty.</param>
-        protected internal override void SetFontName(String fontName)
-        {
+        protected internal override void SetFontName(String fontName) {
             //This dummy override allows PdfType3Font to set font name because of different modules.
             base.SetFontName(fontName);
         }
 
         /// <summary>Sets a preferred font family name.</summary>
         /// <param name="fontFamily">a preferred font family name.</param>
-        protected internal override void SetFontFamily(String fontFamily)
-        {
+        protected internal override void SetFontFamily(String fontFamily) {
             //This dummy override allows PdfType3Font to set font name because of different modules.
             base.SetFontFamily(fontFamily);
         }
@@ -129,8 +118,7 @@ namespace iText.Kernel.Font
         /// integer form 100 to 900. See
         /// <see cref="iText.IO.Font.Constants.FontWeights"/>.
         /// </param>
-        protected internal override void SetFontWeight(int fontWeight)
-        {
+        protected internal override void SetFontWeight(int fontWeight) {
             //This dummy override allows PdfType3Font to set font name because of different modules.
             base.SetFontWeight(fontWeight);
         }
@@ -140,8 +128,7 @@ namespace iText.Kernel.Font
         /// 
         /// <see cref="iText.IO.Font.Constants.FontStretches"/>.
         /// </param>
-        protected internal override void SetFontStretch(String fontWidth)
-        {
+        protected internal override void SetFontStretch(String fontWidth) {
             //This dummy override allows PdfType3Font to set font name because of different modules.
             base.SetFontStretch(fontWidth);
         }
@@ -153,8 +140,7 @@ namespace iText.Kernel.Font
         /// Italic angle in counter-clockwise degrees from the vertical. Zero for upright text, negative for text that leans to the right (forward).
         /// </remarks>
         /// <param name="italicAngle">in counter-clockwise degrees from the vertical</param>
-        protected internal override void SetItalicAngle(int italicAngle)
-        {
+        protected internal override void SetItalicAngle(int italicAngle) {
             //This dummy override allows PdfType3Font to set the PostScript italicAngel because of different modules.
             //This dummy override allows PdfType3Font to set font name because of different modules.
             base.SetItalicAngle(italicAngle);
@@ -166,13 +152,11 @@ namespace iText.Kernel.Font
         /// 
         /// <see cref="iText.IO.Font.Constants.FontDescriptorFlags"/>.
         /// </param>
-        internal virtual void SetPdfFontFlags(int flags)
-        {
+        internal virtual void SetPdfFontFlags(int flags) {
             this.flags = flags;
         }
 
-        internal virtual void AddGlyph(int code, int unicode, int width, int[] bbox, Type3Glyph type3Glyph)
-        {
+        internal virtual void AddGlyph(int code, int unicode, int width, int[] bbox, Type3Glyph type3Glyph) {
             Glyph glyph = new Glyph(code, width, unicode, bbox);
             codeToGlyph.Put(code, glyph);
             unicodeToGlyph.Put(unicode, glyph);

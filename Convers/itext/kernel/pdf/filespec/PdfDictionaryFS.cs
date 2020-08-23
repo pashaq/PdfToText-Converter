@@ -41,14 +41,12 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Filespec
-{
-    public class PdfDictionaryFS : PdfFileSpec
-    {
+namespace iText.Kernel.Pdf.Filespec {
+    public class PdfDictionaryFS : PdfFileSpec {
         public PdfDictionaryFS(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
     }
 }

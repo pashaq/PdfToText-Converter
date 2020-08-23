@@ -43,11 +43,9 @@ address: sales@itextpdf.com
 */
 using System;
 
-namespace iText.Kernel.XMP
-{
+namespace iText.Kernel.XMP {
     /// <summary>Class that contains several constants.</summary>
-    public class PdfConst
-    {
+    public class PdfConst {
         /// <summary>External Contributors to the resource (other than the authors).</summary>
         public const String Contributor = "contributor";
 

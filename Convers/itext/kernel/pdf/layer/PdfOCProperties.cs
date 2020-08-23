@@ -41,12 +41,12 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Font;
 using System;
 using System.Collections.Generic;
+using iText.IO.Font;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Layer
-{
+namespace iText.Kernel.Pdf.Layer {
     /// <summary>
     /// This class represents /OCProperties entry if pdf catalog and manages
     /// the layers of the pdf document.
@@ -61,8 +61,7 @@ namespace iText.Kernel.Pdf.Layer
     /// <see cref="iText.Kernel.Pdf.PdfObject"/>
     /// must be indirect.
     /// </remarks>
-    public class PdfOCProperties : PdfObjectWrapper<PdfDictionary>
-    {
+    public class PdfOCProperties : PdfObjectWrapper<PdfDictionary> {
         internal const String OC_CONFIG_NAME_PATTERN = "OCConfigName";
 
         private IList<PdfLayer> layers = new List<PdfLayer>();
@@ -70,8 +69,7 @@ namespace iText.Kernel.Pdf.Layer
         /// <summary>Creates a new PdfOCProperties instance.</summary>
         /// <param name="document">the document the optional content belongs to</param>
         public PdfOCProperties(PdfDocument document)
-            : this((PdfDictionary)new PdfDictionary().MakeIndirect(document))
-        {
+            : this((PdfDictionary)new PdfDictionary().MakeIndirect(document)) {
         }
 
         /// <summary>
@@ -81,8 +79,7 @@ namespace iText.Kernel.Pdf.Layer
         /// <param name="ocPropertiesDict">the dictionary of optional content properties, must have an indirect reference.
         ///     </param>
         public PdfOCProperties(PdfDictionary ocPropertiesDict)
-            : base(ocPropertiesDict)
-        {
+            : base(ocPropertiesDict) {
             EnsureObjectIsAddedToDocument(ocPropertiesDict);
             ReadLayersFromDictionary();
         }
@@ -99,33 +96,26 @@ namespace iText.Kernel.Pdf.Layer
         /// ON, all others must be turned OFF.
         /// </remarks>
         /// <param name="group">the radio group</param>
-        public virtual void AddOCGRadioGroup(IList<PdfLayer> group)
-        {
+        public virtual void AddOCGRadioGroup(IList<PdfLayer> group) {
             PdfArray ar = new PdfArray();
-            foreach (PdfLayer layer in group)
-            {
-                if (layer.GetTitle() == null)
-                {
+            foreach (PdfLayer layer in group) {
+                if (layer.GetTitle() == null) {
                     ar.Add(layer.GetPdfObject().GetIndirectReference());
                 }
             }
-            if (ar.Size() != 0)
-            {
+            if (ar.Size() != 0) {
                 PdfDictionary d = GetPdfObject().GetAsDictionary(PdfName.D);
-                if (d == null)
-                {
+                if (d == null) {
                     d = new PdfDictionary();
                     GetPdfObject().Put(PdfName.D, d);
                 }
                 PdfArray radioButtonGroups = d.GetAsArray(PdfName.RBGroups);
-                if (radioButtonGroups == null)
-                {
+                if (radioButtonGroups == null) {
                     radioButtonGroups = new PdfArray();
                     d.Put(PdfName.RBGroups, radioButtonGroups);
                     d.SetModified();
                 }
-                else
-                {
+                else {
                     radioButtonGroups.SetModified();
                 }
                 radioButtonGroups.Add(ar);
@@ -139,13 +129,10 @@ namespace iText.Kernel.Pdf.Layer
         /// will not take any affect.
         /// </remarks>
         /// <returns>the resultant dictionary</returns>
-        public virtual PdfObject FillDictionary()
-        {
+        public virtual PdfObject FillDictionary() {
             PdfArray gr = new PdfArray();
-            foreach (PdfLayer layer in layers)
-            {
-                if (layer.GetTitle() == null)
-                {
+            foreach (PdfLayer layer in layers) {
+                if (layer.GetTitle() == null) {
                     gr.Add(layer.GetIndirectReference());
                 }
             }
@@ -153,65 +140,52 @@ namespace iText.Kernel.Pdf.Layer
             // Save radio groups.
             PdfArray rbGroups = null;
             PdfDictionary d = GetPdfObject().GetAsDictionary(PdfName.D);
-            if (d != null)
-            {
+            if (d != null) {
                 rbGroups = d.GetAsArray(PdfName.RBGroups);
             }
             d = new PdfDictionary();
-            if (rbGroups != null)
-            {
+            if (rbGroups != null) {
                 d.Put(PdfName.RBGroups, rbGroups);
             }
             d.Put(PdfName.Name, new PdfString(CreateUniqueName(), PdfEncodings.UNICODE_BIG));
             GetPdfObject().Put(PdfName.D, d);
             IList<PdfLayer> docOrder = new List<PdfLayer>(layers);
-            for (int i = 0; i < docOrder.Count; i++)
-            {
+            for (int i = 0; i < docOrder.Count; i++) {
                 PdfLayer layer = docOrder[i];
-                if (layer.GetParent() != null)
-                {
+                if (layer.GetParent() != null) {
                     docOrder.Remove(layer);
                     i--;
                 }
             }
             PdfArray order = new PdfArray();
-            foreach (Object element in docOrder)
-            {
+            foreach (Object element in docOrder) {
                 PdfLayer layer = (PdfLayer)element;
                 GetOCGOrder(order, layer);
             }
             d.Put(PdfName.Order, order);
             PdfArray off = new PdfArray();
-            foreach (Object element in layers)
-            {
+            foreach (Object element in layers) {
                 PdfLayer layer = (PdfLayer)element;
-                if (layer.GetTitle() == null && !layer.IsOn())
-                {
+                if (layer.GetTitle() == null && !layer.IsOn()) {
                     off.Add(layer.GetIndirectReference());
                 }
             }
-            if (off.Size() > 0)
-            {
+            if (off.Size() > 0) {
                 d.Put(PdfName.OFF, off);
             }
-            else
-            {
+            else {
                 d.Remove(PdfName.OFF);
             }
             PdfArray locked = new PdfArray();
-            foreach (PdfLayer layer in layers)
-            {
-                if (layer.GetTitle() == null && layer.IsLocked())
-                {
+            foreach (PdfLayer layer in layers) {
+                if (layer.GetTitle() == null && layer.IsLocked()) {
                     locked.Add(layer.GetIndirectReference());
                 }
             }
-            if (locked.Size() > 0)
-            {
+            if (locked.Size() > 0) {
                 d.Put(PdfName.Locked, locked);
             }
-            else
-            {
+            else {
                 d.Remove(PdfName.Locked);
             }
             d.Remove(PdfName.AS);
@@ -222,8 +196,7 @@ namespace iText.Kernel.Pdf.Layer
             return GetPdfObject();
         }
 
-        public override void Flush()
-        {
+        public override void Flush() {
             FillDictionary();
             base.Flush();
         }
@@ -238,29 +211,24 @@ namespace iText.Kernel.Pdf.Layer
         /// <see cref="PdfLayer">layers</see>
         /// currently registered in the OCProperties
         /// </returns>
-        public virtual IList<PdfLayer> GetLayers()
-        {
+        public virtual IList<PdfLayer> GetLayers() {
             return new List<PdfLayer>(layers);
         }
 
-        protected internal override bool IsWrappedObjectMustBeIndirect()
-        {
+        protected internal override bool IsWrappedObjectMustBeIndirect() {
             return true;
         }
 
         /// <summary>This method registers a new layer in the OCProperties.</summary>
         /// <param name="layer">the new layer</param>
-        protected internal virtual void RegisterLayer(PdfLayer layer)
-        {
-            if (layer == null)
-            {
+        protected internal virtual void RegisterLayer(PdfLayer layer) {
+            if (layer == null) {
                 throw new ArgumentException("layer argument is null");
             }
             layers.Add(layer);
         }
 
-        protected internal virtual PdfDocument GetDocument()
-        {
+        protected internal virtual PdfDocument GetDocument() {
             return GetPdfObject().GetIndirectReference().GetDocument();
         }
 
@@ -268,59 +236,46 @@ namespace iText.Kernel.Pdf.Layer
         /// Gets the order of the layers in which they will be displayed in the layer view panel,
         /// including nesting.
         /// </summary>
-        private static void GetOCGOrder(PdfArray order, PdfLayer layer)
-        {
-            if (!layer.IsOnPanel())
-            {
+        private static void GetOCGOrder(PdfArray order, PdfLayer layer) {
+            if (!layer.IsOnPanel()) {
                 return;
             }
-            if (layer.GetTitle() == null)
-            {
+            if (layer.GetTitle() == null) {
                 order.Add(layer.GetPdfObject().GetIndirectReference());
             }
             IList<PdfLayer> children = layer.GetChildren();
-            if (children == null)
-            {
+            if (children == null) {
                 return;
             }
             PdfArray kids = new PdfArray();
-            if (layer.GetTitle() != null)
-            {
+            if (layer.GetTitle() != null) {
                 kids.Add(new PdfString(layer.GetTitle(), PdfEncodings.UNICODE_BIG));
             }
-            foreach (PdfLayer child in children)
-            {
+            foreach (PdfLayer child in children) {
                 GetOCGOrder(kids, child);
             }
-            if (kids.Size() > 0)
-            {
+            if (kids.Size() > 0) {
                 order.Add(kids);
             }
         }
 
         /// <summary>Populates the /AS entry in the /D dictionary.</summary>
-        private void AddASEvent(PdfName @event, PdfName category)
-        {
+        private void AddASEvent(PdfName @event, PdfName category) {
             PdfArray arr = new PdfArray();
-            foreach (PdfLayer layer in layers)
-            {
-                if (layer.GetTitle() == null)
-                {
+            foreach (PdfLayer layer in layers) {
+                if (layer.GetTitle() == null) {
                     PdfDictionary usage = layer.GetPdfObject().GetAsDictionary(PdfName.Usage);
-                    if (usage != null && usage.Get(category) != null)
-                    {
+                    if (usage != null && usage.Get(category) != null) {
                         arr.Add(layer.GetPdfObject().GetIndirectReference());
                     }
                 }
             }
-            if (arr.Size() == 0)
-            {
+            if (arr.Size() == 0) {
                 return;
             }
             PdfDictionary d = GetPdfObject().GetAsDictionary(PdfName.D);
             PdfArray arras = d.GetAsArray(PdfName.AS);
-            if (arras == null)
-            {
+            if (arras == null) {
                 arras = new PdfArray();
                 d.Put(PdfName.AS, arras);
             }
@@ -334,54 +289,43 @@ namespace iText.Kernel.Pdf.Layer
         }
 
         /// <summary>Reads the layers from the document to be able to modify them in the future.</summary>
-        private void ReadLayersFromDictionary()
-        {
+        private void ReadLayersFromDictionary() {
             PdfArray ocgs = GetPdfObject().GetAsArray(PdfName.OCGs);
-            if (ocgs == null || ocgs.IsEmpty())
-            {
+            if (ocgs == null || ocgs.IsEmpty()) {
                 return;
             }
             IDictionary<PdfIndirectReference, PdfLayer> layerMap = new SortedDictionary<PdfIndirectReference, PdfLayer
                 >();
-            for (int ind = 0; ind < ocgs.Size(); ind++)
-            {
+            for (int ind = 0; ind < ocgs.Size(); ind++) {
                 PdfLayer currentLayer = new PdfLayer((PdfDictionary)ocgs.GetAsDictionary(ind).MakeIndirect(GetDocument()));
                 // We will set onPanel to true later for the objects present in /D->/Order entry.
                 currentLayer.onPanel = false;
                 layerMap.Put(currentLayer.GetIndirectReference(), currentLayer);
             }
             PdfDictionary d = GetPdfObject().GetAsDictionary(PdfName.D);
-            if (d != null && !d.IsEmpty())
-            {
+            if (d != null && !d.IsEmpty()) {
                 PdfArray off = d.GetAsArray(PdfName.OFF);
-                if (off != null)
-                {
-                    for (int i = 0; i < off.Size(); i++)
-                    {
+                if (off != null) {
+                    for (int i = 0; i < off.Size(); i++) {
                         PdfObject offLayer = off.Get(i, false);
                         layerMap.Get((PdfIndirectReference)offLayer).on = false;
                     }
                 }
                 PdfArray locked = d.GetAsArray(PdfName.Locked);
-                if (locked != null)
-                {
-                    for (int i = 0; i < locked.Size(); i++)
-                    {
+                if (locked != null) {
+                    for (int i = 0; i < locked.Size(); i++) {
                         PdfObject lockedLayer = locked.Get(i, false);
                         layerMap.Get((PdfIndirectReference)lockedLayer).locked = true;
                     }
                 }
                 PdfArray orderArray = d.GetAsArray(PdfName.Order);
-                if (orderArray != null && !orderArray.IsEmpty())
-                {
+                if (orderArray != null && !orderArray.IsEmpty()) {
                     ReadOrderFromDictionary(null, orderArray, layerMap);
                 }
             }
             // Add the layers which should not be displayed on the panel to the order list
-            foreach (PdfLayer layer in layerMap.Values)
-            {
-                if (!layer.IsOnPanel())
-                {
+            foreach (PdfLayer layer in layerMap.Values) {
+                if (!layer.IsOnPanel()) {
                     layers.Add(layer);
                 }
             }
@@ -389,52 +333,40 @@ namespace iText.Kernel.Pdf.Layer
 
         /// <summary>Reads the /Order in the /D entry and initialized the parent-child hierarchy.</summary>
         private void ReadOrderFromDictionary(PdfLayer parent, PdfArray orderArray, IDictionary<PdfIndirectReference
-            , PdfLayer> layerMap)
-        {
-            for (int i = 0; i < orderArray.Size(); i++)
-            {
+            , PdfLayer> layerMap) {
+            for (int i = 0; i < orderArray.Size(); i++) {
                 PdfObject item = orderArray.Get(i);
-                if (item.GetObjectType() == PdfObject.DICTIONARY)
-                {
+                if (item.GetObjectType() == PdfObject.DICTIONARY) {
                     PdfLayer layer = layerMap.Get(item.GetIndirectReference());
-                    if (layer != null)
-                    {
+                    if (layer != null) {
                         layers.Add(layer);
                         layer.onPanel = true;
-                        if (parent != null)
-                        {
+                        if (parent != null) {
                             parent.AddChild(layer);
                         }
-                        if (i + 1 < orderArray.Size() && orderArray.Get(i + 1).GetObjectType() == PdfObject.ARRAY)
-                        {
+                        if (i + 1 < orderArray.Size() && orderArray.Get(i + 1).GetObjectType() == PdfObject.ARRAY) {
                             ReadOrderFromDictionary(layer, orderArray.GetAsArray(i + 1), layerMap);
                             i++;
                         }
                     }
                 }
-                else
-                {
-                    if (item.GetObjectType() == PdfObject.ARRAY)
-                    {
+                else {
+                    if (item.GetObjectType() == PdfObject.ARRAY) {
                         PdfArray subArray = (PdfArray)item;
-                        if (subArray.IsEmpty())
-                        {
+                        if (subArray.IsEmpty()) {
                             continue;
                         }
                         PdfObject firstObj = subArray.Get(0);
-                        if (firstObj.GetObjectType() == PdfObject.STRING)
-                        {
+                        if (firstObj.GetObjectType() == PdfObject.STRING) {
                             PdfLayer titleLayer = PdfLayer.CreateTitleSilent(((PdfString)firstObj).ToUnicodeString(), GetDocument());
                             titleLayer.onPanel = true;
                             layers.Add(titleLayer);
-                            if (parent != null)
-                            {
+                            if (parent != null) {
                                 parent.AddChild(titleLayer);
                             }
                             ReadOrderFromDictionary(titleLayer, new PdfArray(subArray.SubList(1, subArray.Size())), layerMap);
                         }
-                        else
-                        {
+                        else {
                             ReadOrderFromDictionary(parent, subArray, layerMap);
                         }
                     }
@@ -442,24 +374,19 @@ namespace iText.Kernel.Pdf.Layer
             }
         }
 
-        private String CreateUniqueName()
-        {
+        private String CreateUniqueName() {
             int uniqueID = 0;
             ICollection<String> usedNames = new HashSet<String>();
             PdfArray configs = GetPdfObject().GetAsArray(PdfName.Configs);
-            if (null != configs)
-            {
-                for (int i = 0; i < configs.Size(); i++)
-                {
+            if (null != configs) {
+                for (int i = 0; i < configs.Size(); i++) {
                     PdfDictionary alternateDictionary = configs.GetAsDictionary(i);
-                    if (null != alternateDictionary && alternateDictionary.ContainsKey(PdfName.Name))
-                    {
+                    if (null != alternateDictionary && alternateDictionary.ContainsKey(PdfName.Name)) {
                         usedNames.Add(alternateDictionary.GetAsString(PdfName.Name).ToUnicodeString());
                     }
                 }
             }
-            while (usedNames.Contains(OC_CONFIG_NAME_PATTERN + uniqueID))
-            {
+            while (usedNames.Contains(OC_CONFIG_NAME_PATTERN + uniqueID)) {
                 uniqueID++;
             }
             return OC_CONFIG_NAME_PATTERN + uniqueID;

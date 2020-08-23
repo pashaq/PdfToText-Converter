@@ -45,8 +45,7 @@
 */
 using System;
 
-namespace iText.IO.Codec
-{
+namespace iText.IO.Codec {
     /// <summary>A class representing a field in a TIFF 6.0 Image File Directory.</summary>
     /// <remarks>
     /// A class representing a field in a TIFF 6.0 Image File Directory.
@@ -60,8 +59,7 @@ namespace iText.IO.Codec
     /// be removed or changed in future releases of JAI.</b>
     /// </remarks>
     /// <seealso cref="TIFFDirectory"/>
-    public class TIFFField : IComparable<iText.IO.Codec.TIFFField>
-    {
+    public class TIFFField : IComparable<iText.IO.Codec.TIFFField> {
         /// <summary>Flag for 8 bit unsigned integers.</summary>
         public const int TIFF_BYTE = 1;
 
@@ -111,8 +109,7 @@ namespace iText.IO.Codec
         internal Object data;
 
         /// <summary>The default constructor.</summary>
-        internal TIFFField()
-        {
+        internal TIFFField() {
         }
 
         /// <summary>Constructs a TIFFField with arbitrary data.</summary>
@@ -168,8 +165,7 @@ namespace iText.IO.Codec
         /// <param name="type">the tag type</param>
         /// <param name="count">the number of data items present in the field</param>
         /// <param name="data">the field data</param>
-        public TIFFField(int tag, int type, int count, Object data)
-        {
+        public TIFFField(int tag, int type, int count, Object data) {
             this.tag = tag;
             this.type = type;
             this.count = count;
@@ -178,8 +174,7 @@ namespace iText.IO.Codec
 
         /// <summary>Returns the tag number</summary>
         /// <returns>the tag number, between 0 and 65535.</returns>
-        public virtual int GetTag()
-        {
+        public virtual int GetTag() {
             return tag;
         }
 
@@ -191,15 +186,13 @@ namespace iText.IO.Codec
         /// revisions of TIFF, higher values are possible.
         /// </remarks>
         /// <returns>The type of the data stored in the IFD</returns>
-        public virtual int GetFieldType()
-        {
+        public virtual int GetFieldType() {
             return type;
         }
 
         /// <summary>Returns the number of elements in the IFD.</summary>
         /// <returns>The number of elements in the IFD</returns>
-        public virtual int GetCount()
-        {
+        public virtual int GetCount() {
             return count;
         }
 
@@ -215,8 +208,7 @@ namespace iText.IO.Codec
         /// of type TIFF_BYTE, TIFF_SBYTE, or TIFF_UNDEFINED.
         /// </remarks>
         /// <returns>the data as an uninterpreted array of bytes</returns>
-        public virtual byte[] GetAsBytes()
-        {
+        public virtual byte[] GetAsBytes() {
             return (byte[])data;
         }
 
@@ -231,8 +223,7 @@ namespace iText.IO.Codec
         /// of type TIFF_SHORT.
         /// </remarks>
         /// <returns>TIFF_SHORT data as an array of chars</returns>
-        public virtual char[] GetAsChars()
-        {
+        public virtual char[] GetAsChars() {
             return (char[])data;
         }
 
@@ -247,8 +238,7 @@ namespace iText.IO.Codec
         /// of type TIFF_SSHORT.
         /// </remarks>
         /// <returns>TIFF_SSHORT data as an array of shorts (signed 16-bit integers).</returns>
-        public virtual short[] GetAsShorts()
-        {
+        public virtual short[] GetAsShorts() {
             return (short[])data;
         }
 
@@ -263,8 +253,7 @@ namespace iText.IO.Codec
         /// of type TIFF_SLONG.
         /// </remarks>
         /// <returns>TIFF_SLONG data as an array of ints (signed 32-bit integers).</returns>
-        public virtual int[] GetAsInts()
-        {
+        public virtual int[] GetAsInts() {
             return (int[])data;
         }
 
@@ -279,8 +268,7 @@ namespace iText.IO.Codec
         /// of type TIFF_LONG.
         /// </remarks>
         /// <returns>TIFF_LONG data as an array of longs (signed 64-bit integers).</returns>
-        public virtual long[] GetAsLongs()
-        {
+        public virtual long[] GetAsLongs() {
             return (long[])data;
         }
 
@@ -291,8 +279,7 @@ namespace iText.IO.Codec
         /// of type TIFF_FLOAT.
         /// </remarks>
         /// <returns>TIFF_FLOAT data as an array of floats.</returns>
-        public virtual float[] GetAsFloats()
-        {
+        public virtual float[] GetAsFloats() {
             return (float[])data;
         }
 
@@ -303,8 +290,7 @@ namespace iText.IO.Codec
         /// of type TIFF_DOUBLE.
         /// </remarks>
         /// <returns>TIFF_DOUBLE data as an array of doubles.</returns>
-        public virtual double[] GetAsDoubles()
-        {
+        public virtual double[] GetAsDoubles() {
             return (double[])data;
         }
 
@@ -315,8 +301,7 @@ namespace iText.IO.Codec
         /// of type TIFF_ASCII.
         /// </remarks>
         /// <returns>TIFF_ASCII data as an array of strings.</returns>
-        public virtual String[] GetAsStrings()
-        {
+        public virtual String[] GetAsStrings() {
             return (String[])data;
         }
 
@@ -327,8 +312,7 @@ namespace iText.IO.Codec
         /// of type TIFF_SRATIONAL.
         /// </remarks>
         /// <returns>TIFF_SRATIONAL data as an array of 2-element arrays of ints.</returns>
-        public virtual int[][] GetAsSRationals()
-        {
+        public virtual int[][] GetAsSRationals() {
             return (int[][])data;
         }
 
@@ -339,8 +323,7 @@ namespace iText.IO.Codec
         /// of type TIFF_RATTIONAL.
         /// </remarks>
         /// <returns>TIFF_RATIONAL data as an array of 2-element arrays of longs.</returns>
-        public virtual long[][] GetAsRationals()
-        {
+        public virtual long[][] GetAsRationals() {
             return (long[][])data;
         }
 
@@ -364,40 +347,32 @@ namespace iText.IO.Codec
         /// data in TIFF_BYTE, TIFF_SBYTE, TIFF_UNDEFINED, TIFF_SHORT, TIFF_SSHORT,
         /// or TIFF_SLONG format as an int.
         /// </returns>
-        public virtual int GetAsInt(int index)
-        {
-            switch (type)
-            {
+        public virtual int GetAsInt(int index) {
+            switch (type) {
                 case TIFF_BYTE:
-                case TIFF_UNDEFINED:
-                    {
-                        return ((byte[])data)[index] & 0xff;
-                    }
+                case TIFF_UNDEFINED: {
+                    return ((byte[])data)[index] & 0xff;
+                }
 
-                case TIFF_SBYTE:
-                    {
-                        return ((byte[])data)[index];
-                    }
+                case TIFF_SBYTE: {
+                    return ((byte[])data)[index];
+                }
 
-                case TIFF_SHORT:
-                    {
-                        return ((char[])data)[index] & 0xffff;
-                    }
+                case TIFF_SHORT: {
+                    return ((char[])data)[index] & 0xffff;
+                }
 
-                case TIFF_SSHORT:
-                    {
-                        return ((short[])data)[index];
-                    }
+                case TIFF_SSHORT: {
+                    return ((short[])data)[index];
+                }
 
-                case TIFF_SLONG:
-                    {
-                        return ((int[])data)[index];
-                    }
+                case TIFF_SLONG: {
+                    return ((int[])data)[index];
+                }
 
-                default:
-                    {
-                        throw new InvalidCastException();
-                    }
+                default: {
+                    throw new InvalidCastException();
+                }
             }
         }
 
@@ -421,45 +396,36 @@ namespace iText.IO.Codec
         /// data in TIFF_BYTE, TIFF_SBYTE, TIFF_UNDEFINED, TIFF_SHORT, TIFF_SSHORT, TIFF_SLONG,
         /// or TIFF_LONG format as a long.
         /// </returns>
-        public virtual long GetAsLong(int index)
-        {
-            switch (type)
-            {
+        public virtual long GetAsLong(int index) {
+            switch (type) {
                 case TIFF_BYTE:
-                case TIFF_UNDEFINED:
-                    {
-                        return ((byte[])data)[index] & 0xff;
-                    }
+                case TIFF_UNDEFINED: {
+                    return ((byte[])data)[index] & 0xff;
+                }
 
-                case TIFF_SBYTE:
-                    {
-                        return ((byte[])data)[index];
-                    }
+                case TIFF_SBYTE: {
+                    return ((byte[])data)[index];
+                }
 
-                case TIFF_SHORT:
-                    {
-                        return ((char[])data)[index] & 0xffff;
-                    }
+                case TIFF_SHORT: {
+                    return ((char[])data)[index] & 0xffff;
+                }
 
-                case TIFF_SSHORT:
-                    {
-                        return ((short[])data)[index];
-                    }
+                case TIFF_SSHORT: {
+                    return ((short[])data)[index];
+                }
 
-                case TIFF_SLONG:
-                    {
-                        return ((int[])data)[index];
-                    }
+                case TIFF_SLONG: {
+                    return ((int[])data)[index];
+                }
 
-                case TIFF_LONG:
-                    {
-                        return ((long[])data)[index];
-                    }
+                case TIFF_LONG: {
+                    return ((long[])data)[index];
+                }
 
-                default:
-                    {
-                        throw new InvalidCastException();
-                    }
+                default: {
+                    throw new InvalidCastException();
+                }
             }
         }
 
@@ -476,66 +442,53 @@ namespace iText.IO.Codec
         /// </remarks>
         /// <param name="index">The index</param>
         /// <returns>data in any numerical format as a float.</returns>
-        public virtual float GetAsFloat(int index)
-        {
-            switch (type)
-            {
-                case TIFF_BYTE:
-                    {
-                        return ((byte[])data)[index] & 0xff;
-                    }
+        public virtual float GetAsFloat(int index) {
+            switch (type) {
+                case TIFF_BYTE: {
+                    return ((byte[])data)[index] & 0xff;
+                }
 
-                case TIFF_SBYTE:
-                    {
-                        return ((byte[])data)[index];
-                    }
+                case TIFF_SBYTE: {
+                    return ((byte[])data)[index];
+                }
 
-                case TIFF_SHORT:
-                    {
-                        return ((char[])data)[index] & 0xffff;
-                    }
+                case TIFF_SHORT: {
+                    return ((char[])data)[index] & 0xffff;
+                }
 
-                case TIFF_SSHORT:
-                    {
-                        return ((short[])data)[index];
-                    }
+                case TIFF_SSHORT: {
+                    return ((short[])data)[index];
+                }
 
-                case TIFF_SLONG:
-                    {
-                        return ((int[])data)[index];
-                    }
+                case TIFF_SLONG: {
+                    return ((int[])data)[index];
+                }
 
-                case TIFF_LONG:
-                    {
-                        return ((long[])data)[index];
-                    }
+                case TIFF_LONG: {
+                    return ((long[])data)[index];
+                }
 
-                case TIFF_FLOAT:
-                    {
-                        return ((float[])data)[index];
-                    }
+                case TIFF_FLOAT: {
+                    return ((float[])data)[index];
+                }
 
-                case TIFF_DOUBLE:
-                    {
-                        return (float)((double[])data)[index];
-                    }
+                case TIFF_DOUBLE: {
+                    return (float)((double[])data)[index];
+                }
 
-                case TIFF_SRATIONAL:
-                    {
-                        int[] ivalue = GetAsSRational(index);
-                        return (float)((double)ivalue[0] / ivalue[1]);
-                    }
+                case TIFF_SRATIONAL: {
+                    int[] ivalue = GetAsSRational(index);
+                    return (float)((double)ivalue[0] / ivalue[1]);
+                }
 
-                case TIFF_RATIONAL:
-                    {
-                        long[] lvalue = GetAsRational(index);
-                        return (float)((double)lvalue[0] / lvalue[1]);
-                    }
+                case TIFF_RATIONAL: {
+                    long[] lvalue = GetAsRational(index);
+                    return (float)((double)lvalue[0] / lvalue[1]);
+                }
 
-                default:
-                    {
-                        throw new InvalidCastException();
-                    }
+                default: {
+                    throw new InvalidCastException();
+                }
             }
         }
 
@@ -550,66 +503,53 @@ namespace iText.IO.Codec
         /// </remarks>
         /// <param name="index">The index</param>
         /// <returns>data in any numerical format as a double.</returns>
-        public virtual double GetAsDouble(int index)
-        {
-            switch (type)
-            {
-                case TIFF_BYTE:
-                    {
-                        return ((byte[])data)[index] & 0xff;
-                    }
+        public virtual double GetAsDouble(int index) {
+            switch (type) {
+                case TIFF_BYTE: {
+                    return ((byte[])data)[index] & 0xff;
+                }
 
-                case TIFF_SBYTE:
-                    {
-                        return ((byte[])data)[index];
-                    }
+                case TIFF_SBYTE: {
+                    return ((byte[])data)[index];
+                }
 
-                case TIFF_SHORT:
-                    {
-                        return ((char[])data)[index] & 0xffff;
-                    }
+                case TIFF_SHORT: {
+                    return ((char[])data)[index] & 0xffff;
+                }
 
-                case TIFF_SSHORT:
-                    {
-                        return ((short[])data)[index];
-                    }
+                case TIFF_SSHORT: {
+                    return ((short[])data)[index];
+                }
 
-                case TIFF_SLONG:
-                    {
-                        return ((int[])data)[index];
-                    }
+                case TIFF_SLONG: {
+                    return ((int[])data)[index];
+                }
 
-                case TIFF_LONG:
-                    {
-                        return ((long[])data)[index];
-                    }
+                case TIFF_LONG: {
+                    return ((long[])data)[index];
+                }
 
-                case TIFF_FLOAT:
-                    {
-                        return ((float[])data)[index];
-                    }
+                case TIFF_FLOAT: {
+                    return ((float[])data)[index];
+                }
 
-                case TIFF_DOUBLE:
-                    {
-                        return ((double[])data)[index];
-                    }
+                case TIFF_DOUBLE: {
+                    return ((double[])data)[index];
+                }
 
-                case TIFF_SRATIONAL:
-                    {
-                        int[] ivalue = GetAsSRational(index);
-                        return (double)ivalue[0] / ivalue[1];
-                    }
+                case TIFF_SRATIONAL: {
+                    int[] ivalue = GetAsSRational(index);
+                    return (double)ivalue[0] / ivalue[1];
+                }
 
-                case TIFF_RATIONAL:
-                    {
-                        long[] lvalue = GetAsRational(index);
-                        return (double)lvalue[0] / lvalue[1];
-                    }
+                case TIFF_RATIONAL: {
+                    long[] lvalue = GetAsRational(index);
+                    return (double)lvalue[0] / lvalue[1];
+                }
 
-                default:
-                    {
-                        throw new InvalidCastException();
-                    }
+                default: {
+                    throw new InvalidCastException();
+                }
             }
         }
 
@@ -621,8 +561,7 @@ namespace iText.IO.Codec
         /// </remarks>
         /// <param name="index">The index</param>
         /// <returns>a TIFF_ASCII data item as a String.</returns>
-        public virtual String GetAsString(int index)
-        {
+        public virtual String GetAsString(int index) {
             return ((String[])data)[index];
         }
 
@@ -638,8 +577,7 @@ namespace iText.IO.Codec
         /// </remarks>
         /// <param name="index">The index</param>
         /// <returns>a TIFF_SRATIONAL data item as a two-element array of ints.</returns>
-        public virtual int[] GetAsSRational(int index)
-        {
+        public virtual int[] GetAsSRational(int index) {
             return ((int[][])data)[index];
         }
 
@@ -655,10 +593,8 @@ namespace iText.IO.Codec
         /// </remarks>
         /// <param name="index">The index</param>
         /// <returns>a TIFF_RATIONAL data item as a two-element array of ints</returns>
-        public virtual long[] GetAsRational(int index)
-        {
-            if (type == TIFF_LONG)
-            {
+        public virtual long[] GetAsRational(int index) {
+            if (type == TIFF_LONG) {
                 return GetAsLongs();
             }
             return ((long[][])data)[index];
@@ -674,25 +610,19 @@ namespace iText.IO.Codec
         /// <para /><b>Note: this class has a natural ordering that is inconsistent
         /// with <c>equals()</c>.</b>
         /// </remarks>
-        public virtual int CompareTo(iText.IO.Codec.TIFFField o)
-        {
-            if (o == null)
-            {
+        public virtual int CompareTo(iText.IO.Codec.TIFFField o) {
+            if (o == null) {
                 throw new ArgumentException();
             }
             int oTag = o.GetTag();
-            if (tag < oTag)
-            {
+            if (tag < oTag) {
                 return -1;
             }
-            else
-            {
-                if (tag > oTag)
-                {
+            else {
+                if (tag > oTag) {
                     return 1;
                 }
-                else
-                {
+                else {
                     return 0;
                 }
             }

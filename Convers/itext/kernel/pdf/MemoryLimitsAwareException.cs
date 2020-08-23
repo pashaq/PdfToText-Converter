@@ -41,17 +41,15 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using System;
+using iText.Kernel;
 
-namespace iText.Kernel.Pdf
-{
+namespace iText.Kernel.Pdf {
     /// <summary>Exception class for exceptions occurred during decompressed pdf streams processing.</summary>
-    public class MemoryLimitsAwareException : PdfException
-    {
+    public class MemoryLimitsAwareException : PdfException {
         /// <summary>Creates a new instance of MemoryLimitsAwareException.</summary>
         /// <param name="message">the detail message.</param>
         public MemoryLimitsAwareException(String message)
-            : base(message)
-        {
+            : base(message) {
         }
 
         /// <summary>Creates a new instance of MemoryLimitsAwareException.</summary>
@@ -61,8 +59,7 @@ namespace iText.Kernel.Pdf
         /// method).
         /// </param>
         public MemoryLimitsAwareException(Exception cause)
-            : this(UnknownPdfException, cause)
-        {
+            : this(UnknownPdfException, cause) {
         }
 
         /// <summary>Creates a new instance of MemoryLimitsAwareException.</summary>
@@ -73,8 +70,7 @@ namespace iText.Kernel.Pdf
         /// method).
         /// </param>
         public MemoryLimitsAwareException(String message, Exception cause)
-            : base(message, cause)
-        {
+            : base(message, cause) {
         }
     }
 }

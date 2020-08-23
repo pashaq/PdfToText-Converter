@@ -41,21 +41,20 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
+using System.Collections.Generic;
+using System.Text;
 using Common.Logging;
 using iText.IO.Font;
 using iText.IO.Font.Cmap;
 using iText.IO.Font.Otf;
 using iText.IO.Source;
 using iText.IO.Util;
+using iText.Kernel;
 using iText.Kernel.Pdf;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace iText.Kernel.Font
-{
-    public class PdfType0Font : PdfFont
-    {
+namespace iText.Kernel.Font {
+    public class PdfType0Font : PdfFont {
         private static readonly byte[] rotbits = new byte[] { (byte)0x80, (byte)0x40, (byte)0x20, (byte)0x10, (byte
             )0x08, (byte)0x04, (byte)0x02, (byte)0x01 };
 
@@ -77,14 +76,11 @@ namespace iText.Kernel.Font
         protected internal char[] specificUnicodeDifferences;
 
         internal PdfType0Font(TrueTypeFont ttf, String cmap)
-            : base()
-        {
-            if (!PdfEncodings.IDENTITY_H.Equals(cmap) && !PdfEncodings.IDENTITY_V.Equals(cmap))
-            {
+            : base() {
+            if (!PdfEncodings.IDENTITY_H.Equals(cmap) && !PdfEncodings.IDENTITY_V.Equals(cmap)) {
                 throw new PdfException(PdfException.OnlyIdentityCMapsSupportsWithTrueType);
             }
-            if (!ttf.GetFontNames().AllowEmbedding())
-            {
+            if (!ttf.GetFontNames().AllowEmbedding()) {
                 throw new PdfException(PdfException.CannotBeEmbeddedDueToLicensingRestrictions).SetMessageParams(ttf.GetFontNames
                     ().GetFontName() + ttf.GetFontNames().GetStyle());
             }
@@ -94,12 +90,10 @@ namespace iText.Kernel.Font
             cmapEncoding = new CMapEncoding(cmap);
             longTag = new SortedSet<int>();
             cidFontType = CID_FONT_TYPE_2;
-            if (ttf.IsFontSpecific())
-            {
+            if (ttf.IsFontSpecific()) {
                 specificUnicodeDifferences = new char[256];
                 byte[] bytes = new byte[1];
-                for (int k = 0; k < 256; ++k)
-                {
+                for (int k = 0; k < 256; ++k) {
                     bytes[0] = (byte)k;
                     String s = PdfEncodings.ConvertToString(bytes, null);
                     char ch = s.Length > 0 ? s[0] : '?';
@@ -113,10 +107,8 @@ namespace iText.Kernel.Font
         // Or not? Possible it will be convenient construct PdfType0Font based on custom CidFont.
         // There is no typography features in CJK fonts.
         internal PdfType0Font(CidFont font, String cmap)
-            : base()
-        {
-            if (!CidFontProperties.IsCidFont(font.GetFontNames().GetFontName(), cmap))
-            {
+            : base() {
+            if (!CidFontProperties.IsCidFont(font.GetFontNames().GetFontName(), cmap)) {
                 throw new PdfException("Font {0} with {1} encoding is not a cjk font.").SetMessageParams(font.GetFontNames
                     ().GetFontName(), cmap);
             }
@@ -129,22 +121,18 @@ namespace iText.Kernel.Font
         }
 
         internal PdfType0Font(PdfDictionary fontDictionary)
-            : base(fontDictionary)
-        {
+            : base(fontDictionary) {
             newFont = false;
             PdfDictionary cidFont = fontDictionary.GetAsArray(PdfName.DescendantFonts).GetAsDictionary(0);
             PdfObject cmap = fontDictionary.Get(PdfName.Encoding);
             PdfObject toUnicode = fontDictionary.Get(PdfName.ToUnicode);
             CMapToUnicode toUnicodeCMap = FontUtil.ProcessToUnicode(toUnicode);
             if (cmap.IsName() && (PdfEncodings.IDENTITY_H.Equals(((PdfName)cmap).GetValue()) || PdfEncodings.IDENTITY_V
-                .Equals(((PdfName)cmap).GetValue())))
-            {
-                if (toUnicodeCMap == null)
-                {
+                .Equals(((PdfName)cmap).GetValue()))) {
+                if (toUnicodeCMap == null) {
                     String uniMap = GetUniMapFromOrdering(GetOrdering(cidFont));
                     toUnicodeCMap = FontUtil.GetToUnicodeFromUniMap(uniMap);
-                    if (toUnicodeCMap == null)
-                    {
+                    if (toUnicodeCMap == null) {
                         toUnicodeCMap = FontUtil.GetToUnicodeFromUniMap(PdfEncodings.IDENTITY_H);
                         ILog logger = LogManager.GetLogger(typeof(iText.Kernel.Font.PdfType0Font));
                         logger.Error(MessageFormatUtil.Format(iText.IO.LogMessageConstant.UNKNOWN_CMAP, uniMap));
@@ -155,38 +143,30 @@ namespace iText.Kernel.Font
                 System.Diagnostics.Debug.Assert(fontProgram is IDocFontProgram);
                 embedded = ((IDocFontProgram)fontProgram).GetFontFile() != null;
             }
-            else
-            {
+            else {
                 String cidFontName = cidFont.GetAsName(PdfName.BaseFont).GetValue();
                 String uniMap = GetUniMapFromOrdering(GetOrdering(cidFont));
-                if (uniMap != null && uniMap.StartsWith("Uni") && CidFontProperties.IsCidFont(cidFontName, uniMap))
-                {
-                    try
-                    {
+                if (uniMap != null && uniMap.StartsWith("Uni") && CidFontProperties.IsCidFont(cidFontName, uniMap)) {
+                    try {
                         fontProgram = FontProgramFactory.CreateFont(cidFontName);
                         cmapEncoding = CreateCMap(cmap, uniMap);
                         embedded = false;
                     }
-                    catch (System.IO.IOException)
-                    {
+                    catch (System.IO.IOException) {
                         fontProgram = null;
                         cmapEncoding = null;
                     }
                 }
-                else
-                {
-                    if (toUnicodeCMap == null)
-                    {
+                else {
+                    if (toUnicodeCMap == null) {
                         toUnicodeCMap = FontUtil.GetToUnicodeFromUniMap(uniMap);
                     }
-                    if (toUnicodeCMap != null)
-                    {
+                    if (toUnicodeCMap != null) {
                         fontProgram = DocTrueTypeFont.CreateFontProgram(cidFont, toUnicodeCMap);
                         cmapEncoding = CreateCMap(cmap, uniMap);
                     }
                 }
-                if (fontProgram == null)
-                {
+                if (fontProgram == null) {
                     throw new PdfException(MessageFormatUtil.Format(PdfException.CannotRecogniseDocumentFontWithEncoding, cidFontName
                         , cmap));
                 }
@@ -195,18 +175,14 @@ namespace iText.Kernel.Font
             PdfDictionary cidFontDictionary = fontDictionary.GetAsArray(PdfName.DescendantFonts).GetAsDictionary(0);
             // Required according to the spec
             PdfName subtype = cidFontDictionary.GetAsName(PdfName.Subtype);
-            if (PdfName.CIDFontType0.Equals(subtype))
-            {
+            if (PdfName.CIDFontType0.Equals(subtype)) {
                 cidFontType = CID_FONT_TYPE_0;
             }
-            else
-            {
-                if (PdfName.CIDFontType2.Equals(subtype))
-                {
+            else {
+                if (PdfName.CIDFontType2.Equals(subtype)) {
                     cidFontType = CID_FONT_TYPE_2;
                 }
-                else
-                {
+                else {
                     LogManager.GetLogger(GetType()).Error(iText.IO.LogMessageConstant.FAILED_TO_DETERMINE_CID_FONT_SUBTYPE);
                 }
             }
@@ -214,57 +190,45 @@ namespace iText.Kernel.Font
             subset = false;
         }
 
-        public static String GetUniMapFromOrdering(String ordering)
-        {
-            switch (ordering)
-            {
-                case "CNS1":
-                    {
-                        return "UniCNS-UTF16-H";
-                    }
+        public static String GetUniMapFromOrdering(String ordering) {
+            switch (ordering) {
+                case "CNS1": {
+                    return "UniCNS-UTF16-H";
+                }
 
-                case "Japan1":
-                    {
-                        return "UniJIS-UTF16-H";
-                    }
+                case "Japan1": {
+                    return "UniJIS-UTF16-H";
+                }
 
-                case "Korea1":
-                    {
-                        return "UniKS-UTF16-H";
-                    }
+                case "Korea1": {
+                    return "UniKS-UTF16-H";
+                }
 
-                case "GB1":
-                    {
-                        return "UniGB-UTF16-H";
-                    }
+                case "GB1": {
+                    return "UniGB-UTF16-H";
+                }
 
-                case "Identity":
-                    {
-                        return "Identity-H";
-                    }
+                case "Identity": {
+                    return "Identity-H";
+                }
 
-                default:
-                    {
-                        return null;
-                    }
+                default: {
+                    return null;
+                }
             }
         }
 
-        public override Glyph GetGlyph(int unicode)
-        {
+        public override Glyph GetGlyph(int unicode) {
             // TODO handle unicode value with cmap and use only glyphByCode
             Glyph glyph = GetFontProgram().GetGlyph(unicode);
-            if (glyph == null && (glyph = notdefGlyphs.Get(unicode)) == null)
-            {
+            if (glyph == null && (glyph = notdefGlyphs.Get(unicode)) == null) {
                 // Handle special layout characters like sfthyphen (00AD).
                 // This glyphs will be skipped while converting to bytes
                 Glyph notdef = GetFontProgram().GetGlyphByCode(0);
-                if (notdef != null)
-                {
+                if (notdef != null) {
                     glyph = new Glyph(notdef, unicode);
                 }
-                else
-                {
+                else {
                     glyph = new Glyph(-1, 0, unicode);
                 }
                 notdefGlyphs.Put(unicode, glyph);
@@ -272,79 +236,60 @@ namespace iText.Kernel.Font
             return glyph;
         }
 
-        public override bool ContainsGlyph(int unicode)
-        {
-            if (cidFontType == CID_FONT_TYPE_0)
-            {
-                if (cmapEncoding.IsDirect())
-                {
+        public override bool ContainsGlyph(int unicode) {
+            if (cidFontType == CID_FONT_TYPE_0) {
+                if (cmapEncoding.IsDirect()) {
                     return fontProgram.GetGlyphByCode(unicode) != null;
                 }
-                else
-                {
+                else {
                     return GetFontProgram().GetGlyph(unicode) != null;
                 }
             }
-            else
-            {
-                if (cidFontType == CID_FONT_TYPE_2)
-                {
-                    if (fontProgram.IsFontSpecific())
-                    {
+            else {
+                if (cidFontType == CID_FONT_TYPE_2) {
+                    if (fontProgram.IsFontSpecific()) {
                         byte[] b = PdfEncodings.ConvertToBytes((char)unicode, "symboltt");
                         return b.Length > 0 && fontProgram.GetGlyph(b[0] & 0xff) != null;
                     }
-                    else
-                    {
+                    else {
                         return GetFontProgram().GetGlyph(unicode) != null;
                     }
                 }
-                else
-                {
+                else {
                     throw new PdfException("Invalid CID font type: " + cidFontType);
                 }
             }
         }
 
-        public override byte[] ConvertToBytes(String text)
-        {
+        public override byte[] ConvertToBytes(String text) {
             int len = text.Length;
             ByteBuffer buffer = new ByteBuffer();
             int i = 0;
-            if (fontProgram.IsFontSpecific())
-            {
+            if (fontProgram.IsFontSpecific()) {
                 byte[] b = PdfEncodings.ConvertToBytes(text, "symboltt");
                 len = b.Length;
-                for (int k = 0; k < len; ++k)
-                {
+                for (int k = 0; k < len; ++k) {
                     Glyph glyph = fontProgram.GetGlyph(b[k] & 0xff);
-                    if (glyph != null)
-                    {
+                    if (glyph != null) {
                         ConvertToBytes(glyph, buffer);
                     }
                 }
             }
-            else
-            {
-                for (int k = 0; k < len; ++k)
-                {
+            else {
+                for (int k = 0; k < len; ++k) {
                     int val;
-                    if (iText.IO.Util.TextUtil.IsSurrogatePair(text, k))
-                    {
+                    if (iText.IO.Util.TextUtil.IsSurrogatePair(text, k)) {
                         val = iText.IO.Util.TextUtil.ConvertToUtf32(text, k);
                         k++;
                     }
-                    else
-                    {
+                    else {
                         val = text[k];
                     }
                     Glyph glyph = GetGlyph(val);
-                    if (glyph.GetCode() > 0)
-                    {
+                    if (glyph.GetCode() > 0) {
                         ConvertToBytes(glyph, buffer);
                     }
-                    else
-                    {
+                    else {
                         //getCode() could be either -1 or 0
                         int nullCode = cmapEncoding.GetCmapCode(0);
                         buffer.Append(nullCode >> 8);
@@ -355,217 +300,168 @@ namespace iText.Kernel.Font
             return buffer.ToByteArray();
         }
 
-        public override byte[] ConvertToBytes(GlyphLine glyphLine)
-        {
-            if (glyphLine != null)
-            {
+        public override byte[] ConvertToBytes(GlyphLine glyphLine) {
+            if (glyphLine != null) {
                 // prepare and count total length in bytes
                 int totalByteCount = 0;
-                for (int i = glyphLine.start; i < glyphLine.end; i++)
-                {
+                for (int i = glyphLine.start; i < glyphLine.end; i++) {
                     totalByteCount += cmapEncoding.GetCmapBytesLength(glyphLine.Get(i).GetCode());
                 }
                 // perform actual conversion
                 byte[] bytes = new byte[totalByteCount];
                 int offset = 0;
-                for (int i = glyphLine.start; i < glyphLine.end; i++)
-                {
+                for (int i = glyphLine.start; i < glyphLine.end; i++) {
                     longTag.Add(glyphLine.Get(i).GetCode());
                     offset = cmapEncoding.FillCmapBytes(glyphLine.Get(i).GetCode(), bytes, offset);
                 }
                 return bytes;
             }
-            else
-            {
+            else {
                 return null;
             }
         }
 
-        public override byte[] ConvertToBytes(Glyph glyph)
-        {
+        public override byte[] ConvertToBytes(Glyph glyph) {
             longTag.Add(glyph.GetCode());
             return cmapEncoding.GetCmapBytes(glyph.GetCode());
         }
 
-        public override void WriteText(GlyphLine text, int from, int to, PdfOutputStream stream)
-        {
+        public override void WriteText(GlyphLine text, int from, int to, PdfOutputStream stream) {
             int len = to - from + 1;
-            if (len > 0)
-            {
+            if (len > 0) {
                 byte[] bytes = ConvertToBytes(new GlyphLine(text, from, to + 1));
                 StreamUtil.WriteHexedString(stream, bytes);
             }
         }
 
-        public override void WriteText(String text, PdfOutputStream stream)
-        {
+        public override void WriteText(String text, PdfOutputStream stream) {
             StreamUtil.WriteHexedString(stream, ConvertToBytes(text));
         }
 
-        public override GlyphLine CreateGlyphLine(String content)
-        {
+        public override GlyphLine CreateGlyphLine(String content) {
             IList<Glyph> glyphs = new List<Glyph>();
-            if (cidFontType == CID_FONT_TYPE_0)
-            {
+            if (cidFontType == CID_FONT_TYPE_0) {
                 int len = content.Length;
-                if (cmapEncoding.IsDirect())
-                {
-                    for (int k = 0; k < len; ++k)
-                    {
+                if (cmapEncoding.IsDirect()) {
+                    for (int k = 0; k < len; ++k) {
                         Glyph glyph = fontProgram.GetGlyphByCode((int)content[k]);
-                        if (glyph != null)
-                        {
+                        if (glyph != null) {
                             glyphs.Add(glyph);
                         }
                     }
                 }
-                else
-                {
-                    for (int k = 0; k < len; ++k)
-                    {
+                else {
+                    for (int k = 0; k < len; ++k) {
                         int ch;
-                        if (iText.IO.Util.TextUtil.IsSurrogatePair(content, k))
-                        {
+                        if (iText.IO.Util.TextUtil.IsSurrogatePair(content, k)) {
                             ch = iText.IO.Util.TextUtil.ConvertToUtf32(content, k);
                             k++;
                         }
-                        else
-                        {
+                        else {
                             ch = content[k];
                         }
                         glyphs.Add(GetGlyph(ch));
                     }
                 }
             }
-            else
-            {
-                if (cidFontType == CID_FONT_TYPE_2)
-                {
+            else {
+                if (cidFontType == CID_FONT_TYPE_2) {
                     int len = content.Length;
-                    if (fontProgram.IsFontSpecific())
-                    {
+                    if (fontProgram.IsFontSpecific()) {
                         byte[] b = PdfEncodings.ConvertToBytes(content, "symboltt");
                         len = b.Length;
-                        for (int k = 0; k < len; ++k)
-                        {
+                        for (int k = 0; k < len; ++k) {
                             Glyph glyph = fontProgram.GetGlyph(b[k] & 0xff);
-                            if (glyph != null)
-                            {
+                            if (glyph != null) {
                                 glyphs.Add(glyph);
                             }
                         }
                     }
-                    else
-                    {
-                        for (int k = 0; k < len; ++k)
-                        {
+                    else {
+                        for (int k = 0; k < len; ++k) {
                             int val;
-                            if (iText.IO.Util.TextUtil.IsSurrogatePair(content, k))
-                            {
+                            if (iText.IO.Util.TextUtil.IsSurrogatePair(content, k)) {
                                 val = iText.IO.Util.TextUtil.ConvertToUtf32(content, k);
                                 k++;
                             }
-                            else
-                            {
+                            else {
                                 val = content[k];
                             }
                             glyphs.Add(GetGlyph(val));
                         }
                     }
                 }
-                else
-                {
+                else {
                     throw new PdfException("Font has no suitable cmap.");
                 }
             }
             return new GlyphLine(glyphs);
         }
 
-        public override int AppendGlyphs(String text, int from, int to, IList<Glyph> glyphs)
-        {
-            if (cidFontType == CID_FONT_TYPE_0)
-            {
-                if (cmapEncoding.IsDirect())
-                {
+        public override int AppendGlyphs(String text, int from, int to, IList<Glyph> glyphs) {
+            if (cidFontType == CID_FONT_TYPE_0) {
+                if (cmapEncoding.IsDirect()) {
                     int processed = 0;
-                    for (int k = from; k <= to; k++)
-                    {
+                    for (int k = from; k <= to; k++) {
                         Glyph glyph = fontProgram.GetGlyphByCode((int)text[k]);
-                        if (glyph != null && (IsAppendableGlyph(glyph)))
-                        {
+                        if (glyph != null && (IsAppendableGlyph(glyph))) {
                             glyphs.Add(glyph);
                             processed++;
                         }
-                        else
-                        {
+                        else {
                             break;
                         }
                     }
                     return processed;
                 }
-                else
-                {
+                else {
                     return AppendUniGlyphs(text, from, to, glyphs);
                 }
             }
-            else
-            {
-                if (cidFontType == CID_FONT_TYPE_2)
-                {
-                    if (fontProgram.IsFontSpecific())
-                    {
+            else {
+                if (cidFontType == CID_FONT_TYPE_2) {
+                    if (fontProgram.IsFontSpecific()) {
                         int processed = 0;
-                        for (int k = from; k <= to; k++)
-                        {
+                        for (int k = from; k <= to; k++) {
                             Glyph glyph = fontProgram.GetGlyph(text[k] & 0xff);
-                            if (glyph != null && (IsAppendableGlyph(glyph)))
-                            {
+                            if (glyph != null && (IsAppendableGlyph(glyph))) {
                                 glyphs.Add(glyph);
                                 processed++;
                             }
-                            else
-                            {
+                            else {
                                 break;
                             }
                         }
                         return processed;
                     }
-                    else
-                    {
+                    else {
                         return AppendUniGlyphs(text, from, to, glyphs);
                     }
                 }
-                else
-                {
+                else {
                     throw new PdfException("Font has no suitable cmap.");
                 }
             }
         }
 
-        private int AppendUniGlyphs(String text, int from, int to, IList<Glyph> glyphs)
-        {
+        private int AppendUniGlyphs(String text, int from, int to, IList<Glyph> glyphs) {
             int processed = 0;
-            for (int k = from; k <= to; ++k)
-            {
+            for (int k = from; k <= to; ++k) {
                 int val;
                 int currentlyProcessed = processed;
-                if (iText.IO.Util.TextUtil.IsSurrogatePair(text, k))
-                {
+                if (iText.IO.Util.TextUtil.IsSurrogatePair(text, k)) {
                     val = iText.IO.Util.TextUtil.ConvertToUtf32(text, k);
                     processed += 2;
                 }
-                else
-                {
+                else {
                     val = text[k];
                     processed++;
                 }
                 Glyph glyph = GetGlyph(val);
-                if (IsAppendableGlyph(glyph))
-                {
+                if (IsAppendableGlyph(glyph)) {
                     glyphs.Add(glyph);
                 }
-                else
-                {
+                else {
                     processed = currentlyProcessed;
                     break;
                 }
@@ -573,68 +469,52 @@ namespace iText.Kernel.Font
             return processed;
         }
 
-        public override int AppendAnyGlyph(String text, int from, IList<Glyph> glyphs)
-        {
+        public override int AppendAnyGlyph(String text, int from, IList<Glyph> glyphs) {
             int process = 1;
-            if (cidFontType == CID_FONT_TYPE_0)
-            {
-                if (cmapEncoding.IsDirect())
-                {
+            if (cidFontType == CID_FONT_TYPE_0) {
+                if (cmapEncoding.IsDirect()) {
                     Glyph glyph = fontProgram.GetGlyphByCode((int)text[from]);
-                    if (glyph != null)
-                    {
+                    if (glyph != null) {
                         glyphs.Add(glyph);
                     }
                 }
-                else
-                {
+                else {
                     int ch;
-                    if (iText.IO.Util.TextUtil.IsSurrogatePair(text, from))
-                    {
+                    if (iText.IO.Util.TextUtil.IsSurrogatePair(text, from)) {
                         ch = iText.IO.Util.TextUtil.ConvertToUtf32(text, from);
                         process = 2;
                     }
-                    else
-                    {
+                    else {
                         ch = text[from];
                     }
                     glyphs.Add(GetGlyph(ch));
                 }
             }
-            else
-            {
-                if (cidFontType == CID_FONT_TYPE_2)
-                {
+            else {
+                if (cidFontType == CID_FONT_TYPE_2) {
                     TrueTypeFont ttf = (TrueTypeFont)fontProgram;
-                    if (ttf.IsFontSpecific())
-                    {
+                    if (ttf.IsFontSpecific()) {
                         byte[] b = PdfEncodings.ConvertToBytes(text, "symboltt");
-                        if (b.Length > 0)
-                        {
+                        if (b.Length > 0) {
                             Glyph glyph = fontProgram.GetGlyph(b[0] & 0xff);
-                            if (glyph != null)
-                            {
+                            if (glyph != null) {
                                 glyphs.Add(glyph);
                             }
                         }
                     }
-                    else
-                    {
+                    else {
                         int ch;
-                        if (iText.IO.Util.TextUtil.IsSurrogatePair(text, from))
-                        {
+                        if (iText.IO.Util.TextUtil.IsSurrogatePair(text, from)) {
                             ch = iText.IO.Util.TextUtil.ConvertToUtf32(text, from);
                             process = 2;
                         }
-                        else
-                        {
+                        else {
                             ch = text[from];
                         }
                         glyphs.Add(GetGlyph(ch));
                     }
                 }
-                else
-                {
+                else {
                     throw new PdfException("Font has no suitable cmap.");
                 }
             }
@@ -642,21 +522,18 @@ namespace iText.Kernel.Font
         }
 
         //TODO what if Glyphs contains only whitespaces and ignorable identifiers?
-        private bool IsAppendableGlyph(Glyph glyph)
-        {
+        private bool IsAppendableGlyph(Glyph glyph) {
             // If font is specific and glyph.getCode() = 0, unicode value will be also 0.
             // Character.isIdentifierIgnorable(0) gets true.
             return glyph.GetCode() > 0 || iText.IO.Util.TextUtil.IsWhitespaceOrNonPrintable(glyph.GetUnicode());
         }
 
-        public override String Decode(PdfString content)
-        {
+        public override String Decode(PdfString content) {
             return DecodeIntoGlyphLine(content).ToString();
         }
 
         /// <summary><inheritDoc/></summary>
-        public override GlyphLine DecodeIntoGlyphLine(PdfString content)
-        {
+        public override GlyphLine DecodeIntoGlyphLine(PdfString content) {
             //A sequence of one or more bytes shall be extracted from the string and matched against the codespace
             //ranges in the CMap. That is, the first byte shall be matched against 1-byte codespace ranges; if no match is
             //found, a second byte shall be extracted, and the 2-byte code shall be matched against 2-byte codespace
@@ -664,36 +541,29 @@ namespace iText.Kernel.Font
             //have been tested. There will be at most one match because codespace ranges shall not overlap.
             String cids = content.GetValue();
             IList<Glyph> glyphs = new List<Glyph>();
-            for (int i = 0; i < cids.Length; i++)
-            {
+            for (int i = 0; i < cids.Length; i++) {
                 //The code length shall not be greater than 4.
                 int code = 0;
                 Glyph glyph = null;
                 int codeSpaceMatchedLength = 1;
-                for (int codeLength = 1; codeLength <= 4 && i + codeLength <= cids.Length; codeLength++)
-                {
+                for (int codeLength = 1; codeLength <= 4 && i + codeLength <= cids.Length; codeLength++) {
                     code = (code << 8) + cids[i + codeLength - 1];
-                    if (!cmapEncoding.ContainsCodeInCodeSpaceRange(code, codeLength))
-                    {
+                    if (!cmapEncoding.ContainsCodeInCodeSpaceRange(code, codeLength)) {
                         continue;
                     }
-                    else
-                    {
+                    else {
                         codeSpaceMatchedLength = codeLength;
                     }
                     int glyphCode = cmapEncoding.GetCidCode(code);
                     glyph = fontProgram.GetGlyphByCode(glyphCode);
-                    if (glyph != null)
-                    {
+                    if (glyph != null) {
                         i += codeLength - 1;
                         break;
                     }
                 }
-                if (glyph == null)
-                {
+                if (glyph == null) {
                     StringBuilder failedCodes = new StringBuilder();
-                    for (int codeLength = 1; codeLength <= 4 && i + codeLength <= cids.Length; codeLength++)
-                    {
+                    for (int codeLength = 1; codeLength <= 4 && i + codeLength <= cids.Length; codeLength++) {
                         failedCodes.Append((int)cids[i + codeLength - 1]).Append(" ");
                     }
                     ILog logger = LogManager.GetLogger(typeof(iText.Kernel.Font.PdfType0Font));
@@ -701,43 +571,35 @@ namespace iText.Kernel.Font
                         .ToString()));
                     i += codeSpaceMatchedLength - 1;
                 }
-                if (glyph != null && glyph.GetChars() != null)
-                {
+                if (glyph != null && glyph.GetChars() != null) {
                     glyphs.Add(glyph);
                 }
-                else
-                {
+                else {
                     glyphs.Add(new Glyph(0, fontProgram.GetGlyphByCode(0).GetWidth(), -1));
                 }
             }
             return new GlyphLine(glyphs);
         }
 
-        public override float GetContentWidth(PdfString content)
-        {
+        public override float GetContentWidth(PdfString content) {
             float width = 0;
             GlyphLine glyphLine = DecodeIntoGlyphLine(content);
-            for (int i = glyphLine.start; i < glyphLine.end; i++)
-            {
+            for (int i = glyphLine.start; i < glyphLine.end; i++) {
                 width += glyphLine.Get(i).GetWidth();
             }
             return width;
         }
 
-        public override bool IsBuiltWith(String fontProgram, String encoding)
-        {
+        public override bool IsBuiltWith(String fontProgram, String encoding) {
             return GetFontProgram().IsBuiltWith(fontProgram) && cmapEncoding.IsBuiltWith(encoding);
         }
 
-        public override void Flush()
-        {
-            if (IsFlushed())
-            {
+        public override void Flush() {
+            if (IsFlushed()) {
                 return;
             }
             EnsureUnderlyingObjectHasIndirectReference();
-            if (newFont)
-            {
+            if (newFont) {
                 FlushFontData();
             }
             base.Flush();
@@ -746,8 +608,7 @@ namespace iText.Kernel.Font
         /// <summary>Gets CMAP associated with the Pdf Font.</summary>
         /// <returns>CMAP</returns>
         /// <seealso cref="iText.IO.Font.CMapEncoding"/>
-        public virtual CMapEncoding GetCmap()
-        {
+        public virtual CMapEncoding GetCmap() {
             return cmapEncoding;
         }
 
@@ -758,13 +619,11 @@ namespace iText.Kernel.Font
         /// </param>
         /// <returns>the stream representing this CMap or <c>null</c></returns>
         [System.ObsoleteAttribute(@"will be removed in 7.2. Use GetToUnicode() instead")]
-        public virtual PdfStream GetToUnicode(Object[] metrics)
-        {
+        public virtual PdfStream GetToUnicode(Object[] metrics) {
             return GetToUnicode();
         }
 
-        protected internal override PdfDictionary GetFontDescriptor(String fontName)
-        {
+        protected internal override PdfDictionary GetFontDescriptor(String fontName) {
             PdfDictionary fontDescriptor = new PdfDictionary();
             MakeObjectIndirect(fontDescriptor);
             fontDescriptor.Put(PdfName.Type, PdfName.FontDescriptor);
@@ -776,8 +635,7 @@ namespace iText.Kernel.Font
             fontDescriptor.Put(PdfName.ItalicAngle, new PdfNumber(GetFontProgram().GetFontMetrics().GetItalicAngle()));
             fontDescriptor.Put(PdfName.StemV, new PdfNumber(GetFontProgram().GetFontMetrics().GetStemV()));
             fontDescriptor.Put(PdfName.Flags, new PdfNumber(GetFontProgram().GetPdfFontFlags()));
-            if (fontProgram.GetFontIdentification().GetPanose() != null)
-            {
+            if (fontProgram.GetFontIdentification().GetPanose() != null) {
                 PdfDictionary styleDictionary = new PdfDictionary();
                 styleDictionary.Put(PdfName.Panose, new PdfString(fontProgram.GetFontIdentification().GetPanose()).SetHexWriting
                     (true));
@@ -794,8 +652,7 @@ namespace iText.Kernel.Font
         /// <returns>fully initialized CIDFont</returns>
         [System.ObsoleteAttribute(@"will be removed in 7.2")]
         protected internal virtual PdfDictionary GetCidFontType2(TrueTypeFont ttf, PdfDictionary fontDescriptor, String
-             fontName, int[][] metrics)
-        {
+             fontName, int[][] metrics) {
             return GetCidFont(fontDescriptor, fontName, ttf != null && !ttf.IsCff());
         }
 
@@ -816,38 +673,31 @@ namespace iText.Kernel.Font
         /// </param>
         [System.ObsoleteAttribute(@"will be removed in 7.2")]
         protected internal virtual void AddRangeUni(TrueTypeFont ttf, IDictionary<int, int[]> longTag, bool includeMetrics
-            )
-        {
+            ) {
             AddRangeUni(ttf, longTag.Keys);
         }
 
-        private void ConvertToBytes(Glyph glyph, ByteBuffer result)
-        {
+        private void ConvertToBytes(Glyph glyph, ByteBuffer result) {
             int code = glyph.GetCode();
             longTag.Add(code);
             cmapEncoding.FillCmapBytes(code, result);
         }
 
-        private static String GetOrdering(PdfDictionary cidFont)
-        {
+        private static String GetOrdering(PdfDictionary cidFont) {
             PdfDictionary cidinfo = cidFont.GetAsDictionary(PdfName.CIDSystemInfo);
-            if (cidinfo == null)
-            {
+            if (cidinfo == null) {
                 return null;
             }
             return cidinfo.ContainsKey(PdfName.Ordering) ? cidinfo.Get(PdfName.Ordering).ToString() : null;
         }
 
-        private void FlushFontData()
-        {
-            if (cidFontType == CID_FONT_TYPE_0)
-            {
+        private void FlushFontData() {
+            if (cidFontType == CID_FONT_TYPE_0) {
                 GetPdfObject().Put(PdfName.Type, PdfName.Font);
                 GetPdfObject().Put(PdfName.Subtype, PdfName.Type0);
                 String name = fontProgram.GetFontNames().GetFontName();
                 String style = fontProgram.GetFontNames().GetStyle();
-                if (style.Length > 0)
-                {
+                if (style.Length > 0) {
                     name += "-" + style;
                 }
                 GetPdfObject().Put(PdfName.BaseFont, new PdfName(MessageFormatUtil.Format("{0}-{1}", name, cmapEncoding.GetCmapName
@@ -859,24 +709,19 @@ namespace iText.Kernel.Font
                 fontDescriptor.Flush();
                 cidFont.Flush();
             }
-            else
-            {
-                if (cidFontType == CID_FONT_TYPE_2)
-                {
+            else {
+                if (cidFontType == CID_FONT_TYPE_2) {
                     TrueTypeFont ttf = (TrueTypeFont)GetFontProgram();
                     String fontName = UpdateSubsetPrefix(ttf.GetFontNames().GetFontName(), subset, embedded);
                     PdfDictionary fontDescriptor = GetFontDescriptor(fontName);
                     PdfStream fontStream;
                     ttf.UpdateUsedGlyphs((SortedSet<int>)longTag, subset, subsetRanges);
-                    if (ttf.IsCff())
-                    {
+                    if (ttf.IsCff()) {
                         byte[] cffBytes;
-                        if (subset)
-                        {
+                        if (subset) {
                             cffBytes = new CFFFontSubset(ttf.GetFontStreamBytes(), longTag).Process();
                         }
-                        else
-                        {
+                        else {
                             cffBytes = ttf.GetFontStreamBytes();
                         }
                         fontStream = GetPdfFontStream(cffBytes, new int[] { cffBytes.Length });
@@ -886,25 +731,20 @@ namespace iText.Kernel.Font
                             .GetCmapName())));
                         fontDescriptor.Put(PdfName.FontFile3, fontStream);
                     }
-                    else
-                    {
+                    else {
                         byte[] ttfBytes = null;
                         //getDirectoryOffset() > 0 means ttc, which shall be subsetted anyway.
-                        if (subset || ttf.GetDirectoryOffset() > 0)
-                        {
-                            try
-                            {
+                        if (subset || ttf.GetDirectoryOffset() > 0) {
+                            try {
                                 ttfBytes = ttf.GetSubset(longTag, subset);
                             }
-                            catch (iText.IO.IOException)
-                            {
+                            catch (iText.IO.IOException) {
                                 ILog logger = LogManager.GetLogger(typeof(iText.Kernel.Font.PdfType0Font));
                                 logger.Warn(iText.IO.LogMessageConstant.FONT_SUBSET_ISSUE);
                                 ttfBytes = null;
                             }
                         }
-                        if (ttfBytes == null)
-                        {
+                        if (ttfBytes == null) {
                             ttfBytes = ttf.GetFontStreamBytes();
                         }
                         fontStream = GetPdfFontStream(ttfBytes, new int[] { ttfBytes.Length });
@@ -915,12 +755,10 @@ namespace iText.Kernel.Font
                     // because technically we convert all unused glyphs to space, e.g. just remove outlines.
                     int numOfGlyphs = ttf.GetFontMetrics().GetNumberOfGlyphs();
                     byte[] cidSetBytes = new byte[ttf.GetFontMetrics().GetNumberOfGlyphs() / 8 + 1];
-                    for (int i = 0; i < numOfGlyphs / 8; i++)
-                    {
+                    for (int i = 0; i < numOfGlyphs / 8; i++) {
                         cidSetBytes[i] |= 0xff;
                     }
-                    for (int i = 0; i < numOfGlyphs % 8; i++)
-                    {
+                    for (int i = 0; i < numOfGlyphs % 8; i++) {
                         cidSetBytes[cidSetBytes.Length - 1] |= rotbits[i];
                     }
                     fontDescriptor.Put(PdfName.CIDSet, new PdfStream(cidSetBytes));
@@ -930,19 +768,16 @@ namespace iText.Kernel.Font
                     GetPdfObject().Put(PdfName.Encoding, new PdfName(cmapEncoding.GetCmapName()));
                     GetPdfObject().Put(PdfName.DescendantFonts, new PdfArray(cidFont));
                     PdfStream toUnicode = GetToUnicode();
-                    if (toUnicode != null)
-                    {
+                    if (toUnicode != null) {
                         GetPdfObject().Put(PdfName.ToUnicode, toUnicode);
-                        if (toUnicode.GetIndirectReference() != null)
-                        {
+                        if (toUnicode.GetIndirectReference() != null) {
                             toUnicode.Flush();
                         }
                     }
                     // getPdfObject().getIndirectReference() != null by assertion of PdfType0Font#flush()
                     // This means, that fontDescriptor, cidFont and fontStream already are indirects
                     if (GetPdfObject().GetIndirectReference().GetDocument().GetPdfVersion().CompareTo(PdfVersion.PDF_2_0) >= 0
-                        )
-                    {
+                        ) {
                         // CIDSet is deprecated in PDF 2.0
                         fontDescriptor.Remove(PdfName.CIDSet);
                     }
@@ -950,8 +785,7 @@ namespace iText.Kernel.Font
                     cidFont.Flush();
                     fontStream.Flush();
                 }
-                else
-                {
+                else {
                     throw new InvalidOperationException("Unsupported CID Font");
                 }
             }
@@ -965,8 +799,7 @@ namespace iText.Kernel.Font
         /// <returns>fully initialized CIDFont</returns>
         [System.ObsoleteAttribute(@"use GetCidFont(iText.Kernel.Pdf.PdfDictionary, System.String, bool) instead.")]
         protected internal virtual PdfDictionary GetCidFontType2(TrueTypeFont ttf, PdfDictionary fontDescriptor, String
-             fontName, int[] glyphIds)
-        {
+             fontName, int[] glyphIds) {
             return GetCidFont(fontDescriptor, fontName, ttf != null && !ttf.IsCff());
         }
 
@@ -979,20 +812,17 @@ namespace iText.Kernel.Font
         /// </param>
         /// <returns>fully initialized CIDFont</returns>
         protected internal virtual PdfDictionary GetCidFont(PdfDictionary fontDescriptor, String fontName, bool isType2
-            )
-        {
+            ) {
             PdfDictionary cidFont = new PdfDictionary();
             MarkObjectAsIndirect(cidFont);
             cidFont.Put(PdfName.Type, PdfName.Font);
             // sivan; cff
             cidFont.Put(PdfName.FontDescriptor, fontDescriptor);
-            if (isType2)
-            {
+            if (isType2) {
                 cidFont.Put(PdfName.Subtype, PdfName.CIDFontType2);
                 cidFont.Put(PdfName.CIDToGIDMap, PdfName.Identity);
             }
-            else
-            {
+            else {
                 cidFont.Put(PdfName.Subtype, PdfName.CIDFontType0);
             }
             cidFont.Put(PdfName.BaseFont, new PdfName(fontName));
@@ -1001,17 +831,14 @@ namespace iText.Kernel.Font
             cidInfo.Put(PdfName.Ordering, new PdfString(cmapEncoding.GetOrdering()));
             cidInfo.Put(PdfName.Supplement, new PdfNumber(cmapEncoding.GetSupplement()));
             cidFont.Put(PdfName.CIDSystemInfo, cidInfo);
-            if (!vertical)
-            {
+            if (!vertical) {
                 cidFont.Put(PdfName.DW, new PdfNumber(FontProgram.DEFAULT_WIDTH));
                 PdfObject widthsArray = GenerateWidthsArray();
-                if (widthsArray != null)
-                {
+                if (widthsArray != null) {
                     cidFont.Put(PdfName.W, widthsArray);
                 }
             }
-            else
-            {
+            else {
                 //The implementation should be realized in DEVSIX-2730
                 ILog logger = LogManager.GetLogger(typeof(iText.Kernel.Font.PdfType0Font));
                 logger.Warn("Vertical writing has not been implemented yet.");
@@ -1019,28 +846,22 @@ namespace iText.Kernel.Font
             return cidFont;
         }
 
-        private PdfObject GenerateWidthsArray()
-        {
+        private PdfObject GenerateWidthsArray() {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             OutputStream<ByteArrayOutputStream> stream = new OutputStream<ByteArrayOutputStream>(bytes);
             stream.WriteByte('[');
             int lastNumber = -10;
             bool firstTime = true;
-            foreach (int code in longTag)
-            {
+            foreach (int code in longTag) {
                 Glyph glyph = fontProgram.GetGlyphByCode(code);
-                if (glyph.GetWidth() == FontProgram.DEFAULT_WIDTH)
-                {
+                if (glyph.GetWidth() == FontProgram.DEFAULT_WIDTH) {
                     continue;
                 }
-                if (glyph.GetCode() == lastNumber + 1)
-                {
+                if (glyph.GetCode() == lastNumber + 1) {
                     stream.WriteByte(' ');
                 }
-                else
-                {
-                    if (!firstTime)
-                    {
+                else {
+                    if (!firstTime) {
                         stream.WriteByte(']');
                     }
                     firstTime = false;
@@ -1050,8 +871,7 @@ namespace iText.Kernel.Font
                 stream.WriteInteger(glyph.GetWidth());
                 lastNumber = glyph.GetCode();
             }
-            if (stream.GetCurrentPos() > 1)
-            {
+            if (stream.GetCurrentPos() > 1) {
                 stream.WriteString("]]");
                 return new PdfLiteral(bytes.ToArray());
             }
@@ -1060,8 +880,7 @@ namespace iText.Kernel.Font
 
         /// <summary>Creates a ToUnicode CMap to allow copy and paste from Acrobat.</summary>
         /// <returns>the stream representing this CMap or <c>null</c></returns>
-        public virtual PdfStream GetToUnicode()
-        {
+        public virtual PdfStream GetToUnicode() {
             OutputStream<ByteArrayOutputStream> stream = new OutputStream<ByteArrayOutputStream>(new ByteArrayOutputStream
                 ());
             stream.WriteString("/CIDInit /ProcSet findresource begin\n" + "12 dict begin\n" + "begincmap\n" + "/CIDSystemInfo\n"
@@ -1070,44 +889,36 @@ namespace iText.Kernel.Font
             //accumulate long tag into a subset and write it.
             List<Glyph> glyphGroup = new List<Glyph>(100);
             int bfranges = 0;
-            foreach (int? glyphId in longTag)
-            {
+            foreach (int? glyphId in longTag) {
                 Glyph glyph = fontProgram.GetGlyphByCode((int)glyphId);
-                if (glyph.GetChars() != null)
-                {
+                if (glyph.GetChars() != null) {
                     glyphGroup.Add(glyph);
-                    if (glyphGroup.Count == 100)
-                    {
+                    if (glyphGroup.Count == 100) {
                         bfranges += WriteBfrange(stream, glyphGroup);
                     }
                 }
             }
             //flush leftovers
             bfranges += WriteBfrange(stream, glyphGroup);
-            if (bfranges == 0)
-            {
+            if (bfranges == 0) {
                 return null;
             }
             stream.WriteString("endcmap\n" + "CMapName currentdict /CMap defineresource pop\n" + "end end\n");
             return new PdfStream(((ByteArrayOutputStream)stream.GetOutputStream()).ToArray());
         }
 
-        private int WriteBfrange(OutputStream<ByteArrayOutputStream> stream, IList<Glyph> range)
-        {
-            if (range.IsEmpty())
-            {
+        private int WriteBfrange(OutputStream<ByteArrayOutputStream> stream, IList<Glyph> range) {
+            if (range.IsEmpty()) {
                 return 0;
             }
             stream.WriteInteger(range.Count);
             stream.WriteString(" beginbfrange\n");
-            foreach (Glyph glyph in range)
-            {
+            foreach (Glyph glyph in range) {
                 String fromTo = CMapContentParser.ToHex(glyph.GetCode());
                 stream.WriteString(fromTo);
                 stream.WriteString(fromTo);
                 stream.WriteByte('<');
-                foreach (char ch in glyph.GetChars())
-                {
+                foreach (char ch in glyph.GetChars()) {
                     stream.WriteString(ToHex4(ch));
                 }
                 stream.WriteByte('>');
@@ -1118,8 +929,7 @@ namespace iText.Kernel.Font
             return 1;
         }
 
-        private static String ToHex4(char ch)
-        {
+        private static String ToHex4(char ch) {
             String s = "0000" + JavaUtil.IntegerToHexString(ch);
             return s.Substring(s.Length - 4);
         }
@@ -1137,25 +947,19 @@ namespace iText.Kernel.Font
         /// </param>
         [System.ObsoleteAttribute(@"use iText.IO.Font.TrueTypeFont.UpdateUsedGlyphs(Java.Util.SortedSet{E}, bool, System.Collections.Generic.IList{E}) instead."
             )]
-        protected internal virtual void AddRangeUni(TrueTypeFont ttf, ICollection<int> longTag)
-        {
+        protected internal virtual void AddRangeUni(TrueTypeFont ttf, ICollection<int> longTag) {
             ttf.UpdateUsedGlyphs((SortedSet<int>)longTag, subset, subsetRanges);
         }
 
-        private String GetCompatibleUniMap(String registry)
-        {
+        private String GetCompatibleUniMap(String registry) {
             String uniMap = "";
-            foreach (String name in CidFontProperties.GetRegistryNames().Get(registry + "_Uni"))
-            {
+            foreach (String name in CidFontProperties.GetRegistryNames().Get(registry + "_Uni")) {
                 uniMap = name;
-                if (name.EndsWith("V") && vertical)
-                {
+                if (name.EndsWith("V") && vertical) {
                     break;
                 }
-                else
-                {
-                    if (!name.EndsWith("V") && !vertical)
-                    {
+                else {
+                    if (!name.EndsWith("V") && !vertical) {
                         break;
                     }
                 }
@@ -1163,23 +967,18 @@ namespace iText.Kernel.Font
             return uniMap;
         }
 
-        private static CMapEncoding CreateCMap(PdfObject cmap, String uniMap)
-        {
-            if (cmap.IsStream())
-            {
+        private static CMapEncoding CreateCMap(PdfObject cmap, String uniMap) {
+            if (cmap.IsStream()) {
                 PdfStream cmapStream = (PdfStream)cmap;
                 byte[] cmapBytes = cmapStream.GetBytes();
                 return new CMapEncoding(cmapStream.GetAsName(PdfName.CMapName).GetValue(), cmapBytes);
             }
-            else
-            {
+            else {
                 String cmapName = ((PdfName)cmap).GetValue();
-                if (PdfEncodings.IDENTITY_H.Equals(cmapName) || PdfEncodings.IDENTITY_V.Equals(cmapName))
-                {
+                if (PdfEncodings.IDENTITY_H.Equals(cmapName) || PdfEncodings.IDENTITY_V.Equals(cmapName)) {
                     return new CMapEncoding(cmapName);
                 }
-                else
-                {
+                else {
                     return new CMapEncoding(cmapName, uniMap);
                 }
             }

@@ -42,6 +42,8 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 
+using System;
+using System.Globalization;
 using iText.Kernel.Pdf;
 using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Asn1.X509;
@@ -50,52 +52,38 @@ using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.X509;
-using System;
-using System.Globalization;
 
-namespace iText.Kernel.Crypto.Securityhandler
-{
-    internal sealed class EncryptionUtils
-    {
-        internal static byte[] GenerateSeed(int seedLength)
-        {
+namespace iText.Kernel.Crypto.Securityhandler {
+    internal sealed class EncryptionUtils {
+        internal static byte[] GenerateSeed(int seedLength) {
             return IVGenerator.GetIV(seedLength);
         }
 
-        internal static byte[] FetchEnvelopedData(ICipherParameters certificateKey, X509Certificate certificate, PdfArray recipients)
-        {
+        internal static byte[] FetchEnvelopedData(ICipherParameters certificateKey, X509Certificate certificate, PdfArray recipients) {
             bool foundRecipient = false;
             byte[] envelopedData = null;
-            for (int i = 0; i < recipients.Size(); i++)
-            {
-                try
-                {
+            for (int i = 0; i < recipients.Size(); i++) {
+                try {
                     PdfString recipient = recipients.GetAsString(i);
                     CmsEnvelopedData data = new CmsEnvelopedData(recipient.GetValueBytes());
 
-                    foreach (RecipientInformation recipientInfo in data.GetRecipientInfos().GetRecipients())
-                    {
-                        if (recipientInfo.RecipientID.Match(certificate) && !foundRecipient)
-                        {
+                    foreach (RecipientInformation recipientInfo in data.GetRecipientInfos().GetRecipients()) {
+                        if (recipientInfo.RecipientID.Match(certificate) && !foundRecipient) {
                             envelopedData = recipientInfo.GetContent(certificateKey);
                             foundRecipient = true;
                         }
                     }
-                }
-                catch (Exception f)
-                {
+                } catch (Exception f) {
                     throw new PdfException(PdfException.PdfDecryption, f);
                 }
             }
-            if (!foundRecipient || envelopedData == null)
-            {
+            if (!foundRecipient || envelopedData == null) {
                 throw new PdfException(PdfException.BadCertificateAndKey);
             }
             return envelopedData;
         }
 
-        internal static byte[] CipherBytes(X509Certificate x509Certificate, byte[] abyte0, AlgorithmIdentifier algorithmidentifier)
-        {
+        internal static byte[] CipherBytes(X509Certificate x509Certificate, byte[] abyte0, AlgorithmIdentifier algorithmidentifier) {
             IBufferedCipher cipher = CipherUtilities.GetCipher(algorithmidentifier.ObjectID);
             cipher.Init(true, x509Certificate.GetPublicKey());
             byte[] outp = new byte[10000];
@@ -107,9 +95,8 @@ namespace iText.Kernel.Crypto.Securityhandler
         }
 
         // TODO Review this method and it's usages. It is used in bouncy castle sources in itextsharp, so we need to be carefull about it in case we update BouncyCastle.
-        internal static CultureInfo GetStandartEnUsLocale()
-        {
-            CultureInfo locale = (CultureInfo)CultureInfo.InvariantCulture.Clone();
+        internal static CultureInfo GetStandartEnUsLocale() {
+            CultureInfo locale = (CultureInfo) CultureInfo.InvariantCulture.Clone();
             //                          en-US                        Invariant
             //=====================     ==================           ==================
             //Currency Symbol           $                            
@@ -127,8 +114,7 @@ namespace iText.Kernel.Crypto.Securityhandler
             return locale;
         }
 
-        internal static DERForRecipientParams CalculateDERForRecipientParams(byte[] @in)
-        {
+        internal static DERForRecipientParams CalculateDERForRecipientParams(byte[] @in) {
             /*
              According to ISO 32000-2 (7.6.5.3 Public-key encryption algorithms) RC-2 algorithm is outdated
              and should be replaced with a safer one 256-bit AES-CBC:
@@ -167,8 +153,7 @@ namespace iText.Kernel.Crypto.Securityhandler
             return parameters;
         }
 
-        internal class DERForRecipientParams
-        {
+        internal class DERForRecipientParams {
             internal byte[] abyte0;
             internal byte[] abyte1;
             internal AlgorithmIdentifier algorithmIdentifier;

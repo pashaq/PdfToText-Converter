@@ -41,14 +41,13 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System.IO;
 using iText.IO.Util;
 using iText.Kernel.Geom;
-using System.IO;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Annot
-{
-    public class PdfSoundAnnotation : PdfMarkupAnnotation
-    {
+namespace iText.Kernel.Pdf.Annot {
+    public class PdfSoundAnnotation : PdfMarkupAnnotation {
         /// <summary>Creates a new Sound annotation.</summary>
         /// <remarks>
         /// Creates a new Sound annotation.
@@ -64,8 +63,7 @@ namespace iText.Kernel.Pdf.Annot
         /// with sound
         /// </param>
         public PdfSoundAnnotation(Rectangle rect, PdfStream sound)
-            : base(rect)
-        {
+            : base(rect) {
             Put(PdfName.Sound, sound);
         }
 
@@ -83,8 +81,7 @@ namespace iText.Kernel.Pdf.Annot
         /// </param>
         /// <seealso cref="PdfAnnotation.MakeAnnotation(iText.Kernel.Pdf.PdfObject)"/>
         protected internal PdfSoundAnnotation(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
         /// <summary>Creates a sound annotation.</summary>
@@ -106,8 +103,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <param name="sampleSizeInBits">the number of bits per sample value per channel</param>
         public PdfSoundAnnotation(PdfDocument document, Rectangle rect, Stream soundStream, float sampleRate, PdfName
              encoding, int channels, int sampleSizeInBits)
-            : base(rect)
-        {
+            : base(rect) {
             PdfStream sound = new PdfStream(document, JavaUtil.CorrectWavFile(soundStream));
             sound.Put(PdfName.R, new PdfNumber(sampleRate));
             sound.Put(PdfName.E, encoding);
@@ -116,13 +112,11 @@ namespace iText.Kernel.Pdf.Annot
             Put(PdfName.Sound, sound);
         }
 
-        public override PdfName GetSubtype()
-        {
+        public override PdfName GetSubtype() {
             return PdfName.Sound;
         }
 
-        public virtual PdfStream GetSound()
-        {
+        public virtual PdfStream GetSound() {
             return GetPdfObject().GetAsStream(PdfName.Sound);
         }
 
@@ -137,8 +131,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfName"/>
         /// that specifies the icon for displaying annotation, or null if icon name is not specified.
         /// </returns>
-        public virtual PdfName GetIconName()
-        {
+        public virtual PdfName GetIconName() {
             return GetPdfObject().GetAsName(PdfName.Name);
         }
 
@@ -161,8 +154,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfSoundAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfSoundAnnotation SetIconName(PdfName name)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfSoundAnnotation SetIconName(PdfName name) {
             return (iText.Kernel.Pdf.Annot.PdfSoundAnnotation)Put(PdfName.Name, name);
         }
     }

@@ -42,12 +42,11 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using System;
-using System.Globalization;
 using System.Text;
+using System.Globalization;
 
 
-namespace iText.Kernel.Pdf
-{
+namespace iText.Kernel.Pdf {
     /// <summary>
     /// <c>PdfDate</c>
     /// is the PDF date object.
@@ -66,8 +65,7 @@ namespace iText.Kernel.Pdf
     /// </summary>
     /// <seealso cref="PdfString"/>
     /// <seealso cref="Java.Util.GregorianCalendar"/>
-    public class PdfDate : PdfObjectWrapper<PdfString>
-    {
+    public class PdfDate : PdfObjectWrapper<PdfString> {
         /// <summary>
         /// Constructs a
         /// <c>PdfDate</c>
@@ -79,8 +77,7 @@ namespace iText.Kernel.Pdf
         /// &gt;-object
         /// </param>
         public PdfDate(DateTime d)
-            : base(new PdfString(GenerateStringByDateTime(d)))
-        {
+            : base(new PdfString(GenerateStringByDateTime(d))) {
         }
 
         /// <summary>
@@ -89,14 +86,12 @@ namespace iText.Kernel.Pdf
         /// -object, representing the current day and time.
         /// </summary>
         public PdfDate()
-            : this(DateTime.Now)
-        {
+            : this(DateTime.Now) {
         }
 
         /// <summary>Gives the W3C format of the PdfDate.</summary>
         /// <returns>a formatted date</returns>
-        public virtual String GetW3CDate()
-        {
+        public virtual String GetW3CDate() {
             return GetW3CDate(GetPdfObject().GetValue());
         }
 
@@ -107,70 +102,58 @@ namespace iText.Kernel.Pdf
         /// </summary>
         /// <param name="d">the date in the format D:YYYYMMDDHHmmSSOHH'mm'</param>
         /// <returns>a formatted date</returns>
-        public static String GetW3CDate(String d)
-        {
-            if (d.StartsWith("D:"))
-            {
+        public static String GetW3CDate(String d) {
+            if (d.StartsWith("D:")) {
                 d = d.Substring(2);
             }
             StringBuilder sb = new StringBuilder();
-            if (d.Length < 4)
-            {
+            if (d.Length < 4) {
                 return "0000";
             }
             //year
             sb.Append(d.JSubstring(0, 4));
             d = d.Substring(4);
-            if (d.Length < 2)
-            {
+            if (d.Length < 2) {
                 return sb.ToString();
             }
             //month
             sb.Append('-').Append(d.JSubstring(0, 2));
             d = d.Substring(2);
-            if (d.Length < 2)
-            {
+            if (d.Length < 2) {
                 return sb.ToString();
             }
             //day
             sb.Append('-').Append(d.JSubstring(0, 2));
             d = d.Substring(2);
-            if (d.Length < 2)
-            {
+            if (d.Length < 2) {
                 return sb.ToString();
             }
             //hour
             sb.Append('T').Append(d.JSubstring(0, 2));
             d = d.Substring(2);
-            if (d.Length < 2)
-            {
+            if (d.Length < 2) {
                 sb.Append(":00Z");
                 return sb.ToString();
             }
             //minute
             sb.Append(':').Append(d.JSubstring(0, 2));
             d = d.Substring(2);
-            if (d.Length < 2)
-            {
+            if (d.Length < 2) {
                 sb.Append('Z');
                 return sb.ToString();
             }
             //second
             sb.Append(':').Append(d.JSubstring(0, 2));
             d = d.Substring(2);
-            if (d.StartsWith("-") || d.StartsWith("+"))
-            {
+            if (d.StartsWith("-") || d.StartsWith("+")) {
                 String sign = d.JSubstring(0, 1);
                 d = d.Substring(1);
-                if (d.Length >= 2)
-                {
+                if (d.Length >= 2) {
                     String h = d.JSubstring(0, 2);
                     String m = "00";
-                    if (d.Length > 2)
-                    {
+                    if (d.Length > 2) {
                         d = d.Substring(3);
-                        if (d.Length >= 2)
-                        {
+                        if (d.Length >= 2) {
                             m = d.JSubstring(0, 2);
                         }
                     }
@@ -193,28 +176,22 @@ namespace iText.Kernel.Pdf
         /// <c>DateTime</c>
         /// representing the date
         /// </returns>
-        public static DateTime Decode(String s)
-        {
+        public static DateTime Decode(String s) {
             if (s.StartsWith("D:"))
                 s = s.Substring(2);
             int year, month = 1, day = 1, hour = 0, minute = 0, second = 0;
             int offsetHour = 0, offsetMinute = 0;
             char variation = '\0';
             year = int.Parse(s.Substring(0, 4));
-            if (s.Length >= 6)
-            {
+            if (s.Length >= 6) {
                 month = int.Parse(s.Substring(4, 2));
-                if (s.Length >= 8)
-                {
+                if (s.Length >= 8) {
                     day = int.Parse(s.Substring(6, 2));
-                    if (s.Length >= 10)
-                    {
+                    if (s.Length >= 10) {
                         hour = int.Parse(s.Substring(8, 2));
-                        if (s.Length >= 12)
-                        {
+                        if (s.Length >= 12) {
                             minute = int.Parse(s.Substring(10, 2));
-                            if (s.Length >= 14)
-                            {
+                            if (s.Length >= 14) {
                                 second = int.Parse(s.Substring(12, 2));
                             }
                         }
@@ -227,11 +204,9 @@ namespace iText.Kernel.Pdf
             variation = s[14];
             if (variation == 'Z')
                 return d.ToLocalTime();
-            if (s.Length >= 17)
-            {
+            if (s.Length >= 17) {
                 offsetHour = int.Parse(s.Substring(15, 2));
-                if (s.Length >= 20)
-                {
+                if (s.Length >= 20) {
                     offsetMinute = int.Parse(s.Substring(18, 2));
                 }
             }
@@ -243,13 +218,11 @@ namespace iText.Kernel.Pdf
             return d.ToLocalTime();
         }
 
-        protected internal override bool IsWrappedObjectMustBeIndirect()
-        {
+        protected internal override bool IsWrappedObjectMustBeIndirect() {
             return false;
         }
 
-        private static String GenerateStringByDateTime(DateTime d)
-        {
+        private static String GenerateStringByDateTime(DateTime d) {
             String value = d.ToString("\\D\\:yyyyMMddHHmmss", DateTimeFormatInfo.InvariantInfo);
             String timezone = d.ToString("zzz", DateTimeFormatInfo.InvariantInfo).Replace(":", "'") + "'";
             return value + timezone;

@@ -43,54 +43,44 @@ address: sales@itextpdf.com
 */
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 #if NETSTANDARD1_6
 using System.Net.Http;
 #endif
 
-namespace iText.IO.Util
-{
+namespace iText.IO.Util {
     /// <summary>
     /// This file is a helper class for internal usage only.
     /// Be aware that its API and functionality may be changed in future.
     /// </summary>
-    public static class UrlUtil
-    {
+    public static class UrlUtil {
         /// <summary>This method makes a valid URL from a given filename.</summary>
         /// <param name="filename">a given filename</param>
         /// <returns>a valid URL</returns>
-        public static Uri ToURL(String filename)
-        {
-            try
-            {
+        public static Uri ToURL(String filename) {
+            try {
                 return new Uri(filename);
-            }
-            catch
-            {
+            } catch {
                 return new Uri(Path.GetFullPath(filename));
             }
         }
 
-        public static Stream OpenStream(Uri url)
-        {
+        public static Stream OpenStream(Uri url) {
             Stream isp;
-            if (url.IsFile)
-            {
+            if (url.IsFile) {
                 // Use url.LocalPath because it's needed for handling UNC pathes (like used in local
                 // networks, e.g. \\computer\file.ext). It's safe to use #LocalPath because we 
                 // check #IsFile beforehand. On the other hand, the url.AbsolutePath provides escaped string and also breaks
                 // UNC path.
-                isp = new FileStream(url.LocalPath, FileMode.Open, FileAccess.Read);
-            }
-            else
-            {
+                isp = new FileStream(url.LocalPath, FileMode.Open, FileAccess.Read);     
+            } else {
 #if !NETSTANDARD1_6
                 WebRequest req = WebRequest.Create(url);
                 req.Credentials = CredentialCache.DefaultCredentials;
                 using (WebResponse res = req.GetResponse())
-                using (Stream rs = res.GetResponseStream())
-                {
+                using (Stream rs = res.GetResponseStream()) {
 #else
                 HttpClient client = new HttpClient();
                 using (Stream rs = client.GetStreamAsync(url).Result) {
@@ -98,8 +88,7 @@ namespace iText.IO.Util
                     isp = new MemoryStream();
                     byte[] buffer = new byte[4096];
                     int read;
-                    while ((read = rs.Read(buffer, 0, buffer.Length)) > 0)
-                    {
+                    while ((read = rs.Read(buffer, 0, buffer.Length)) > 0) {
                         isp.Write(buffer, 0, read);
                     }
                     isp.Position = 0;
@@ -114,8 +103,7 @@ namespace iText.IO.Util
         /// </summary>
         /// <param name="filename">a given filename</param>
         /// <returns>a valid Uri</returns>
-        public static Uri ToNormalizedURI(String filename)
-        {
+        public static Uri ToNormalizedURI(String filename) {
             return ToNormalizedURI(new FileInfo(filename));
         }
 
@@ -124,8 +112,7 @@ namespace iText.IO.Util
         /// </summary>
         /// <param name="file">a given file</param>
         /// <returns>a valid Uri</returns>
-        public static Uri ToNormalizedURI(FileInfo file)
-        {
+        public static Uri ToNormalizedURI(FileInfo file) {
             return new Uri(file.FullName);
         }
 
@@ -134,8 +121,7 @@ namespace iText.IO.Util
         /// </summary>
         /// <param name="uri">an initial url</param>
         /// <returns>the last redirected url</returns>
-        public static Uri GetFinalURL(Uri uri)
-        {
+        public static Uri GetFinalURL(Uri uri) {
             return uri;
         }
 
@@ -148,7 +134,7 @@ namespace iText.IO.Util
         {
             return new FileInfo(filename).FullName;
         }
-
+        
         /// <summary>
         /// This method gets normalized uri string from a file.
         /// </summary>

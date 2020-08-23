@@ -45,92 +45,70 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace iText.IO.Util
-{
-    public class LinkedHashSet<TKey> : ISet<TKey>
-    {
+namespace iText.IO.Util {
+    public class LinkedHashSet<TKey> : ISet<TKey> {
         private readonly IDictionary<TKey, LinkedListNode<TKey>> _map = new Dictionary<TKey, LinkedListNode<TKey>>();
         private readonly LinkedList<TKey> _list = new LinkedList<TKey>();
 
-        public LinkedHashSet()
-        {
-        }
+        public LinkedHashSet() {
+        } 
 
-        public LinkedHashSet(ICollection<TKey> c)
-        {
+        public LinkedHashSet(ICollection<TKey> c) {
             this.AddAll(c);
-        }
+        } 
 
-        public IEnumerator<TKey> GetEnumerator()
-        {
+        public IEnumerator<TKey> GetEnumerator() {
             return _list.GetEnumerator();
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
+        IEnumerator IEnumerable.GetEnumerator() {
             return GetEnumerator();
         }
 
-        public void Add(TKey item)
-        {
-            ((ISet<TKey>)this).Add(item);
+        public void Add(TKey item) {
+            ((ISet<TKey>) this).Add(item);
         }
 
-        public void UnionWith(IEnumerable<TKey> other)
-        {
-            foreach (TKey item in other)
-            {
+        public void UnionWith(IEnumerable<TKey> other) {
+            foreach (TKey item in other) {
                 Add(item);
             }
         }
 
-        public void IntersectWith(IEnumerable<TKey> other)
-        {
-            foreach (TKey item in other)
-            {
-                if (!Contains(item))
-                {
+        public void IntersectWith(IEnumerable<TKey> other) {
+            foreach (TKey item in other) {
+                if (!Contains(item)) {
                     Remove(item);
                 }
             }
         }
 
-        public void ExceptWith(IEnumerable<TKey> other)
-        {
-            foreach (TKey item in other)
-            {
+        public void ExceptWith(IEnumerable<TKey> other) {
+            foreach (TKey item in other) {
                 Remove(item);
             }
         }
 
-        public void SymmetricExceptWith(IEnumerable<TKey> other)
-        {
-            foreach (TKey item in other)
-            {
-                if (Contains(item))
-                {
+        public void SymmetricExceptWith(IEnumerable<TKey> other) {
+            foreach (TKey item in other) {
+                if (Contains(item)) {
                     Remove(item);
                 }
             }
         }
 
-        public bool IsSubsetOf(IEnumerable<TKey> other)
-        {
+        public bool IsSubsetOf(IEnumerable<TKey> other) {
             return this.All(other.Contains);
         }
 
-        public bool IsSupersetOf(IEnumerable<TKey> other)
-        {
+        public bool IsSupersetOf(IEnumerable<TKey> other) {
             return other.All(this.Contains);
         }
 
-        public bool IsProperSupersetOf(IEnumerable<TKey> other)
-        {
+        public bool IsProperSupersetOf(IEnumerable<TKey> other) {
             int cnt = 0;
-            foreach (TKey item in other)
-            {
-                if (!Contains(item))
-                {
+            foreach (TKey item in other) {
+                if (!Contains(item)) {
                     return false;
                 }
                 cnt++;
@@ -138,32 +116,25 @@ namespace iText.IO.Util
             return cnt == 0 || Count > cnt;
         }
 
-        public bool IsProperSubsetOf(IEnumerable<TKey> other)
-        {
+        public bool IsProperSubsetOf(IEnumerable<TKey> other) {
             int otherCount = 0;
-            foreach (TKey item in other)
-            {
+            foreach (TKey item in other) {
                 otherCount++;
-                if (otherCount > Count)
-                {
+                if (otherCount > Count) {
                     break;
                 }
             }
             return otherCount > Count && this.All(other.Contains);
         }
 
-        public bool Overlaps(IEnumerable<TKey> other)
-        {
+        public bool Overlaps(IEnumerable<TKey> other) {
             return other.Any(Contains);
         }
 
-        public bool SetEquals(IEnumerable<TKey> other)
-        {
+        public bool SetEquals(IEnumerable<TKey> other) {
             int otherCount = 0;
-            foreach (TKey item in other)
-            {
-                if (!Contains(item))
-                {
+            foreach (TKey item in other) {
+                if (!Contains(item)) {
                     return false;
                 }
                 otherCount++;
@@ -171,10 +142,8 @@ namespace iText.IO.Util
             return Count == otherCount;
         }
 
-        bool ISet<TKey>.Add(TKey item)
-        {
-            if (!_map.ContainsKey(item))
-            {
+        bool ISet<TKey>.Add(TKey item) {
+            if (!_map.ContainsKey(item)) {
                 LinkedListNode<TKey> node = _list.AddLast(item);
                 _map.Add(item, node);
                 return true;
@@ -182,30 +151,24 @@ namespace iText.IO.Util
             return false;
         }
 
-        public void Clear()
-        {
+        public void Clear() {
             _map.Clear();
             _list.Clear();
         }
 
-        public bool Contains(TKey item)
-        {
+        public bool Contains(TKey item) {
             return _map.ContainsKey(item);
         }
 
-        public void CopyTo(TKey[] array, int arrayIndex)
-        {
-            foreach (TKey item in _list)
-            {
+        public void CopyTo(TKey[] array, int arrayIndex) {
+            foreach (TKey item in _list) {
                 array.SetValue(item, arrayIndex++);
             }
         }
 
-        public bool Remove(TKey item)
-        {
+        public bool Remove(TKey item) {
             LinkedListNode<TKey> node;
-            if (_map.TryGetValue(item, out node))
-            {
+            if (_map.TryGetValue(item, out node)) {
                 _map.Remove(item);
                 _list.Remove(node);
                 return true;

@@ -45,8 +45,7 @@ address: sales@itextpdf.com
 using System;
 using System.IO;
 
-namespace iText.IO.Util
-{
+namespace iText.IO.Util {
     /// <summary>
     /// Abstract class for reading filtered character streams.
     /// The abstract class <code>FilterReader</code> itself
@@ -58,23 +57,19 @@ namespace iText.IO.Util
     /// @author      Mark Reinhold
     /// @since       JDK1.1
     /// </summary>
-    public abstract class FilterReader : TextReader
-    {
+    public abstract class FilterReader : TextReader {
         protected TextReader inp;
         private Object lockObj = new Object();
 
-        protected FilterReader(TextReader inp)
-        {
+        protected FilterReader(TextReader inp) {
             this.inp = inp;
         }
 
         /// <summary>
         /// Reads a single character.
         /// </summary>
-        public override int Read()
-        {
-            lock (lockObj)
-            {
+        public override int Read() {
+            lock (lockObj) {
                 return inp.Read();
             }
         }
@@ -82,18 +77,14 @@ namespace iText.IO.Util
         /// <summary>
         /// Reads characters into a portion of an array.
         /// </summary>
-        public override int Read(char[] cbuf, int off, int len)
-        {
-            lock (lockObj)
-            {
+        public override int Read(char[] cbuf, int off, int len) {
+            lock (lockObj) {
                 return inp.Read(cbuf, off, len);
             }
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
+        protected override void Dispose(bool disposing) {
+            if (disposing) {
                 inp.Dispose();
             }
             base.Dispose(disposing);

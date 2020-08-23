@@ -41,24 +41,21 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Util;
-using iText.Kernel.Counter.Context;
 using System;
 using System.Collections.Generic;
+using iText.IO.Util;
+using iText.Kernel.Counter.Context;
 
-namespace iText.Kernel.Counter
-{
+namespace iText.Kernel.Counter {
     /// <summary>The class that retrieves context of its invocation.</summary>
-    public class ContextManager
-    {
+    public class ContextManager {
         private static readonly iText.Kernel.Counter.ContextManager instance = new iText.Kernel.Counter.ContextManager
             ();
 
         private readonly SortedDictionary<String, IContext> contextMappings = new SortedDictionary<String, IContext
             >(new ContextManager.LengthComparator());
 
-        private ContextManager()
-        {
+        private ContextManager() {
             RegisterGenericContext(JavaUtil.ArraysAsList(NamespaceConstant.CORE_IO, NamespaceConstant.CORE_KERNEL, NamespaceConstant
                 .CORE_LAYOUT, NamespaceConstant.CORE_BARCODES, NamespaceConstant.CORE_PDFA, NamespaceConstant.CORE_SIGN
                 , NamespaceConstant.CORE_FORMS, NamespaceConstant.CORE_SXP, NamespaceConstant.CORE_SVG), JavaCollectionsUtil
@@ -83,8 +80,7 @@ namespace iText.Kernel.Counter
         /// <see cref="ContextManager"/>
         /// instance
         /// </returns>
-        public static iText.Kernel.Counter.ContextManager GetInstance()
-        {
+        public static iText.Kernel.Counter.ContextManager GetInstance() {
             return instance;
         }
 
@@ -101,8 +97,7 @@ namespace iText.Kernel.Counter
         /// <see langword="null"/>
         /// if the class is unknown.
         /// </returns>
-        public virtual IContext GetContext(Type clazz)
-        {
+        public virtual IContext GetContext(Type clazz) {
             return clazz != null ? GetContext(clazz.FullName) : null;
         }
 
@@ -119,23 +114,18 @@ namespace iText.Kernel.Counter
         /// <see langword="null"/>
         /// if the class is unknown.
         /// </returns>
-        public virtual IContext GetContext(String className)
-        {
+        public virtual IContext GetContext(String className) {
             return GetNamespaceMapping(GetRecognisedNamespace(className));
         }
 
-        internal virtual String GetRecognisedNamespace(String className)
-        {
-            if (className != null)
-            {
+        internal virtual String GetRecognisedNamespace(String className) {
+            if (className != null) {
                 // If both "a" and "a.b" namespaces are registered,
                 // iText should consider the context of "a.b" for an "a.b" event,
                 // that's why the contexts are sorted by the length of the namespace
-                foreach (String @namespace in contextMappings.Keys)
-                {
+                foreach (String @namespace in contextMappings.Keys) {
                     //Conversion to lowercase is done to be compatible with possible changes in case of packages/namespaces
-                    if (className.ToLowerInvariant().StartsWith(@namespace))
-                    {
+                    if (className.ToLowerInvariant().StartsWith(@namespace)) {
                         return @namespace;
                     }
                 }
@@ -143,41 +133,32 @@ namespace iText.Kernel.Counter
             return null;
         }
 
-        private IContext GetNamespaceMapping(String @namespace)
-        {
-            if (@namespace != null)
-            {
+        private IContext GetNamespaceMapping(String @namespace) {
+            if (@namespace != null) {
                 return contextMappings.Get(@namespace);
             }
             return null;
         }
 
-        private void RegisterGenericContext(ICollection<String> namespaces, ICollection<String> eventIds)
-        {
+        private void RegisterGenericContext(ICollection<String> namespaces, ICollection<String> eventIds) {
             GenericContext context = new GenericContext(eventIds);
-            foreach (String @namespace in namespaces)
-            {
+            foreach (String @namespace in namespaces) {
                 //Conversion to lowercase is done to be compatible with possible changes in case of packages/namespaces
                 RegisterContext(@namespace.ToLowerInvariant(), context);
             }
         }
 
-        private void RegisterContext(String @namespace, IContext context)
-        {
+        private void RegisterContext(String @namespace, IContext context) {
             contextMappings.Put(@namespace, context);
         }
 
-        private class LengthComparator : IComparer<String>
-        {
-            public virtual int Compare(String o1, String o2)
-            {
+        private class LengthComparator : IComparer<String> {
+            public virtual int Compare(String o1, String o2) {
                 int lengthComparison = -JavaUtil.IntegerCompare(o1.Length, o2.Length);
-                if (0 != lengthComparison)
-                {
+                if (0 != lengthComparison) {
                     return lengthComparison;
                 }
-                else
-                {
+                else {
                     return string.CompareOrdinal(o1, o2);
                 }
             }

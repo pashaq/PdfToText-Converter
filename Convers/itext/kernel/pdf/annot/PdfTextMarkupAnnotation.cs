@@ -42,11 +42,10 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Annot
-{
-    public class PdfTextMarkupAnnotation : PdfMarkupAnnotation
-    {
+namespace iText.Kernel.Pdf.Annot {
+    public class PdfTextMarkupAnnotation : PdfMarkupAnnotation {
         /// <summary>Subtypes</summary>
         public static readonly PdfName MarkupHighlight = PdfName.Highlight;
 
@@ -57,8 +56,7 @@ namespace iText.Kernel.Pdf.Annot
         public static readonly PdfName MarkupSquiggly = PdfName.Squiggly;
 
         public PdfTextMarkupAnnotation(Rectangle rect, PdfName subtype, float[] quadPoints)
-            : base(rect)
-        {
+            : base(rect) {
             Put(PdfName.Subtype, subtype);
             SetQuadPoints(new PdfArray(quadPoints));
         }
@@ -77,8 +75,7 @@ namespace iText.Kernel.Pdf.Annot
         /// </param>
         /// <seealso cref="PdfAnnotation.MakeAnnotation(iText.Kernel.Pdf.PdfObject)"/>
         protected internal PdfTextMarkupAnnotation(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
         /// <summary>Creates a text markup annotation of highlight style subtype.</summary>
@@ -109,8 +106,7 @@ namespace iText.Kernel.Pdf.Annot
         /// of Highlight type.
         /// </returns>
         public static iText.Kernel.Pdf.Annot.PdfTextMarkupAnnotation CreateHighLight(Rectangle rect, float[] quadPoints
-            )
-        {
+            ) {
             return new iText.Kernel.Pdf.Annot.PdfTextMarkupAnnotation(rect, MarkupHighlight, quadPoints);
         }
 
@@ -142,8 +138,7 @@ namespace iText.Kernel.Pdf.Annot
         /// of Underline type.
         /// </returns>
         public static iText.Kernel.Pdf.Annot.PdfTextMarkupAnnotation CreateUnderline(Rectangle rect, float[] quadPoints
-            )
-        {
+            ) {
             return new iText.Kernel.Pdf.Annot.PdfTextMarkupAnnotation(rect, MarkupUnderline, quadPoints);
         }
 
@@ -175,8 +170,7 @@ namespace iText.Kernel.Pdf.Annot
         /// of Strikeout type.
         /// </returns>
         public static iText.Kernel.Pdf.Annot.PdfTextMarkupAnnotation CreateStrikeout(Rectangle rect, float[] quadPoints
-            )
-        {
+            ) {
             return new iText.Kernel.Pdf.Annot.PdfTextMarkupAnnotation(rect, MarkupStrikeout, quadPoints);
         }
 
@@ -208,16 +202,13 @@ namespace iText.Kernel.Pdf.Annot
         /// of squiggly-underline type.
         /// </returns>
         public static iText.Kernel.Pdf.Annot.PdfTextMarkupAnnotation CreateSquiggly(Rectangle rect, float[] quadPoints
-            )
-        {
+            ) {
             return new iText.Kernel.Pdf.Annot.PdfTextMarkupAnnotation(rect, MarkupSquiggly, quadPoints);
         }
 
-        public override PdfName GetSubtype()
-        {
+        public override PdfName GetSubtype() {
             PdfName subType = GetPdfObject().GetAsName(PdfName.Subtype);
-            if (subType == null)
-            {
+            if (subType == null) {
                 subType = PdfName.Underline;
             }
             return subType;
@@ -242,8 +233,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfArray"/>
         /// of 8 × n numbers specifying the coordinates of n quadrilaterals.
         /// </returns>
-        public virtual PdfArray GetQuadPoints()
-        {
+        public virtual PdfArray GetQuadPoints() {
             return GetPdfObject().GetAsArray(PdfName.QuadPoints);
         }
 
@@ -277,8 +267,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfTextMarkupAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfTextMarkupAnnotation SetQuadPoints(PdfArray quadPoints)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfTextMarkupAnnotation SetQuadPoints(PdfArray quadPoints) {
             return (iText.Kernel.Pdf.Annot.PdfTextMarkupAnnotation)Put(PdfName.QuadPoints, quadPoints);
         }
     }

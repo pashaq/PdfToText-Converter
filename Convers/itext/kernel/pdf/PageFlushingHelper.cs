@@ -40,14 +40,14 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Util;
-using iText.Kernel.Events;
-using iText.Kernel.Pdf.Layer;
 using System;
 using System.Collections.Generic;
+using iText.IO.Util;
+using iText.Kernel;
+using iText.Kernel.Events;
+using iText.Kernel.Pdf.Layer;
 
-namespace iText.Kernel.Pdf
-{
+namespace iText.Kernel.Pdf {
     /// <summary>This class allows to free the memory taken by already processed pages when handling big PDF files.
     ///     </summary>
     /// <remarks>
@@ -138,12 +138,10 @@ namespace iText.Kernel.Pdf
     /// <see cref="PageFlushingHelper"/>
     /// class doesn't work with PdfADocument instances.
     /// </remarks>
-    public class PageFlushingHelper
-    {
+    public class PageFlushingHelper {
         private static readonly PageFlushingHelper.DeepFlushingContext pageContext;
 
-        static PageFlushingHelper()
-        {
+        static PageFlushingHelper() {
             pageContext = InitPageFlushingContext();
         }
 
@@ -157,8 +155,7 @@ namespace iText.Kernel.Pdf
 
         private ICollection<PdfIndirectReference> layersRefs = new HashSet<PdfIndirectReference>();
 
-        public PageFlushingHelper(PdfDocument pdfDoc)
-        {
+        public PageFlushingHelper(PdfDocument pdfDoc) {
             this.pdfDoc = pdfDoc;
         }
 
@@ -208,10 +205,8 @@ namespace iText.Kernel.Pdf
         /// </remarks>
         /// <param name="pageNum">the page number which low level objects structure is to be flushed to the output stream.
         ///     </param>
-        public virtual void UnsafeFlushDeep(int pageNum)
-        {
-            if (pdfDoc.GetWriter() == null)
-            {
+        public virtual void UnsafeFlushDeep(int pageNum) {
+            if (pdfDoc.GetWriter() == null) {
                 throw new ArgumentException(PdfException.FlushingHelperFLushingModeIsNotForDocReadingMode);
             }
             release = false;
@@ -242,8 +237,7 @@ namespace iText.Kernel.Pdf
         /// This includes reading data from pages, page modification and page handling via addons/utilities.
         /// </remarks>
         /// <param name="pageNum">the page number which low level objects structure is to be released from memory.</param>
-        public virtual void ReleaseDeep(int pageNum)
-        {
+        public virtual void ReleaseDeep(int pageNum) {
             release = true;
             FlushPage(pageNum);
         }
@@ -284,15 +278,12 @@ namespace iText.Kernel.Pdf
         /// </remarks>
         /// <param name="pageNum">the page number which low level objects structure is to be flushed or released from memory.
         ///     </param>
-        public virtual void AppendModeFlush(int pageNum)
-        {
-            if (pdfDoc.GetWriter() == null)
-            {
+        public virtual void AppendModeFlush(int pageNum) {
+            if (pdfDoc.GetWriter() == null) {
                 throw new ArgumentException(PdfException.FlushingHelperFLushingModeIsNotForDocReadingMode);
             }
             PdfPage page = pdfDoc.GetPage(pageNum);
-            if (page.IsFlushed())
-            {
+            if (page.IsFlushed()) {
                 return;
             }
             page.GetDocument().DispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.END_PAGE, page));
@@ -301,39 +292,30 @@ namespace iText.Kernel.Pdf
             release = true;
             pageWasModified = FlushPage(pageNum) || pageWasModified;
             PdfArray annots = page.GetPdfObject().GetAsArray(PdfName.Annots);
-            if (annots != null && !annots.IsFlushed())
-            {
+            if (annots != null && !annots.IsFlushed()) {
                 ArrayFlushIfModified(annots);
             }
             PdfObject thumb = page.GetPdfObject().Get(PdfName.Thumb, false);
             FlushIfModified(thumb);
             PdfObject contents = page.GetPdfObject().Get(PdfName.Contents, false);
-            if (contents is PdfIndirectReference)
-            {
-                if (contents.CheckState(PdfObject.MODIFIED) && !contents.CheckState(PdfObject.FLUSHED))
-                {
+            if (contents is PdfIndirectReference) {
+                if (contents.CheckState(PdfObject.MODIFIED) && !contents.CheckState(PdfObject.FLUSHED)) {
                     PdfObject contentsDirectObj = ((PdfIndirectReference)contents).GetRefersTo();
-                    if (contentsDirectObj.IsArray())
-                    {
+                    if (contentsDirectObj.IsArray()) {
                         ArrayFlushIfModified((PdfArray)contentsDirectObj);
                     }
-                    else
-                    {
+                    else {
                         // already checked that modified
                         contentsDirectObj.Flush();
                     }
                 }
             }
-            else
-            {
-                if (contents is PdfArray)
-                {
+            else {
+                if (contents is PdfArray) {
                     ArrayFlushIfModified((PdfArray)contents);
                 }
-                else
-                {
-                    if (contents is PdfStream)
-                    {
+                else {
+                    if (contents is PdfStream) {
                         FlushIfModified(contents);
                     }
                 }
@@ -341,31 +323,26 @@ namespace iText.Kernel.Pdf
             // Page tags flushing is supported only in PdfPage#flush and #unsafeFlushDeep: it makes sense to flush tags
             // completely for heavily modified or new pages. For the slightly modified pages it should be enough to release
             // the tag structure objects via tag structure releasing utility.
-            if (!pageWasModified)
-            {
+            if (!pageWasModified) {
                 page.GetPdfObject().GetIndirectReference().ClearState(PdfObject.MODIFIED);
                 pdfDoc.GetCatalog().GetPageTree().ReleasePage(pageNum);
                 page.UnsetForbidRelease();
                 page.GetPdfObject().Release();
             }
-            else
-            {
+            else {
                 // inherited and modified resources are handled in #flushPage call in the beginning of method
                 page.ReleaseInstanceFields();
                 page.GetPdfObject().Flush();
             }
         }
 
-        private bool FlushPage(int pageNum)
-        {
+        private bool FlushPage(int pageNum) {
             PdfPage page = pdfDoc.GetPage(pageNum);
-            if (page.IsFlushed())
-            {
+            if (page.IsFlushed()) {
                 return false;
             }
             bool pageChanged = false;
-            if (!release)
-            {
+            if (!release) {
                 pdfDoc.DispatchEvent(new PdfDocumentEvent(PdfDocumentEvent.END_PAGE, page));
                 InitCurrentLayers(pdfDoc);
             }
@@ -375,41 +352,33 @@ namespace iText.Kernel.Pdf
             // inits /Resources dict entry if not inherited and not created yet
             PdfDictionary resourcesDict = page.InitResources(false);
             PdfResources resources = page.GetResources(false);
-            if (resources != null && resources.IsModified() && !resources.IsReadOnly())
-            {
+            if (resources != null && resources.IsModified() && !resources.IsReadOnly()) {
                 resourcesDict = resources.GetPdfObject();
                 pageDict.Put(PdfName.Resources, resources.GetPdfObject());
                 pageDict.SetModified();
                 pageChanged = true;
             }
-            if (!resourcesDict.IsFlushed())
-            {
+            if (!resourcesDict.IsFlushed()) {
                 FlushDictRecursively(resourcesDict, null);
                 FlushOrRelease(resourcesDict);
             }
             FlushDictRecursively(pageDict, pageContext);
-            if (release)
-            {
-                if (!page.GetPdfObject().IsModified())
-                {
+            if (release) {
+                if (!page.GetPdfObject().IsModified()) {
                     pdfDoc.GetCatalog().GetPageTree().ReleasePage(pageNum);
                     page.UnsetForbidRelease();
                     page.GetPdfObject().Release();
                 }
             }
-            else
-            {
-                if (pdfDoc.IsTagged() && !pdfDoc.GetStructTreeRoot().IsFlushed())
-                {
+            else {
+                if (pdfDoc.IsTagged() && !pdfDoc.GetStructTreeRoot().IsFlushed()) {
                     page.TryFlushPageTags();
                 }
-                if (!pdfDoc.IsAppendMode() || page.GetPdfObject().IsModified())
-                {
+                if (!pdfDoc.IsAppendMode() || page.GetPdfObject().IsModified()) {
                     page.ReleaseInstanceFields();
                     page.GetPdfObject().Flush();
                 }
-                else
-                {
+                else {
                     // it's append mode
                     pdfDoc.GetCatalog().GetPageTree().ReleasePage(pageNum);
                     page.UnsetForbidRelease();
@@ -420,44 +389,33 @@ namespace iText.Kernel.Pdf
             return pageChanged;
         }
 
-        private void InitCurrentLayers(PdfDocument pdfDoc)
-        {
-            if (pdfDoc.GetCatalog().IsOCPropertiesMayHaveChanged())
-            {
+        private void InitCurrentLayers(PdfDocument pdfDoc) {
+            if (pdfDoc.GetCatalog().IsOCPropertiesMayHaveChanged()) {
                 IList<PdfLayer> layers = pdfDoc.GetCatalog().GetOCProperties(false).GetLayers();
-                foreach (PdfLayer layer in layers)
-                {
+                foreach (PdfLayer layer in layers) {
                     layersRefs.Add(layer.GetPdfObject().GetIndirectReference());
                 }
             }
         }
 
-        private void FlushObjectRecursively(PdfObject obj, PageFlushingHelper.DeepFlushingContext context)
-        {
-            if (obj == null)
-            {
+        private void FlushObjectRecursively(PdfObject obj, PageFlushingHelper.DeepFlushingContext context) {
+            if (obj == null) {
                 return;
             }
             bool avoidReleaseForIndirectObjInstance = false;
-            if (obj.IsIndirectReference())
-            {
+            if (obj.IsIndirectReference()) {
                 PdfIndirectReference indRef = (PdfIndirectReference)obj;
-                if (indRef.refersTo == null || indRef.CheckState(PdfObject.FLUSHED))
-                {
+                if (indRef.refersTo == null || indRef.CheckState(PdfObject.FLUSHED)) {
                     return;
                 }
                 obj = indRef.GetRefersTo();
             }
-            else
-            {
-                if (obj.IsFlushed())
-                {
+            else {
+                if (obj.IsFlushed()) {
                     return;
                 }
-                else
-                {
-                    if (release && obj.IsIndirect())
-                    {
+                else {
+                    if (release && obj.IsIndirect()) {
                         // We should avoid the case when object is going to be released but is stored in containing object
                         // not as indirect reference. This can happen when containing object is somehow modified.
                         // Generally containing objects should not contain released read-only object instance.
@@ -466,50 +424,38 @@ namespace iText.Kernel.Pdf
                     }
                 }
             }
-            if (pdfDoc.IsDocumentFont(obj.GetIndirectReference()) || layersRefs.Contains(obj.GetIndirectReference()))
-            {
+            if (pdfDoc.IsDocumentFont(obj.GetIndirectReference()) || layersRefs.Contains(obj.GetIndirectReference())) {
                 return;
             }
-            if (obj.IsDictionary() || obj.IsStream())
-            {
-                if (!currNestedObjParents.Add(obj))
-                {
+            if (obj.IsDictionary() || obj.IsStream()) {
+                if (!currNestedObjParents.Add(obj)) {
                     return;
                 }
                 FlushDictRecursively((PdfDictionary)obj, context);
                 currNestedObjParents.Remove(obj);
             }
-            else
-            {
-                if (obj.IsArray())
-                {
-                    if (!currNestedObjParents.Add(obj))
-                    {
+            else {
+                if (obj.IsArray()) {
+                    if (!currNestedObjParents.Add(obj)) {
                         return;
                     }
                     PdfArray array = (PdfArray)obj;
-                    for (int i = 0; i < array.Size(); ++i)
-                    {
+                    for (int i = 0; i < array.Size(); ++i) {
                         FlushObjectRecursively(array.Get(i, false), context);
                     }
                     currNestedObjParents.Remove(obj);
                 }
             }
-            if (!avoidReleaseForIndirectObjInstance)
-            {
+            if (!avoidReleaseForIndirectObjInstance) {
                 FlushOrRelease(obj);
             }
         }
 
-        private void FlushDictRecursively(PdfDictionary dict, PageFlushingHelper.DeepFlushingContext context)
-        {
-            foreach (PdfName key in dict.KeySet())
-            {
+        private void FlushDictRecursively(PdfDictionary dict, PageFlushingHelper.DeepFlushingContext context) {
+            foreach (PdfName key in dict.KeySet()) {
                 PageFlushingHelper.DeepFlushingContext innerContext = null;
-                if (context != null)
-                {
-                    if (context.IsKeyInBlackList(key))
-                    {
+                if (context != null) {
+                    if (context.IsKeyInBlackList(key)) {
                         continue;
                     }
                     innerContext = context.GetInnerContextFor(key);
@@ -519,64 +465,49 @@ namespace iText.Kernel.Pdf
             }
         }
 
-        private void FlushOrRelease(PdfObject obj)
-        {
-            if (release)
-            {
-                if (!obj.IsReleaseForbidden())
-                {
+        private void FlushOrRelease(PdfObject obj) {
+            if (release) {
+                if (!obj.IsReleaseForbidden()) {
                     obj.Release();
                 }
             }
-            else
-            {
+            else {
                 MakeIndirectIfNeeded(obj);
-                if (!pdfDoc.IsAppendMode() || obj.IsModified())
-                {
+                if (!pdfDoc.IsAppendMode() || obj.IsModified()) {
                     obj.Flush();
                 }
-                else
-                {
-                    if (!obj.IsReleaseForbidden())
-                    {
+                else {
+                    if (!obj.IsReleaseForbidden()) {
                         obj.Release();
                     }
                 }
             }
         }
 
-        private void FlushIfModified(PdfObject o)
-        {
-            if (o != null && !(o is PdfIndirectReference))
-            {
+        private void FlushIfModified(PdfObject o) {
+            if (o != null && !(o is PdfIndirectReference)) {
                 MakeIndirectIfNeeded(o);
                 o = o.GetIndirectReference();
             }
-            if (o != null && o.CheckState(PdfObject.MODIFIED) && !o.CheckState(PdfObject.FLUSHED))
-            {
+            if (o != null && o.CheckState(PdfObject.MODIFIED) && !o.CheckState(PdfObject.FLUSHED)) {
                 ((PdfIndirectReference)o).GetRefersTo().Flush();
             }
         }
 
-        private void ArrayFlushIfModified(PdfArray contentsArr)
-        {
-            for (int i = 0; i < contentsArr.Size(); ++i)
-            {
+        private void ArrayFlushIfModified(PdfArray contentsArr) {
+            for (int i = 0; i < contentsArr.Size(); ++i) {
                 PdfObject c = contentsArr.Get(i, false);
                 FlushIfModified(c);
             }
         }
 
-        private void MakeIndirectIfNeeded(PdfObject o)
-        {
-            if (o.CheckState(PdfObject.MUST_BE_INDIRECT))
-            {
+        private void MakeIndirectIfNeeded(PdfObject o) {
+            if (o.CheckState(PdfObject.MUST_BE_INDIRECT)) {
                 o.MakeIndirect(pdfDoc);
             }
         }
 
-        private static PageFlushingHelper.DeepFlushingContext InitPageFlushingContext()
-        {
+        private static PageFlushingHelper.DeepFlushingContext InitPageFlushingContext() {
             ICollection<PdfName> ALL_KEYS_IN_BLACK_LIST = null;
             IDictionary<PdfName, PageFlushingHelper.DeepFlushingContext> NO_INNER_CONTEXTS = JavaCollectionsUtil.EmptyMap
                 <PdfName, PageFlushingHelper.DeepFlushingContext>();
@@ -595,7 +526,7 @@ namespace iText.Kernel.Pdf
             PageFlushingHelper.DeepFlushingContext annotsContext = new PageFlushingHelper.DeepFlushingContext(
                         // annotations flushing blacklist
                         new LinkedHashSet<PdfName>(JavaUtil.ArraysAsList(PdfName.P, PdfName.Popup, PdfName.Dest, PdfName.Parent, PdfName
-                .V)),
+                .V)), 
                         // keys that belong to form fields which can be merged with widget annotations
                         annotInnerContexts);
             annotInnerContexts.Put(PdfName.A, actionContext);
@@ -635,8 +566,7 @@ namespace iText.Kernel.Pdf
             return pageContext;
         }
 
-        private class DeepFlushingContext
-        {
+        private class DeepFlushingContext {
             // null stands for every key to be in black list
             internal ICollection<PdfName> blackList;
 
@@ -646,26 +576,22 @@ namespace iText.Kernel.Pdf
             internal PageFlushingHelper.DeepFlushingContext unconditionalInnerContext;
 
             public DeepFlushingContext(ICollection<PdfName> blackList, IDictionary<PdfName, PageFlushingHelper.DeepFlushingContext
-                > innerContexts)
-            {
+                > innerContexts) {
                 this.blackList = blackList;
                 this.innerContexts = innerContexts;
             }
 
-            public DeepFlushingContext(PageFlushingHelper.DeepFlushingContext unconditionalInnerContext)
-            {
+            public DeepFlushingContext(PageFlushingHelper.DeepFlushingContext unconditionalInnerContext) {
                 this.blackList = JavaCollectionsUtil.EmptySet<PdfName>();
                 this.innerContexts = null;
                 this.unconditionalInnerContext = unconditionalInnerContext;
             }
 
-            public virtual bool IsKeyInBlackList(PdfName key)
-            {
+            public virtual bool IsKeyInBlackList(PdfName key) {
                 return blackList == null || blackList.Contains(key);
             }
 
-            public virtual PageFlushingHelper.DeepFlushingContext GetInnerContextFor(PdfName key)
-            {
+            public virtual PageFlushingHelper.DeepFlushingContext GetInnerContextFor(PdfName key) {
                 return innerContexts == null ? unconditionalInnerContext : innerContexts.Get(key);
             }
         }

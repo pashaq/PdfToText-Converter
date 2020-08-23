@@ -40,13 +40,10 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-namespace iText.IO.Font.Constants
-{
+namespace iText.IO.Font.Constants {
     /// <summary>Font descriptor flags</summary>
-    public sealed class FontDescriptorFlags
-    {
-        private FontDescriptorFlags()
-        {
+    public sealed class FontDescriptorFlags {
+        private FontDescriptorFlags() {
         }
 
         public static int FixedPitch = 1;

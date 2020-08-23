@@ -41,21 +41,19 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
+using System.Collections.Generic;
 using iText.IO.Font;
 using iText.Kernel.Colors;
 using iText.Kernel.Pdf.Action;
 using iText.Kernel.Pdf.Navigation;
-using System;
-using System.Collections.Generic;
 
-namespace iText.Kernel.Pdf
-{
+namespace iText.Kernel.Pdf {
     /// <summary>
     /// Document outline object
     /// See ISO-320001, 12.3.3 Document Outline.
     /// </summary>
-    public class PdfOutline
-    {
+    public class PdfOutline {
         /// <summary>A flag for displaying the outline item’s text with italic font.</summary>
         public static int FLAG_ITALIC = 1;
 
@@ -82,8 +80,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfDocument"/>
         /// the outline belongs to.
         /// </param>
-        internal PdfOutline(String title, PdfDictionary content, PdfDocument pdfDocument)
-        {
+        internal PdfOutline(String title, PdfDictionary content, PdfDocument pdfDocument) {
             this.title = title;
             this.content = content;
             this.pdfDoc = pdfDocument;
@@ -99,8 +96,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="AddOutline(System.String)"/>
         /// instead.
         /// </param>
-        internal PdfOutline(String title, PdfDictionary content, iText.Kernel.Pdf.PdfOutline parent)
-        {
+        internal PdfOutline(String title, PdfDictionary content, iText.Kernel.Pdf.PdfOutline parent) {
             this.title = title;
             this.content = content;
             this.parent = parent;
@@ -113,8 +109,7 @@ namespace iText.Kernel.Pdf
         /// 
         /// <see cref="PdfDocument"/>
         /// </param>
-        internal PdfOutline(PdfDocument doc)
-        {
+        internal PdfOutline(PdfDocument doc) {
             content = new PdfDictionary();
             content.Put(PdfName.Type, PdfName.Outlines);
             this.pdfDoc = doc;
@@ -124,8 +119,7 @@ namespace iText.Kernel.Pdf
 
         /// <summary>Gets title of the outline.</summary>
         /// <returns>String value.</returns>
-        public virtual String GetTitle()
-        {
+        public virtual String GetTitle() {
             return title;
         }
 
@@ -137,8 +131,7 @@ namespace iText.Kernel.Pdf
         /// key.
         /// </summary>
         /// <param name="title">String value.</param>
-        public virtual void SetTitle(String title)
-        {
+        public virtual void SetTitle(String title) {
             this.title = title;
             this.content.Put(PdfName.Title, new PdfString(title, PdfEncodings.UNICODE_BIG));
         }
@@ -152,8 +145,7 @@ namespace iText.Kernel.Pdf
         /// 
         /// <see cref="iText.Kernel.Colors.Color"/>
         /// </param>
-        public virtual void SetColor(Color color)
-        {
+        public virtual void SetColor(Color color) {
             content.Put(PdfName.C, new PdfArray(color.GetColorValue()));
         }
 
@@ -170,10 +162,8 @@ namespace iText.Kernel.Pdf
         /// . Default value is
         /// <c>0</c>.
         /// </param>
-        public virtual void SetStyle(int style)
-        {
-            if (style == FLAG_BOLD || style == FLAG_ITALIC)
-            {
+        public virtual void SetStyle(int style) {
+            if (style == FLAG_BOLD || style == FLAG_ITALIC) {
                 content.Put(PdfName.F, new PdfNumber(style));
             }
         }
@@ -183,8 +173,7 @@ namespace iText.Kernel.Pdf
         /// 
         /// <see cref="PdfDictionary"/>.
         /// </returns>
-        public virtual PdfDictionary GetContent()
-        {
+        public virtual PdfDictionary GetContent() {
             return content;
         }
 
@@ -193,8 +182,7 @@ namespace iText.Kernel.Pdf
         /// List of
         /// <see cref="PdfOutline"/>.
         /// </returns>
-        public virtual IList<iText.Kernel.Pdf.PdfOutline> GetAllChildren()
-        {
+        public virtual IList<iText.Kernel.Pdf.PdfOutline> GetAllChildren() {
             return children;
         }
 
@@ -203,8 +191,7 @@ namespace iText.Kernel.Pdf
         /// 
         /// <see cref="PdfOutline"/>.
         /// </returns>
-        public virtual iText.Kernel.Pdf.PdfOutline GetParent()
-        {
+        public virtual iText.Kernel.Pdf.PdfOutline GetParent() {
             return parent;
         }
 
@@ -216,8 +203,7 @@ namespace iText.Kernel.Pdf
         /// 
         /// <see cref="iText.Kernel.Pdf.Navigation.PdfDestination"/>.
         /// </returns>
-        public virtual PdfDestination GetDestination()
-        {
+        public virtual PdfDestination GetDestination() {
             return destination;
         }
 
@@ -232,8 +218,7 @@ namespace iText.Kernel.Pdf
         /// instance of
         /// <see cref="iText.Kernel.Pdf.Navigation.PdfDestination"/>.
         /// </param>
-        public virtual void AddDestination(PdfDestination destination)
-        {
+        public virtual void AddDestination(PdfDestination destination) {
             SetDestination(destination);
             content.Put(PdfName.Dest, destination.GetPdfObject());
         }
@@ -249,8 +234,7 @@ namespace iText.Kernel.Pdf
         /// instance of
         /// <see cref="iText.Kernel.Pdf.Action.PdfAction"/>.
         /// </param>
-        public virtual void AddAction(PdfAction action)
-        {
+        public virtual void AddAction(PdfAction action) {
             content.Put(PdfName.A, action.GetPdfObject());
         }
 
@@ -260,20 +244,15 @@ namespace iText.Kernel.Pdf
         /// By default, outlines are open.
         /// </remarks>
         /// <param name="open">if false, the outline will be closed by default</param>
-        public virtual void SetOpen(bool open)
-        {
-            if (!open)
-            {
+        public virtual void SetOpen(bool open) {
+            if (!open) {
                 content.Put(PdfName.Count, new PdfNumber(-1));
             }
-            else
-            {
-                if (children.Count > 0)
-                {
+            else {
+                if (children.Count > 0) {
                     content.Put(PdfName.Count, new PdfNumber(children.Count));
                 }
-                else
-                {
+                else {
                     content.Remove(PdfName.Count);
                 }
             }
@@ -294,42 +273,34 @@ namespace iText.Kernel.Pdf
         /// If the position equals -1, then the outline will be put in the end of children list.
         /// </param>
         /// <returns>just created outline</returns>
-        public virtual iText.Kernel.Pdf.PdfOutline AddOutline(String title, int position)
-        {
-            if (position == -1)
-            {
+        public virtual iText.Kernel.Pdf.PdfOutline AddOutline(String title, int position) {
+            if (position == -1) {
                 position = children.Count;
             }
             PdfDictionary dictionary = new PdfDictionary();
             iText.Kernel.Pdf.PdfOutline outline = new iText.Kernel.Pdf.PdfOutline(title, dictionary, this);
             dictionary.Put(PdfName.Title, new PdfString(title, PdfEncodings.UNICODE_BIG));
             dictionary.Put(PdfName.Parent, content);
-            if (children.Count > 0)
-            {
-                if (position != 0)
-                {
+            if (children.Count > 0) {
+                if (position != 0) {
                     PdfDictionary prevContent = children[position - 1].GetContent();
                     dictionary.Put(PdfName.Prev, prevContent);
                     prevContent.Put(PdfName.Next, dictionary);
                 }
-                if (position != children.Count)
-                {
+                if (position != children.Count) {
                     PdfDictionary nextContent = children[position].GetContent();
                     dictionary.Put(PdfName.Next, nextContent);
                     nextContent.Put(PdfName.Prev, dictionary);
                 }
             }
-            if (position == 0)
-            {
+            if (position == 0) {
                 content.Put(PdfName.First, dictionary);
             }
-            if (position == children.Count)
-            {
+            if (position == children.Count) {
                 content.Put(PdfName.Last, dictionary);
             }
             PdfNumber count = this.content.GetAsNumber(PdfName.Count);
-            if (count == null || count.GetValue() != -1)
-            {
+            if (count == null || count.GetValue() != -1) {
                 content.Put(PdfName.Count, new PdfNumber(children.Count + 1));
             }
             children.Add(position, outline);
@@ -347,8 +318,7 @@ namespace iText.Kernel.Pdf
         /// </summary>
         /// <param name="title">an outline title</param>
         /// <returns>just created outline</returns>
-        public virtual iText.Kernel.Pdf.PdfOutline AddOutline(String title)
-        {
+        public virtual iText.Kernel.Pdf.PdfOutline AddOutline(String title) {
             return AddOutline(title, -1);
         }
 
@@ -363,13 +333,11 @@ namespace iText.Kernel.Pdf
         /// </summary>
         /// <param name="outline">an outline to add.</param>
         /// <returns>just created outline</returns>
-        public virtual iText.Kernel.Pdf.PdfOutline AddOutline(iText.Kernel.Pdf.PdfOutline outline)
-        {
+        public virtual iText.Kernel.Pdf.PdfOutline AddOutline(iText.Kernel.Pdf.PdfOutline outline) {
             iText.Kernel.Pdf.PdfOutline newOutline = AddOutline(outline.GetTitle());
             newOutline.AddDestination(outline.GetDestination());
             IList<iText.Kernel.Pdf.PdfOutline> children = outline.GetAllChildren();
-            foreach (iText.Kernel.Pdf.PdfOutline child in children)
-            {
+            foreach (iText.Kernel.Pdf.PdfOutline child in children) {
                 newOutline.AddOutline(child);
             }
             return newOutline;
@@ -378,10 +346,8 @@ namespace iText.Kernel.Pdf
         /// <summary>Remove this outline from the document.</summary>
         /// <remarks>Remove this outline from the document. Outlines that are children of this outline are removed recursively
         ///     </remarks>
-        public virtual void RemoveOutline()
-        {
-            if (!pdfDoc.HasOutlines() || IsOutlineRoot())
-            {
+        public virtual void RemoveOutline() {
+            if (!pdfDoc.HasOutlines() || IsOutlineRoot()) {
                 pdfDoc.GetCatalog().Remove(PdfName.Outlines);
                 return;
             }
@@ -389,42 +355,34 @@ namespace iText.Kernel.Pdf
             IList<iText.Kernel.Pdf.PdfOutline> children = parent.children;
             children.Remove(this);
             PdfDictionary parentContent = parent.content;
-            if (children.Count > 0)
-            {
+            if (children.Count > 0) {
                 parentContent.Put(PdfName.First, children[0].content);
                 parentContent.Put(PdfName.Last, children[children.Count - 1].content);
             }
-            else
-            {
+            else {
                 parent.RemoveOutline();
                 return;
             }
             PdfDictionary next = content.GetAsDictionary(PdfName.Next);
             PdfDictionary prev = content.GetAsDictionary(PdfName.Prev);
-            if (prev != null)
-            {
-                if (next != null)
-                {
+            if (prev != null) {
+                if (next != null) {
                     prev.Put(PdfName.Next, next);
                     next.Put(PdfName.Prev, prev);
                 }
-                else
-                {
+                else {
                     prev.Remove(PdfName.Next);
                 }
             }
-            else
-            {
-                if (next != null)
-                {
+            else {
+                if (next != null) {
                     next.Remove(PdfName.Prev);
                 }
             }
         }
 
         /// <summary>Clear list of children.</summary>
-        internal virtual void Clear()
-        {
+        internal virtual void Clear() {
             children.Clear();
         }
 
@@ -436,8 +394,7 @@ namespace iText.Kernel.Pdf
         /// instance of
         /// <see cref="iText.Kernel.Pdf.Navigation.PdfDestination"/>.
         /// </param>
-        internal virtual void SetDestination(PdfDestination destination)
-        {
+        internal virtual void SetDestination(PdfDestination destination) {
             this.destination = destination;
         }
 
@@ -453,10 +410,8 @@ namespace iText.Kernel.Pdf
         /// <see langword="null"/>
         /// if it can't be found.
         /// </returns>
-        private PdfDictionary GetOutlineRoot()
-        {
-            if (!pdfDoc.HasOutlines())
-            {
+        private PdfDictionary GetOutlineRoot() {
+            if (!pdfDoc.HasOutlines()) {
                 return null;
             }
             return pdfDoc.GetCatalog().GetPdfObject().GetAsDictionary(PdfName.Outlines);
@@ -474,8 +429,7 @@ namespace iText.Kernel.Pdf
         /// <see langword="true"/>
         /// otherwise.
         /// </returns>
-        private bool IsOutlineRoot()
-        {
+        private bool IsOutlineRoot() {
             PdfDictionary outlineRoot = GetOutlineRoot();
             return outlineRoot == content;
         }

@@ -41,15 +41,13 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
 using Common.Logging;
 using iText.Kernel.Pdf.Colorspace;
-using System;
 
-namespace iText.Kernel.Colors
-{
+namespace iText.Kernel.Colors {
     /// <summary>Color space to specify shades of gray color.</summary>
-    public class DeviceGray : Color
-    {
+    public class DeviceGray : Color {
         /// <summary>Predefined white DeviceGray color.</summary>
         public static readonly iText.Kernel.Colors.DeviceGray WHITE = new iText.Kernel.Colors.DeviceGray(1f);
 
@@ -68,10 +66,8 @@ namespace iText.Kernel.Colors
         /// </remarks>
         /// <param name="value">the grayscale value</param>
         public DeviceGray(float value)
-            : base(new PdfDeviceCs.Gray(), new float[] { value > 1 ? 1 : (value > 0 ? value : 0) })
-        {
-            if (value > 1 || value < 0)
-            {
+            : base(new PdfDeviceCs.Gray(), new float[] { value > 1 ? 1 : (value > 0 ? value : 0) }) {
+            if (value > 1 || value < 0) {
                 ILog LOGGER = LogManager.GetLogger(typeof(iText.Kernel.Colors.DeviceGray));
                 LOGGER.Warn(iText.IO.LogMessageConstant.COLORANT_INTENSITIES_INVALID);
             }
@@ -79,8 +75,7 @@ namespace iText.Kernel.Colors
 
         /// <summary>Creates DeviceGray color with grayscale value initialised as zero.</summary>
         public DeviceGray()
-            : this(0f)
-        {
+            : this(0f) {
         }
 
         /// <summary>
@@ -90,11 +85,9 @@ namespace iText.Kernel.Colors
         /// </summary>
         /// <param name="grayColor">the DeviceGray color to be made lighter</param>
         /// <returns>lighter color</returns>
-        public static iText.Kernel.Colors.DeviceGray MakeLighter(iText.Kernel.Colors.DeviceGray grayColor)
-        {
+        public static iText.Kernel.Colors.DeviceGray MakeLighter(iText.Kernel.Colors.DeviceGray grayColor) {
             float v = grayColor.GetColorValue()[0];
-            if (v == 0f)
-            {
+            if (v == 0f) {
                 return new iText.Kernel.Colors.DeviceGray(0.3f);
             }
             float multiplier = Math.Min(1f, v + 0.33f) / v;
@@ -108,8 +101,7 @@ namespace iText.Kernel.Colors
         /// </summary>
         /// <param name="grayColor">the DeviceGray color to be made darker</param>
         /// <returns>darker color</returns>
-        public static iText.Kernel.Colors.DeviceGray MakeDarker(iText.Kernel.Colors.DeviceGray grayColor)
-        {
+        public static iText.Kernel.Colors.DeviceGray MakeDarker(iText.Kernel.Colors.DeviceGray grayColor) {
             float v = grayColor.GetColorValue()[0];
             float multiplier = Math.Max(0f, (v - 0.33f) / v);
             return new iText.Kernel.Colors.DeviceGray(v * multiplier);

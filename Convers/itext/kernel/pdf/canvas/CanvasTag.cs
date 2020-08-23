@@ -41,11 +41,11 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.Kernel.Pdf.Tagging;
 using System;
+using iText.Kernel.Pdf;
+using iText.Kernel.Pdf.Tagging;
 
-namespace iText.Kernel.Pdf.Canvas
-{
+namespace iText.Kernel.Pdf.Canvas {
     /// <summary>This class represents a single tag on a single piece of marked content.</summary>
     /// <remarks>
     /// This class represents a single tag on a single piece of marked content.
@@ -56,8 +56,7 @@ namespace iText.Kernel.Pdf.Canvas
     /// mechanism in Tagged PDF is extensible, so PDF creators can choose to create
     /// custom tags.
     /// </remarks>
-    public class CanvasTag
-    {
+    public class CanvasTag {
         /// <summary>The type of the tag.</summary>
         protected internal PdfName role;
 
@@ -69,8 +68,7 @@ namespace iText.Kernel.Pdf.Canvas
         /// logical structure).
         /// </summary>
         /// <param name="role">the type of tag</param>
-        public CanvasTag(PdfName role)
-        {
+        public CanvasTag(PdfName role) {
             this.role = role;
         }
 
@@ -80,8 +78,7 @@ namespace iText.Kernel.Pdf.Canvas
         /// </summary>
         /// <param name="role">the type of tag</param>
         /// <param name="mcid">marked content id which serves as a reference to the document's logical structure</param>
-        public CanvasTag(PdfName role, int mcid)
-        {
+        public CanvasTag(PdfName role, int mcid) {
             this.role = role;
             AddProperty(PdfName.MCID, new PdfNumber(mcid));
         }
@@ -96,28 +93,23 @@ namespace iText.Kernel.Pdf.Canvas
         /// wrapper object
         /// </param>
         public CanvasTag(PdfMcr mcr)
-            : this(mcr.GetRole(), mcr.GetMcid())
-        {
+            : this(mcr.GetRole(), mcr.GetMcid()) {
         }
 
         /// <summary>Get the role of the tag.</summary>
         /// <returns>the role of the tag as a PdfName</returns>
-        public virtual PdfName GetRole()
-        {
+        public virtual PdfName GetRole() {
             return role;
         }
 
         /// <summary>Get the marked content id of the tag.</summary>
         /// <returns>marked content id</returns>
-        public virtual int GetMcid()
-        {
+        public virtual int GetMcid() {
             int mcid = -1;
-            if (properties != null)
-            {
+            if (properties != null) {
                 mcid = (int)properties.GetAsInt(PdfName.MCID);
             }
-            if (mcid == -1)
-            {
+            if (mcid == -1) {
                 throw new InvalidOperationException("CanvasTag has no MCID");
             }
             return mcid;
@@ -125,8 +117,7 @@ namespace iText.Kernel.Pdf.Canvas
 
         /// <summary>Determine if an MCID is available</summary>
         /// <returns>true if the MCID is available, false otherwise</returns>
-        public virtual bool HasMcid()
-        {
+        public virtual bool HasMcid() {
             return properties != null && properties.ContainsKey(PdfName.MCID);
         }
 
@@ -145,8 +136,7 @@ namespace iText.Kernel.Pdf.Canvas
         /// current
         /// <see cref="CanvasTag"/>
         /// </returns>
-        public virtual iText.Kernel.Pdf.Canvas.CanvasTag SetProperties(PdfDictionary properties)
-        {
+        public virtual iText.Kernel.Pdf.Canvas.CanvasTag SetProperties(PdfDictionary properties) {
             this.properties = properties;
             return this;
         }
@@ -162,8 +152,7 @@ namespace iText.Kernel.Pdf.Canvas
         /// current
         /// <see cref="CanvasTag"/>
         /// </returns>
-        public virtual iText.Kernel.Pdf.Canvas.CanvasTag AddProperty(PdfName name, PdfObject value)
-        {
+        public virtual iText.Kernel.Pdf.Canvas.CanvasTag AddProperty(PdfName name, PdfObject value) {
             EnsurePropertiesInit();
             properties.Put(name, value);
             return this;
@@ -179,10 +168,8 @@ namespace iText.Kernel.Pdf.Canvas
         /// current
         /// <see cref="CanvasTag"/>
         /// </returns>
-        public virtual iText.Kernel.Pdf.Canvas.CanvasTag RemoveProperty(PdfName name)
-        {
-            if (properties != null)
-            {
+        public virtual iText.Kernel.Pdf.Canvas.CanvasTag RemoveProperty(PdfName name) {
+            if (properties != null) {
                 properties.Remove(name);
             }
             return this;
@@ -195,10 +182,8 @@ namespace iText.Kernel.Pdf.Canvas
         /// </summary>
         /// <param name="name">the key of the key-value pair to be retrieved</param>
         /// <returns>the value corresponding to the key</returns>
-        public virtual PdfObject GetProperty(PdfName name)
-        {
-            if (properties == null)
-            {
+        public virtual PdfObject GetProperty(PdfName name) {
+            if (properties == null) {
                 return null;
             }
             return properties.Get(name);
@@ -206,36 +191,29 @@ namespace iText.Kernel.Pdf.Canvas
 
         /// <summary>Get the properties of the tag.</summary>
         /// <returns>properties of the tag</returns>
-        public virtual PdfDictionary GetProperties()
-        {
+        public virtual PdfDictionary GetProperties() {
             return properties;
         }
 
-        public virtual String GetActualText()
-        {
+        public virtual String GetActualText() {
             return GetPropertyAsString(PdfName.ActualText);
         }
 
-        public virtual String GetExpansionText()
-        {
+        public virtual String GetExpansionText() {
             return GetPropertyAsString(PdfName.E);
         }
 
-        private String GetPropertyAsString(PdfName name)
-        {
+        private String GetPropertyAsString(PdfName name) {
             PdfString text = properties.GetAsString(name);
             String result = null;
-            if (text != null)
-            {
+            if (text != null) {
                 result = text.ToUnicodeString();
             }
             return result;
         }
 
-        private void EnsurePropertiesInit()
-        {
-            if (properties == null)
-            {
+        private void EnsurePropertiesInit() {
+            if (properties == null) {
                 properties = new PdfDictionary();
             }
         }

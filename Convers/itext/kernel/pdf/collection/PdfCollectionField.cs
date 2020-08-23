@@ -42,11 +42,11 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using System;
+using iText.Kernel;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Collection
-{
-    public class PdfCollectionField : PdfObjectWrapper<PdfDictionary>
-    {
+namespace iText.Kernel.Pdf.Collection {
+    public class PdfCollectionField : PdfObjectWrapper<PdfDictionary> {
         /// <summary>A possible type of collection field.</summary>
         public const int TEXT = 0;
 
@@ -74,58 +74,48 @@ namespace iText.Kernel.Pdf.Collection
         protected internal int subType;
 
         protected internal PdfCollectionField(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
             String subType = pdfObject.GetAsName(PdfName.Subtype).GetValue();
-            switch (subType)
-            {
-                case "D":
-                    {
-                        this.subType = DATE;
-                        break;
-                    }
+            switch (subType) {
+                case "D": {
+                    this.subType = DATE;
+                    break;
+                }
 
-                case "N":
-                    {
-                        this.subType = NUMBER;
-                        break;
-                    }
+                case "N": {
+                    this.subType = NUMBER;
+                    break;
+                }
 
-                case "F":
-                    {
-                        this.subType = FILENAME;
-                        break;
-                    }
+                case "F": {
+                    this.subType = FILENAME;
+                    break;
+                }
 
-                case "Desc":
-                    {
-                        this.subType = DESC;
-                        break;
-                    }
+                case "Desc": {
+                    this.subType = DESC;
+                    break;
+                }
 
-                case "ModDate":
-                    {
-                        this.subType = MODDATE;
-                        break;
-                    }
+                case "ModDate": {
+                    this.subType = MODDATE;
+                    break;
+                }
 
-                case "CreationDate":
-                    {
-                        this.subType = CREATIONDATE;
-                        break;
-                    }
+                case "CreationDate": {
+                    this.subType = CREATIONDATE;
+                    break;
+                }
 
-                case "Size":
-                    {
-                        this.subType = SIZE;
-                        break;
-                    }
+                case "Size": {
+                    this.subType = SIZE;
+                    break;
+                }
 
-                default:
-                    {
-                        this.subType = TEXT;
-                        break;
-                    }
+                default: {
+                    this.subType = TEXT;
+                    break;
+                }
             }
         }
 
@@ -133,59 +123,49 @@ namespace iText.Kernel.Pdf.Collection
         /// <param name="name">the field name</param>
         /// <param name="subType">the field subtype</param>
         public PdfCollectionField(String name, int subType)
-            : base(new PdfDictionary())
-        {
+            : base(new PdfDictionary()) {
             GetPdfObject().Put(PdfName.N, new PdfString(name));
             this.subType = subType;
-            switch (subType)
-            {
-                default:
-                    {
-                        GetPdfObject().Put(PdfName.Subtype, PdfName.S);
-                        break;
-                    }
+            switch (subType) {
+                default: {
+                    GetPdfObject().Put(PdfName.Subtype, PdfName.S);
+                    break;
+                }
 
-                case DATE:
-                    {
-                        GetPdfObject().Put(PdfName.Subtype, PdfName.D);
-                        break;
-                    }
+                case DATE: {
+                    GetPdfObject().Put(PdfName.Subtype, PdfName.D);
+                    break;
+                }
 
-                case NUMBER:
-                    {
-                        GetPdfObject().Put(PdfName.Subtype, PdfName.N);
-                        break;
-                    }
+                case NUMBER: {
+                    GetPdfObject().Put(PdfName.Subtype, PdfName.N);
+                    break;
+                }
 
-                case FILENAME:
-                    {
-                        GetPdfObject().Put(PdfName.Subtype, PdfName.F);
-                        break;
-                    }
+                case FILENAME: {
+                    GetPdfObject().Put(PdfName.Subtype, PdfName.F);
+                    break;
+                }
 
-                case DESC:
-                    {
-                        GetPdfObject().Put(PdfName.Subtype, PdfName.Desc);
-                        break;
-                    }
+                case DESC: {
+                    GetPdfObject().Put(PdfName.Subtype, PdfName.Desc);
+                    break;
+                }
 
-                case MODDATE:
-                    {
-                        GetPdfObject().Put(PdfName.Subtype, PdfName.ModDate);
-                        break;
-                    }
+                case MODDATE: {
+                    GetPdfObject().Put(PdfName.Subtype, PdfName.ModDate);
+                    break;
+                }
 
-                case CREATIONDATE:
-                    {
-                        GetPdfObject().Put(PdfName.Subtype, PdfName.CreationDate);
-                        break;
-                    }
+                case CREATIONDATE: {
+                    GetPdfObject().Put(PdfName.Subtype, PdfName.CreationDate);
+                    break;
+                }
 
-                case SIZE:
-                    {
-                        GetPdfObject().Put(PdfName.Subtype, PdfName.Size);
-                        break;
-                    }
+                case SIZE: {
+                    GetPdfObject().Put(PdfName.Subtype, PdfName.Size);
+                    break;
+                }
             }
         }
 
@@ -193,8 +173,7 @@ namespace iText.Kernel.Pdf.Collection
         /// <remarks>The relative order of the field name. Fields are sorted in ascending order.</remarks>
         /// <param name="order">a number indicating the order of the field</param>
         /// <returns>this instance to support fluent interface</returns>
-        public virtual iText.Kernel.Pdf.Collection.PdfCollectionField SetOrder(int order)
-        {
+        public virtual iText.Kernel.Pdf.Collection.PdfCollectionField SetOrder(int order) {
             GetPdfObject().Put(PdfName.O, new PdfNumber(order));
             return this;
         }
@@ -205,16 +184,14 @@ namespace iText.Kernel.Pdf.Collection
         /// <see cref="iText.Kernel.Pdf.PdfNumber">PDF number</see>
         /// showing the order of the field name
         /// </returns>
-        public virtual PdfNumber GetOrder()
-        {
+        public virtual PdfNumber GetOrder() {
             return GetPdfObject().GetAsNumber(PdfName.O);
         }
 
         /// <summary>Sets the initial visibility of the field.</summary>
         /// <param name="visible">is a state of visibility</param>
         /// <returns>this instance to support fluent interface</returns>
-        public virtual iText.Kernel.Pdf.Collection.PdfCollectionField SetVisibility(bool visible)
-        {
+        public virtual iText.Kernel.Pdf.Collection.PdfCollectionField SetVisibility(bool visible) {
             GetPdfObject().Put(PdfName.V, PdfBoolean.ValueOf(visible));
             return this;
         }
@@ -225,16 +202,14 @@ namespace iText.Kernel.Pdf.Collection
         /// <see cref="iText.Kernel.Pdf.PdfBoolean">PDF boolean</see>
         /// value
         /// </returns>
-        public virtual PdfBoolean GetVisibility()
-        {
+        public virtual PdfBoolean GetVisibility() {
             return GetPdfObject().GetAsBoolean(PdfName.V);
         }
 
         /// <summary>Indication if the field value should be editable in the viewer.</summary>
         /// <param name="editable">is a state of editable</param>
         /// <returns>this instance to support fluent interface</returns>
-        public virtual iText.Kernel.Pdf.Collection.PdfCollectionField SetEditable(bool editable)
-        {
+        public virtual iText.Kernel.Pdf.Collection.PdfCollectionField SetEditable(bool editable) {
             GetPdfObject().Put(PdfName.E, PdfBoolean.ValueOf(editable));
             return this;
         }
@@ -245,8 +220,7 @@ namespace iText.Kernel.Pdf.Collection
         /// as
         /// <see cref="iText.Kernel.Pdf.PdfBoolean">pdf boolean</see>.
         /// </returns>
-        public virtual PdfBoolean GetEditable()
-        {
+        public virtual PdfBoolean GetEditable() {
             return GetPdfObject().GetAsBoolean(PdfName.E);
         }
 
@@ -256,31 +230,25 @@ namespace iText.Kernel.Pdf.Collection
         /// resulting
         /// <see cref="iText.Kernel.Pdf.PdfObject">PDF object</see>
         /// </returns>
-        public virtual PdfObject GetValue(String value)
-        {
-            switch (subType)
-            {
-                case TEXT:
-                    {
-                        return new PdfString(value);
-                    }
+        public virtual PdfObject GetValue(String value) {
+            switch (subType) {
+                case TEXT: {
+                    return new PdfString(value);
+                }
 
-                case DATE:
-                    {
-                        return new PdfDate(PdfDate.Decode(value)).GetPdfObject();
-                    }
+                case DATE: {
+                    return new PdfDate(PdfDate.Decode(value)).GetPdfObject();
+                }
 
-                case NUMBER:
-                    {
-                        return new PdfNumber(Double.Parse(value.Trim(), System.Globalization.CultureInfo.InvariantCulture));
-                    }
+                case NUMBER: {
+                    return new PdfNumber(Double.Parse(value.Trim(), System.Globalization.CultureInfo.InvariantCulture));
+                }
             }
             throw new PdfException(PdfException._1IsNotAnAcceptableValueForTheField2).SetMessageParams(value, GetPdfObject
                 ().GetAsString(PdfName.N).GetValue());
         }
 
-        protected internal override bool IsWrappedObjectMustBeIndirect()
-        {
+        protected internal override bool IsWrappedObjectMustBeIndirect() {
             return false;
         }
     }

@@ -40,8 +40,7 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-namespace iText.Kernel.Colors
-{
+namespace iText.Kernel.Colors {
     /// <summary>
     /// Class containing predefined
     /// <see cref="DeviceRgb"/>
@@ -59,8 +58,7 @@ namespace iText.Kernel.Colors
     /// and
     /// <see cref="DeviceRgb"/>.
     /// </remarks>
-    public class ColorConstants
-    {
+    public class ColorConstants {
         /// <summary>Predefined black DeviceRgb color</summary>
         public static readonly Color BLACK = DeviceRgb.BLACK;
 

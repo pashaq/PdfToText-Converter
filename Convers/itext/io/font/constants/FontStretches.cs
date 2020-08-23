@@ -42,12 +42,9 @@ address: sales@itextpdf.com
 */
 using System;
 
-namespace iText.IO.Font.Constants
-{
-    public sealed class FontStretches
-    {
-        private FontStretches()
-        {
+namespace iText.IO.Font.Constants {
+    public sealed class FontStretches {
+        private FontStretches() {
         }
 
         private const int FWIDTH_ULTRA_CONDENSED = 1;
@@ -98,64 +95,53 @@ namespace iText.IO.Font.Constants
         /// <see cref="FontStretches"/>
         /// constants.
         /// </returns>
-        public static String FromOpenTypeWidthClass(int fontWidth)
-        {
+        public static String FromOpenTypeWidthClass(int fontWidth) {
             String fontWidthValue = NORMAL;
-            switch (fontWidth)
-            {
-                case FWIDTH_ULTRA_CONDENSED:
-                    {
-                        fontWidthValue = ULTRA_CONDENSED;
-                        break;
-                    }
+            switch (fontWidth) {
+                case FWIDTH_ULTRA_CONDENSED: {
+                    fontWidthValue = ULTRA_CONDENSED;
+                    break;
+                }
 
-                case FWIDTH_EXTRA_CONDENSED:
-                    {
-                        fontWidthValue = EXTRA_CONDENSED;
-                        break;
-                    }
+                case FWIDTH_EXTRA_CONDENSED: {
+                    fontWidthValue = EXTRA_CONDENSED;
+                    break;
+                }
 
-                case FWIDTH_CONDENSED:
-                    {
-                        fontWidthValue = CONDENSED;
-                        break;
-                    }
+                case FWIDTH_CONDENSED: {
+                    fontWidthValue = CONDENSED;
+                    break;
+                }
 
-                case FWIDTH_SEMI_CONDENSED:
-                    {
-                        fontWidthValue = SEMI_CONDENSED;
-                        break;
-                    }
+                case FWIDTH_SEMI_CONDENSED: {
+                    fontWidthValue = SEMI_CONDENSED;
+                    break;
+                }
 
-                case FWIDTH_NORMAL:
-                    {
-                        fontWidthValue = NORMAL;
-                        break;
-                    }
+                case FWIDTH_NORMAL: {
+                    fontWidthValue = NORMAL;
+                    break;
+                }
 
-                case FWIDTH_SEMI_EXPANDED:
-                    {
-                        fontWidthValue = SEMI_EXPANDED;
-                        break;
-                    }
+                case FWIDTH_SEMI_EXPANDED: {
+                    fontWidthValue = SEMI_EXPANDED;
+                    break;
+                }
 
-                case FWIDTH_EXPANDED:
-                    {
-                        fontWidthValue = EXPANDED;
-                        break;
-                    }
+                case FWIDTH_EXPANDED: {
+                    fontWidthValue = EXPANDED;
+                    break;
+                }
 
-                case FWIDTH_EXTRA_EXPANDED:
-                    {
-                        fontWidthValue = EXTRA_EXPANDED;
-                        break;
-                    }
+                case FWIDTH_EXTRA_EXPANDED: {
+                    fontWidthValue = EXTRA_EXPANDED;
+                    break;
+                }
 
-                case FWIDTH_ULTRA_EXPANDED:
-                    {
-                        fontWidthValue = ULTRA_EXPANDED;
-                        break;
-                    }
+                case FWIDTH_ULTRA_EXPANDED: {
+                    fontWidthValue = ULTRA_EXPANDED;
+                    break;
+                }
             }
             return fontWidthValue;
         }

@@ -41,28 +41,23 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Tagging
-{
-    public class PdfMcrNumber : PdfMcr
-    {
+namespace iText.Kernel.Pdf.Tagging {
+    public class PdfMcrNumber : PdfMcr {
         public PdfMcrNumber(PdfNumber pdfObject, PdfStructElem parent)
-            : base(pdfObject, parent)
-        {
+            : base(pdfObject, parent) {
         }
 
         public PdfMcrNumber(PdfPage page, PdfStructElem parent)
-            : base(new PdfNumber(page.GetNextMcid()), parent)
-        {
+            : base(new PdfNumber(page.GetNextMcid()), parent) {
         }
 
-        public override int GetMcid()
-        {
+        public override int GetMcid() {
             return ((PdfNumber)GetPdfObject()).IntValue();
         }
 
-        public override PdfDictionary GetPageObject()
-        {
+        public override PdfDictionary GetPageObject() {
             return base.GetPageObject();
         }
     }

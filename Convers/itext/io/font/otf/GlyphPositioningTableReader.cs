@@ -41,11 +41,10 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Source;
 using System.Collections.Generic;
+using iText.IO.Source;
 
-namespace iText.IO.Font.Otf
-{
+namespace iText.IO.Font.Otf {
     /// <summary>Parses an OpenTypeFont file and reads the Glyph Substitution Table.</summary>
     /// <remarks>
     /// Parses an OpenTypeFont file and reads the Glyph Substitution Table. This table governs how two or more Glyphs should be merged
@@ -54,22 +53,17 @@ namespace iText.IO.Font.Otf
     /// This has been written according to the OPenTypeFont specifications. This may be found <a href="http://www.microsoft.com/typography/otspec/gsub.htm">here</a>.
     /// </remarks>
     /// <author><a href="mailto:paawak@gmail.com">Palash Ray</a></author>
-    public class GlyphPositioningTableReader : OpenTypeFontTableReader
-    {
+    public class GlyphPositioningTableReader : OpenTypeFontTableReader {
         public GlyphPositioningTableReader(RandomAccessFileOrArray rf, int gposTableLocation, OpenTypeGdefTableReader
              gdef, IDictionary<int, Glyph> indexGlyphMap, int unitsPerEm)
-            : base(rf, gposTableLocation, gdef, indexGlyphMap, unitsPerEm)
-        {
+            : base(rf, gposTableLocation, gdef, indexGlyphMap, unitsPerEm) {
             StartReadingTable();
         }
 
         protected internal override OpenTableLookup ReadLookupTable(int lookupType, int lookupFlag, int[] subTableLocations
-            )
-        {
-            if (lookupType == 9)
-            {
-                for (int k = 0; k < subTableLocations.Length; ++k)
-                {
+            ) {
+            if (lookupType == 9) {
+                for (int k = 0; k < subTableLocations.Length; ++k) {
                     int location = subTableLocations[k];
                     rf.Seek(location);
                     rf.ReadUnsignedShort();
@@ -78,32 +72,26 @@ namespace iText.IO.Font.Otf
                     subTableLocations[k] = location;
                 }
             }
-            switch (lookupType)
-            {
-                case 2:
-                    {
-                        return new GposLookupType2(this, lookupFlag, subTableLocations);
-                    }
+            switch (lookupType) {
+                case 2: {
+                    return new GposLookupType2(this, lookupFlag, subTableLocations);
+                }
 
-                case 4:
-                    {
-                        return new GposLookupType4(this, lookupFlag, subTableLocations);
-                    }
+                case 4: {
+                    return new GposLookupType4(this, lookupFlag, subTableLocations);
+                }
 
-                case 5:
-                    {
-                        return new GposLookupType5(this, lookupFlag, subTableLocations);
-                    }
+                case 5: {
+                    return new GposLookupType5(this, lookupFlag, subTableLocations);
+                }
 
-                case 6:
-                    {
-                        return new GposLookupType6(this, lookupFlag, subTableLocations);
-                    }
+                case 6: {
+                    return new GposLookupType6(this, lookupFlag, subTableLocations);
+                }
 
-                default:
-                    {
-                        return null;
-                    }
+                default: {
+                    return null;
+                }
             }
         }
     }

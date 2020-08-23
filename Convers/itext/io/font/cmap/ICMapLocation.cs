@@ -41,14 +41,12 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Source;
 using System;
+using iText.IO.Source;
 
-namespace iText.IO.Font.Cmap
-{
+namespace iText.IO.Font.Cmap {
     /// <author>psoares</author>
-    public interface ICMapLocation
-    {
+    public interface ICMapLocation {
         PdfTokenizer GetLocation(String location);
     }
 }

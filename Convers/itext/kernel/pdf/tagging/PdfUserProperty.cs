@@ -40,15 +40,13 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Font;
 using System;
+using iText.IO.Font;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Tagging
-{
-    public class PdfUserProperty : PdfObjectWrapper<PdfDictionary>
-    {
-        public enum ValueType
-        {
+namespace iText.Kernel.Pdf.Tagging {
+    public class PdfUserProperty : PdfObjectWrapper<PdfDictionary> {
+        public enum ValueType {
             UNKNOWN,
             TEXT,
             NUMBER,
@@ -56,146 +54,120 @@ namespace iText.Kernel.Pdf.Tagging
         }
 
         public PdfUserProperty(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
         public PdfUserProperty(String name, String value)
-            : base(new PdfDictionary())
-        {
+            : base(new PdfDictionary()) {
             SetName(name);
             SetValue(value);
         }
 
         public PdfUserProperty(String name, int value)
-            : base(new PdfDictionary())
-        {
+            : base(new PdfDictionary()) {
             SetName(name);
             SetValue(value);
         }
 
         public PdfUserProperty(String name, float value)
-            : base(new PdfDictionary())
-        {
+            : base(new PdfDictionary()) {
             SetName(name);
             SetValue(value);
         }
 
         public PdfUserProperty(String name, bool value)
-            : base(new PdfDictionary())
-        {
+            : base(new PdfDictionary()) {
             SetName(name);
             SetValue(value);
         }
 
-        public virtual String GetName()
-        {
+        public virtual String GetName() {
             return GetPdfObject().GetAsString(PdfName.N).ToUnicodeString();
         }
 
-        public virtual PdfUserProperty SetName(String name)
-        {
+        public virtual PdfUserProperty SetName(String name) {
             GetPdfObject().Put(PdfName.N, new PdfString(name, PdfEncodings.UNICODE_BIG));
             return this;
         }
 
-        public virtual PdfUserProperty.ValueType GetValueType()
-        {
+        public virtual PdfUserProperty.ValueType GetValueType() {
             PdfObject valObj = GetPdfObject().Get(PdfName.V);
-            if (valObj == null)
-            {
+            if (valObj == null) {
                 return PdfUserProperty.ValueType.UNKNOWN;
             }
-            switch (valObj.GetObjectType())
-            {
-                case PdfObject.BOOLEAN:
-                    {
-                        return PdfUserProperty.ValueType.BOOLEAN;
-                    }
+            switch (valObj.GetObjectType()) {
+                case PdfObject.BOOLEAN: {
+                    return PdfUserProperty.ValueType.BOOLEAN;
+                }
 
-                case PdfObject.NUMBER:
-                    {
-                        return PdfUserProperty.ValueType.NUMBER;
-                    }
+                case PdfObject.NUMBER: {
+                    return PdfUserProperty.ValueType.NUMBER;
+                }
 
-                case PdfObject.STRING:
-                    {
-                        return PdfUserProperty.ValueType.TEXT;
-                    }
+                case PdfObject.STRING: {
+                    return PdfUserProperty.ValueType.TEXT;
+                }
 
-                default:
-                    {
-                        return PdfUserProperty.ValueType.UNKNOWN;
-                    }
+                default: {
+                    return PdfUserProperty.ValueType.UNKNOWN;
+                }
             }
         }
 
-        public virtual PdfUserProperty SetValue(String value)
-        {
+        public virtual PdfUserProperty SetValue(String value) {
             GetPdfObject().Put(PdfName.V, new PdfString(value, PdfEncodings.UNICODE_BIG));
             return this;
         }
 
-        public virtual PdfUserProperty SetValue(int value)
-        {
+        public virtual PdfUserProperty SetValue(int value) {
             GetPdfObject().Put(PdfName.V, new PdfNumber(value));
             return this;
         }
 
-        public virtual PdfUserProperty SetValue(float value)
-        {
+        public virtual PdfUserProperty SetValue(float value) {
             GetPdfObject().Put(PdfName.V, new PdfNumber(value));
             return this;
         }
 
-        public virtual PdfUserProperty SetValue(bool value)
-        {
+        public virtual PdfUserProperty SetValue(bool value) {
             GetPdfObject().Put(PdfName.V, new PdfBoolean(value));
             return this;
         }
 
-        public virtual String GetValueAsText()
-        {
+        public virtual String GetValueAsText() {
             PdfString str = GetPdfObject().GetAsString(PdfName.V);
             return str != null ? str.ToUnicodeString() : null;
         }
 
-        public virtual float? GetValueAsFloat()
-        {
+        public virtual float? GetValueAsFloat() {
             PdfNumber num = GetPdfObject().GetAsNumber(PdfName.V);
             return num != null ? (float?)num.FloatValue() : (float?)null;
         }
 
-        public virtual bool? GetValueAsBool()
-        {
+        public virtual bool? GetValueAsBool() {
             return GetPdfObject().GetAsBool(PdfName.V);
         }
 
-        public virtual String GetValueFormattedRepresentation()
-        {
+        public virtual String GetValueFormattedRepresentation() {
             PdfString f = GetPdfObject().GetAsString(PdfName.F);
             return f != null ? f.ToUnicodeString() : null;
         }
 
-        public virtual PdfUserProperty SetValueFormattedRepresentation(String formattedRepresentation)
-        {
+        public virtual PdfUserProperty SetValueFormattedRepresentation(String formattedRepresentation) {
             GetPdfObject().Put(PdfName.F, new PdfString(formattedRepresentation, PdfEncodings.UNICODE_BIG));
             return this;
         }
 
-        public virtual bool? IsHidden()
-        {
+        public virtual bool? IsHidden() {
             return GetPdfObject().GetAsBool(PdfName.H);
         }
 
-        public virtual PdfUserProperty SetHidden(bool isHidden)
-        {
+        public virtual PdfUserProperty SetHidden(bool isHidden) {
             GetPdfObject().Put(PdfName.H, new PdfBoolean(isHidden));
             return this;
         }
 
-        protected internal override bool IsWrappedObjectMustBeIndirect()
-        {
+        protected internal override bool IsWrappedObjectMustBeIndirect() {
             return false;
         }
     }

@@ -41,6 +41,7 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -48,12 +49,9 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace iText.Kernel.Utils
-{
-    sealed class XmlUtils
-    {
-        public static void WriteXmlDocToStream(XmlDocument xmlReport, Stream stream)
-        {
+namespace iText.Kernel.Utils {
+    sealed class XmlUtils {
+        public static void WriteXmlDocToStream(XmlDocument xmlReport, Stream stream) {
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Encoding = Encoding.UTF8;
             settings.Indent = true;
@@ -62,23 +60,19 @@ namespace iText.Kernel.Utils
             writer.Flush();
         }
 
-        public static bool CompareXmls(Stream xml1, Stream xml2)
-        {
+        public static bool CompareXmls(Stream xml1, Stream xml2) {
             XElement el1 = XElement.Load(createSafeReader(xml1));
             XElement el2 = XElement.Load(createSafeReader(xml2));
 
             return XNode.DeepEquals(Normalize(el1), Normalize(el2));
         }
 
-        public static XmlDocument InitNewXmlDocument()
-        {
+        public static XmlDocument InitNewXmlDocument() {
             return new XmlDocument();
         }
 
-        private static XElement Normalize(XElement element)
-        {
-            if (element.HasElements)
-            {
+        private static XElement Normalize(XElement element) {
+            if (element.HasElements) {
                 return new XElement(
                     element.Name,
                     element.Attributes().Where(a => a.Name.Namespace == XNamespace.Xmlns)
@@ -87,8 +81,7 @@ namespace iText.Kernel.Utils
                         .Select(e => Normalize(e)));
             }
 
-            if (element.IsEmpty)
-            {
+            if (element.IsEmpty) {
                 return new XElement(element.Name, element.Attributes()
                     .OrderBy(a => a.Name.ToString()));
             }
@@ -97,20 +90,16 @@ namespace iText.Kernel.Utils
                 .OrderBy(a => a.Name.ToString()), element.Value);
         }
 
-        private static XmlReader createSafeReader(Stream str)
-        {
+        private static XmlReader createSafeReader(Stream str) {
             XmlReaderSettings xmlReaderSettings = new XmlReaderSettings();
             xmlReaderSettings.DtdProcessing = DtdProcessing.Ignore;
             XmlReader reader = XmlReader.Create(str, xmlReaderSettings);
-            try
-            {
+            try {
                 // Prevents Exception "Reference to undeclared entity 'question'"
                 PropertyInfo propertyInfo = reader.GetType().GetProperty("DisableUndeclaredEntityCheck",
                     BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
                 propertyInfo.SetValue(reader, true, null);
-            }
-            catch (Exception exc)
-            {
+            } catch (Exception exc) {
             }
             return reader;
         }

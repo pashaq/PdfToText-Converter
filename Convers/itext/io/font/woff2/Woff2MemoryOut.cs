@@ -15,41 +15,34 @@
 // This is part of java port of project hosted at https://github.com/google/woff2
 using System;
 
-namespace iText.IO.Font.Woff2
-{
+namespace iText.IO.Font.Woff2 {
     /// <summary>Fixed memory block for woff2 out.</summary>
-    internal class Woff2MemoryOut : Woff2Out
-    {
+    internal class Woff2MemoryOut : Woff2Out {
         private byte[] buf_;
 
         private int buf_size_;
 
         private int offset_;
 
-        public Woff2MemoryOut(byte[] buf_, int buf_size_)
-        {
+        public Woff2MemoryOut(byte[] buf_, int buf_size_) {
             this.buf_ = buf_;
             this.buf_size_ = buf_size_;
             this.offset_ = 0;
         }
 
-        public virtual void Write(byte[] buf, int buff_offset, int n)
-        {
+        public virtual void Write(byte[] buf, int buff_offset, int n) {
             Write(buf, buff_offset, offset_, n);
         }
 
-        public virtual void Write(byte[] buf, int buff_offset, int offset, int n)
-        {
-            if (offset > buf_size_ || n > buf_size_ - offset)
-            {
+        public virtual void Write(byte[] buf, int buff_offset, int offset, int n) {
+            if (offset > buf_size_ || n > buf_size_ - offset) {
                 throw new FontCompressionException(FontCompressionException.WRITE_FAILED);
             }
             Array.Copy(buf, buff_offset, buf_, offset, n);
             offset_ = Math.Max(offset_, offset + n);
         }
 
-        public virtual int Size()
-        {
+        public virtual int Size() {
             return offset_;
         }
     }

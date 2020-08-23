@@ -41,13 +41,12 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Source;
 using System.IO;
+using iText.IO.Source;
+using iText.Kernel;
 
-namespace iText.Kernel.Pdf
-{
-    internal class PdfObjectStream : PdfStream
-    {
+namespace iText.Kernel.Pdf {
+    internal class PdfObjectStream : PdfStream {
         /// <summary>Max number of objects in object stream.</summary>
         public const int MAX_OBJ_STREAM_SIZE = 200;
 
@@ -58,8 +57,7 @@ namespace iText.Kernel.Pdf
         protected internal PdfOutputStream indexStream;
 
         public PdfObjectStream(PdfDocument doc)
-            : this(doc, new ByteArrayOutputStream())
-        {
+            : this(doc, new ByteArrayOutputStream()) {
             indexStream = new PdfOutputStream(new ByteArrayOutputStream());
         }
 
@@ -70,8 +68,7 @@ namespace iText.Kernel.Pdf
         /// </remarks>
         /// <param name="prev">previous PdfObjectStream.</param>
         internal PdfObjectStream(iText.Kernel.Pdf.PdfObjectStream prev)
-            : this(prev.GetIndirectReference().GetDocument(), prev.GetOutputStream().GetOutputStream())
-        {
+            : this(prev.GetIndirectReference().GetDocument(), prev.GetOutputStream().GetOutputStream()) {
             indexStream = new PdfOutputStream(prev.indexStream.GetOutputStream());
             ((ByteArrayOutputStream)outputStream.GetOutputStream()).JReset();
             ((ByteArrayOutputStream)indexStream.GetOutputStream()).JReset();
@@ -79,8 +76,7 @@ namespace iText.Kernel.Pdf
         }
 
         private PdfObjectStream(PdfDocument doc, Stream outputStream)
-            : base(outputStream)
-        {
+            : base(outputStream) {
             //avoid reuse existed references, create new, opposite to get next reference
             MakeIndirect(doc, doc.GetXref().CreateNewIndirectReference(doc));
             GetOutputStream().document = doc;
@@ -91,10 +87,8 @@ namespace iText.Kernel.Pdf
 
         /// <summary>Adds object to the object stream.</summary>
         /// <param name="object">object to add.</param>
-        public virtual void AddObject(PdfObject @object)
-        {
-            if (size.IntValue() == MAX_OBJ_STREAM_SIZE)
-            {
+        public virtual void AddObject(PdfObject @object) {
+            if (size.IntValue() == MAX_OBJ_STREAM_SIZE) {
                 throw new PdfException(PdfException.PdfObjectStreamReachMaxSize);
             }
             PdfOutputStream outputStream = GetOutputStream();
@@ -110,25 +104,20 @@ namespace iText.Kernel.Pdf
 
         /// <summary>Gets object stream size (number of objects inside).</summary>
         /// <returns>object stream size.</returns>
-        public virtual int GetSize()
-        {
+        public virtual int GetSize() {
             return size.IntValue();
         }
 
-        public virtual PdfOutputStream GetIndexStream()
-        {
+        public virtual PdfOutputStream GetIndexStream() {
             return indexStream;
         }
 
-        protected internal override void ReleaseContent()
-        {
+        protected internal override void ReleaseContent() {
             ReleaseContent(false);
         }
 
-        private void ReleaseContent(bool close)
-        {
-            if (close)
-            {
+        private void ReleaseContent(bool close) {
+            if (close) {
                 outputStream = null;
                 indexStream = null;
                 base.ReleaseContent();

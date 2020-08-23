@@ -41,49 +41,41 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Font.Otf.Lookuptype5;
 using System;
 using System.Collections.Generic;
+using iText.IO.Font.Otf.Lookuptype5;
 
-namespace iText.IO.Font.Otf
-{
+namespace iText.IO.Font.Otf {
     /// <summary>LookupType 5: Contextual Substitution Subtable</summary>
-    public class GsubLookupType5 : OpenTableLookup
-    {
+    public class GsubLookupType5 : OpenTableLookup {
         protected internal IList<ContextualSubTable> subTables;
 
         protected internal GsubLookupType5(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations
             )
-            : base(openReader, lookupFlag, subTableLocations)
-        {
+            : base(openReader, lookupFlag, subTableLocations) {
             subTables = new List<ContextualSubTable>();
             ReadSubTables();
         }
 
-        public override bool TransformOne(GlyphLine line)
-        {
+        public override bool TransformOne(GlyphLine line) {
             bool changed = false;
             int oldLineStart = line.start;
             int oldLineEnd = line.end;
             int initialLineIndex = line.idx;
-            foreach (ContextualSubTable subTable in subTables)
-            {
+            foreach (ContextualSubTable subTable in subTables) {
                 ContextualSubstRule contextRule = subTable.GetMatchingContextRule(line);
-                if (contextRule == null)
-                {
+                if (contextRule == null) {
                     continue;
                 }
                 int lineEndBeforeSubstitutions = line.end;
                 SubstLookupRecord[] substLookupRecords = contextRule.GetSubstLookupRecords();
                 OpenTableLookup.GlyphIndexer gidx = new OpenTableLookup.GlyphIndexer();
                 gidx.line = line;
-                foreach (SubstLookupRecord substRecord in substLookupRecords)
-                {
+                foreach (SubstLookupRecord substRecord in substLookupRecords) {
                     // There could be some skipped glyphs inside the context sequence, therefore currently GlyphIndexer and
                     // nextGlyph method are used to get to the glyph at "substRecord.sequenceIndex" index
                     gidx.idx = initialLineIndex;
-                    for (int i = 0; i < substRecord.sequenceIndex; ++i)
-                    {
+                    for (int i = 0; i < substRecord.sequenceIndex; ++i) {
                         gidx.NextGlyph(openReader, lookupFlag);
                     }
                     line.idx = gidx.idx;
@@ -100,49 +92,39 @@ namespace iText.IO.Font.Otf
             return changed;
         }
 
-        protected internal override void ReadSubTable(int subTableLocation)
-        {
+        protected internal override void ReadSubTable(int subTableLocation) {
             openReader.rf.Seek(subTableLocation);
             int substFormat = openReader.rf.ReadShort();
-            if (substFormat == 1)
-            {
+            if (substFormat == 1) {
                 ReadSubTableFormat1(subTableLocation);
             }
-            else
-            {
-                if (substFormat == 2)
-                {
+            else {
+                if (substFormat == 2) {
                     ReadSubTableFormat2(subTableLocation);
                 }
-                else
-                {
-                    if (substFormat == 3)
-                    {
+                else {
+                    if (substFormat == 3) {
                         ReadSubTableFormat3(subTableLocation);
                     }
-                    else
-                    {
+                    else {
                         throw new ArgumentException("Bad substFormat: " + substFormat);
                     }
                 }
             }
         }
 
-        protected internal virtual void ReadSubTableFormat1(int subTableLocation)
-        {
+        protected internal virtual void ReadSubTableFormat1(int subTableLocation) {
             IDictionary<int, IList<ContextualSubstRule>> substMap = new Dictionary<int, IList<ContextualSubstRule>>();
             int coverageOffset = openReader.rf.ReadUnsignedShort();
             int subRuleSetCount = openReader.rf.ReadUnsignedShort();
             int[] subRuleSetOffsets = openReader.ReadUShortArray(subRuleSetCount, subTableLocation);
             IList<int> coverageGlyphIds = openReader.ReadCoverageFormat(subTableLocation + coverageOffset);
-            for (int i = 0; i < subRuleSetCount; ++i)
-            {
+            for (int i = 0; i < subRuleSetCount; ++i) {
                 openReader.rf.Seek(subRuleSetOffsets[i]);
                 int subRuleCount = openReader.rf.ReadUnsignedShort();
                 int[] subRuleOffsets = openReader.ReadUShortArray(subRuleCount, subRuleSetOffsets[i]);
                 IList<ContextualSubstRule> subRuleSet = new List<ContextualSubstRule>(subRuleCount);
-                for (int j = 0; j < subRuleCount; ++j)
-                {
+                for (int j = 0; j < subRuleCount; ++j) {
                     openReader.rf.Seek(subRuleOffsets[j]);
                     int glyphCount = openReader.rf.ReadUnsignedShort();
                     int substCount = openReader.rf.ReadUnsignedShort();
@@ -155,8 +137,7 @@ namespace iText.IO.Font.Otf
             subTables.Add(new SubTableLookup5Format1(openReader, lookupFlag, substMap));
         }
 
-        protected internal virtual void ReadSubTableFormat2(int subTableLocation)
-        {
+        protected internal virtual void ReadSubTableFormat2(int subTableLocation) {
             int coverageOffset = openReader.rf.ReadUnsignedShort();
             int classDefOffset = openReader.rf.ReadUnsignedShort();
             int subClassSetCount = openReader.rf.ReadUnsignedShort();
@@ -167,17 +148,14 @@ namespace iText.IO.Font.Otf
             SubTableLookup5Format2 t = new SubTableLookup5Format2(openReader, lookupFlag, coverageGlyphIds, classDefinition
                 );
             IList<IList<ContextualSubstRule>> subClassSets = new List<IList<ContextualSubstRule>>(subClassSetCount);
-            for (int i = 0; i < subClassSetCount; ++i)
-            {
+            for (int i = 0; i < subClassSetCount; ++i) {
                 IList<ContextualSubstRule> subClassSet = null;
-                if (subClassSetOffsets[i] != 0)
-                {
+                if (subClassSetOffsets[i] != 0) {
                     openReader.rf.Seek(subClassSetOffsets[i]);
                     int subClassRuleCount = openReader.rf.ReadUnsignedShort();
                     int[] subClassRuleOffsets = openReader.ReadUShortArray(subClassRuleCount, subClassSetOffsets[i]);
                     subClassSet = new List<ContextualSubstRule>(subClassRuleCount);
-                    for (int j = 0; j < subClassRuleCount; ++j)
-                    {
+                    for (int j = 0; j < subClassRuleCount; ++j) {
                         ContextualSubstRule rule;
                         openReader.rf.Seek(subClassRuleOffsets[j]);
                         int glyphCount = openReader.rf.ReadUnsignedShort();
@@ -194,8 +172,7 @@ namespace iText.IO.Font.Otf
             subTables.Add(t);
         }
 
-        protected internal virtual void ReadSubTableFormat3(int subTableLocation)
-        {
+        protected internal virtual void ReadSubTableFormat3(int subTableLocation) {
             int glyphCount = openReader.rf.ReadUnsignedShort();
             int substCount = openReader.rf.ReadUnsignedShort();
             int[] coverageOffsets = openReader.ReadUShortArray(glyphCount, subTableLocation);

@@ -27,12 +27,11 @@
 //        SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //        http://www.adobe.com/devnet/xmp/library/eula-xmp-library-java.html
-using iText.Kernel.XMP.Properties;
 using System;
 using System.Collections;
+using iText.Kernel.XMP.Properties;
 
-namespace iText.Kernel.XMP
-{
+namespace iText.Kernel.XMP {
     /// <summary>
     /// The schema registry keeps track of all namespaces and aliases used in the XMP
     /// metadata.
@@ -64,8 +63,7 @@ namespace iText.Kernel.XMP
     /// first item of an array of structures.
     /// </remarks>
     /// <since>27.01.2006</since>
-    public interface XMPSchemaRegistry
-    {
+    public interface XMPSchemaRegistry {
         // ---------------------------------------------------------------------------------------------
         // Namespace Functions
         /// <summary>Register a namespace URI with a suggested prefix.</summary>

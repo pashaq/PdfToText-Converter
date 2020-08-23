@@ -41,20 +41,19 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using Common.Logging;
-using iText.IO.Util;
 using System;
 using System.Collections.Generic;
+using Common.Logging;
+using iText.IO.Util;
+using iText.Kernel;
 
-namespace iText.Kernel.Pdf
-{
+namespace iText.Kernel.Pdf {
     /// <summary>
     /// Algorithm for construction
     /// <see cref="PdfPages"/>
     /// tree
     /// </summary>
-    internal class PdfPagesTree
-    {
+    internal class PdfPagesTree {
         private readonly int leafSize = 10;
 
         private IList<PdfIndirectReference> pageRefs;
@@ -77,29 +76,24 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfCatalog"/>
         /// which will be used to create the tree
         /// </param>
-        public PdfPagesTree(PdfCatalog pdfCatalog)
-        {
+        public PdfPagesTree(PdfCatalog pdfCatalog) {
             this.document = pdfCatalog.GetDocument();
             this.pageRefs = new List<PdfIndirectReference>();
             this.parents = new List<PdfPages>();
             this.pages = new List<PdfPage>();
-            if (pdfCatalog.GetPdfObject().ContainsKey(PdfName.Pages))
-            {
+            if (pdfCatalog.GetPdfObject().ContainsKey(PdfName.Pages)) {
                 PdfDictionary pages = pdfCatalog.GetPdfObject().GetAsDictionary(PdfName.Pages);
-                if (pages == null)
-                {
+                if (pages == null) {
                     throw new PdfException(PdfException.InvalidPageStructurePagesPagesMustBePdfDictionary);
                 }
                 this.root = new PdfPages(0, int.MaxValue, pages, null);
                 parents.Add(this.root);
-                for (int i = 0; i < this.root.GetCount(); i++)
-                {
+                for (int i = 0; i < this.root.GetCount(); i++) {
                     this.pageRefs.Add(null);
                     this.pages.Add(null);
                 }
             }
-            else
-            {
+            else {
                 this.root = null;
                 this.parents.Add(new PdfPages(0, this.document));
             }
@@ -118,35 +112,28 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfPage"/>
         /// at the specified position in this list
         /// </returns>
-        public virtual PdfPage GetPage(int pageNum)
-        {
-            if (pageNum < 1 || pageNum > GetNumberOfPages())
-            {
-                throw new IndexOutOfRangeException(MessageFormatUtil.Format(PdfException.RequestedPageNumberIsOutOfBounds,
+        public virtual PdfPage GetPage(int pageNum) {
+            if (pageNum < 1 || pageNum > GetNumberOfPages()) {
+                throw new IndexOutOfRangeException(MessageFormatUtil.Format(PdfException.RequestedPageNumberIsOutOfBounds, 
                     pageNum));
             }
             --pageNum;
             PdfPage pdfPage = pages[pageNum];
-            if (pdfPage == null)
-            {
+            if (pdfPage == null) {
                 LoadPage(pageNum);
-                if (pageRefs[pageNum] != null)
-                {
+                if (pageRefs[pageNum] != null) {
                     int parentIndex = FindPageParent(pageNum);
                     PdfObject pageObject = pageRefs[pageNum].GetRefersTo();
-                    if (pageObject is PdfDictionary)
-                    {
+                    if (pageObject is PdfDictionary) {
                         pdfPage = document.GetPageFactory().CreatePdfPage((PdfDictionary)pageObject);
                         pdfPage.parentPages = parents[parentIndex];
                     }
-                    else
-                    {
+                    else {
                         LOGGER.Error(MessageFormatUtil.Format(iText.IO.LogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE
                             , pageNum + 1));
                     }
                 }
-                else
-                {
+                else {
                     LOGGER.Error(MessageFormatUtil.Format(iText.IO.LogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE
                         , pageNum + 1));
                 }
@@ -167,11 +154,9 @@ namespace iText.Kernel.Pdf
         /// object, that wraps
         /// <paramref name="pageDictionary"/>.
         /// </returns>
-        public virtual PdfPage GetPage(PdfDictionary pageDictionary)
-        {
+        public virtual PdfPage GetPage(PdfDictionary pageDictionary) {
             int pageNum = GetPageNumber(pageDictionary);
-            if (pageNum > 0)
-            {
+            if (pageNum > 0) {
                 return GetPage(pageNum);
             }
             return null;
@@ -179,8 +164,7 @@ namespace iText.Kernel.Pdf
 
         /// <summary>Gets total number of @see PdfPages.</summary>
         /// <returns>total number of pages</returns>
-        public virtual int GetNumberOfPages()
-        {
+        public virtual int GetNumberOfPages() {
             return pageRefs.Count;
         }
 
@@ -188,8 +172,7 @@ namespace iText.Kernel.Pdf
         /// Returns the index of the first occurrence of the specified page
         /// in this tree, or 0 if this tree does not contain the page.
         /// </summary>
-        public virtual int GetPageNumber(PdfPage page)
-        {
+        public virtual int GetPageNumber(PdfPage page) {
             return pages.IndexOf(page) + 1;
         }
 
@@ -197,21 +180,16 @@ namespace iText.Kernel.Pdf
         /// Returns the index of the first occurrence of the page in this tree
         /// specified by it's PdfDictionary, or 0 if this tree does not contain the page.
         /// </summary>
-        public virtual int GetPageNumber(PdfDictionary pageDictionary)
-        {
+        public virtual int GetPageNumber(PdfDictionary pageDictionary) {
             int pageNum = pageRefs.IndexOf(pageDictionary.GetIndirectReference());
-            if (pageNum >= 0)
-            {
+            if (pageNum >= 0) {
                 return pageNum + 1;
             }
-            for (int i = 0; i < pageRefs.Count; i++)
-            {
-                if (pageRefs[i] == null)
-                {
+            for (int i = 0; i < pageRefs.Count; i++) {
+                if (pageRefs[i] == null) {
                     LoadPage(i);
                 }
-                if (pageRefs[i].Equals(pageDictionary.GetIndirectReference()))
-                {
+                if (pageRefs[i].Equals(pageDictionary.GetIndirectReference())) {
                     return i + 1;
                 }
             }
@@ -228,27 +206,21 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfPage"/>
         /// to be added
         /// </param>
-        public virtual void AddPage(PdfPage pdfPage)
-        {
+        public virtual void AddPage(PdfPage pdfPage) {
             PdfPages pdfPages;
-            if (root != null)
-            {
+            if (root != null) {
                 // in this case we save tree structure
-                if (pageRefs.Count == 0)
-                {
+                if (pageRefs.Count == 0) {
                     pdfPages = root;
                 }
-                else
-                {
+                else {
                     LoadPage(pageRefs.Count - 1);
                     pdfPages = parents[parents.Count - 1];
                 }
             }
-            else
-            {
+            else {
                 pdfPages = parents[parents.Count - 1];
-                if (pdfPages.GetCount() % leafSize == 0 && pageRefs.Count > 0)
-                {
+                if (pdfPages.GetCount() % leafSize == 0 && pageRefs.Count > 0) {
                     pdfPages = new PdfPages(pdfPages.GetFrom() + pdfPages.GetCount(), document);
                     parents.Add(pdfPages);
                 }
@@ -271,15 +243,12 @@ namespace iText.Kernel.Pdf
         /// <see cref="PdfPage"/>
         /// to insert.
         /// </param>
-        public virtual void AddPage(int index, PdfPage pdfPage)
-        {
+        public virtual void AddPage(int index, PdfPage pdfPage) {
             --index;
-            if (index > pageRefs.Count)
-            {
+            if (index > pageRefs.Count) {
                 throw new IndexOutOfRangeException("index");
             }
-            if (index == pageRefs.Count)
-            {
+            if (index == pageRefs.Count) {
                 AddPage(pdfPage);
                 return;
             }
@@ -302,30 +271,24 @@ namespace iText.Kernel.Pdf
         /// </remarks>
         /// <param name="pageNum">the one-based index of the PdfPage to be removed</param>
         /// <returns>the page that was removed from the list</returns>
-        public virtual PdfPage RemovePage(int pageNum)
-        {
+        public virtual PdfPage RemovePage(int pageNum) {
             PdfPage pdfPage = GetPage(pageNum);
-            if (pdfPage.IsFlushed())
-            {
+            if (pdfPage.IsFlushed()) {
                 LOGGER.Warn(iText.IO.LogMessageConstant.REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED);
             }
-            if (InternalRemovePage(--pageNum))
-            {
+            if (InternalRemovePage(--pageNum)) {
                 return pdfPage;
             }
-            else
-            {
+            else {
                 return null;
             }
         }
 
-        internal virtual void ReleasePage(int pageNumber)
-        {
+        internal virtual void ReleasePage(int pageNumber) {
             --pageNumber;
             if (pageRefs[pageNumber] != null && !pageRefs[pageNumber].CheckState(PdfObject.FLUSHED) && !pageRefs[pageNumber
                 ].CheckState(PdfObject.MODIFIED) && (pageRefs[pageNumber].GetOffset() > 0 || pageRefs[pageNumber].GetIndex
-                () >= 0))
-            {
+                () >= 0)) {
                 pages[pageNumber] = null;
             }
         }
@@ -335,36 +298,27 @@ namespace iText.Kernel.Pdf
         /// root
         /// <see cref="PdfPages"/>
         /// </returns>
-        protected internal virtual PdfObject GenerateTree()
-        {
-            if (pageRefs.Count == 0)
-            {
+        protected internal virtual PdfObject GenerateTree() {
+            if (pageRefs.Count == 0) {
                 throw new PdfException(PdfException.DocumentHasNoPages);
             }
-            if (generated)
-            {
+            if (generated) {
                 throw new PdfException(PdfException.PdfPagesTreeCouldBeGeneratedOnlyOnce);
             }
-            if (root == null)
-            {
-                while (parents.Count != 1)
-                {
+            if (root == null) {
+                while (parents.Count != 1) {
                     IList<PdfPages> nextParents = new List<PdfPages>();
                     //dynamicLeafSize helps to avoid PdfPages leaf with only one page
                     int dynamicLeafSize = leafSize;
                     PdfPages current = null;
-                    for (int i = 0; i < parents.Count; i++)
-                    {
+                    for (int i = 0; i < parents.Count; i++) {
                         PdfPages pages = parents[i];
                         int pageCount = pages.GetCount();
-                        if (i % dynamicLeafSize == 0)
-                        {
-                            if (pageCount <= 1)
-                            {
+                        if (i % dynamicLeafSize == 0) {
+                            if (pageCount <= 1) {
                                 dynamicLeafSize++;
                             }
-                            else
-                            {
+                            else {
                                 current = new PdfPages(-1, document);
                                 nextParents.Add(current);
                                 dynamicLeafSize = leafSize;
@@ -381,42 +335,35 @@ namespace iText.Kernel.Pdf
             return root.GetPdfObject();
         }
 
-        protected internal virtual void ClearPageRefs()
-        {
+        protected internal virtual void ClearPageRefs() {
             pageRefs = null;
             pages = null;
         }
 
-        protected internal virtual IList<PdfPages> GetParents()
-        {
+        protected internal virtual IList<PdfPages> GetParents() {
             return parents;
         }
 
-        protected internal virtual PdfPages GetRoot()
-        {
+        protected internal virtual PdfPages GetRoot() {
             return root;
         }
 
-        protected internal virtual PdfPages FindPageParent(PdfPage pdfPage)
-        {
+        protected internal virtual PdfPages FindPageParent(PdfPage pdfPage) {
             int pageNum = GetPageNumber(pdfPage) - 1;
             int parentIndex = FindPageParent(pageNum);
             return parents[parentIndex];
         }
 
-        private void LoadPage(int pageNum)
-        {
+        private void LoadPage(int pageNum) {
             PdfIndirectReference targetPage = pageRefs[pageNum];
-            if (targetPage != null)
-            {
+            if (targetPage != null) {
                 return;
             }
             //if we go here, we have to split PdfPages that contains pageNum
             int parentIndex = FindPageParent(pageNum);
             PdfPages parent = parents[parentIndex];
             PdfArray kids = parent.GetKids();
-            if (kids == null)
-            {
+            if (kids == null) {
                 throw new PdfException(PdfException.InvalidPageStructure1).SetMessageParams(pageNum + 1);
             }
             int kidsCount = parent.GetCount();
@@ -424,40 +371,32 @@ namespace iText.Kernel.Pdf
             // mix of PdfPage and PdfPages not allowed.
             bool findPdfPages = false;
             // NOTE optimization? when we already found needed index
-            for (int i = 0; i < kids.Size(); i++)
-            {
+            for (int i = 0; i < kids.Size(); i++) {
                 PdfDictionary page = kids.GetAsDictionary(i);
                 // null values not allowed in pages tree.
-                if (page == null)
-                {
+                if (page == null) {
                     throw new PdfException(PdfException.InvalidPageStructure1).SetMessageParams(pageNum + 1);
                 }
                 PdfObject pageKids = page.Get(PdfName.Kids);
-                if (pageKids != null)
-                {
-                    if (pageKids.IsArray())
-                    {
+                if (pageKids != null) {
+                    if (pageKids.IsArray()) {
                         findPdfPages = true;
                     }
-                    else
-                    {
+                    else {
                         // kids must be of type array
                         throw new PdfException(PdfException.InvalidPageStructure1).SetMessageParams(pageNum + 1);
                     }
                 }
-                if (document.GetReader().IsMemorySavingMode() && !findPdfPages && parent.GetFrom() + i != pageNum)
-                {
+                if (document.GetReader().IsMemorySavingMode() && !findPdfPages && parent.GetFrom() + i != pageNum) {
                     page.Release();
                 }
             }
-            if (findPdfPages)
-            {
+            if (findPdfPages) {
                 // handle mix of PdfPage and PdfPages.
                 // handle count property!
                 IList<PdfPages> newParents = new List<PdfPages>(kids.Size());
                 PdfPages lastPdfPages = null;
-                for (int i = 0; i < kids.Size() && kidsCount > 0; i++)
-                {
+                for (int i = 0; i < kids.Size() && kidsCount > 0; i++) {
                     /*
                     * We don't release pdfPagesObject in the end of each loop because we enter this for-cycle only when parent has PdfPages kids.
                     * If all of the kids are PdfPages, then there's nothing to release, because we don't release PdfPages at this point.
@@ -466,18 +405,15 @@ namespace iText.Kernel.Pdf
                     * thus modifying the page object by resetting its parent, thus making it impossible to release the object.
                     */
                     PdfDictionary pdfPagesObject = kids.GetAsDictionary(i);
-                    if (pdfPagesObject.GetAsArray(PdfName.Kids) == null)
-                    {
+                    if (pdfPagesObject.GetAsArray(PdfName.Kids) == null) {
                         // pdfPagesObject is PdfPage
                         // possible if only first kid is PdfPage
-                        if (lastPdfPages == null)
-                        {
+                        if (lastPdfPages == null) {
                             lastPdfPages = new PdfPages(parent.GetFrom(), document, parent);
                             kids.Set(i, lastPdfPages.GetPdfObject());
                             newParents.Add(lastPdfPages);
                         }
-                        else
-                        {
+                        else {
                             // Only remove from kids if we did not replace the entry with new PdfPages
                             kids.Remove(i);
                             i--;
@@ -487,8 +423,7 @@ namespace iText.Kernel.Pdf
                         lastPdfPages.AddPage(pdfPagesObject);
                         kidsCount--;
                     }
-                    else
-                    {
+                    else {
                         // pdfPagesObject is PdfPages
                         int from = lastPdfPages == null ? parent.GetFrom() : lastPdfPages.GetFrom() + lastPdfPages.GetCount();
                         lastPdfPages = new PdfPages(from, kidsCount, pdfPagesObject, parent);
@@ -497,29 +432,24 @@ namespace iText.Kernel.Pdf
                     }
                 }
                 parents.JRemoveAt(parentIndex);
-                for (int i = newParents.Count - 1; i >= 0; i--)
-                {
+                for (int i = newParents.Count - 1; i >= 0; i--) {
                     parents.Add(parentIndex, newParents[i]);
                 }
                 // recursive call, to load needed pageRef.
                 // NOTE optimization? add to loadPage startParentIndex.
                 LoadPage(pageNum);
             }
-            else
-            {
+            else {
                 int from = parent.GetFrom();
                 // Possible exception in case kids.getSize() < parent.getCount().
                 // In any case parent.getCount() has higher priority.
                 // NOTE optimization? when we already found needed index
-                for (int i = 0; i < parent.GetCount(); i++)
-                {
+                for (int i = 0; i < parent.GetCount(); i++) {
                     PdfObject kid = kids.Get(i, false);
-                    if (kid is PdfIndirectReference)
-                    {
+                    if (kid is PdfIndirectReference) {
                         pageRefs[from + i] = (PdfIndirectReference)kid;
                     }
-                    else
-                    {
+                    else {
                         pageRefs[from + i] = kid.GetIndirectReference();
                     }
                 }
@@ -527,63 +457,50 @@ namespace iText.Kernel.Pdf
         }
 
         // zero-based index
-        private bool InternalRemovePage(int pageNum)
-        {
+        private bool InternalRemovePage(int pageNum) {
             int parentIndex = FindPageParent(pageNum);
             PdfPages pdfPages = parents[parentIndex];
-            if (pdfPages.RemovePage(pageNum))
-            {
-                if (pdfPages.GetCount() == 0)
-                {
+            if (pdfPages.RemovePage(pageNum)) {
+                if (pdfPages.GetCount() == 0) {
                     parents.JRemoveAt(parentIndex);
                     pdfPages.RemoveFromParent();
                     --parentIndex;
                 }
-                if (parents.Count == 0)
-                {
+                if (parents.Count == 0) {
                     root = null;
                     parents.Add(new PdfPages(0, document));
                 }
-                else
-                {
+                else {
                     CorrectPdfPagesFromProperty(parentIndex + 1, -1);
                 }
                 pageRefs.JRemoveAt(pageNum);
                 pages.JRemoveAt(pageNum);
                 return true;
             }
-            else
-            {
+            else {
                 return false;
             }
         }
 
         // zero-based index
-        private int FindPageParent(int pageNum)
-        {
+        private int FindPageParent(int pageNum) {
             int low = 0;
             int high = parents.Count - 1;
-            while (low != high)
-            {
+            while (low != high) {
                 int middle = (low + high + 1) / 2;
-                if (parents[middle].CompareTo(pageNum) > 0)
-                {
+                if (parents[middle].CompareTo(pageNum) > 0) {
                     high = middle - 1;
                 }
-                else
-                {
+                else {
                     low = middle;
                 }
             }
             return low;
         }
 
-        private void CorrectPdfPagesFromProperty(int index, int correction)
-        {
-            for (int i = index; i < parents.Count; i++)
-            {
-                if (parents[i] != null)
-                {
+        private void CorrectPdfPagesFromProperty(int index, int correction) {
+            for (int i = index; i < parents.Count; i++) {
+                if (parents[i] != null) {
                     parents[i].CorrectFrom(correction);
                 }
             }

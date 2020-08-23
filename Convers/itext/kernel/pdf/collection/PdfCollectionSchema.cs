@@ -42,20 +42,17 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using System;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Collection
-{
-    public class PdfCollectionSchema : PdfObjectWrapper<PdfDictionary>
-    {
+namespace iText.Kernel.Pdf.Collection {
+    public class PdfCollectionSchema : PdfObjectWrapper<PdfDictionary> {
         public PdfCollectionSchema(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
         /// <summary>Creates a Collection Schema dictionary.</summary>
         public PdfCollectionSchema()
-            : this(new PdfDictionary())
-        {
+            : this(new PdfDictionary()) {
         }
 
         /// <summary>Adds a Collection field to the Schema.</summary>
@@ -63,8 +60,7 @@ namespace iText.Kernel.Pdf.Collection
         /// <param name="field">a Collection Field</param>
         /// <returns>this instance to support fluent interface</returns>
         public virtual iText.Kernel.Pdf.Collection.PdfCollectionSchema AddField(String name, PdfCollectionField field
-            )
-        {
+            ) {
             GetPdfObject().Put(new PdfName(name), field.GetPdfObject());
             return this;
         }
@@ -75,13 +71,11 @@ namespace iText.Kernel.Pdf.Collection
         /// a
         /// <see cref="PdfCollectionField">Collection field</see>
         /// </returns>
-        public virtual PdfCollectionField GetField(String name)
-        {
+        public virtual PdfCollectionField GetField(String name) {
             return new PdfCollectionField(GetPdfObject().GetAsDictionary(new PdfName(name)));
         }
 
-        protected internal override bool IsWrappedObjectMustBeIndirect()
-        {
+        protected internal override bool IsWrappedObjectMustBeIndirect() {
             return false;
         }
     }

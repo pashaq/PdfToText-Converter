@@ -43,12 +43,9 @@ address: sales@itextpdf.com
 */
 using System;
 
-namespace iText.IO.Util
-{
-    public sealed class CliCommandUtil
-    {
-        private CliCommandUtil()
-        {
+namespace iText.IO.Util {
+    public sealed class CliCommandUtil {
+        private CliCommandUtil() {
         }
 
         /// <summary>
@@ -61,19 +58,15 @@ namespace iText.IO.Util
         /// boolean result of checking: true - the required command is executable and the output version
         /// text is correct
         /// </returns>
-        public static bool IsVersionCommandExecutable(String command, String versionText)
-        {
-            if ((command == null) || (versionText == null))
-            {
+        public static bool IsVersionCommandExecutable(String command, String versionText) {
+            if ((command == null) || (versionText == null)) {
                 return false;
             }
-            try
-            {
+            try {
                 String result = SystemUtil.RunProcessAndGetOutput(command, "-version");
                 return result.Contains(versionText);
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 return false;
             }
         }

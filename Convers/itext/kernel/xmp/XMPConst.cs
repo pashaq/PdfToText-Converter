@@ -29,12 +29,10 @@
 //        http://www.adobe.com/devnet/xmp/library/eula-xmp-library-java.html
 using System;
 
-namespace iText.Kernel.XMP
-{
+namespace iText.Kernel.XMP {
     /// <summary>Common constants for the XMP Toolkit.</summary>
     /// <since>20.01.2006</since>
-    public abstract class XMPConst
-    {
+    public abstract class XMPConst {
         // ---------------------------------------------------------------------------------------------
         // Standard namespace URI constants
         // Standard namespaces
@@ -237,7 +235,6 @@ namespace iText.Kernel.XMP
         public const String CONFORMANCE = "conformance";
     }
 
-    public static class XMPConstConstants
-    {
+    public static class XMPConstConstants {
     }
 }

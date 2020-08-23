@@ -41,14 +41,12 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Util;
 using System;
 using System.Collections.Generic;
+using iText.IO.Util;
 
-namespace iText.Kernel.Pdf
-{
-    public class PdfNumTree
-    {
+namespace iText.Kernel.Pdf {
+    public class PdfNumTree {
         private const int NODE_SIZE = 40;
 
         private PdfCatalog catalog;
@@ -60,57 +58,45 @@ namespace iText.Kernel.Pdf
         /// <summary>Creates the NumberTree of current Document</summary>
         /// <param name="catalog">Document catalog</param>
         /// <param name="treeType">the type of tree. ParentTree or PageLabels.</param>
-        public PdfNumTree(PdfCatalog catalog, PdfName treeType)
-        {
+        public PdfNumTree(PdfCatalog catalog, PdfName treeType) {
             this.treeType = treeType;
             this.catalog = catalog;
         }
 
-        public virtual IDictionary<int?, PdfObject> GetNumbers()
-        {
-            if (items.Count > 0)
-            {
+        public virtual IDictionary<int?, PdfObject> GetNumbers() {
+            if (items.Count > 0) {
                 return items;
             }
             PdfDictionary numbers = null;
-            if (treeType.Equals(PdfName.PageLabels))
-            {
+            if (treeType.Equals(PdfName.PageLabels)) {
                 numbers = catalog.GetPdfObject().GetAsDictionary(PdfName.PageLabels);
             }
-            else
-            {
-                if (treeType.Equals(PdfName.ParentTree))
-                {
+            else {
+                if (treeType.Equals(PdfName.ParentTree)) {
                     PdfDictionary structTreeRoot = catalog.GetPdfObject().GetAsDictionary(PdfName.StructTreeRoot);
-                    if (structTreeRoot != null)
-                    {
+                    if (structTreeRoot != null) {
                         numbers = structTreeRoot.GetAsDictionary(PdfName.ParentTree);
                     }
                 }
             }
-            if (numbers != null)
-            {
+            if (numbers != null) {
                 ReadTree(numbers);
             }
             return items;
         }
 
-        public virtual void AddEntry(int key, PdfObject value)
-        {
+        public virtual void AddEntry(int key, PdfObject value) {
             items.Put(key, value);
         }
 
-        public virtual PdfDictionary BuildTree()
-        {
+        public virtual PdfDictionary BuildTree() {
             int?[] numbers = new int?[items.Count];
             numbers = items.Keys.ToArray(numbers);
             JavaUtil.Sort(numbers);
-            if (numbers.Length <= NODE_SIZE)
-            {
+            if (numbers.Length <= NODE_SIZE) {
                 PdfDictionary dic = new PdfDictionary();
                 PdfArray ar = new PdfArray();
-                for (int k = 0; k < numbers.Length; ++k)
-                {
+                for (int k = 0; k < numbers.Length; ++k) {
                     ar.Add(new PdfNumber((int)numbers[k]));
                     ar.Add(items.Get(numbers[k]));
                 }
@@ -119,8 +105,7 @@ namespace iText.Kernel.Pdf
             }
             int skip = NODE_SIZE;
             PdfDictionary[] kids = new PdfDictionary[(numbers.Length + NODE_SIZE - 1) / NODE_SIZE];
-            for (int i = 0; i < kids.Length; ++i)
-            {
+            for (int i = 0; i < kids.Length; ++i) {
                 int offset = i * NODE_SIZE;
                 int end = Math.Min(offset + NODE_SIZE, numbers.Length);
                 PdfDictionary dic = new PdfDictionary();
@@ -129,8 +114,7 @@ namespace iText.Kernel.Pdf
                 arr.Add(new PdfNumber((int)numbers[end - 1]));
                 dic.Put(PdfName.Limits, arr);
                 arr = new PdfArray();
-                for (; offset < end; ++offset)
-                {
+                for (; offset < end; ++offset) {
                     arr.Add(new PdfNumber((int)numbers[offset]));
                     arr.Add(items.Get(numbers[offset]));
                 }
@@ -139,13 +123,10 @@ namespace iText.Kernel.Pdf
                 kids[i] = dic;
             }
             int top = kids.Length;
-            while (true)
-            {
-                if (top <= NODE_SIZE)
-                {
+            while (true) {
+                if (top <= NODE_SIZE) {
                     PdfArray arr = new PdfArray();
-                    for (int k = 0; k < top; ++k)
-                    {
+                    for (int k = 0; k < top; ++k) {
                         arr.Add(kids[k]);
                     }
                     PdfDictionary dic = new PdfDictionary();
@@ -154,8 +135,7 @@ namespace iText.Kernel.Pdf
                 }
                 skip *= NODE_SIZE;
                 int tt = (numbers.Length + skip - 1) / skip;
-                for (int k = 0; k < tt; ++k)
-                {
+                for (int k = 0; k < tt; ++k) {
                     int offset = k * NODE_SIZE;
                     int end = Math.Min(offset + NODE_SIZE, top);
                     PdfDictionary dic = (PdfDictionary)new PdfDictionary().MakeIndirect(catalog.GetDocument());
@@ -164,8 +144,7 @@ namespace iText.Kernel.Pdf
                     arr.Add(new PdfNumber((int)numbers[Math.Min((k + 1) * skip, numbers.Length) - 1]));
                     dic.Put(PdfName.Limits, arr);
                     arr = new PdfArray();
-                    for (; offset < end; ++offset)
-                    {
+                    for (; offset < end; ++offset) {
                         arr.Add(kids[offset]);
                     }
                     dic.Put(PdfName.Kids, arr);
@@ -175,47 +154,35 @@ namespace iText.Kernel.Pdf
             }
         }
 
-        private void ReadTree(PdfDictionary dictionary)
-        {
-            if (dictionary != null)
-            {
+        private void ReadTree(PdfDictionary dictionary) {
+            if (dictionary != null) {
                 IterateItems(dictionary, null);
             }
         }
 
-        private PdfNumber IterateItems(PdfDictionary dictionary, PdfNumber leftOver)
-        {
+        private PdfNumber IterateItems(PdfDictionary dictionary, PdfNumber leftOver) {
             PdfArray nums = dictionary.GetAsArray(PdfName.Nums);
-            if (nums != null)
-            {
-                for (int k = 0; k < nums.Size(); k++)
-                {
+            if (nums != null) {
+                for (int k = 0; k < nums.Size(); k++) {
                     PdfNumber number;
-                    if (leftOver == null)
-                    {
+                    if (leftOver == null) {
                         number = nums.GetAsNumber(k++);
                     }
-                    else
-                    {
+                    else {
                         number = leftOver;
                         leftOver = null;
                     }
-                    if (k < nums.Size())
-                    {
+                    if (k < nums.Size()) {
                         items.Put(number.IntValue(), nums.Get(k));
                     }
-                    else
-                    {
+                    else {
                         return number;
                     }
                 }
             }
-            else
-            {
-                if ((nums = dictionary.GetAsArray(PdfName.Kids)) != null)
-                {
-                    for (int k = 0; k < nums.Size(); k++)
-                    {
+            else {
+                if ((nums = dictionary.GetAsArray(PdfName.Kids)) != null) {
+                    for (int k = 0; k < nums.Size(); k++) {
                         PdfDictionary kid = nums.GetAsDictionary(k);
                         leftOver = IterateItems(kid, leftOver);
                     }

@@ -41,39 +41,32 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Util;
 using System;
 using System.Collections.Generic;
+using iText.IO.Util;
 
-namespace iText.IO.Font.Otf
-{
+namespace iText.IO.Font.Otf {
     /// <summary>LookupType 1: Single Substitution Subtable</summary>
     /// <author>psoares</author>
-    public class GsubLookupType1 : OpenTableLookup
-    {
+    public class GsubLookupType1 : OpenTableLookup {
         private IntHashtable substMap;
 
         public GsubLookupType1(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations)
-            : base(openReader, lookupFlag, subTableLocations)
-        {
+            : base(openReader, lookupFlag, subTableLocations) {
             substMap = new IntHashtable();
             ReadSubTables();
         }
 
-        public override bool TransformOne(GlyphLine line)
-        {
-            if (line.idx >= line.end)
-            {
+        public override bool TransformOne(GlyphLine line) {
+            if (line.idx >= line.end) {
                 return false;
             }
             Glyph g = line.Get(line.idx);
             bool changed = false;
-            if (!openReader.IsSkip(g.GetCode(), lookupFlag))
-            {
+            if (!openReader.IsSkip(g.GetCode(), lookupFlag)) {
                 int substCode = substMap.Get(g.GetCode());
                 // there is no need to substitute a symbol with itself
-                if (substCode != 0 && substCode != g.GetCode())
-                {
+                if (substCode != 0 && substCode != g.GetCode()) {
                     line.SubstituteOneToOne(openReader, substCode);
                     changed = true;
                 }
@@ -82,47 +75,38 @@ namespace iText.IO.Font.Otf
             return changed;
         }
 
-        protected internal override void ReadSubTable(int subTableLocation)
-        {
+        protected internal override void ReadSubTable(int subTableLocation) {
             openReader.rf.Seek(subTableLocation);
             int substFormat = openReader.rf.ReadShort();
-            if (substFormat == 1)
-            {
+            if (substFormat == 1) {
                 int coverage = openReader.rf.ReadUnsignedShort();
                 int deltaGlyphID = openReader.rf.ReadShort();
                 IList<int> coverageGlyphIds = openReader.ReadCoverageFormat(subTableLocation + coverage);
-                foreach (int coverageGlyphId in coverageGlyphIds)
-                {
+                foreach (int coverageGlyphId in coverageGlyphIds) {
                     int substituteGlyphId = coverageGlyphId + deltaGlyphID;
                     substMap.Put(coverageGlyphId, substituteGlyphId);
                 }
             }
-            else
-            {
-                if (substFormat == 2)
-                {
+            else {
+                if (substFormat == 2) {
                     int coverage = openReader.rf.ReadUnsignedShort();
                     int glyphCount = openReader.rf.ReadUnsignedShort();
                     int[] substitute = new int[glyphCount];
-                    for (int k = 0; k < glyphCount; ++k)
-                    {
+                    for (int k = 0; k < glyphCount; ++k) {
                         substitute[k] = openReader.rf.ReadUnsignedShort();
                     }
                     IList<int> coverageGlyphIds = openReader.ReadCoverageFormat(subTableLocation + coverage);
-                    for (int k = 0; k < glyphCount; ++k)
-                    {
+                    for (int k = 0; k < glyphCount; ++k) {
                         substMap.Put(coverageGlyphIds[k], substitute[k]);
                     }
                 }
-                else
-                {
+                else {
                     throw new ArgumentException("Bad substFormat: " + substFormat);
                 }
             }
         }
 
-        public override bool HasSubstitution(int index)
-        {
+        public override bool HasSubstitution(int index) {
             return substMap.ContainsKey(index);
         }
     }

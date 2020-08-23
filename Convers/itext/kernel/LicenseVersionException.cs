@@ -40,15 +40,13 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Util;
 using System;
 using System.Collections.Generic;
+using iText.IO.Util;
 
-namespace iText.Kernel
-{
+namespace iText.Kernel {
     /// <summary>Exception class for License-key version exceptions throw in the Version class</summary>
-    public class LicenseVersionException : Exception
-    {
+    public class LicenseVersionException : Exception {
         public const String NO_I_TEXT7_LICENSE_IS_LOADED_BUT_AN_I_TEXT5_LICENSE_IS_LOADED = "No iText7 License is loaded but an iText5 license is loaded.";
 
         public const String THE_MAJOR_VERSION_OF_THE_LICENSE_0_IS_LOWER_THAN_THE_MAJOR_VERSION_1_OF_THE_CORE_LIBRARY
@@ -81,8 +79,7 @@ namespace iText.Kernel
         /// <summary>Creates a new instance of PdfException.</summary>
         /// <param name="message">the detail message.</param>
         public LicenseVersionException(String message)
-            : base(message)
-        {
+            : base(message) {
         }
 
         /// <summary>Creates a new instance of PdfException.</summary>
@@ -92,16 +89,14 @@ namespace iText.Kernel
         /// method).
         /// </param>
         public LicenseVersionException(Exception cause)
-            : this(UNKNOWN_EXCEPTION_WHEN_CHECKING_LICENSE_VERSION, cause)
-        {
+            : this(UNKNOWN_EXCEPTION_WHEN_CHECKING_LICENSE_VERSION, cause) {
         }
 
         /// <summary>Creates a new instance of PdfException.</summary>
         /// <param name="message">the detail message.</param>
         /// <param name="obj">an object for more details.</param>
         public LicenseVersionException(String message, Object obj)
-            : this(message)
-        {
+            : this(message) {
             this.@object = obj;
         }
 
@@ -113,8 +108,7 @@ namespace iText.Kernel
         /// method).
         /// </param>
         public LicenseVersionException(String message, Exception cause)
-            : base(message, cause)
-        {
+            : base(message, cause) {
         }
 
         /// <summary>Creates a new instance of PdfException.</summary>
@@ -126,21 +120,16 @@ namespace iText.Kernel
         /// </param>
         /// <param name="obj">an object for more details.</param>
         public LicenseVersionException(String message, Exception cause, Object obj)
-            : this(message, cause)
-        {
+            : this(message, cause) {
             this.@object = obj;
         }
 
-        public override String Message
-        {
-            get
-            {
-                if (messageParams == null || messageParams.Count == 0)
-                {
+        public override String Message {
+            get {
+                if (messageParams == null || messageParams.Count == 0) {
                     return base.Message;
                 }
-                else
-                {
+                else {
                     return MessageFormatUtil.Format(base.Message, GetMessageParams());
                 }
             }
@@ -149,8 +138,7 @@ namespace iText.Kernel
         /// <summary>Sets additional params for Exception message.</summary>
         /// <param name="messageParams">additional params.</param>
         /// <returns>object itself.</returns>
-        public virtual iText.Kernel.LicenseVersionException SetMessageParams(params Object[] messageParams)
-        {
+        public virtual iText.Kernel.LicenseVersionException SetMessageParams(params Object[] messageParams) {
             this.messageParams = new List<Object>();
             this.messageParams.AddAll(messageParams);
             return this;
@@ -162,11 +150,9 @@ namespace iText.Kernel
         /// Placeholder format is defined similar to the following: "{0}".
         /// </remarks>
         /// <returns>params for exception message.</returns>
-        protected internal virtual Object[] GetMessageParams()
-        {
+        protected internal virtual Object[] GetMessageParams() {
             Object[] parameters = new Object[messageParams.Count];
-            for (int i = 0; i < messageParams.Count; i++)
-            {
+            for (int i = 0; i < messageParams.Count; i++) {
                 parameters[i] = messageParams[i];
             }
             return parameters;

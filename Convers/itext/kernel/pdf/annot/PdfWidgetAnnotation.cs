@@ -41,14 +41,13 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.Kernel.Geom;
-using iText.Kernel.Pdf.Action;
 using System.Collections.Generic;
+using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
+using iText.Kernel.Pdf.Action;
 
-namespace iText.Kernel.Pdf.Annot
-{
-    public class PdfWidgetAnnotation : PdfAnnotation
-    {
+namespace iText.Kernel.Pdf.Annot {
+    public class PdfWidgetAnnotation : PdfAnnotation {
         public const int HIDDEN = 1;
 
         public const int VISIBLE_BUT_DOES_NOT_PRINT = 2;
@@ -58,9 +57,8 @@ namespace iText.Kernel.Pdf.Annot
         public const int VISIBLE = 4;
 
         public PdfWidgetAnnotation(Rectangle rect)
-            : base(rect)
-        {
-            {
+            : base(rect) {
+ {
                 widgetEntries.Add(PdfName.Subtype);
                 widgetEntries.Add(PdfName.Type);
                 widgetEntries.Add(PdfName.Rect);
@@ -97,9 +95,8 @@ namespace iText.Kernel.Pdf.Annot
         /// </param>
         /// <seealso cref="PdfAnnotation.MakeAnnotation(iText.Kernel.Pdf.PdfObject)"/>
         protected internal PdfWidgetAnnotation(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
-            {
+            : base(pdfObject) {
+ {
                 widgetEntries.Add(PdfName.Subtype);
                 widgetEntries.Add(PdfName.Type);
                 widgetEntries.Add(PdfName.Rect);
@@ -124,13 +121,11 @@ namespace iText.Kernel.Pdf.Annot
 
         private HashSet<PdfName> widgetEntries = new HashSet<PdfName>();
 
-        public override PdfName GetSubtype()
-        {
+        public override PdfName GetSubtype() {
             return PdfName.Widget;
         }
 
-        public virtual iText.Kernel.Pdf.Annot.PdfWidgetAnnotation SetParent(PdfObject parent)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfWidgetAnnotation SetParent(PdfObject parent) {
             return (iText.Kernel.Pdf.Annot.PdfWidgetAnnotation)Put(PdfName.Parent, parent);
         }
 
@@ -162,34 +157,28 @@ namespace iText.Kernel.Pdf.Annot
         /// </remarks>
         /// <param name="mode">The new value for the annotation's highlighting mode.</param>
         /// <returns>The widget annotation which this method was called on.</returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfWidgetAnnotation SetHighlightMode(PdfName mode)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfWidgetAnnotation SetHighlightMode(PdfName mode) {
             return (iText.Kernel.Pdf.Annot.PdfWidgetAnnotation)Put(PdfName.H, mode);
         }
 
         /// <summary>Getter for the annotation's highlighting mode.</summary>
         /// <returns>Current value of the annotation's highlighting mode.</returns>
-        public virtual PdfName GetHighlightMode()
-        {
+        public virtual PdfName GetHighlightMode() {
             return GetPdfObject().GetAsName(PdfName.H);
         }
 
         /// <summary>This method removes all widget annotation entries from the form field  the given annotation merged with.
         ///     </summary>
-        public virtual void ReleaseFormFieldFromWidgetAnnotation()
-        {
+        public virtual void ReleaseFormFieldFromWidgetAnnotation() {
             PdfDictionary annotDict = GetPdfObject();
-            foreach (PdfName entry in widgetEntries)
-            {
+            foreach (PdfName entry in widgetEntries) {
                 annotDict.Remove(entry);
             }
             PdfDictionary parent = annotDict.GetAsDictionary(PdfName.Parent);
-            if (parent != null && annotDict.Size() == 1)
-            {
+            if (parent != null && annotDict.Size() == 1) {
                 PdfArray kids = parent.GetAsArray(PdfName.Kids);
                 kids.Remove(annotDict);
-                if (kids.Size() == 0)
-                {
+                if (kids.Size() == 0) {
                     parent.Remove(PdfName.Kids);
                 }
             }
@@ -201,33 +190,27 @@ namespace iText.Kernel.Pdf.Annot
         /// </summary>
         /// <param name="visibility">visibility option</param>
         /// <returns>the edited widget annotation</returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfWidgetAnnotation SetVisibility(int visibility)
-        {
-            switch (visibility)
-            {
-                case HIDDEN:
-                    {
-                        GetPdfObject().Put(PdfName.F, new PdfNumber(PdfAnnotation.PRINT | PdfAnnotation.HIDDEN));
-                        break;
-                    }
+        public virtual iText.Kernel.Pdf.Annot.PdfWidgetAnnotation SetVisibility(int visibility) {
+            switch (visibility) {
+                case HIDDEN: {
+                    GetPdfObject().Put(PdfName.F, new PdfNumber(PdfAnnotation.PRINT | PdfAnnotation.HIDDEN));
+                    break;
+                }
 
-                case VISIBLE_BUT_DOES_NOT_PRINT:
-                    {
-                        break;
-                    }
+                case VISIBLE_BUT_DOES_NOT_PRINT: {
+                    break;
+                }
 
-                case HIDDEN_BUT_PRINTABLE:
-                    {
-                        GetPdfObject().Put(PdfName.F, new PdfNumber(PdfAnnotation.PRINT | PdfAnnotation.NO_VIEW));
-                        break;
-                    }
+                case HIDDEN_BUT_PRINTABLE: {
+                    GetPdfObject().Put(PdfName.F, new PdfNumber(PdfAnnotation.PRINT | PdfAnnotation.NO_VIEW));
+                    break;
+                }
 
                 case VISIBLE:
-                default:
-                    {
-                        GetPdfObject().Put(PdfName.F, new PdfNumber(PdfAnnotation.PRINT));
-                        break;
-                    }
+                default: {
+                    GetPdfObject().Put(PdfName.F, new PdfNumber(PdfAnnotation.PRINT));
+                    break;
+                }
             }
             return this;
         }
@@ -243,8 +226,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfDictionary"/>
         /// which defines the characteristics and behaviour of an action.
         /// </returns>
-        public virtual PdfDictionary GetAction()
-        {
+        public virtual PdfDictionary GetAction() {
             return GetPdfObject().GetAsDictionary(PdfName.A);
         }
 
@@ -263,8 +245,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfWidgetAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfWidgetAnnotation SetAction(PdfAction action)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfWidgetAnnotation SetAction(PdfAction action) {
             return (iText.Kernel.Pdf.Annot.PdfWidgetAnnotation)Put(PdfName.A, action.GetPdfObject());
         }
 
@@ -279,8 +260,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfDictionary"/>.
         /// </returns>
         /// <seealso cref="GetAction()"/>
-        public virtual PdfDictionary GetAdditionalAction()
-        {
+        public virtual PdfDictionary GetAdditionalAction() {
             return GetPdfObject().GetAsDictionary(PdfName.AA);
         }
 
@@ -315,8 +295,7 @@ namespace iText.Kernel.Pdf.Annot
         /// instance.
         /// </returns>
         public virtual iText.Kernel.Pdf.Annot.PdfWidgetAnnotation SetAdditionalAction(PdfName key, PdfAction action
-            )
-        {
+            ) {
             PdfAction.SetAdditionalAction(this, key, action);
             return this;
         }
@@ -330,8 +309,7 @@ namespace iText.Kernel.Pdf.Annot
         /// annotation’s appearance stream. See ISO-320001, Table 189.
         /// </remarks>
         /// <returns>an appearance characteristics dictionary or null if it isn't specified.</returns>
-        public virtual PdfDictionary GetAppearanceCharacteristics()
-        {
+        public virtual PdfDictionary GetAppearanceCharacteristics() {
             return GetPdfObject().GetAsDictionary(PdfName.MK);
         }
 
@@ -354,8 +332,7 @@ namespace iText.Kernel.Pdf.Annot
         /// instance.
         /// </returns>
         public virtual iText.Kernel.Pdf.Annot.PdfWidgetAnnotation SetAppearanceCharacteristics(PdfDictionary characteristics
-            )
-        {
+            ) {
             return (iText.Kernel.Pdf.Annot.PdfWidgetAnnotation)Put(PdfName.MK, characteristics);
         }
 
@@ -377,8 +354,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfDictionary"/>
         /// which is a border style dictionary or null if it is not specified.
         /// </returns>
-        public virtual PdfDictionary GetBorderStyle()
-        {
+        public virtual PdfDictionary GetBorderStyle() {
             return GetPdfObject().GetAsDictionary(PdfName.BS);
         }
 
@@ -404,8 +380,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfWidgetAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfWidgetAnnotation SetBorderStyle(PdfDictionary borderStyle)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfWidgetAnnotation SetBorderStyle(PdfDictionary borderStyle) {
             return (iText.Kernel.Pdf.Annot.PdfWidgetAnnotation)Put(PdfName.BS, borderStyle);
         }
 
@@ -443,8 +418,7 @@ namespace iText.Kernel.Pdf.Annot
         /// instance.
         /// </returns>
         /// <seealso cref="GetBorderStyle()"/>
-        public virtual iText.Kernel.Pdf.Annot.PdfWidgetAnnotation SetBorderStyle(PdfName style)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfWidgetAnnotation SetBorderStyle(PdfName style) {
             return SetBorderStyle(BorderStyleUtil.SetStyle(GetBorderStyle(), style));
         }
 
@@ -465,8 +439,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfWidgetAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfWidgetAnnotation SetDashPattern(PdfArray dashPattern)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfWidgetAnnotation SetDashPattern(PdfArray dashPattern) {
             return SetBorderStyle(BorderStyleUtil.SetDashPattern(GetBorderStyle(), dashPattern));
         }
     }

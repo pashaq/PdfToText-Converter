@@ -43,8 +43,7 @@ address: sales@itextpdf.com
 */
 using System;
 
-namespace iText.IO.Util
-{
+namespace iText.IO.Util {
     /// <summary>
     /// This class is a convenience method to sequentially calculate hash code of the
     /// object based on the field values.
@@ -86,8 +85,7 @@ namespace iText.IO.Util
     /// </c></pre>
     /// </remarks>
     /// <seealso cref="System.Collections.IList{E}.GetHashCode()"/>
-    public sealed class HashCode
-    {
+    public sealed class HashCode {
         /// <summary>The hashCode value before any data is appended, equals to 1.</summary>
         /// <seealso cref="System.Collections.IList{E}.GetHashCode()"/>
         public const int EMPTY_HASH_CODE = 1;
@@ -95,8 +93,7 @@ namespace iText.IO.Util
         private int hashCode = EMPTY_HASH_CODE;
 
         /// <summary>Returns accumulated hashCode</summary>
-        public sealed override int GetHashCode()
-        {
+        public sealed override int GetHashCode() {
             return hashCode;
         }
 
@@ -104,8 +101,7 @@ namespace iText.IO.Util
         /// <param name="hashCode">previous hashCode value</param>
         /// <param name="value">new element</param>
         /// <returns>combined hashCode</returns>
-        public static int Combine(int hashCode, bool value)
-        {
+        public static int Combine(int hashCode, bool value) {
             int v = value ? 1231 : 1237;
             return Combine(hashCode, v);
         }
@@ -114,8 +110,7 @@ namespace iText.IO.Util
         /// <param name="hashCode">previous hashCode value</param>
         /// <param name="value">new element</param>
         /// <returns>combined hashCode</returns>
-        public static int Combine(int hashCode, long value)
-        {
+        public static int Combine(int hashCode, long value) {
             int v = (int)(value ^ ((long)(((ulong)value) >> 32)));
             return Combine(hashCode, v);
         }
@@ -124,8 +119,7 @@ namespace iText.IO.Util
         /// <param name="hashCode">previous hashCode value</param>
         /// <param name="value">new element</param>
         /// <returns>combined hashCode</returns>
-        public static int Combine(int hashCode, float value)
-        {
+        public static int Combine(int hashCode, float value) {
             int v = JavaUtil.FloatToIntBits(value);
             return Combine(hashCode, v);
         }
@@ -134,8 +128,7 @@ namespace iText.IO.Util
         /// <param name="hashCode">previous hashCode value</param>
         /// <param name="value">new element</param>
         /// <returns>combined hashCode</returns>
-        public static int Combine(int hashCode, double value)
-        {
+        public static int Combine(int hashCode, double value) {
             long v = JavaUtil.DoubleToLongBits(value);
             return Combine(hashCode, v);
         }
@@ -144,8 +137,7 @@ namespace iText.IO.Util
         /// <param name="hashCode">previous hashCode value</param>
         /// <param name="value">new element</param>
         /// <returns>combined hashCode</returns>
-        public static int Combine(int hashCode, Object value)
-        {
+        public static int Combine(int hashCode, Object value) {
             return Combine(hashCode, value.GetHashCode());
         }
 
@@ -153,16 +145,14 @@ namespace iText.IO.Util
         /// <param name="hashCode">previous hashCode value</param>
         /// <param name="value">new element</param>
         /// <returns>combined hashCode</returns>
-        public static int Combine(int hashCode, int value)
-        {
+        public static int Combine(int hashCode, int value) {
             return 31 * hashCode + value;
         }
 
         /// <summary>Appends value's hashCode to the current hashCode.</summary>
         /// <param name="value">new element</param>
         /// <returns>this</returns>
-        public HashCode Append(int value)
-        {
+        public HashCode Append(int value) {
             hashCode = Combine(hashCode, value);
             return this;
         }
@@ -170,8 +160,7 @@ namespace iText.IO.Util
         /// <summary>Appends value's hashCode to the current hashCode.</summary>
         /// <param name="value">new element</param>
         /// <returns>this</returns>
-        public HashCode Append(long value)
-        {
+        public HashCode Append(long value) {
             hashCode = Combine(hashCode, value);
             return this;
         }
@@ -179,8 +168,7 @@ namespace iText.IO.Util
         /// <summary>Appends value's hashCode to the current hashCode.</summary>
         /// <param name="value">new element</param>
         /// <returns>this</returns>
-        public HashCode Append(float value)
-        {
+        public HashCode Append(float value) {
             hashCode = Combine(hashCode, value);
             return this;
         }
@@ -188,8 +176,7 @@ namespace iText.IO.Util
         /// <summary>Appends value's hashCode to the current hashCode.</summary>
         /// <param name="value">new element</param>
         /// <returns>this</returns>
-        public HashCode Append(double value)
-        {
+        public HashCode Append(double value) {
             hashCode = Combine(hashCode, value);
             return this;
         }
@@ -197,8 +184,7 @@ namespace iText.IO.Util
         /// <summary>Appends value's hashCode to the current hashCode.</summary>
         /// <param name="value">new element</param>
         /// <returns>this</returns>
-        public HashCode Append(bool value)
-        {
+        public HashCode Append(bool value) {
             hashCode = Combine(hashCode, value);
             return this;
         }
@@ -206,8 +192,7 @@ namespace iText.IO.Util
         /// <summary>Appends value's hashCode to the current hashCode.</summary>
         /// <param name="value">new element</param>
         /// <returns>this</returns>
-        public HashCode Append(Object value)
-        {
+        public HashCode Append(Object value) {
             hashCode = Combine(hashCode, value);
             return this;
         }

@@ -42,16 +42,14 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using System.IO;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Filters
-{
+namespace iText.Kernel.Pdf.Filters {
     /// <summary>Handles LZWDECODE filter</summary>
-    public class LZWDecodeFilter : MemoryLimitsAwareFilter
-    {
+    public class LZWDecodeFilter : MemoryLimitsAwareFilter {
         /// <summary><inheritDoc/></summary>
         public override byte[] Decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary
-            )
-        {
+            ) {
             MemoryStream outputStream = EnableMemoryLimitsAwareHandler(streamDictionary);
             b = LZWDecode(b, outputStream);
             b = FlateDecodeFilter.DecodePredictor(b, decodeParams);
@@ -61,8 +59,7 @@ namespace iText.Kernel.Pdf.Filters
         /// <summary>Decodes a byte[] according to the LZW encoding.</summary>
         /// <param name="in">byte[] to be decoded</param>
         /// <returns>decoded byte[]</returns>
-        public static byte[] LZWDecode(byte[] @in)
-        {
+        public static byte[] LZWDecode(byte[] @in) {
             return LZWDecode(@in, new MemoryStream());
         }
 
@@ -70,8 +67,7 @@ namespace iText.Kernel.Pdf.Filters
         /// <param name="in">byte[] to be decoded</param>
         /// <param name="out">the out stream which will be used to write the bytes.</param>
         /// <returns>decoded byte[]</returns>
-        private static byte[] LZWDecode(byte[] @in, MemoryStream @out)
-        {
+        private static byte[] LZWDecode(byte[] @in, MemoryStream @out) {
             LZWDecoder lzw = new LZWDecoder();
             lzw.Decode(@in, @out);
             return @out.ToArray();

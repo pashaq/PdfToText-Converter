@@ -44,8 +44,7 @@ address: sales@itextpdf.com
 using System.Collections;
 using System.Collections.Generic;
 
-namespace iText.Kernel.Pdf
-{
+namespace iText.Kernel.Pdf {
     internal class PdfArrayDirectIterator : IEnumerator<PdfObject>
     {
         private IEnumerator<PdfObject> parentEnumerator;

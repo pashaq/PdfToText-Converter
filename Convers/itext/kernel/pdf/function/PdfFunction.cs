@@ -41,35 +41,29 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.Kernel.Pdf.Colorspace;
 using System.Collections.Generic;
+using iText.Kernel.Pdf;
+using iText.Kernel.Pdf.Colorspace;
 
-namespace iText.Kernel.Pdf.Function
-{
-    public class PdfFunction : PdfObjectWrapper<PdfObject>
-    {
+namespace iText.Kernel.Pdf.Function {
+    public class PdfFunction : PdfObjectWrapper<PdfObject> {
         public PdfFunction(PdfObject pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
-        public virtual int GetFunctionType()
-        {
+        public virtual int GetFunctionType() {
             return (int)((PdfDictionary)GetPdfObject()).GetAsInt(PdfName.FunctionType);
         }
 
-        public virtual bool CheckCompatibilityWithColorSpace(PdfColorSpace alternateSpace)
-        {
+        public virtual bool CheckCompatibilityWithColorSpace(PdfColorSpace alternateSpace) {
             return true;
         }
 
-        public virtual int GetInputSize()
-        {
+        public virtual int GetInputSize() {
             return ((PdfDictionary)GetPdfObject()).GetAsArray(PdfName.Domain).Size() / 2;
         }
 
-        public virtual int GetOutputSize()
-        {
+        public virtual int GetOutputSize() {
             PdfArray range = ((PdfDictionary)GetPdfObject()).GetAsArray(PdfName.Range);
             return range == null ? 0 : range.Size() / 2;
         }
@@ -90,97 +84,78 @@ namespace iText.Kernel.Pdf.Function
         /// For example: wrapperInstance.makeIndirect(document).flush();
         /// Note that not every wrapper require this, only those that have such warning in documentation.
         /// </remarks>
-        public override void Flush()
-        {
+        public override void Flush() {
             base.Flush();
         }
 
-        protected internal override bool IsWrappedObjectMustBeIndirect()
-        {
+        protected internal override bool IsWrappedObjectMustBeIndirect() {
             return true;
         }
 
-        public class Type0 : PdfFunction
-        {
+        public class Type0 : PdfFunction {
             public Type0(PdfStream pdfObject)
-                : base(pdfObject)
-            {
+                : base(pdfObject) {
             }
 
             public Type0(PdfArray domain, PdfArray range, PdfArray size, PdfNumber bitsPerSample, byte[] samples)
-                : this(domain, range, size, bitsPerSample, null, null, null, samples)
-            {
+                : this(domain, range, size, bitsPerSample, null, null, null, samples) {
             }
 
             public Type0(PdfArray domain, PdfArray range, PdfArray size, PdfNumber bitsPerSample, PdfNumber order, PdfArray
                  encode, PdfArray decode, byte[] samples)
-                : this(MakeType0(domain, range, size, bitsPerSample, order, encode, decode, samples))
-            {
+                : this(MakeType0(domain, range, size, bitsPerSample, order, encode, decode, samples)) {
             }
 
-            public override bool CheckCompatibilityWithColorSpace(PdfColorSpace alternateSpace)
-            {
+            public override bool CheckCompatibilityWithColorSpace(PdfColorSpace alternateSpace) {
                 return GetInputSize() == 1 && GetOutputSize() == alternateSpace.GetNumberOfComponents();
             }
 
             private static PdfStream MakeType0(PdfArray domain, PdfArray range, PdfArray size, PdfNumber bitsPerSample
-                , PdfNumber order, PdfArray encode, PdfArray decode, byte[] samples)
-            {
+                , PdfNumber order, PdfArray encode, PdfArray decode, byte[] samples) {
                 PdfStream stream = new PdfStream(samples);
                 stream.Put(PdfName.FunctionType, new PdfNumber(0));
                 stream.Put(PdfName.Domain, domain);
                 stream.Put(PdfName.Range, range);
                 stream.Put(PdfName.Size, size);
                 stream.Put(PdfName.BitsPerSample, bitsPerSample);
-                if (order != null)
-                {
+                if (order != null) {
                     stream.Put(PdfName.Order, order);
                 }
-                if (encode != null)
-                {
+                if (encode != null) {
                     stream.Put(PdfName.Encode, encode);
                 }
-                if (decode != null)
-                {
+                if (decode != null) {
                     stream.Put(PdfName.Decode, decode);
                 }
                 return stream;
             }
         }
 
-        public class Type2 : PdfFunction
-        {
+        public class Type2 : PdfFunction {
             public Type2(PdfDictionary pdfObject)
-                : base(pdfObject)
-            {
+                : base(pdfObject) {
             }
 
             public Type2(PdfArray domain, PdfArray range, PdfNumber n)
-                : this(domain, range, null, null, n)
-            {
+                : this(domain, range, null, null, n) {
             }
 
             public Type2(PdfArray domain, PdfArray range, PdfArray c0, PdfArray c1, PdfNumber n)
-                : this(MakeType2(domain, range, c0, c1, n))
-            {
+                : this(MakeType2(domain, range, c0, c1, n)) {
             }
 
             private static PdfDictionary MakeType2(PdfArray domain, PdfArray range, PdfArray c0, PdfArray c1, PdfNumber
-                 n)
-            {
+                 n) {
                 PdfDictionary dictionary = new PdfDictionary();
                 dictionary.Put(PdfName.FunctionType, new PdfNumber(2));
                 dictionary.Put(PdfName.Domain, domain);
-                if (range != null)
-                {
+                if (range != null) {
                     dictionary.Put(PdfName.Range, range);
                 }
-                if (c0 != null)
-                {
+                if (c0 != null) {
                     dictionary.Put(PdfName.C0, c0);
                 }
-                if (c1 != null)
-                {
+                if (c1 != null) {
                     dictionary.Put(PdfName.C1, c1);
                 }
                 dictionary.Put(PdfName.N, n);
@@ -188,32 +163,26 @@ namespace iText.Kernel.Pdf.Function
             }
         }
 
-        public class Type3 : PdfFunction
-        {
+        public class Type3 : PdfFunction {
             public Type3(PdfDictionary pdfObject)
-                : base(pdfObject)
-            {
+                : base(pdfObject) {
             }
 
             public Type3(PdfArray domain, PdfArray range, PdfArray functions, PdfArray bounds, PdfArray encode)
-                : this(MakeType3(domain, range, functions, bounds, encode))
-            {
+                : this(MakeType3(domain, range, functions, bounds, encode)) {
             }
 
             public Type3(PdfArray domain, PdfArray range, IList<PdfFunction> functions, PdfArray bounds, PdfArray encode
                 )
-                : this(domain, range, GetFunctionsArray(functions), bounds, encode)
-            {
+                : this(domain, range, GetFunctionsArray(functions), bounds, encode) {
             }
 
             private static PdfDictionary MakeType3(PdfArray domain, PdfArray range, PdfArray functions, PdfArray bounds
-                , PdfArray encode)
-            {
+                , PdfArray encode) {
                 PdfDictionary dictionary = new PdfDictionary();
                 dictionary.Put(PdfName.FunctionType, new PdfNumber(3));
                 dictionary.Put(PdfName.Domain, domain);
-                if (range != null)
-                {
+                if (range != null) {
                     dictionary.Put(PdfName.Range, range);
                 }
                 dictionary.Put(PdfName.Functions, functions);
@@ -222,36 +191,29 @@ namespace iText.Kernel.Pdf.Function
                 return dictionary;
             }
 
-            private static PdfArray GetFunctionsArray(IList<PdfFunction> functions)
-            {
+            private static PdfArray GetFunctionsArray(IList<PdfFunction> functions) {
                 PdfArray array = new PdfArray();
-                foreach (PdfFunction function in functions)
-                {
+                foreach (PdfFunction function in functions) {
                     array.Add(function.GetPdfObject());
                 }
                 return array;
             }
         }
 
-        public class Type4 : PdfFunction
-        {
+        public class Type4 : PdfFunction {
             public Type4(PdfStream pdfObject)
-                : base(pdfObject)
-            {
+                : base(pdfObject) {
             }
 
             public Type4(PdfArray domain, PdfArray range, byte[] ps)
-                : this(MakeType4(domain, range, ps))
-            {
+                : this(MakeType4(domain, range, ps)) {
             }
 
-            public override bool CheckCompatibilityWithColorSpace(PdfColorSpace alternateSpace)
-            {
+            public override bool CheckCompatibilityWithColorSpace(PdfColorSpace alternateSpace) {
                 return GetInputSize() == 1 && GetOutputSize() == alternateSpace.GetNumberOfComponents();
             }
 
-            private static PdfStream MakeType4(PdfArray domain, PdfArray range, byte[] ps)
-            {
+            private static PdfStream MakeType4(PdfArray domain, PdfArray range, byte[] ps) {
                 PdfStream stream = new PdfStream(ps);
                 stream.Put(PdfName.FunctionType, new PdfNumber(4));
                 stream.Put(PdfName.Domain, domain);
@@ -260,29 +222,23 @@ namespace iText.Kernel.Pdf.Function
             }
         }
 
-        public static PdfFunction MakeFunction(PdfDictionary pdfObject)
-        {
-            switch (pdfObject.GetObjectType())
-            {
-                case 0:
-                    {
-                        return new PdfFunction.Type0((PdfStream)pdfObject);
-                    }
+        public static PdfFunction MakeFunction(PdfDictionary pdfObject) {
+            switch (pdfObject.GetObjectType()) {
+                case 0: {
+                    return new PdfFunction.Type0((PdfStream)pdfObject);
+                }
 
-                case 2:
-                    {
-                        return new PdfFunction.Type2(pdfObject);
-                    }
+                case 2: {
+                    return new PdfFunction.Type2(pdfObject);
+                }
 
-                case 3:
-                    {
-                        return new PdfFunction.Type3(pdfObject);
-                    }
+                case 3: {
+                    return new PdfFunction.Type3(pdfObject);
+                }
 
-                case 4:
-                    {
-                        return new PdfFunction.Type4((PdfStream)pdfObject);
-                    }
+                case 4: {
+                    return new PdfFunction.Type4((PdfStream)pdfObject);
+                }
             }
             return null;
         }

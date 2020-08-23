@@ -41,11 +41,9 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-namespace iText.Kernel.Pdf
-{
+namespace iText.Kernel.Pdf {
     /// <summary>Type of object to conform.</summary>
-    public enum IsoKey
-    {
+    public enum IsoKey {
         CANVAS_STACK,
         FILL_COLOR,
         EXTENDED_GRAPHICS_STATE,

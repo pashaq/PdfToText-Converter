@@ -42,11 +42,11 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using System.Collections.Generic;
+using iText.Kernel.Pdf;
+using iText.Kernel.Pdf.Canvas;
 
-namespace iText.Kernel.Pdf.Canvas.Parser
-{
-    public interface IXObjectDoHandler
-    {
+namespace iText.Kernel.Pdf.Canvas.Parser {
+    public interface IXObjectDoHandler {
         void HandleXObject(PdfCanvasProcessor processor, Stack<CanvasTag> canvasTagHierarchy, PdfStream stream, PdfName
              xObjectName);
     }

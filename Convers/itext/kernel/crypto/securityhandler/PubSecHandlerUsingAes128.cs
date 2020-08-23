@@ -41,42 +41,36 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.Kernel.Pdf;
-using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.X509;
 using System;
 using System.IO;
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.X509;
+using iText.Kernel.Crypto;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Crypto.Securityhandler
-{
-    public class PubSecHandlerUsingAes128 : PubKeySecurityHandler
-    {
+namespace iText.Kernel.Crypto.Securityhandler {
+    public class PubSecHandlerUsingAes128 : PubKeySecurityHandler {
         private static readonly byte[] salt = new byte[] { (byte)0x73, (byte)0x41, (byte)0x6c, (byte)0x54 };
 
         public PubSecHandlerUsingAes128(PdfDictionary encryptionDictionary, X509Certificate[] certs, int[] permissions
-            , bool encryptMetadata, bool embeddedFilesOnly)
-        {
+            , bool encryptMetadata, bool embeddedFilesOnly) {
             InitKeyAndFillDictionary(encryptionDictionary, certs, permissions, encryptMetadata, embeddedFilesOnly);
         }
 
         public PubSecHandlerUsingAes128(PdfDictionary encryptionDictionary, ICipherParameters certificateKey, X509Certificate
-             certificate, bool encryptMetadata)
-        {
+             certificate, bool encryptMetadata) {
             InitKeyAndReadDictionary(encryptionDictionary, certificateKey, certificate, encryptMetadata);
         }
 
-        public override OutputStreamEncryption GetEncryptionStream(Stream os)
-        {
+        public override OutputStreamEncryption GetEncryptionStream(Stream os) {
             return new OutputStreamAesEncryption(os, nextObjectKey, 0, nextObjectKeySize);
         }
 
-        public override IDecryptor GetDecryptor()
-        {
+        public override IDecryptor GetDecryptor() {
             return new AesDecryptor(nextObjectKey, 0, nextObjectKeySize);
         }
 
-        public override void SetHashKeyForNextObject(int objNumber, int objGeneration)
-        {
+        public override void SetHashKeyForNextObject(int objNumber, int objGeneration) {
             // added by ujihara
             md5.Reset();
             extra[0] = (byte)objNumber;
@@ -89,26 +83,22 @@ namespace iText.Kernel.Crypto.Securityhandler
             md5.Update(salt);
             nextObjectKey = md5.Digest();
             nextObjectKeySize = mkey.Length + 5;
-            if (nextObjectKeySize > 16)
-            {
+            if (nextObjectKeySize > 16) {
                 nextObjectKeySize = 16;
             }
         }
 
-        protected internal override String GetDigestAlgorithm()
-        {
+        protected internal override String GetDigestAlgorithm() {
             return "SHA-1";
         }
 
-        protected internal override void InitKey(byte[] globalKey, int keyLength)
-        {
+        protected internal override void InitKey(byte[] globalKey, int keyLength) {
             mkey = new byte[keyLength / 8];
             Array.Copy(globalKey, 0, mkey, 0, mkey.Length);
         }
 
         protected internal override void SetPubSecSpecificHandlerDicEntries(PdfDictionary encryptionDictionary, bool
-             encryptMetadata, bool embeddedFilesOnly)
-        {
+             encryptMetadata, bool embeddedFilesOnly) {
             encryptionDictionary.Put(PdfName.Filter, PdfName.Adobe_PubSec);
             encryptionDictionary.Put(PdfName.SubFilter, PdfName.Adbe_pkcs7_s5);
             encryptionDictionary.Put(PdfName.R, new PdfNumber(4));
@@ -116,8 +106,7 @@ namespace iText.Kernel.Crypto.Securityhandler
             PdfArray recipients = CreateRecipientsArray();
             PdfDictionary stdcf = new PdfDictionary();
             stdcf.Put(PdfName.Recipients, recipients);
-            if (!encryptMetadata)
-            {
+            if (!encryptMetadata) {
                 stdcf.Put(PdfName.EncryptMetadata, PdfBoolean.FALSE);
             }
             stdcf.Put(PdfName.CFM, PdfName.AESV2);
@@ -125,14 +114,12 @@ namespace iText.Kernel.Crypto.Securityhandler
             PdfDictionary cf = new PdfDictionary();
             cf.Put(PdfName.DefaultCryptFilter, stdcf);
             encryptionDictionary.Put(PdfName.CF, cf);
-            if (embeddedFilesOnly)
-            {
+            if (embeddedFilesOnly) {
                 encryptionDictionary.Put(PdfName.EFF, PdfName.DefaultCryptFilter);
                 encryptionDictionary.Put(PdfName.StrF, PdfName.Identity);
                 encryptionDictionary.Put(PdfName.StmF, PdfName.Identity);
             }
-            else
-            {
+            else {
                 encryptionDictionary.Put(PdfName.StrF, PdfName.DefaultCryptFilter);
                 encryptionDictionary.Put(PdfName.StmF, PdfName.DefaultCryptFilter);
             }

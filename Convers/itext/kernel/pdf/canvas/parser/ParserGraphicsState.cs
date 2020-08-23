@@ -42,42 +42,36 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using iText.Kernel.Geom;
+using iText.Kernel.Pdf.Canvas;
 using iText.Kernel.Pdf.Canvas.Parser.ClipperLib;
 
-namespace iText.Kernel.Pdf.Canvas.Parser
-{
+namespace iText.Kernel.Pdf.Canvas.Parser {
     /// <summary>
     /// Internal class which is essentially a
     /// <see cref="iText.Kernel.Pdf.Canvas.CanvasGraphicsState"/>
     /// which supports tracking of
     /// clipping path state and changes.
     /// </summary>
-    public class ParserGraphicsState : CanvasGraphicsState
-    {
+    public class ParserGraphicsState : CanvasGraphicsState {
         // NOTE: From the spec default value of this field should be the boundary of the entire imageable portion of the output page.
         private Path clippingPath;
 
         /// <summary>Internal empty and default constructor.</summary>
-        internal ParserGraphicsState()
-        {
+        internal ParserGraphicsState() {
         }
 
         /// <summary>Copy constructor.</summary>
         /// <param name="source">the Graphics State to copy from</param>
         internal ParserGraphicsState(iText.Kernel.Pdf.Canvas.Parser.ParserGraphicsState source)
-            : base(source)
-        {
-            if (source.clippingPath != null)
-            {
+            : base(source) {
+            if (source.clippingPath != null) {
                 clippingPath = new Path(source.clippingPath);
             }
         }
 
-        public override void UpdateCtm(Matrix newCtm)
-        {
+        public override void UpdateCtm(Matrix newCtm) {
             base.UpdateCtm(newCtm);
-            if (clippingPath != null)
-            {
+            if (clippingPath != null) {
                 TransformClippingPath(newCtm);
             }
         }
@@ -96,10 +90,8 @@ namespace iText.Kernel.Pdf.Canvas.Parser
         /// or
         /// <see cref="iText.Kernel.Pdf.Canvas.PdfCanvasConstants.FillingRule.NONZERO_WINDING"/>
         /// </param>
-        public virtual void Clip(Path path, int fillingRule)
-        {
-            if (clippingPath == null || clippingPath.IsEmpty())
-            {
+        public virtual void Clip(Path path, int fillingRule) {
+            if (clippingPath == null || clippingPath.IsEmpty()) {
                 return;
             }
             Path pathCopy = new Path(path);
@@ -122,8 +114,7 @@ namespace iText.Kernel.Pdf.Canvas.Parser
         /// ).
         /// </remarks>
         /// <returns>The current clipping path.</returns>
-        public virtual Path GetClippingPath()
-        {
+        public virtual Path GetClippingPath() {
             return clippingPath;
         }
 
@@ -134,15 +125,13 @@ namespace iText.Kernel.Pdf.Canvas.Parser
         /// it simply replaces it with the new one instead.
         /// </remarks>
         /// <param name="clippingPath">New clipping path.</param>
-        public virtual void SetClippingPath(Path clippingPath)
-        {
+        public virtual void SetClippingPath(Path clippingPath) {
             Path pathCopy = new Path(clippingPath);
             pathCopy.CloseAllSubpaths();
             this.clippingPath = pathCopy;
         }
 
-        private void TransformClippingPath(Matrix newCtm)
-        {
+        private void TransformClippingPath(Matrix newCtm) {
             clippingPath = ShapeTransformUtil.TransformPath(clippingPath, newCtm);
         }
     }

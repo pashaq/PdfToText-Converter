@@ -42,11 +42,10 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using iText.Kernel.Geom;
+using iText.Kernel.Pdf.Canvas;
 
-namespace iText.Kernel.Pdf.Canvas.Parser.Data
-{
-    public class ClippingPathInfo : AbstractRenderInfo
-    {
+namespace iText.Kernel.Pdf.Canvas.Parser.Data {
+    public class ClippingPathInfo : AbstractRenderInfo {
         private Path path;
 
         private Matrix ctm;
@@ -54,8 +53,7 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Data
         /// <param name="path">The path to be rendered.</param>
         /// <param name="ctm">The path to be rendered.</param>
         public ClippingPathInfo(CanvasGraphicsState gs, Path path, Matrix ctm)
-            : base(gs)
-        {
+            : base(gs) {
             this.path = path;
             this.ctm = ctm;
         }
@@ -65,14 +63,12 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Data
         /// <see cref="iText.Kernel.Geom.Path"/>
         /// which represents current clipping path.
         /// </returns>
-        public virtual Path GetClippingPath()
-        {
+        public virtual Path GetClippingPath() {
             return path;
         }
 
         /// <returns>Current transformation matrix.</returns>
-        public virtual Matrix GetCtm()
-        {
+        public virtual Matrix GetCtm() {
             return ctm;
         }
     }

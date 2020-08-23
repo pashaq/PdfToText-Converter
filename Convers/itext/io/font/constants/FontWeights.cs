@@ -42,12 +42,9 @@ address: sales@itextpdf.com
 */
 using System;
 
-namespace iText.IO.Font.Constants
-{
-    public sealed class FontWeights
-    {
-        private FontWeights()
-        {
+namespace iText.IO.Font.Constants {
+    public sealed class FontWeights {
+        private FontWeights() {
         }
 
         // Font weight Thin
@@ -77,92 +74,77 @@ namespace iText.IO.Font.Constants
         // Font weight Black (Heavy)
         public const int BLACK = 900;
 
-        public static int FromType1FontWeight(String weight)
-        {
+        public static int FromType1FontWeight(String weight) {
             int fontWeight = NORMAL;
-            switch (weight.ToLowerInvariant())
-            {
-                case "ultralight":
-                    {
-                        fontWeight = THIN;
-                        break;
-                    }
+            switch (weight.ToLowerInvariant()) {
+                case "ultralight": {
+                    fontWeight = THIN;
+                    break;
+                }
 
                 case "thin":
-                case "extralight":
-                    {
-                        fontWeight = EXTRA_LIGHT;
-                        break;
-                    }
+                case "extralight": {
+                    fontWeight = EXTRA_LIGHT;
+                    break;
+                }
 
-                case "light":
-                    {
-                        fontWeight = LIGHT;
-                        break;
-                    }
+                case "light": {
+                    fontWeight = LIGHT;
+                    break;
+                }
 
                 case "book":
                 case "regular":
-                case "normal":
-                    {
-                        fontWeight = NORMAL;
-                        break;
-                    }
+                case "normal": {
+                    fontWeight = NORMAL;
+                    break;
+                }
 
-                case "medium":
-                    {
-                        fontWeight = MEDIUM;
-                        break;
-                    }
+                case "medium": {
+                    fontWeight = MEDIUM;
+                    break;
+                }
 
                 case "demibold":
-                case "semibold":
-                    {
-                        fontWeight = SEMI_BOLD;
-                        break;
-                    }
+                case "semibold": {
+                    fontWeight = SEMI_BOLD;
+                    break;
+                }
 
-                case "bold":
-                    {
-                        fontWeight = BOLD;
-                        break;
-                    }
+                case "bold": {
+                    fontWeight = BOLD;
+                    break;
+                }
 
                 case "extrabold":
-                case "ultrabold":
-                    {
-                        fontWeight = EXTRA_BOLD;
-                        break;
-                    }
+                case "ultrabold": {
+                    fontWeight = EXTRA_BOLD;
+                    break;
+                }
 
                 case "heavy":
                 case "black":
                 case "ultra":
-                case "ultrablack":
-                    {
-                        fontWeight = BLACK;
-                        break;
-                    }
+                case "ultrablack": {
+                    fontWeight = BLACK;
+                    break;
+                }
 
                 case "fat":
-                case "extrablack":
-                    {
-                        fontWeight = BLACK;
-                        break;
-                    }
+                case "extrablack": {
+                    fontWeight = BLACK;
+                    break;
+                }
             }
             return fontWeight;
         }
 
-        public static int NormalizeFontWeight(int fontWeight)
-        {
+        public static int NormalizeFontWeight(int fontWeight) {
             fontWeight = (fontWeight / 100) * 100;
-            if (fontWeight < iText.IO.Font.Constants.FontWeights.THIN)
-            {
+            if (fontWeight < iText.IO.Font.Constants.FontWeights.THIN) {
                 return iText.IO.Font.Constants.FontWeights.THIN;
             }
-            if (fontWeight > iText.IO.Font.Constants.FontWeights.BLACK)
-            {
+            if (fontWeight > iText.IO.Font.Constants.FontWeights.BLACK) {
                 return iText.IO.Font.Constants.FontWeights.BLACK;
             }
             return fontWeight;

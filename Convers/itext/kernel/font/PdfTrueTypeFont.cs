@@ -41,48 +41,41 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
+using System.Collections.Generic;
 using Common.Logging;
 using iText.IO.Font;
 using iText.IO.Font.Otf;
+using iText.Kernel;
 using iText.Kernel.Pdf;
-using System;
-using System.Collections.Generic;
 
-namespace iText.Kernel.Font
-{
+namespace iText.Kernel.Font {
     /// <summary>Note.</summary>
     /// <remarks>Note. For TrueType FontNames.getStyle() is the same to Subfamily(). So, we shouldn't add style to /BaseFont.
     ///     </remarks>
-    public class PdfTrueTypeFont : PdfSimpleFont<TrueTypeFont>
-    {
+    public class PdfTrueTypeFont : PdfSimpleFont<TrueTypeFont> {
         internal PdfTrueTypeFont(TrueTypeFont ttf, String encoding, bool embedded)
-            : base()
-        {
+            : base() {
             SetFontProgram(ttf);
             this.embedded = embedded;
             FontNames fontNames = ttf.GetFontNames();
-            if (embedded && !fontNames.AllowEmbedding())
-            {
+            if (embedded && !fontNames.AllowEmbedding()) {
                 throw new PdfException("{0} cannot be embedded due to licensing restrictions.").SetMessageParams(fontNames
                     .GetFontName());
             }
-            if ((encoding == null || encoding.Length == 0) && ttf.IsFontSpecific())
-            {
+            if ((encoding == null || encoding.Length == 0) && ttf.IsFontSpecific()) {
                 encoding = FontEncoding.FONT_SPECIFIC;
             }
-            if (encoding != null && FontEncoding.FONT_SPECIFIC.ToLowerInvariant().Equals(encoding.ToLowerInvariant()))
-            {
+            if (encoding != null && FontEncoding.FONT_SPECIFIC.ToLowerInvariant().Equals(encoding.ToLowerInvariant())) {
                 fontEncoding = FontEncoding.CreateFontSpecificEncoding();
             }
-            else
-            {
+            else {
                 fontEncoding = FontEncoding.CreateFontEncoding(encoding);
             }
         }
 
         internal PdfTrueTypeFont(PdfDictionary fontDictionary)
-            : base(fontDictionary)
-        {
+            : base(fontDictionary) {
             newFont = false;
             fontEncoding = DocFontEncoding.CreateDocFontEncoding(fontDictionary.Get(PdfName.Encoding), toUnicode);
             fontProgram = DocTrueTypeFont.CreateFontProgram(fontDictionary, fontEncoding, toUnicode);
@@ -90,17 +83,13 @@ namespace iText.Kernel.Font
             subset = false;
         }
 
-        public override Glyph GetGlyph(int unicode)
-        {
-            if (fontEncoding.CanEncode(unicode))
-            {
+        public override Glyph GetGlyph(int unicode) {
+            if (fontEncoding.CanEncode(unicode)) {
                 Glyph glyph = GetFontProgram().GetGlyph(fontEncoding.GetUnicodeDifference(unicode));
                 //TODO TrueType what if font is specific?
-                if (glyph == null && (glyph = notdefGlyphs.Get(unicode)) == null)
-                {
+                if (glyph == null && (glyph = notdefGlyphs.Get(unicode)) == null) {
                     Glyph notdef = GetFontProgram().GetGlyphByCode(0);
-                    if (notdef != null)
-                    {
+                    if (notdef != null) {
                         glyph = new Glyph(GetFontProgram().GetGlyphByCode(0), unicode);
                         notdefGlyphs.Put(unicode, glyph);
                     }
@@ -110,38 +99,30 @@ namespace iText.Kernel.Font
             return null;
         }
 
-        public override bool ContainsGlyph(int unicode)
-        {
-            if (fontEncoding.IsFontSpecific())
-            {
+        public override bool ContainsGlyph(int unicode) {
+            if (fontEncoding.IsFontSpecific()) {
                 return fontProgram.GetGlyphByCode(unicode) != null;
             }
-            else
-            {
+            else {
                 return fontEncoding.CanEncode(unicode) && GetFontProgram().GetGlyph(fontEncoding.GetUnicodeDifference(unicode
                     )) != null;
             }
         }
 
-        public override void Flush()
-        {
-            if (IsFlushed())
-            {
+        public override void Flush() {
+            if (IsFlushed()) {
                 return;
             }
             EnsureUnderlyingObjectHasIndirectReference();
             //TODO make subtype class member and simplify this method
-            if (newFont)
-            {
+            if (newFont) {
                 PdfName subtype;
                 String fontName;
-                if (((TrueTypeFont)GetFontProgram()).IsCff())
-                {
+                if (((TrueTypeFont)GetFontProgram()).IsCff()) {
                     subtype = PdfName.Type1;
                     fontName = fontProgram.GetFontNames().GetFontName();
                 }
-                else
-                {
+                else {
                     subtype = PdfName.TrueType;
                     fontName = UpdateSubsetPrefix(fontProgram.GetFontNames().GetFontName(), subset, embedded);
                 }
@@ -162,84 +143,66 @@ namespace iText.Kernel.Font
         /// </param>
         [System.ObsoleteAttribute(@"use iText.IO.Font.TrueTypeFont.UpdateUsedGlyphs(Java.Util.SortedSet{E}, bool, System.Collections.Generic.IList{E})"
             )]
-        protected internal virtual void AddRangeUni(ICollection<int> longTag)
-        {
+        protected internal virtual void AddRangeUni(ICollection<int> longTag) {
             ((TrueTypeFont)GetFontProgram()).UpdateUsedGlyphs((SortedSet<int>)longTag, subset, subsetRanges);
         }
 
-        protected internal override void AddFontStream(PdfDictionary fontDescriptor)
-        {
-            if (embedded)
-            {
+        protected internal override void AddFontStream(PdfDictionary fontDescriptor) {
+            if (embedded) {
                 PdfName fontFileName;
                 PdfStream fontStream;
-                if (fontProgram is IDocFontProgram)
-                {
+                if (fontProgram is IDocFontProgram) {
                     fontFileName = ((IDocFontProgram)fontProgram).GetFontFileName();
                     fontStream = ((IDocFontProgram)fontProgram).GetFontFile();
                 }
-                else
-                {
-                    if (((TrueTypeFont)GetFontProgram()).IsCff())
-                    {
+                else {
+                    if (((TrueTypeFont)GetFontProgram()).IsCff()) {
                         fontFileName = PdfName.FontFile3;
-                        try
-                        {
+                        try {
                             byte[] fontStreamBytes = ((TrueTypeFont)GetFontProgram()).GetFontStreamBytes();
                             fontStream = GetPdfFontStream(fontStreamBytes, new int[] { fontStreamBytes.Length });
                             fontStream.Put(PdfName.Subtype, new PdfName("Type1C"));
                         }
-                        catch (PdfException e)
-                        {
+                        catch (PdfException e) {
                             ILog logger = LogManager.GetLogger(typeof(iText.Kernel.Font.PdfTrueTypeFont));
                             logger.Error(e.Message);
                             fontStream = null;
                         }
                     }
-                    else
-                    {
+                    else {
                         fontFileName = PdfName.FontFile2;
                         SortedSet<int> glyphs = new SortedSet<int>();
-                        for (int k = 0; k < shortTag.Length; k++)
-                        {
-                            if (shortTag[k] != 0)
-                            {
+                        for (int k = 0; k < shortTag.Length; k++) {
+                            if (shortTag[k] != 0) {
                                 int uni = fontEncoding.GetUnicode(k);
                                 Glyph glyph = uni > -1 ? fontProgram.GetGlyph(uni) : fontProgram.GetGlyphByCode(k);
-                                if (glyph != null)
-                                {
+                                if (glyph != null) {
                                     glyphs.Add(glyph.GetCode());
                                 }
                             }
                         }
                         ((TrueTypeFont)GetFontProgram()).UpdateUsedGlyphs(glyphs, subset, subsetRanges);
-                        try
-                        {
+                        try {
                             byte[] fontStreamBytes;
                             //getDirectoryOffset() > 0 means ttc, which shall be subset anyway.
-                            if (subset || ((TrueTypeFont)GetFontProgram()).GetDirectoryOffset() > 0)
-                            {
+                            if (subset || ((TrueTypeFont)GetFontProgram()).GetDirectoryOffset() > 0) {
                                 fontStreamBytes = ((TrueTypeFont)GetFontProgram()).GetSubset(glyphs, subset);
                             }
-                            else
-                            {
+                            else {
                                 fontStreamBytes = ((TrueTypeFont)GetFontProgram()).GetFontStreamBytes();
                             }
                             fontStream = GetPdfFontStream(fontStreamBytes, new int[] { fontStreamBytes.Length });
                         }
-                        catch (PdfException e)
-                        {
+                        catch (PdfException e) {
                             ILog logger = LogManager.GetLogger(typeof(iText.Kernel.Font.PdfTrueTypeFont));
                             logger.Error(e.Message);
                             fontStream = null;
                         }
                     }
                 }
-                if (fontStream != null)
-                {
+                if (fontStream != null) {
                     fontDescriptor.Put(fontFileName, fontStream);
-                    if (fontStream.GetIndirectReference() != null)
-                    {
+                    if (fontStream.GetIndirectReference() != null) {
                         fontStream.Flush();
                     }
                 }

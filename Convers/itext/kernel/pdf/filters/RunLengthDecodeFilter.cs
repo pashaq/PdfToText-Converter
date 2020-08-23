@@ -42,38 +42,31 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using System.IO;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Filters
-{
+namespace iText.Kernel.Pdf.Filters {
     /// <summary>Handles RunLengthDecode filter.</summary>
-    public class RunLengthDecodeFilter : MemoryLimitsAwareFilter
-    {
+    public class RunLengthDecodeFilter : MemoryLimitsAwareFilter {
         /// <summary><inheritDoc/></summary>
         public override byte[] Decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary
-            )
-        {
+            ) {
             MemoryStream outputStream = EnableMemoryLimitsAwareHandler(streamDictionary);
             byte dupCount;
-            for (int i = 0; i < b.Length; i++)
-            {
+            for (int i = 0; i < b.Length; i++) {
                 dupCount = b[i];
-                if (dupCount == (byte)0x80)
-                {
+                if (dupCount == (byte)0x80) {
                     // this is implicit end of data
                     break;
                 }
-                if ((dupCount & 0x80) == 0)
-                {
+                if ((dupCount & 0x80) == 0) {
                     int bytesToCopy = dupCount + 1;
                     outputStream.Write(b, i + 1, bytesToCopy);
                     i += bytesToCopy;
                 }
-                else
-                {
+                else {
                     // make dupcount copies of the next byte
                     i++;
-                    for (int j = 0; j < 257 - (dupCount & 0xff); j++)
-                    {
+                    for (int j = 0; j < 257 - (dupCount & 0xff); j++) {
                         outputStream.Write(b[i]);
                     }
                 }

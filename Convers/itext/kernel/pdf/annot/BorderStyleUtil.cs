@@ -40,13 +40,11 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Annot
-{
-    internal class BorderStyleUtil
-    {
-        private BorderStyleUtil()
-        {
+namespace iText.Kernel.Pdf.Annot {
+    internal class BorderStyleUtil {
+        private BorderStyleUtil() {
         }
 
         /// <summary>Setter for the border style.</summary>
@@ -79,10 +77,8 @@ namespace iText.Kernel.Pdf.Annot
         /// <param name="bs">original border style dictionary.</param>
         /// <param name="style">The new value for the annotation's border style.</param>
         /// <returns>Updated border style dictionary entry.</returns>
-        public static PdfDictionary SetStyle(PdfDictionary bs, PdfName style)
-        {
-            if (null == bs)
-            {
+        public static PdfDictionary SetStyle(PdfDictionary bs, PdfName style) {
+            if (null == bs) {
                 bs = new PdfDictionary();
             }
             bs.Put(PdfName.S, style);
@@ -103,10 +99,8 @@ namespace iText.Kernel.Pdf.Annot
         /// shall be used in drawing a dashed border.
         /// </param>
         /// <returns>Updated border style dictionary entry.</returns>
-        public static PdfDictionary SetDashPattern(PdfDictionary bs, PdfArray dashPattern)
-        {
-            if (null == bs)
-            {
+        public static PdfDictionary SetDashPattern(PdfDictionary bs, PdfArray dashPattern) {
+            if (null == bs) {
                 bs = new PdfDictionary();
             }
             bs.Put(PdfName.D, dashPattern);

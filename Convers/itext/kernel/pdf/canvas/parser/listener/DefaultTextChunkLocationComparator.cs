@@ -40,41 +40,33 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Util;
 using System.Collections.Generic;
+using iText.IO.Util;
 
-namespace iText.Kernel.Pdf.Canvas.Parser.Listener
-{
-    internal class DefaultTextChunkLocationComparator : IComparer<ITextChunkLocation>
-    {
+namespace iText.Kernel.Pdf.Canvas.Parser.Listener {
+    internal class DefaultTextChunkLocationComparator : IComparer<ITextChunkLocation> {
         private bool leftToRight = true;
 
         public DefaultTextChunkLocationComparator()
-            : this(true)
-        {
+            : this(true) {
         }
 
-        public DefaultTextChunkLocationComparator(bool leftToRight)
-        {
+        public DefaultTextChunkLocationComparator(bool leftToRight) {
             this.leftToRight = leftToRight;
         }
 
-        public virtual int Compare(ITextChunkLocation first, ITextChunkLocation second)
-        {
+        public virtual int Compare(ITextChunkLocation first, ITextChunkLocation second) {
             // not really needed, but just in case
-            if (first == second)
-            {
+            if (first == second) {
                 return 0;
             }
             int result;
             result = JavaUtil.IntegerCompare(first.OrientationMagnitude(), second.OrientationMagnitude());
-            if (result != 0)
-            {
+            if (result != 0) {
                 return result;
             }
             int distPerpendicularDiff = first.DistPerpendicular() - second.DistPerpendicular();
-            if (distPerpendicularDiff != 0)
-            {
+            if (distPerpendicularDiff != 0) {
                 return distPerpendicularDiff;
             }
             return leftToRight ? JavaUtil.FloatCompare(first.DistParallelStart(), second.DistParallelStart()) : -JavaUtil.FloatCompare

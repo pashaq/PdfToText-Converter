@@ -42,17 +42,13 @@ address: sales@itextpdf.com
 */
 using iText.Kernel.Geom;
 
-namespace iText.Kernel.Pdf
-{
-    internal class PdfPageFactory : IPdfPageFactory
-    {
-        public virtual PdfPage CreatePdfPage(PdfDictionary pdfObject)
-        {
+namespace iText.Kernel.Pdf {
+    internal class PdfPageFactory : IPdfPageFactory {
+        public virtual PdfPage CreatePdfPage(PdfDictionary pdfObject) {
             return new PdfPage(pdfObject);
         }
 
-        public virtual PdfPage CreatePdfPage(PdfDocument pdfDocument, PageSize pageSize)
-        {
+        public virtual PdfPage CreatePdfPage(PdfDocument pdfDocument, PageSize pageSize) {
             return new PdfPage(pdfDocument, pageSize);
         }
     }

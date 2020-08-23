@@ -43,9 +43,9 @@ address: sales@itextpdf.com
 */
 using System;
 using System.Collections.Generic;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Navigation
-{
+namespace iText.Kernel.Pdf.Navigation {
     /// <summary>
     /// This class shall be used for creation of destinations, associated with outline items, annotations
     /// or actions within current document.
@@ -62,120 +62,99 @@ namespace iText.Kernel.Pdf.Navigation
     /// when it is saved as an optimized pdf with the "discard-invalid-links" option.
     /// Therefore it is strongly recommended to use methods accepting pdfPage instance, if the destination is inside of the current document.
     /// </remarks>
-    public class PdfExplicitDestination : PdfDestination
-    {
+    public class PdfExplicitDestination : PdfDestination {
         public PdfExplicitDestination()
-            : this(new PdfArray())
-        {
+            : this(new PdfArray()) {
         }
 
         public PdfExplicitDestination(PdfArray pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
-        public override PdfObject GetDestinationPage(IDictionary<String, PdfObject> names)
-        {
+        public override PdfObject GetDestinationPage(IDictionary<String, PdfObject> names) {
             return ((PdfArray)GetPdfObject()).Get(0);
         }
 
         public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination CreateXYZ(PdfPage page, float left, float
-             top, float zoom)
-        {
+             top, float zoom) {
             return Create(page, PdfName.XYZ, left, float.NaN, float.NaN, top, zoom);
         }
 
         [System.ObsoleteAttribute(@"Use PdfExplicitRemoteGoToDestination.CreateXYZ(int, float, float, float) instead."
             )]
-        public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination CreateXYZ(int pageNum, float left, float
-            top, float zoom)
-        {
+        public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination CreateXYZ(int pageNum, float left, float 
+            top, float zoom) {
             return Create(pageNum, PdfName.XYZ, left, float.NaN, float.NaN, top, zoom);
         }
 
-        public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination CreateFit(PdfPage page)
-        {
+        public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination CreateFit(PdfPage page) {
             return Create(page, PdfName.Fit, float.NaN, float.NaN, float.NaN, float.NaN, float.NaN);
         }
 
         [System.ObsoleteAttribute(@"Use PdfExplicitRemoteGoToDestination.CreateFit(int) instead.")]
-        public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination CreateFit(int pageNum)
-        {
+        public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination CreateFit(int pageNum) {
             return Create(pageNum, PdfName.Fit, float.NaN, float.NaN, float.NaN, float.NaN, float.NaN);
         }
 
-        public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination CreateFitH(PdfPage page, float top)
-        {
+        public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination CreateFitH(PdfPage page, float top) {
             return Create(page, PdfName.FitH, float.NaN, float.NaN, float.NaN, top, float.NaN);
         }
 
         [System.ObsoleteAttribute(@"Use PdfExplicitRemoteGoToDestination.CreateFitH(int, float) instead.")]
-        public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination CreateFitH(int pageNum, float top)
-        {
+        public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination CreateFitH(int pageNum, float top) {
             return Create(pageNum, PdfName.FitH, float.NaN, float.NaN, float.NaN, top, float.NaN);
         }
 
-        public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination CreateFitV(PdfPage page, float left)
-        {
+        public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination CreateFitV(PdfPage page, float left) {
             return Create(page, PdfName.FitV, left, float.NaN, float.NaN, float.NaN, float.NaN);
         }
 
         [System.ObsoleteAttribute(@"Use PdfExplicitRemoteGoToDestination.CreateFitV(int, float) instead.")]
-        public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination CreateFitV(int pageNum, float left)
-        {
+        public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination CreateFitV(int pageNum, float left) {
             return Create(pageNum, PdfName.FitV, left, float.NaN, float.NaN, float.NaN, float.NaN);
         }
 
         public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination CreateFitR(PdfPage page, float left, float
-             bottom, float right, float top)
-        {
+             bottom, float right, float top) {
             return Create(page, PdfName.FitR, left, bottom, right, top, float.NaN);
         }
 
         [System.ObsoleteAttribute(@"Use PdfExplicitRemoteGoToDestination.CreateFitR(int, float, float, float, float) instead."
             )]
         public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination CreateFitR(int pageNum, float left, float
-             bottom, float right, float top)
-        {
+             bottom, float right, float top) {
             return Create(pageNum, PdfName.FitR, left, bottom, right, top, float.NaN);
         }
 
-        public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination CreateFitB(PdfPage page)
-        {
+        public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination CreateFitB(PdfPage page) {
             return Create(page, PdfName.FitB, float.NaN, float.NaN, float.NaN, float.NaN, float.NaN);
         }
 
         [System.ObsoleteAttribute(@"Use PdfExplicitRemoteGoToDestination.CreateFitB(int) instead.")]
-        public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination CreateFitB(int pageNum)
-        {
+        public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination CreateFitB(int pageNum) {
             return Create(pageNum, PdfName.FitB, float.NaN, float.NaN, float.NaN, float.NaN, float.NaN);
         }
 
-        public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination CreateFitBH(PdfPage page, float top)
-        {
+        public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination CreateFitBH(PdfPage page, float top) {
             return Create(page, PdfName.FitBH, float.NaN, float.NaN, float.NaN, top, float.NaN);
         }
 
         [System.ObsoleteAttribute(@"Use PdfExplicitRemoteGoToDestination.CreateFitBH(int, float) instead.")]
-        public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination CreateFitBH(int pageNum, float top)
-        {
+        public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination CreateFitBH(int pageNum, float top) {
             return Create(pageNum, PdfName.FitBH, float.NaN, float.NaN, float.NaN, top, float.NaN);
         }
 
-        public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination CreateFitBV(PdfPage page, float left)
-        {
+        public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination CreateFitBV(PdfPage page, float left) {
             return Create(page, PdfName.FitBV, left, float.NaN, float.NaN, float.NaN, float.NaN);
         }
 
         [System.ObsoleteAttribute(@"Use PdfExplicitRemoteGoToDestination.CreateFitBV(int, float) instead.")]
-        public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination CreateFitBV(int pageNum, float left)
-        {
+        public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination CreateFitBV(int pageNum, float left) {
             return Create(pageNum, PdfName.FitBV, left, float.NaN, float.NaN, float.NaN, float.NaN);
         }
 
-        public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination Create(PdfPage page, PdfName type, float
-            left, float bottom, float right, float top, float zoom)
-        {
+        public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination Create(PdfPage page, PdfName type, float 
+            left, float bottom, float right, float top, float zoom) {
             return new iText.Kernel.Pdf.Navigation.PdfExplicitDestination().Add(page).Add(type).Add(left).Add(bottom).
                 Add(right).Add(top).Add(zoom);
         }
@@ -183,41 +162,34 @@ namespace iText.Kernel.Pdf.Navigation
         [System.ObsoleteAttribute(@"Use PdfExplicitRemoteGoToDestination.Create(int, iText.Kernel.Pdf.PdfName, float, float, float, float, float) instead."
             )]
         public static iText.Kernel.Pdf.Navigation.PdfExplicitDestination Create(int pageNum, PdfName type, float left
-            , float bottom, float right, float top, float zoom)
-        {
+            , float bottom, float right, float top, float zoom) {
             return new iText.Kernel.Pdf.Navigation.PdfExplicitDestination().Add(--pageNum).Add(type).Add(left).Add(bottom
                 ).Add(right).Add(top).Add(zoom);
         }
 
-        protected internal override bool IsWrappedObjectMustBeIndirect()
-        {
+        protected internal override bool IsWrappedObjectMustBeIndirect() {
             return false;
         }
 
-        private iText.Kernel.Pdf.Navigation.PdfExplicitDestination Add(float value)
-        {
-            if (!float.IsNaN(value))
-            {
+        private iText.Kernel.Pdf.Navigation.PdfExplicitDestination Add(float value) {
+            if (!float.IsNaN(value)) {
                 ((PdfArray)GetPdfObject()).Add(new PdfNumber(value));
             }
             return this;
         }
 
-        private iText.Kernel.Pdf.Navigation.PdfExplicitDestination Add(int value)
-        {
+        private iText.Kernel.Pdf.Navigation.PdfExplicitDestination Add(int value) {
             ((PdfArray)GetPdfObject()).Add(new PdfNumber(value));
             return this;
         }
 
-        private iText.Kernel.Pdf.Navigation.PdfExplicitDestination Add(PdfPage page)
-        {
+        private iText.Kernel.Pdf.Navigation.PdfExplicitDestination Add(PdfPage page) {
             // Explicitly using object indirect reference here in order to correctly process released objects.
             ((PdfArray)GetPdfObject()).Add(page.GetPdfObject().GetIndirectReference());
             return this;
         }
 
-        private iText.Kernel.Pdf.Navigation.PdfExplicitDestination Add(PdfName type)
-        {
+        private iText.Kernel.Pdf.Navigation.PdfExplicitDestination Add(PdfName type) {
             ((PdfArray)GetPdfObject()).Add(type);
             return this;
         }

@@ -46,27 +46,22 @@ namespace iText.IO.Util
     {
         private long num;
 
-        public AtomicLong() : this(0)
-        {
+        public AtomicLong(): this(0) {
         }
 
-        public AtomicLong(long initialValue)
-        {
+        public AtomicLong(long initialValue) {
             this.num = initialValue;
         }
 
-        public long IncrementAndGet()
-        {
+        public long IncrementAndGet() {
             return System.Threading.Interlocked.Increment(ref num);
         }
 
-        public void Set(long value)
-        {
+        public void Set(long value) {
             System.Threading.Interlocked.Exchange(ref num, value);
         }
 
-        public long Get()
-        {
+        public long Get() {
             return System.Threading.Interlocked.Read(ref num);
         }
     }

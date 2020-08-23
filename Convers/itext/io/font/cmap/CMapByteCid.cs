@@ -45,19 +45,15 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace iText.IO.Font.Cmap
-{
+namespace iText.IO.Font.Cmap {
     /// <author>psoares</author>
-    public class CMapByteCid : AbstractCMap
-    {
-        protected internal class Cursor
-        {
+    public class CMapByteCid : AbstractCMap {
+        protected internal class Cursor {
             public int offset;
 
             public int length;
 
-            public Cursor(int offset, int length)
-            {
+            public Cursor(int offset, int length) {
                 this.offset = offset;
                 this.length = length;
             }
@@ -65,15 +61,12 @@ namespace iText.IO.Font.Cmap
 
         private IList<int[]> planes = new List<int[]>();
 
-        public CMapByteCid()
-        {
+        public CMapByteCid() {
             planes.Add(new int[256]);
         }
 
-        internal override void AddChar(String mark, CMapObject code)
-        {
-            if (code.IsNumber())
-            {
+        internal override void AddChar(String mark, CMapObject code) {
+            if (code.IsNumber()) {
                 EncodeSequence(DecodeStringToByte(mark), (int)code.GetValue());
             }
         }
@@ -81,55 +74,45 @@ namespace iText.IO.Font.Cmap
         /// <param name="cidBytes"/>
         /// <param name="offset"/>
         /// <param name="length"/>
-        public virtual String DecodeSequence(byte[] cidBytes, int offset, int length)
-        {
+        public virtual String DecodeSequence(byte[] cidBytes, int offset, int length) {
             StringBuilder sb = new StringBuilder();
             CMapByteCid.Cursor cursor = new CMapByteCid.Cursor(offset, length);
             int cid;
-            while ((cid = DecodeSingle(cidBytes, cursor)) >= 0)
-            {
+            while ((cid = DecodeSingle(cidBytes, cursor)) >= 0) {
                 sb.Append((char)cid);
             }
             return sb.ToString();
         }
 
-        protected internal virtual int DecodeSingle(byte[] cidBytes, CMapByteCid.Cursor cursor)
-        {
+        protected internal virtual int DecodeSingle(byte[] cidBytes, CMapByteCid.Cursor cursor) {
             int end = cursor.offset + cursor.length;
             int currentPlane = 0;
-            while (cursor.offset < end)
-            {
+            while (cursor.offset < end) {
                 int one = cidBytes[cursor.offset++] & 0xff;
                 cursor.length--;
                 int[] plane = planes[currentPlane];
                 int cid = plane[one];
-                if ((cid & 0x8000) == 0)
-                {
+                if ((cid & 0x8000) == 0) {
                     return cid;
                 }
-                else
-                {
+                else {
                     currentPlane = cid & 0x7fff;
                 }
             }
             return -1;
         }
 
-        private void EncodeSequence(byte[] seq, int cid)
-        {
+        private void EncodeSequence(byte[] seq, int cid) {
             int size = seq.Length - 1;
             int nextPlane = 0;
-            for (int idx = 0; idx < size; ++idx)
-            {
+            for (int idx = 0; idx < size; ++idx) {
                 int[] plane = planes[nextPlane];
                 int one = seq[idx] & 0xff;
                 int c = plane[one];
-                if (c != 0 && (c & 0x8000) == 0)
-                {
+                if (c != 0 && (c & 0x8000) == 0) {
                     throw new iText.IO.IOException("Inconsistent mapping.");
                 }
-                if (c == 0)
-                {
+                if (c == 0) {
                     planes.Add(new int[256]);
                     c = (planes.Count - 1 | 0x8000);
                     plane[one] = c;
@@ -139,8 +122,7 @@ namespace iText.IO.Font.Cmap
             int[] plane_1 = planes[nextPlane];
             int one_1 = seq[size] & 0xff;
             int c_1 = plane_1[one_1];
-            if ((c_1 & 0x8000) != 0)
-            {
+            if ((c_1 & 0x8000) != 0) {
                 throw new iText.IO.IOException("Inconsistent mapping.");
             }
             plane_1[one_1] = cid;

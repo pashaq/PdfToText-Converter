@@ -41,15 +41,14 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Filters
-{
+namespace iText.Kernel.Pdf.Filters {
     /// <summary>
     /// The main interface for creating a new
     /// <c>FilterHandler</c>
     /// </summary>
-    public interface IFilterHandler
-    {
+    public interface IFilterHandler {
         /// <summary>Decode the byte[] using the provided filterName.</summary>
         /// <param name="b">the bytes that need to be decoded</param>
         /// <param name="filterName">PdfName of the filter</param>

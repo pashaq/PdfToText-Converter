@@ -45,10 +45,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace iText.IO.Font.Otf
-{
-    public class GlyphLine
-    {
+namespace iText.IO.Font.Otf {
+    public class GlyphLine {
         public int start;
 
         public int end;
@@ -59,15 +57,13 @@ namespace iText.IO.Font.Otf
 
         protected internal IList<GlyphLine.ActualText> actualText;
 
-        public GlyphLine()
-        {
+        public GlyphLine() {
             this.glyphs = new List<Glyph>();
         }
 
         /// <summary>Create a new line of Glyphs.</summary>
         /// <param name="glyphs">list containing the glyphs</param>
-        public GlyphLine(IList<Glyph> glyphs)
-        {
+        public GlyphLine(IList<Glyph> glyphs) {
             this.glyphs = glyphs;
             this.start = 0;
             this.end = glyphs.Count;
@@ -77,8 +73,7 @@ namespace iText.IO.Font.Otf
         /// <param name="glyphs">list of Glyphs to slice</param>
         /// <param name="start">starting index of the slice</param>
         /// <param name="end">terminating index of the slice</param>
-        public GlyphLine(IList<Glyph> glyphs, int start, int end)
-        {
+        public GlyphLine(IList<Glyph> glyphs, int start, int end) {
             this.glyphs = glyphs;
             this.start = start;
             this.end = end;
@@ -91,15 +86,13 @@ namespace iText.IO.Font.Otf
         /// <param name="end">terminating index of the slice</param>
         protected internal GlyphLine(IList<Glyph> glyphs, IList<GlyphLine.ActualText> actualText, int start, int end
             )
-            : this(glyphs, start, end)
-        {
+            : this(glyphs, start, end) {
             this.actualText = actualText;
         }
 
         /// <summary>Copy a line of Glyphs.</summary>
         /// <param name="other">line of Glyphs to copy</param>
-        public GlyphLine(iText.IO.Font.Otf.GlyphLine other)
-        {
+        public GlyphLine(iText.IO.Font.Otf.GlyphLine other) {
             this.glyphs = other.glyphs;
             this.actualText = other.actualText;
             this.start = other.start;
@@ -111,11 +104,9 @@ namespace iText.IO.Font.Otf
         /// <param name="other">line of Glyphs to copy</param>
         /// <param name="start">starting index of the slice</param>
         /// <param name="end">terminating index of the slice</param>
-        public GlyphLine(iText.IO.Font.Otf.GlyphLine other, int start, int end)
-        {
+        public GlyphLine(iText.IO.Font.Otf.GlyphLine other, int start, int end) {
             this.glyphs = other.glyphs.SubList(start, end);
-            if (other.actualText != null)
-            {
+            if (other.actualText != null) {
                 this.actualText = other.actualText.SubList(start, end);
             }
             this.start = 0;
@@ -127,21 +118,16 @@ namespace iText.IO.Font.Otf
         /// <param name="start">starting index of the slice</param>
         /// <param name="end">terminating index of the slice</param>
         /// <returns>String containing the unicode representation of the slice.</returns>
-        public virtual String ToUnicodeString(int start, int end)
-        {
+        public virtual String ToUnicodeString(int start, int end) {
             ActualTextIterator iter = new ActualTextIterator(this, start, end);
             StringBuilder str = new StringBuilder();
-            while (iter.HasNext())
-            {
+            while (iter.HasNext()) {
                 GlyphLine.GlyphLinePart part = iter.Next();
-                if (part.actualText != null)
-                {
+                if (part.actualText != null) {
                     str.Append(part.actualText);
                 }
-                else
-                {
-                    for (int i = part.start; i < part.end; i++)
-                    {
+                else {
+                    for (int i = part.start; i < part.end; i++) {
                         str.Append(glyphs[i].GetUnicodeChars());
                     }
                 }
@@ -149,8 +135,7 @@ namespace iText.IO.Font.Otf
             return str.ToString();
         }
 
-        public override String ToString()
-        {
+        public override String ToString() {
             return ToUnicodeString(start, end);
         }
 
@@ -158,47 +143,39 @@ namespace iText.IO.Font.Otf
         /// <param name="left">leftmost index of the slice</param>
         /// <param name="right">rightmost index of the slice</param>
         /// <returns>new GlyphLine containing the copied slice</returns>
-        public virtual iText.IO.Font.Otf.GlyphLine Copy(int left, int right)
-        {
+        public virtual iText.IO.Font.Otf.GlyphLine Copy(int left, int right) {
             iText.IO.Font.Otf.GlyphLine glyphLine = new iText.IO.Font.Otf.GlyphLine();
             glyphLine.start = 0;
             glyphLine.end = right - left;
             glyphLine.glyphs = new List<Glyph>(glyphs.SubList(left, right));
-            glyphLine.actualText = actualText == null ? null : new List<GlyphLine.ActualText>(actualText.SubList(left,
+            glyphLine.actualText = actualText == null ? null : new List<GlyphLine.ActualText>(actualText.SubList(left, 
                 right));
             return glyphLine;
         }
 
-        public virtual Glyph Get(int index)
-        {
+        public virtual Glyph Get(int index) {
             return glyphs[index];
         }
 
-        public virtual Glyph Set(int index, Glyph glyph)
-        {
+        public virtual Glyph Set(int index, Glyph glyph) {
             return glyphs[index] = glyph;
         }
 
-        public virtual void Add(Glyph glyph)
-        {
+        public virtual void Add(Glyph glyph) {
             glyphs.Add(glyph);
-            if (actualText != null)
-            {
+            if (actualText != null) {
                 actualText.Add(null);
             }
         }
 
-        public virtual void Add(int index, Glyph glyph)
-        {
+        public virtual void Add(int index, Glyph glyph) {
             glyphs.Add(index, glyph);
-            if (actualText != null)
-            {
+            if (actualText != null) {
                 actualText.Add(index, null);
             }
         }
 
-        public virtual void SetGlyphs(IList<Glyph> replacementGlyphs)
-        {
+        public virtual void SetGlyphs(IList<Glyph> replacementGlyphs) {
             glyphs = new List<Glyph>(replacementGlyphs);
             start = 0;
             end = replacementGlyphs.Count;
@@ -212,15 +189,11 @@ namespace iText.IO.Font.Otf
         /// The same is true for the actual text.
         /// </remarks>
         /// <param name="other">the line that should be added to the current one</param>
-        public virtual void Add(iText.IO.Font.Otf.GlyphLine other)
-        {
-            if (other.actualText != null)
-            {
-                if (actualText == null)
-                {
+        public virtual void Add(iText.IO.Font.Otf.GlyphLine other) {
+            if (other.actualText != null) {
+                if (actualText == null) {
                     actualText = new List<GlyphLine.ActualText>(glyphs.Count);
-                    for (int i = 0; i < glyphs.Count; i++)
-                    {
+                    for (int i = 0; i < glyphs.Count; i++) {
                         actualText.Add(null);
                     }
                 }
@@ -231,66 +204,52 @@ namespace iText.IO.Font.Otf
 
         /// <summary>Replaces the current content with the other line's content.</summary>
         /// <param name="other">the line with the content to be set to the current one</param>
-        public virtual void ReplaceContent(iText.IO.Font.Otf.GlyphLine other)
-        {
+        public virtual void ReplaceContent(iText.IO.Font.Otf.GlyphLine other) {
             glyphs.Clear();
             glyphs.AddAll(other.glyphs);
-            if (other.actualText != null)
-            {
-                if (actualText == null)
-                {
+            if (other.actualText != null) {
+                if (actualText == null) {
                     actualText = new List<GlyphLine.ActualText>();
                 }
-                else
-                {
+                else {
                     actualText.Clear();
                 }
                 actualText.AddAll(other.actualText);
             }
-            else
-            {
+            else {
                 actualText = null;
             }
             start = other.start;
             end = other.end;
         }
 
-        public virtual int Size()
-        {
+        public virtual int Size() {
             return glyphs.Count;
         }
 
         public virtual void SubstituteManyToOne(OpenTypeFontTableReader tableReader, int lookupFlag, int rightPartLen
-            , int substitutionGlyphIndex)
-        {
+            , int substitutionGlyphIndex) {
             OpenTableLookup.GlyphIndexer gidx = new OpenTableLookup.GlyphIndexer();
             gidx.line = this;
             gidx.idx = idx;
             StringBuilder chars = new StringBuilder();
             Glyph currentGlyph = glyphs[idx];
-            if (currentGlyph.GetChars() != null)
-            {
+            if (currentGlyph.GetChars() != null) {
                 chars.Append(currentGlyph.GetChars());
             }
-            else
-            {
-                if (currentGlyph.HasValidUnicode())
-                {
+            else {
+                if (currentGlyph.HasValidUnicode()) {
                     chars.Append(iText.IO.Util.TextUtil.ConvertFromUtf32(currentGlyph.GetUnicode()));
                 }
             }
-            for (int j = 0; j < rightPartLen; ++j)
-            {
+            for (int j = 0; j < rightPartLen; ++j) {
                 gidx.NextGlyph(tableReader, lookupFlag);
                 currentGlyph = glyphs[gidx.idx];
-                if (currentGlyph.GetChars() != null)
-                {
+                if (currentGlyph.GetChars() != null) {
                     chars.Append(currentGlyph.GetChars());
                 }
-                else
-                {
-                    if (currentGlyph.HasValidUnicode())
-                    {
+                else {
+                    if (currentGlyph.HasValidUnicode()) {
                         chars.Append(iText.IO.Util.TextUtil.ConvertFromUtf32(currentGlyph.GetUnicode()));
                     }
                 }
@@ -304,24 +263,18 @@ namespace iText.IO.Font.Otf
             end -= rightPartLen;
         }
 
-        public virtual void SubstituteOneToOne(OpenTypeFontTableReader tableReader, int substitutionGlyphIndex)
-        {
+        public virtual void SubstituteOneToOne(OpenTypeFontTableReader tableReader, int substitutionGlyphIndex) {
             Glyph oldGlyph = glyphs[idx];
             Glyph newGlyph = tableReader.GetGlyph(substitutionGlyphIndex);
-            if (oldGlyph.GetChars() != null)
-            {
+            if (oldGlyph.GetChars() != null) {
                 newGlyph.SetChars(oldGlyph.GetChars());
             }
-            else
-            {
-                if (newGlyph.HasValidUnicode())
-                {
+            else {
+                if (newGlyph.HasValidUnicode()) {
                     newGlyph.SetChars(iText.IO.Util.TextUtil.ConvertFromUtf32(newGlyph.GetUnicode()));
                 }
-                else
-                {
-                    if (oldGlyph.HasValidUnicode())
-                    {
+                else {
+                    if (oldGlyph.HasValidUnicode()) {
                         newGlyph.SetChars(iText.IO.Util.TextUtil.ConvertFromUtf32(oldGlyph.GetUnicode()));
                     }
                 }
@@ -329,17 +282,14 @@ namespace iText.IO.Font.Otf
             glyphs[idx] = newGlyph;
         }
 
-        public virtual void SubstituteOneToMany(OpenTypeFontTableReader tableReader, int[] substGlyphIds)
-        {
+        public virtual void SubstituteOneToMany(OpenTypeFontTableReader tableReader, int[] substGlyphIds) {
             //sequence length shall be at least 1
             int substCode = substGlyphIds[0];
             Glyph glyph = tableReader.GetGlyph(substCode);
             glyphs[idx] = glyph;
-            if (substGlyphIds.Length > 1)
-            {
+            if (substGlyphIds.Length > 1) {
                 IList<Glyph> additionalGlyphs = new List<Glyph>(substGlyphIds.Length - 1);
-                for (int i = 1; i < substGlyphIds.Length; ++i)
-                {
+                for (int i = 1; i < substGlyphIds.Length; ++i) {
                     substCode = substGlyphIds[i];
                     glyph = tableReader.GetGlyph(substCode);
                     additionalGlyphs.Add(glyph);
@@ -350,113 +300,88 @@ namespace iText.IO.Font.Otf
             }
         }
 
-        public virtual iText.IO.Font.Otf.GlyphLine Filter(GlyphLine.IGlyphLineFilter filter)
-        {
+        public virtual iText.IO.Font.Otf.GlyphLine Filter(GlyphLine.IGlyphLineFilter filter) {
             bool anythingFiltered = false;
             IList<Glyph> filteredGlyphs = new List<Glyph>(end - start);
             IList<GlyphLine.ActualText> filteredActualText = actualText != null ? new List<GlyphLine.ActualText>(end -
                  start) : null;
-            for (int i = start; i < end; i++)
-            {
-                if (filter.Accept(glyphs[i]))
-                {
+            for (int i = start; i < end; i++) {
+                if (filter.Accept(glyphs[i])) {
                     filteredGlyphs.Add(glyphs[i]);
-                    if (filteredActualText != null)
-                    {
+                    if (filteredActualText != null) {
                         filteredActualText.Add(actualText[i]);
                     }
                 }
-                else
-                {
+                else {
                     anythingFiltered = true;
                 }
             }
-            if (anythingFiltered)
-            {
+            if (anythingFiltered) {
                 return new iText.IO.Font.Otf.GlyphLine(filteredGlyphs, filteredActualText, 0, filteredGlyphs.Count);
             }
-            else
-            {
+            else {
                 return this;
             }
         }
 
-        public virtual void SetActualText(int left, int right, String text)
-        {
-            if (this.actualText == null)
-            {
+        public virtual void SetActualText(int left, int right, String text) {
+            if (this.actualText == null) {
                 this.actualText = new List<GlyphLine.ActualText>(glyphs.Count);
-                for (int i = 0; i < glyphs.Count; i++)
-                {
+                for (int i = 0; i < glyphs.Count; i++) {
                     this.actualText.Add(null);
                 }
             }
             GlyphLine.ActualText actualText = new GlyphLine.ActualText(text);
-            for (int i = left; i < right; i++)
-            {
+            for (int i = left; i < right; i++) {
                 this.actualText[i] = actualText;
             }
         }
 
-        public virtual IEnumerator<GlyphLine.GlyphLinePart> Iterator()
-        {
+        public virtual IEnumerator<GlyphLine.GlyphLinePart> Iterator() {
             return new ActualTextIterator(this);
         }
 
-        public override bool Equals(Object obj)
-        {
-            if (this == obj)
-            {
+        public override bool Equals(Object obj) {
+            if (this == obj) {
                 return true;
             }
-            if (obj == null || GetType() != obj.GetType())
-            {
+            if (obj == null || GetType() != obj.GetType()) {
                 return false;
             }
             iText.IO.Font.Otf.GlyphLine other = (iText.IO.Font.Otf.GlyphLine)obj;
-            if (end - start != other.end - other.start)
-            {
+            if (end - start != other.end - other.start) {
                 return false;
             }
-            if (actualText == null && other.actualText != null || actualText != null && other.actualText == null)
-            {
+            if (actualText == null && other.actualText != null || actualText != null && other.actualText == null) {
                 return false;
             }
-            for (int i = start; i < end; i++)
-            {
+            for (int i = start; i < end; i++) {
                 int otherPos = other.start + i - start;
                 Glyph myGlyph = Get(i);
                 Glyph otherGlyph = other.Get(otherPos);
-                if (myGlyph == null && otherGlyph != null || myGlyph != null && !myGlyph.Equals(otherGlyph))
-                {
+                if (myGlyph == null && otherGlyph != null || myGlyph != null && !myGlyph.Equals(otherGlyph)) {
                     return false;
                 }
                 GlyphLine.ActualText myAT = actualText == null ? null : actualText[i];
                 GlyphLine.ActualText otherAT = other.actualText == null ? null : other.actualText[otherPos];
-                if (myAT == null && otherAT != null || myAT != null && !myAT.Equals(otherAT))
-                {
+                if (myAT == null && otherAT != null || myAT != null && !myAT.Equals(otherAT)) {
                     return false;
                 }
             }
             return true;
         }
 
-        public override int GetHashCode()
-        {
+        public override int GetHashCode() {
             int result = 0;
             result = 31 * result + start;
             result = 31 * result + end;
-            for (int i = start; i < end; i++)
-            {
+            for (int i = start; i < end; i++) {
                 result = 31 * result + glyphs[i].GetHashCode();
             }
-            if (null != actualText)
-            {
-                for (int i = start; i < end; i++)
-                {
+            if (null != actualText) {
+                for (int i = start; i < end; i++) {
                     result = 31 * result;
-                    if (null != actualText[i])
-                    {
+                    if (null != actualText[i]) {
                         result += actualText[i].GetHashCode();
                     }
                 }
@@ -464,34 +389,27 @@ namespace iText.IO.Font.Otf
             return result;
         }
 
-        private void RemoveGlyph(int index)
-        {
+        private void RemoveGlyph(int index) {
             glyphs.JRemoveAt(index);
-            if (actualText != null)
-            {
+            if (actualText != null) {
                 actualText.JRemoveAt(index);
             }
         }
 
-        private void AddAllGlyphs(int index, IList<Glyph> additionalGlyphs)
-        {
+        private void AddAllGlyphs(int index, IList<Glyph> additionalGlyphs) {
             glyphs.AddAll(index, additionalGlyphs);
-            if (actualText != null)
-            {
-                for (int i = 0; i < additionalGlyphs.Count; i++)
-                {
+            if (actualText != null) {
+                for (int i = 0; i < additionalGlyphs.Count; i++) {
                     this.actualText.Add(index, null);
                 }
             }
         }
 
-        public interface IGlyphLineFilter
-        {
+        public interface IGlyphLineFilter {
             bool Accept(Glyph glyph);
         }
 
-        public class GlyphLinePart
-        {
+        public class GlyphLinePart {
             public int start;
 
             public int end;
@@ -502,49 +420,40 @@ namespace iText.IO.Font.Otf
             public bool reversed;
 
             public GlyphLinePart(int start, int end)
-                : this(start, end, null)
-            {
+                : this(start, end, null) {
             }
 
-            public GlyphLinePart(int start, int end, String actualText)
-            {
+            public GlyphLinePart(int start, int end, String actualText) {
                 this.start = start;
                 this.end = end;
                 this.actualText = actualText;
             }
 
-            public virtual GlyphLine.GlyphLinePart SetReversed(bool reversed)
-            {
+            public virtual GlyphLine.GlyphLinePart SetReversed(bool reversed) {
                 this.reversed = reversed;
                 return this;
             }
         }
 
-        protected internal class ActualText
-        {
+        protected internal class ActualText {
             public String value;
 
-            public ActualText(String value)
-            {
+            public ActualText(String value) {
                 this.value = value;
             }
 
-            public override bool Equals(Object obj)
-            {
-                if (this == obj)
-                {
+            public override bool Equals(Object obj) {
+                if (this == obj) {
                     return true;
                 }
-                if (obj == null || GetType() != obj.GetType())
-                {
+                if (obj == null || GetType() != obj.GetType()) {
                     return false;
                 }
                 GlyphLine.ActualText other = (GlyphLine.ActualText)obj;
                 return value == null && other.value == null || value.Equals(other.value);
             }
 
-            public override int GetHashCode()
-            {
+            public override int GetHashCode() {
                 return 31 * value.GetHashCode();
             }
         }

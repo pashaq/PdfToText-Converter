@@ -41,21 +41,21 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Font.Otf;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Globalization;
 using System.Text;
+using System.Text.RegularExpressions;
+using iText.IO.Font.Otf;
 
-namespace iText.IO.Util
-{
+namespace iText.IO.Util {
     /// <summary>This file is a helper class for internal usage only.</summary>
     /// <remarks>
     /// This file is a helper class for internal usage only.
     /// Be aware that its API and functionality may be changed in future.
     /// </remarks>
-    public sealed class TextUtil
-    {
+    public sealed class TextUtil {
 
         public const int CHARACTER_MIN_SUPPLEMENTARY_CODE_POINT = 0x010000;
 
@@ -71,8 +71,7 @@ namespace iText.IO.Util
                 '\u001F', // U+001F UNIT SEPARATOR
             };
 
-        private TextUtil()
-        {
+        private TextUtil() {
         }
 
         /// <summary>
@@ -81,8 +80,7 @@ namespace iText.IO.Util
         /// </summary>
         /// <param name="c">the character</param>
         /// <returns>true if the character belongs to the interval</returns>
-        public static bool IsSurrogateHigh(char c)
-        {
+        public static bool IsSurrogateHigh(char c) {
             return c >= '\ud800' && c <= '\udbff';
         }
 
@@ -92,19 +90,16 @@ namespace iText.IO.Util
         /// </summary>
         /// <param name="c">the character</param>
         /// <returns>true if the character belongs to the interval</returns>
-        public static bool IsSurrogateLow(char c)
-        {
+        public static bool IsSurrogateLow(char c) {
             return c >= '\udc00' && c <= '\udfff';
         }
-
-        public static char HighSurrogate(int codePoint)
-        {
-            return (char)((int)((uint)codePoint >> 10) + ('\uD800' - (int)((uint)0x010000 >> 10)));
+        
+        public static char HighSurrogate(int codePoint) {
+            return (char) ((int)((uint)codePoint >> 10) + ('\uD800' - (int)((uint)0x010000 >> 10)));
         }
 
-        public static char LowSurrogate(int codePoint)
-        {
-            return (char)((codePoint & 0x3ff) + '\uDC00');
+        public static char LowSurrogate(int codePoint) {
+            return (char) ((codePoint & 0x3ff) + '\uDC00');
         }
 
         /// <summary>
@@ -115,8 +110,7 @@ namespace iText.IO.Util
         /// <param name="text">the String with the high and low surrogate characters</param>
         /// <param name="idx">the index of the 'high' character in the pair</param>
         /// <returns>true if the characters are surrogate pairs</returns>
-        public static bool IsSurrogatePair(String text, int idx)
-        {
+        public static bool IsSurrogatePair(String text, int idx) {
             return !(idx < 0 || idx > text.Length - 2) && IsSurrogateHigh(text[idx]) && IsSurrogateLow(text[idx + 1]);
         }
 
@@ -128,8 +122,7 @@ namespace iText.IO.Util
         /// <param name="text">the character array with the high and low surrogate characters</param>
         /// <param name="idx">the index of the 'high' character in the pair</param>
         /// <returns>true if the characters are surrogate pairs</returns>
-        public static bool IsSurrogatePair(char[] text, int idx)
-        {
+        public static bool IsSurrogatePair(char[] text, int idx) {
             return !(idx < 0 || idx > text.Length - 2) && IsSurrogateHigh(text[idx]) && IsSurrogateLow(text[idx + 1]);
         }
 
@@ -140,8 +133,7 @@ namespace iText.IO.Util
         /// <param name="highSurrogate">the high surrogate value</param>
         /// <param name="lowSurrogate">the low surrogate value</param>
         /// <returns>a code point value</returns>
-        public static int ConvertToUtf32(char highSurrogate, char lowSurrogate)
-        {
+        public static int ConvertToUtf32(char highSurrogate, char lowSurrogate) {
             return (highSurrogate - 0xd800) * 0x400 + lowSurrogate - 0xdc00 + 0x10000;
         }
 
@@ -149,8 +141,7 @@ namespace iText.IO.Util
         /// <param name="text">a character array that has the unicode character(s)</param>
         /// <param name="idx">the index of the 'high' character</param>
         /// <returns>the code point value</returns>
-        public static int ConvertToUtf32(char[] text, int idx)
-        {
+        public static int ConvertToUtf32(char[] text, int idx) {
             return (text[idx] - 0xd800) * 0x400 + text[idx + 1] - 0xdc00 + 0x10000;
         }
 
@@ -158,28 +149,22 @@ namespace iText.IO.Util
         /// <param name="text">a String that has the unicode character(s)</param>
         /// <param name="idx">the index of the 'high' character</param>
         /// <returns>the codepoint value</returns>
-        public static int ConvertToUtf32(String text, int idx)
-        {
+        public static int ConvertToUtf32(String text, int idx) {
             return (text[idx] - 0xd800) * 0x400 + text[idx + 1] - 0xdc00 + 0x10000;
         }
 
-        public static int[] ConvertToUtf32(String text)
-        {
-            if (text == null)
-            {
+        public static int[] ConvertToUtf32(String text) {
+            if (text == null) {
                 return null;
             }
             IList<int> charCodes = new List<int>(text.Length);
             int pos = 0;
-            while (pos < text.Length)
-            {
-                if (IsSurrogatePair(text, pos))
-                {
+            while (pos < text.Length) {
+                if (IsSurrogatePair(text, pos)) {
                     charCodes.Add(ConvertToUtf32(text, pos));
                     pos += 2;
                 }
-                else
-                {
+                else {
                     charCodes.Add((int)text[pos]);
                     pos++;
                 }
@@ -190,10 +175,8 @@ namespace iText.IO.Util
         /// <summary>Converts a UTF32 code point value to a String with the corresponding character(s).</summary>
         /// <param name="codePoint">a Unicode value</param>
         /// <returns>the corresponding characters in a String</returns>
-        public static char[] ConvertFromUtf32(int codePoint)
-        {
-            if (codePoint < 0x10000)
-            {
+        public static char[] ConvertFromUtf32(int codePoint) {
+            if (codePoint < 0x10000) {
                 return new char[] { (char)codePoint };
             }
             codePoint -= 0x10000;
@@ -208,11 +191,9 @@ namespace iText.IO.Util
         /// <param name="startPos">start position of text to convert, inclusive</param>
         /// <param name="endPos">end position of txt to convert, exclusive</param>
         /// <returns>the corresponding characters in a String</returns>
-        public static String ConvertFromUtf32(int[] text, int startPos, int endPos)
-        {
+        public static String ConvertFromUtf32(int[] text, int startPos, int endPos) {
             StringBuilder sb = new StringBuilder();
-            for (int i = startPos; i < endPos; i++)
-            {
+            for (int i = startPos; i < endPos; i++) {
                 sb.Append(ConvertFromUtf32ToCharArray(text[i]));
             }
             return sb.ToString();
@@ -221,34 +202,28 @@ namespace iText.IO.Util
         /// <summary>Converts a UTF32 code point value to a char array with the corresponding character(s).</summary>
         /// <param name="codePoint">a Unicode value</param>
         /// <returns>the corresponding characters in a char array</returns>
-        public static char[] ConvertFromUtf32ToCharArray(int codePoint)
-        {
-            if (codePoint < 0x10000)
-            {
+        public static char[] ConvertFromUtf32ToCharArray(int codePoint) {
+            if (codePoint < 0x10000) {
                 return new char[] { (char)codePoint };
             }
             codePoint -= 0x10000;
             return new char[] { (char)(codePoint / 0x400 + 0xd800), (char)(codePoint % 0x400 + 0xdc00) };
         }
 
-        public static bool IsWhiteSpace(char ch)
-        {
-            return IsWhiteSpace((int)ch);
+        public static bool IsWhiteSpace(char ch) {
+            return IsWhiteSpace((int) ch);
         }
 
-        public static bool IsWhiteSpace(int unicode)
-        {
-            if (unicode == '\u00A0' || unicode == '\u2007' || unicode == '\u202F')
-            {
+        public static bool IsWhiteSpace(int unicode) {
+            if (unicode == '\u00A0' || unicode == '\u2007' || unicode == '\u202F') {
                 // non-breaking space char
                 return false;
             }
-
-            UnicodeCategory category = unicode <= Char.MaxValue ? CharUnicodeInfo.GetUnicodeCategory((char)unicode) :
+            
+            UnicodeCategory category = unicode <= Char.MaxValue ? CharUnicodeInfo.GetUnicodeCategory((char)unicode) : 
                 CharUnicodeInfo.GetUnicodeCategory(new String(ConvertFromUtf32(unicode)), 0);
             if (category == UnicodeCategory.SpaceSeparator || category == UnicodeCategory.LineSeparator ||
-                category == UnicodeCategory.ParagraphSeparator)
-            {
+                category == UnicodeCategory.ParagraphSeparator) {
 
                 return true;
             }
@@ -293,7 +268,7 @@ namespace iText.IO.Util
         /// </summary>
         public static bool IsNewLine(char c)
         {
-            int unicode = (int)c;
+            int unicode = (int) c;
             return IsNewLine(unicode);
         }
 
@@ -344,13 +319,11 @@ namespace iText.IO.Util
             return g.GetUnicode() == ' ';
         }
 
-        public static bool IsNonPrintable(int c)
-        {
+        public static bool IsNonPrintable(int c) {
             return IsIdentifierIgnorable(c) || c == '\u00AD';
         }
 
-        public static bool IsWhitespaceOrNonPrintable(int code)
-        {
+        public static bool IsWhitespaceOrNonPrintable(int code) {
             return IsWhiteSpace((char)code) || IsNonPrintable(code);
         }
 

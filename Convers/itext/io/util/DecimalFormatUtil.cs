@@ -45,16 +45,13 @@ address: sales@itextpdf.com
 using System;
 using System.Globalization;
 
-namespace iText.IO.Util
-{
+namespace iText.IO.Util {
     /// <summary>
     /// This file is a helper class for internal usage only.
     /// Be aware that its API and functionality may be changed in future.
     /// </summary>
-    public class DecimalFormatUtil
-    {
-        public static String FormatNumber(double d, String pattern)
-        {
+    public class DecimalFormatUtil {
+        public static String FormatNumber(double d, String pattern) {
             return d.ToString(pattern, CultureInfo.InvariantCulture);
         }
     }

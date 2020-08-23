@@ -26,11 +26,9 @@
 * LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
 * OF THIS SOFTWARE.
 */
-namespace iText.IO.Codec
-{
+namespace iText.IO.Codec {
     /// <summary>A list of constants used in class TIFFImage.</summary>
-    public class TIFFConstants
-    {
+    public class TIFFConstants {
         /*
         * TIFF Tag Definitions (from tifflib).
         */

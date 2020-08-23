@@ -41,15 +41,15 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
+using System.Collections.Generic;
+using System.Text;
 using iText.IO.Util;
 using iText.Kernel.Geom;
 using iText.Kernel.Pdf.Canvas;
 using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Kernel.Pdf.Canvas.Parser.Data;
 using iText.Kernel.Pdf.Canvas.Parser.Listener;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Convers
 {
@@ -135,34 +135,34 @@ namespace Convers
                 }
                 if (useActualText)
                 {
-                    CanvasTag lastTagWithActualText = lastTextRenderInfo != null ?
+                    CanvasTag lastTagWithActualText = lastTextRenderInfo != null ? 
                         FindLastTagWithActualText(lastTextRenderInfo.GetCanvasTagHierarchy()) : null;
 
-                    if (lastTagWithActualText != null && lastTagWithActualText ==
+                    if (lastTagWithActualText != null && lastTagWithActualText == 
                         FindLastTagWithActualText(renderInfo.GetCanvasTagHierarchy()))
                     {
                         // Merge two text pieces, assume they will be in the same line
                         TextChunk lastTextChunk = locationalResult[locationalResult.Count - 1];
 
                         Vector mergedStart = new Vector(
-                            Math.Min(lastTextChunk.GetLocation().GetStartLocation().Get(0),
-                                segment.GetStartPoint().Get(0)),
-                            Math.Min(lastTextChunk.GetLocation().GetStartLocation().Get(1),
-                                segment.GetStartPoint().Get(1)),
-                            Math.Min(lastTextChunk.GetLocation().GetStartLocation().Get(2),
+                            Math.Min(lastTextChunk.GetLocation().GetStartLocation().Get(0), 
+                                segment.GetStartPoint().Get(0)), 
+                            Math.Min(lastTextChunk.GetLocation().GetStartLocation().Get(1), 
+                                segment.GetStartPoint().Get(1)), 
+                            Math.Min(lastTextChunk.GetLocation().GetStartLocation().Get(2), 
                                 segment.GetStartPoint().Get(2)));
 
                         Vector mergedEnd = new Vector(
-                            Math.Max(lastTextChunk.GetLocation().GetEndLocation().Get(0),
-                                segment.GetEndPoint().Get(0)),
-                            Math.Max(lastTextChunk.GetLocation().GetEndLocation().Get(1),
-                                segment.GetEndPoint().Get(1)),
-                            Math.Max(lastTextChunk.GetLocation().GetEndLocation().Get(2),
+                            Math.Max(lastTextChunk.GetLocation().GetEndLocation().Get(0), 
+                                segment.GetEndPoint().Get(0)), 
+                            Math.Max(lastTextChunk.GetLocation().GetEndLocation().Get(1), 
+                                segment.GetEndPoint().Get(1)), 
+                            Math.Max(lastTextChunk.GetLocation().GetEndLocation().Get(2), 
                                 segment.GetEndPoint().Get(2)));
 
                         TextChunk merged = new TextChunk(
-                            lastTextChunk.GetText(),
-                            tclStrat.CreateLocation(renderInfo,
+                            lastTextChunk.GetText(), 
+                            tclStrat.CreateLocation(renderInfo, 
                                 new LineSegment(mergedStart, mergedEnd)));
 
                         locationalResult[locationalResult.Count - 1] = merged;
@@ -173,7 +173,7 @@ namespace Convers
 
                         TextChunk tc = new TextChunk(
                             actualText ?? renderInfo.GetText(), tclStrat.CreateLocation(renderInfo, segment));
-
+                        
                         locationalResult.Add(tc);
                     }
                 }
@@ -219,7 +219,7 @@ namespace Convers
                     {
                         // we only insert a blank space if the trailing character of the previous string 
                         //wasn't a space, and the leading character of the current string isn't a space
-                        if (IsChunkAtWordBoundary(chunk, lastChunk) && !StartsWithSpace(chunk.text)
+                        if (IsChunkAtWordBoundary(chunk, lastChunk) && !StartsWithSpace(chunk.text) 
                                 && !EndsWithSpace(lastChunk.text))
                         {
                             line.Append(' ');
@@ -229,7 +229,6 @@ namespace Convers
                     }
                     else
                     {
-
                         Lines.Add(new PdfTextLine(space, line.ToString()));
 
                         space = (int)Math.Round(chunk.GetLocation().GetStartLocation().Get(0));
@@ -282,7 +281,7 @@ namespace Convers
 
         private void SortWithMarks(IList<TextChunk> textChunks)
         {
-            IDictionary<TextChunk, TextChunkMarks> marks =
+            IDictionary<TextChunk, TextChunkMarks> marks = 
                             new Dictionary<TextChunk, TextChunkMarks>();
             IList<TextChunk> toSort = new List<TextChunk>();
 
@@ -300,7 +299,7 @@ namespace Convers
                         {
                             ITextChunkLocation baseLocation = textChunks[baseInd].GetLocation();
 
-                            if (!baseLocation.GetStartLocation().Equals(baseLocation.GetEndLocation())
+                            if (!baseLocation.GetStartLocation().Equals(baseLocation.GetEndLocation()) 
                                 && TextChunkLocationDefaultImp.ContainsMark(baseLocation, location))
                             {
                                 TextChunkMarks currentMarks = marks.Get(textChunks[baseInd]);

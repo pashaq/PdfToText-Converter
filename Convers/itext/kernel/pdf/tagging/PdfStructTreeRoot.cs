@@ -41,17 +41,17 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using Common.Logging;
-using iText.IO.Util;
-using iText.Kernel.Pdf.Filespec;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using Common.Logging;
+using iText.IO.Util;
+using iText.Kernel;
+using iText.Kernel.Pdf;
+using iText.Kernel.Pdf.Filespec;
 
-namespace iText.Kernel.Pdf.Tagging
-{
-    public class PdfStructTreeRoot : PdfObjectWrapper<PdfDictionary>, IStructureNode
-    {
+namespace iText.Kernel.Pdf.Tagging {
+    public class PdfStructTreeRoot : PdfObjectWrapper<PdfDictionary>, IStructureNode {
         private PdfDocument document;
 
         private ParentTreeHandler parentTreeHandler;
@@ -59,17 +59,14 @@ namespace iText.Kernel.Pdf.Tagging
         private static IDictionary<String, PdfName> staticRoleNames = new ConcurrentDictionary<String, PdfName>();
 
         public PdfStructTreeRoot(PdfDocument document)
-            : this((PdfDictionary)new PdfDictionary().MakeIndirect(document), document)
-        {
+            : this((PdfDictionary)new PdfDictionary().MakeIndirect(document), document) {
             GetPdfObject().Put(PdfName.Type, PdfName.StructTreeRoot);
         }
 
         public PdfStructTreeRoot(PdfDictionary pdfObject, PdfDocument document)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
             this.document = document;
-            if (this.document == null)
-            {
+            if (this.document == null) {
                 EnsureObjectIsAddedToDocument(pdfObject);
                 this.document = pdfObject.GetIndirectReference().GetDocument();
             }
@@ -79,16 +76,13 @@ namespace iText.Kernel.Pdf.Tagging
             GetRoleMap();
         }
 
-        public static PdfName ConvertRoleToPdfName(String role)
-        {
+        public static PdfName ConvertRoleToPdfName(String role) {
             PdfName name = PdfName.staticNames.Get(role);
-            if (name != null)
-            {
+            if (name != null) {
                 return name;
             }
             name = staticRoleNames.Get(role);
-            if (name != null)
-            {
+            if (name != null) {
                 return name;
             }
             name = new PdfName(role);
@@ -96,19 +90,16 @@ namespace iText.Kernel.Pdf.Tagging
             return name;
         }
 
-        public virtual PdfStructElem AddKid(PdfStructElem structElem)
-        {
+        public virtual PdfStructElem AddKid(PdfStructElem structElem) {
             return AddKid(-1, structElem);
         }
 
-        public virtual PdfStructElem AddKid(int index, PdfStructElem structElem)
-        {
+        public virtual PdfStructElem AddKid(int index, PdfStructElem structElem) {
             AddKidObject(index, structElem.GetPdfObject());
             return structElem;
         }
 
-        public virtual IStructureNode GetParent()
-        {
+        public virtual IStructureNode GetParent() {
             return null;
         }
 
@@ -120,74 +111,59 @@ namespace iText.Kernel.Pdf.Tagging
         /// in the list on it's place.
         /// </remarks>
         /// <returns>list of the direct kids of StructTreeRoot.</returns>
-        public virtual IList<IStructureNode> GetKids()
-        {
+        public virtual IList<IStructureNode> GetKids() {
             PdfObject k = GetPdfObject().Get(PdfName.K);
             IList<IStructureNode> kids = new List<IStructureNode>();
-            if (k != null)
-            {
-                if (k.IsArray())
-                {
+            if (k != null) {
+                if (k.IsArray()) {
                     PdfArray a = (PdfArray)k;
-                    for (int i = 0; i < a.Size(); i++)
-                    {
+                    for (int i = 0; i < a.Size(); i++) {
                         IfKidIsStructElementAddToList(a.Get(i), kids);
                     }
                 }
-                else
-                {
+                else {
                     IfKidIsStructElementAddToList(k, kids);
                 }
             }
             return kids;
         }
 
-        public virtual PdfArray GetKidsObject()
-        {
+        public virtual PdfArray GetKidsObject() {
             PdfArray k = null;
             PdfObject kObj = GetPdfObject().Get(PdfName.K);
-            if (kObj != null && kObj.IsArray())
-            {
+            if (kObj != null && kObj.IsArray()) {
                 k = (PdfArray)kObj;
             }
-            if (k == null)
-            {
+            if (k == null) {
                 k = new PdfArray();
                 GetPdfObject().Put(PdfName.K, k);
                 SetModified();
-                if (kObj != null)
-                {
+                if (kObj != null) {
                     k.Add(kObj);
                 }
             }
             return k;
         }
 
-        public virtual void AddRoleMapping(String fromRole, String toRole)
-        {
+        public virtual void AddRoleMapping(String fromRole, String toRole) {
             PdfDictionary roleMap = GetRoleMap();
             PdfObject prevVal = roleMap.Put(ConvertRoleToPdfName(fromRole), ConvertRoleToPdfName(toRole));
-            if (prevVal != null && prevVal is PdfName)
-            {
+            if (prevVal != null && prevVal is PdfName) {
                 ILog logger = LogManager.GetLogger(typeof(iText.Kernel.Pdf.Tagging.PdfStructTreeRoot));
                 logger.Warn(String.Format(iText.IO.LogMessageConstant.MAPPING_IN_STRUCT_ROOT_OVERWRITTEN, fromRole, prevVal
                     , toRole));
             }
-            if (roleMap.IsIndirect())
-            {
+            if (roleMap.IsIndirect()) {
                 roleMap.SetModified();
             }
-            else
-            {
+            else {
                 SetModified();
             }
         }
 
-        public virtual PdfDictionary GetRoleMap()
-        {
+        public virtual PdfDictionary GetRoleMap() {
             PdfDictionary roleMap = GetPdfObject().GetAsDictionary(PdfName.RoleMap);
-            if (roleMap == null)
-            {
+            if (roleMap == null) {
                 roleMap = new PdfDictionary();
                 GetPdfObject().Put(PdfName.RoleMap, roleMap);
                 SetModified();
@@ -213,18 +189,14 @@ namespace iText.Kernel.Pdf.Tagging
         /// <see cref="PdfNamespace"/>
         /// s used within the document.
         /// </returns>
-        public virtual IList<PdfNamespace> GetNamespaces()
-        {
+        public virtual IList<PdfNamespace> GetNamespaces() {
             PdfArray namespacesArray = GetPdfObject().GetAsArray(PdfName.Namespaces);
-            if (namespacesArray == null)
-            {
+            if (namespacesArray == null) {
                 return JavaCollectionsUtil.EmptyList<PdfNamespace>();
             }
-            else
-            {
+            else {
                 IList<PdfNamespace> namespacesList = new List<PdfNamespace>(namespacesArray.Size());
-                for (int i = 0; i < namespacesArray.Size(); ++i)
-                {
+                for (int i = 0; i < namespacesArray.Size(); ++i) {
                     namespacesList.Add(new PdfNamespace(namespacesArray.GetAsDictionary(i)));
                 }
                 return namespacesList;
@@ -248,8 +220,7 @@ namespace iText.Kernel.Pdf.Tagging
         /// <see cref="PdfNamespace"/>
         /// to be added.
         /// </param>
-        public virtual void AddNamespace(PdfNamespace @namespace)
-        {
+        public virtual void AddNamespace(PdfNamespace @namespace) {
             GetNamespacesObject().Add(@namespace.GetPdfObject());
             SetModified();
         }
@@ -265,11 +236,9 @@ namespace iText.Kernel.Pdf.Tagging
         /// <see cref="iText.Kernel.Pdf.PdfArray"/>
         /// of namespaces used within the document.
         /// </returns>
-        public virtual PdfArray GetNamespacesObject()
-        {
+        public virtual PdfArray GetNamespacesObject() {
             PdfArray namespacesArray = GetPdfObject().GetAsArray(PdfName.Namespaces);
-            if (namespacesArray == null)
-            {
+            if (namespacesArray == null) {
                 namespacesArray = new PdfArray();
                 VersionConforming.ValidatePdfVersionForDictEntry(GetDocument(), PdfVersion.PDF_2_0, PdfName.Namespaces, PdfName
                     .StructTreeRoot);
@@ -306,18 +275,14 @@ namespace iText.Kernel.Pdf.Tagging
         /// containing one or more
         /// <see cref="iText.Kernel.Pdf.Filespec.PdfFileSpec"/>.
         /// </returns>
-        public virtual IList<PdfFileSpec> GetPronunciationLexiconsList()
-        {
+        public virtual IList<PdfFileSpec> GetPronunciationLexiconsList() {
             PdfArray pronunciationLexicons = GetPdfObject().GetAsArray(PdfName.PronunciationLexicon);
-            if (pronunciationLexicons == null)
-            {
+            if (pronunciationLexicons == null) {
                 return JavaCollectionsUtil.EmptyList<PdfFileSpec>();
             }
-            else
-            {
+            else {
                 IList<PdfFileSpec> lexiconsList = new List<PdfFileSpec>(pronunciationLexicons.Size());
-                for (int i = 0; i < pronunciationLexicons.Size(); ++i)
-                {
+                for (int i = 0; i < pronunciationLexicons.Size(); ++i) {
                     lexiconsList.Add(PdfFileSpec.WrapFileSpecObject(pronunciationLexicons.Get(i)));
                 }
                 return lexiconsList;
@@ -343,11 +308,9 @@ namespace iText.Kernel.Pdf.Tagging
         /// <see cref="iText.Kernel.Pdf.Filespec.PdfFileSpec"/>
         /// object, which specifies XML file conforming to PLS.
         /// </param>
-        public virtual void AddPronunciationLexicon(PdfFileSpec pronunciationLexiconFileSpec)
-        {
+        public virtual void AddPronunciationLexicon(PdfFileSpec pronunciationLexiconFileSpec) {
             PdfArray pronunciationLexicons = GetPdfObject().GetAsArray(PdfName.PronunciationLexicon);
-            if (pronunciationLexicons == null)
-            {
+            if (pronunciationLexicons == null) {
                 pronunciationLexicons = new PdfArray();
                 VersionConforming.ValidatePdfVersionForDictEntry(GetDocument(), PdfVersion.PDF_2_0, PdfName.PronunciationLexicon
                     , PdfName.StructTreeRoot);
@@ -367,13 +330,11 @@ namespace iText.Kernel.Pdf.Tagging
         /// <see cref="iText.Kernel.Pdf.PdfPage"/>
         /// for which to create parent tree entry. Typically this page is flushed after this call.
         /// </param>
-        public virtual void CreateParentTreeEntryForPage(PdfPage page)
-        {
+        public virtual void CreateParentTreeEntryForPage(PdfPage page) {
             GetParentTreeHandler().CreateParentTreeEntryForPage(page);
         }
 
-        public virtual void SavePageStructParentIndexIfNeeded(PdfPage page)
-        {
+        public virtual void SavePageStructParentIndexIfNeeded(PdfPage page) {
             GetParentTreeHandler().SavePageStructParentIndexIfNeeded(page);
         }
 
@@ -391,39 +352,32 @@ namespace iText.Kernel.Pdf.Tagging
         /// </param>
         /// <returns>the unmodifiable collection of marked content references on page, if no Mcrs defined returns null
         ///     </returns>
-        public virtual ICollection<PdfMcr> GetPageMarkedContentReferences(PdfPage page)
-        {
+        public virtual ICollection<PdfMcr> GetPageMarkedContentReferences(PdfPage page) {
             ParentTreeHandler.PageMcrsContainer pageMcrs = GetParentTreeHandler().GetPageMarkedContentReferences(page);
-            return pageMcrs != null ? JavaCollectionsUtil.UnmodifiableCollection(pageMcrs.GetAllMcrsAsCollection()) :
+            return pageMcrs != null ? JavaCollectionsUtil.UnmodifiableCollection(pageMcrs.GetAllMcrsAsCollection()) : 
                 null;
         }
 
-        public virtual PdfMcr FindMcrByMcid(PdfDictionary pageDict, int mcid)
-        {
+        public virtual PdfMcr FindMcrByMcid(PdfDictionary pageDict, int mcid) {
             return GetParentTreeHandler().FindMcrByMcid(pageDict, mcid);
         }
 
-        public virtual PdfObjRef FindObjRefByStructParentIndex(PdfDictionary pageDict, int structParentIndex)
-        {
+        public virtual PdfObjRef FindObjRefByStructParentIndex(PdfDictionary pageDict, int structParentIndex) {
             return GetParentTreeHandler().FindObjRefByStructParentIndex(pageDict, structParentIndex);
         }
 
-        public virtual PdfName GetRole()
-        {
+        public virtual PdfName GetRole() {
             return null;
         }
 
-        public override void Flush()
-        {
-            for (int i = 0; i < GetDocument().GetNumberOfPages(); ++i)
-            {
+        public override void Flush() {
+            for (int i = 0; i < GetDocument().GetNumberOfPages(); ++i) {
                 CreateParentTreeEntryForPage(GetDocument().GetPage(i + 1));
             }
             GetPdfObject().Put(PdfName.ParentTree, GetParentTreeHandler().BuildParentTree());
             GetPdfObject().Put(PdfName.ParentTreeNextKey, new PdfNumber((int)GetDocument().GetNextStructParentIndex())
                 );
-            if (!GetDocument().IsAppendMode())
-            {
+            if (!GetDocument().IsAppendMode()) {
                 FlushAllKids(this);
             }
             base.Flush();
@@ -443,8 +397,7 @@ namespace iText.Kernel.Pdf.Tagging
         /// </remarks>
         /// <param name="destDocument">document to copy structure to. Shall not be current document.</param>
         /// <param name="page2page">association between original page and copied page.</param>
-        public virtual void CopyTo(PdfDocument destDocument, IDictionary<PdfPage, PdfPage> page2page)
-        {
+        public virtual void CopyTo(PdfDocument destDocument, IDictionary<PdfPage, PdfPage> page2page) {
             StructureTreeCopier.CopyTo(destDocument, page2page, GetDocument());
         }
 
@@ -466,8 +419,7 @@ namespace iText.Kernel.Pdf.Tagging
         /// <param name="insertBeforePage">indicates where the structure to be inserted.</param>
         /// <param name="page2page">association between original page and copied page.</param>
         public virtual void CopyTo(PdfDocument destDocument, int insertBeforePage, IDictionary<PdfPage, PdfPage> page2page
-            )
-        {
+            ) {
             StructureTreeCopier.CopyTo(destDocument, insertBeforePage, page2page, GetDocument());
         }
 
@@ -480,31 +432,25 @@ namespace iText.Kernel.Pdf.Tagging
         /// </remarks>
         /// <param name="fromPage">page which tag structure will be moved</param>
         /// <param name="insertBeforePage">indicates before tags of which page tag structure will be moved to</param>
-        public virtual void Move(PdfPage fromPage, int insertBeforePage)
-        {
-            for (int i = 1; i <= GetDocument().GetNumberOfPages(); ++i)
-            {
-                if (GetDocument().GetPage(i).IsFlushed())
-                {
+        public virtual void Move(PdfPage fromPage, int insertBeforePage) {
+            for (int i = 1; i <= GetDocument().GetNumberOfPages(); ++i) {
+                if (GetDocument().GetPage(i).IsFlushed()) {
                     throw new PdfException(MessageFormatUtil.Format(PdfException.CannotMovePagesInPartlyFlushedDocument, i));
                 }
             }
             StructureTreeCopier.Move(GetDocument(), fromPage, insertBeforePage);
         }
 
-        public virtual int GetParentTreeNextKey()
-        {
+        public virtual int GetParentTreeNextKey() {
             // /ParentTreeNextKey entry is always inited on ParentTreeHandler initialization
             return GetPdfObject().GetAsNumber(PdfName.ParentTreeNextKey).IntValue();
         }
 
-        public virtual int GetNextMcidForPage(PdfPage page)
-        {
+        public virtual int GetNextMcidForPage(PdfPage page) {
             return GetParentTreeHandler().GetNextMcidForPage(page);
         }
 
-        public virtual PdfDocument GetDocument()
-        {
+        public virtual PdfDocument GetDocument() {
             return document;
         }
 
@@ -520,20 +466,16 @@ namespace iText.Kernel.Pdf.Tagging
         /// </remarks>
         /// <param name="description">the file description</param>
         /// <param name="fs">file specification dictionary of associated file</param>
-        public virtual void AddAssociatedFile(String description, PdfFileSpec fs)
-        {
-            if (null == ((PdfDictionary)fs.GetPdfObject()).Get(PdfName.AFRelationship))
-            {
+        public virtual void AddAssociatedFile(String description, PdfFileSpec fs) {
+            if (null == ((PdfDictionary)fs.GetPdfObject()).Get(PdfName.AFRelationship)) {
                 ILog logger = LogManager.GetLogger(typeof(iText.Kernel.Pdf.Tagging.PdfStructTreeRoot));
                 logger.Error(iText.IO.LogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
             }
-            if (null != description)
-            {
+            if (null != description) {
                 GetDocument().GetCatalog().GetNameTree(PdfName.EmbeddedFiles).AddEntry(description, fs.GetPdfObject());
             }
             PdfArray afArray = GetPdfObject().GetAsArray(PdfName.AF);
-            if (afArray == null)
-            {
+            if (afArray == null) {
                 afArray = new PdfArray();
                 GetPdfObject().Put(PdfName.AF, afArray);
             }
@@ -554,44 +496,35 @@ namespace iText.Kernel.Pdf.Tagging
         /// For associated files their associated file specification dictionaries shall include the AFRelationship key
         /// </remarks>
         /// <param name="fs">file specification dictionary of associated file</param>
-        public virtual void AddAssociatedFile(PdfFileSpec fs)
-        {
+        public virtual void AddAssociatedFile(PdfFileSpec fs) {
             AddAssociatedFile(null, fs);
         }
 
         /// <summary>Returns files associated with structure tree root.</summary>
         /// <param name="create">defines whether AF arrays will be created if it doesn't exist</param>
         /// <returns>associated files array</returns>
-        public virtual PdfArray GetAssociatedFiles(bool create)
-        {
+        public virtual PdfArray GetAssociatedFiles(bool create) {
             PdfArray afArray = GetPdfObject().GetAsArray(PdfName.AF);
-            if (afArray == null && create)
-            {
+            if (afArray == null && create) {
                 afArray = new PdfArray();
                 GetPdfObject().Put(PdfName.AF, afArray);
             }
             return afArray;
         }
 
-        internal virtual ParentTreeHandler GetParentTreeHandler()
-        {
+        internal virtual ParentTreeHandler GetParentTreeHandler() {
             return parentTreeHandler;
         }
 
-        internal virtual void AddKidObject(int index, PdfDictionary structElem)
-        {
-            if (index == -1)
-            {
+        internal virtual void AddKidObject(int index, PdfDictionary structElem) {
+            if (index == -1) {
                 GetKidsObject().Add(structElem);
             }
-            else
-            {
+            else {
                 GetKidsObject().Add(index, structElem);
             }
-            if (PdfStructElem.IsStructElem(structElem))
-            {
-                if (GetPdfObject().GetIndirectReference() == null)
-                {
+            if (PdfStructElem.IsStructElem(structElem)) {
+                if (GetPdfObject().GetIndirectReference() == null) {
                     throw new PdfException(PdfException.StructureElementDictionaryShallBeAnIndirectObjectInOrderToHaveChildren
                         );
                 }
@@ -600,33 +533,25 @@ namespace iText.Kernel.Pdf.Tagging
             SetModified();
         }
 
-        protected internal override bool IsWrappedObjectMustBeIndirect()
-        {
+        protected internal override bool IsWrappedObjectMustBeIndirect() {
             return true;
         }
 
-        private void FlushAllKids(IStructureNode elem)
-        {
-            foreach (IStructureNode kid in elem.GetKids())
-            {
-                if (kid is PdfStructElem && !((PdfStructElem)kid).IsFlushed())
-                {
+        private void FlushAllKids(IStructureNode elem) {
+            foreach (IStructureNode kid in elem.GetKids()) {
+                if (kid is PdfStructElem && !((PdfStructElem)kid).IsFlushed()) {
                     FlushAllKids(kid);
                     ((PdfStructElem)kid).Flush();
                 }
             }
         }
 
-        private void IfKidIsStructElementAddToList(PdfObject kid, IList<IStructureNode> kids)
-        {
-            if (kid.IsFlushed())
-            {
+        private void IfKidIsStructElementAddToList(PdfObject kid, IList<IStructureNode> kids) {
+            if (kid.IsFlushed()) {
                 kids.Add(null);
             }
-            else
-            {
-                if (kid.IsDictionary() && PdfStructElem.IsStructElem((PdfDictionary)kid))
-                {
+            else {
+                if (kid.IsDictionary() && PdfStructElem.IsStructElem((PdfDictionary)kid)) {
                     kids.Add(new PdfStructElem((PdfDictionary)kid));
                 }
             }

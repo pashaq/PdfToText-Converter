@@ -43,11 +43,9 @@ address: sales@itextpdf.com
 */
 using System;
 
-namespace iText.IO
-{
+namespace iText.IO {
     /// <summary>Class containing constants to be used in logging.</summary>
-    public sealed class LogMessageConstant
-    {
+    public sealed class LogMessageConstant {
         public const String ACTION_WAS_SET_TO_LINK_ANNOTATION_WITH_DESTINATION = "Action was set for a link annotation containing destination. The old destination will be cleared.";
 
         public const String ALREADY_FLUSHED_INDIRECT_OBJECT_MADE_FREE = "An attempt is made to free already flushed indirect object reference. Indirect reference wasn't freed.";

@@ -6,23 +6,20 @@
 // NOTICE:  Adobe permits you to use, modify, and distribute this file in accordance with the terms
 // of the Adobe license agreement accompanying it.
 // =================================================================================================
+using System;
 using iText.Kernel.XMP.Impl;
 using iText.Kernel.XMP.Options;
-using System;
 
-namespace iText.Kernel.XMP
-{
+namespace iText.Kernel.XMP {
     /// <summary>Utility methods for XMP.</summary>
     /// <remarks>
     /// Utility methods for XMP. I included only those that are different from the
     /// Java default conversion utilities.
     /// </remarks>
     /// <since>21.02.2006</since>
-    public sealed class XMPUtils
-    {
+    public sealed class XMPUtils {
         /// <summary>Private constructor</summary>
-        private XMPUtils()
-        {
+        private XMPUtils() {
         }
 
         // EMPTY
@@ -48,9 +45,8 @@ namespace iText.Kernel.XMP
         /// </param>
         /// <param name="allowCommas">Option flag to control the catenation.</param>
         /// <returns>Returns the string containing the catenated array items.</returns>
-        public static String CatenateArrayItems(XMPMeta xmp, String schemaNS, String arrayName, String separator,
-            String quotes, bool allowCommas)
-        {
+        public static String CatenateArrayItems(XMPMeta xmp, String schemaNS, String arrayName, String separator, 
+            String quotes, bool allowCommas) {
             return XMPUtilsImpl.CatenateArrayItems(xmp, schemaNS, arrayName, separator, quotes, allowCommas);
         }
 
@@ -69,8 +65,7 @@ namespace iText.Kernel.XMP
         /// <param name="arrayOptions">Option flags to control the separation.</param>
         /// <param name="preserveCommas">Flag if commas shall be preserved</param>
         public static void SeparateArrayItems(XMPMeta xmp, String schemaNS, String arrayName, String catedStr, PropertyOptions
-             arrayOptions, bool preserveCommas)
-        {
+             arrayOptions, bool preserveCommas) {
             XMPUtilsImpl.SeparateArrayItems(xmp, schemaNS, arrayName, catedStr, arrayOptions, preserveCommas);
         }
 
@@ -117,8 +112,7 @@ namespace iText.Kernel.XMP
         /// <em>Note:</em> Currently not supported.
         /// </param>
         public static void RemoveProperties(XMPMeta xmp, String schemaNS, String propName, bool doAllProperties, bool
-             includeAliases)
-        {
+             includeAliases) {
             XMPUtilsImpl.RemoveProperties(xmp, schemaNS, propName, doAllProperties, includeAliases);
         }
 
@@ -128,8 +122,7 @@ namespace iText.Kernel.XMP
         /// <param name="doAllProperties">Do internal properties in addition to external properties.</param>
         /// <param name="replaceOldValues">Replace the values of existing properties.</param>
         public static void AppendProperties(XMPMeta source, XMPMeta dest, bool doAllProperties, bool replaceOldValues
-            )
-        {
+            ) {
             AppendProperties(source, dest, doAllProperties, replaceOldValues, false);
         }
 
@@ -207,8 +200,7 @@ namespace iText.Kernel.XMP
         /// <param name="replaceOldValues">Replace the values of existing properties.</param>
         /// <param name="deleteEmptyValues">Delete destination values if source property is empty.</param>
         public static void AppendProperties(XMPMeta source, XMPMeta dest, bool doAllProperties, bool replaceOldValues
-            , bool deleteEmptyValues)
-        {
+            , bool deleteEmptyValues) {
             XMPUtilsImpl.AppendProperties(source, dest, doAllProperties, replaceOldValues, deleteEmptyValues);
         }
 
@@ -233,20 +225,16 @@ namespace iText.Kernel.XMP
         /// </description></item>
         /// </list>
         /// </returns>
-        public static bool ConvertToBoolean(String value)
-        {
-            if (value == null || value.Length == 0)
-            {
+        public static bool ConvertToBoolean(String value) {
+            if (value == null || value.Length == 0) {
                 throw new XMPException("Empty convert-string", XMPError.BADVALUE);
             }
             value = value.ToLowerInvariant();
-            try
-            {
+            try {
                 // First try interpretation as Integer (anything not 0 is true)
                 return Convert.ToInt32(value, System.Globalization.CultureInfo.InvariantCulture) != 0;
             }
-            catch (FormatException)
-            {
+            catch (FormatException) {
                 return "true".Equals(value) || "t".Equals(value) || "on".Equals(value) || "yes".Equals(value);
             }
         }
@@ -260,33 +248,26 @@ namespace iText.Kernel.XMP
         /// and
         /// <see cref="XMPConst.FALSESTR"/>.
         /// </returns>
-        public static String ConvertFromBoolean(bool value)
-        {
+        public static String ConvertFromBoolean(bool value) {
             return value ? XMPConst.TRUESTR : XMPConst.FALSESTR;
         }
 
         /// <summary>Converts a string value to an <c>int</c>.</summary>
         /// <param name="rawValue">the string value</param>
         /// <returns>Returns an int.</returns>
-        public static int ConvertToInteger(String rawValue)
-        {
-            try
-            {
-                if (rawValue == null || rawValue.Length == 0)
-                {
+        public static int ConvertToInteger(String rawValue) {
+            try {
+                if (rawValue == null || rawValue.Length == 0) {
                     throw new XMPException("Empty convert-string", XMPError.BADVALUE);
                 }
-                if (rawValue.StartsWith("0x"))
-                {
+                if (rawValue.StartsWith("0x")) {
                     return Convert.ToInt32(rawValue.Substring(2), 16);
                 }
-                else
-                {
+                else {
                     return Convert.ToInt32(rawValue, System.Globalization.CultureInfo.InvariantCulture);
                 }
             }
-            catch (FormatException)
-            {
+            catch (FormatException) {
                 throw new XMPException("Invalid integer string", XMPError.BADVALUE);
             }
         }
@@ -294,33 +275,26 @@ namespace iText.Kernel.XMP
         /// <summary>Convert from int to string.</summary>
         /// <param name="value">an int value</param>
         /// <returns>The string representation of the int.</returns>
-        public static String ConvertFromInteger(int value)
-        {
+        public static String ConvertFromInteger(int value) {
             return value.ToString();
         }
 
         /// <summary>Converts a string value to a <c>long</c>.</summary>
         /// <param name="rawValue">the string value</param>
         /// <returns>Returns a long.</returns>
-        public static long ConvertToLong(String rawValue)
-        {
-            try
-            {
-                if (rawValue == null || rawValue.Length == 0)
-                {
+        public static long ConvertToLong(String rawValue) {
+            try {
+                if (rawValue == null || rawValue.Length == 0) {
                     throw new XMPException("Empty convert-string", XMPError.BADVALUE);
                 }
-                if (rawValue.StartsWith("0x"))
-                {
+                if (rawValue.StartsWith("0x")) {
                     return Convert.ToInt64(rawValue.Substring(2), 16);
                 }
-                else
-                {
+                else {
                     return Convert.ToInt64(rawValue, System.Globalization.CultureInfo.InvariantCulture);
                 }
             }
-            catch (FormatException)
-            {
+            catch (FormatException) {
                 throw new XMPException("Invalid long string", XMPError.BADVALUE);
             }
         }
@@ -328,29 +302,23 @@ namespace iText.Kernel.XMP
         /// <summary>Convert from long to string.</summary>
         /// <param name="value">a long value</param>
         /// <returns>The string representation of the long.</returns>
-        public static String ConvertFromLong(long value)
-        {
+        public static String ConvertFromLong(long value) {
             return value.ToString();
         }
 
         /// <summary>Converts a string value to a <c>double</c>.</summary>
         /// <param name="rawValue">the string value</param>
         /// <returns>Returns a double.</returns>
-        public static double ConvertToDouble(String rawValue)
-        {
-            try
-            {
-                if (rawValue == null || rawValue.Length == 0)
-                {
+        public static double ConvertToDouble(String rawValue) {
+            try {
+                if (rawValue == null || rawValue.Length == 0) {
                     throw new XMPException("Empty convert-string", XMPError.BADVALUE);
                 }
-                else
-                {
+                else {
                     return Double.Parse(rawValue, System.Globalization.CultureInfo.InvariantCulture);
                 }
             }
-            catch (FormatException)
-            {
+            catch (FormatException) {
                 throw new XMPException("Invalid double string", XMPError.BADVALUE);
             }
         }
@@ -358,22 +326,18 @@ namespace iText.Kernel.XMP
         /// <summary>Convert from long to string.</summary>
         /// <param name="value">a long value</param>
         /// <returns>The string representation of the long.</returns>
-        public static String ConvertFromDouble(double value)
-        {
+        public static String ConvertFromDouble(double value) {
             return value.ToString();
         }
 
         /// <summary>Converts a string value to an <c>XMPDateTime</c>.</summary>
         /// <param name="rawValue">the string value</param>
         /// <returns>Returns an <c>XMPDateTime</c>-object.</returns>
-        public static XMPDateTime ConvertToDate(String rawValue)
-        {
-            if (rawValue == null || rawValue.Length == 0)
-            {
+        public static XMPDateTime ConvertToDate(String rawValue) {
+            if (rawValue == null || rawValue.Length == 0) {
                 throw new XMPException("Empty convert-string", XMPError.BADVALUE);
             }
-            else
-            {
+            else {
                 return ISO8601Converter.Parse(rawValue);
             }
         }
@@ -381,30 +345,25 @@ namespace iText.Kernel.XMP
         /// <summary>Convert from <c>XMPDateTime</c> to string.</summary>
         /// <param name="value">an <c>XMPDateTime</c></param>
         /// <returns>The string representation of the long.</returns>
-        public static String ConvertFromDate(XMPDateTime value)
-        {
+        public static String ConvertFromDate(XMPDateTime value) {
             return ISO8601Converter.Render(value);
         }
 
         /// <summary>Convert from a byte array to a base64 encoded string.</summary>
         /// <param name="buffer">the byte array to be converted</param>
         /// <returns>Returns the base64 string.</returns>
-        public static String EncodeBase64(byte[] buffer)
-        {
+        public static String EncodeBase64(byte[] buffer) {
             return iText.IO.Util.JavaUtil.GetStringForBytes(Base64.Encode(buffer));
         }
 
         /// <summary>Decode from Base64 encoded string to raw data.</summary>
         /// <param name="base64String">a base64 encoded string</param>
         /// <returns>Returns a byte array containg the decoded string.</returns>
-        public static byte[] DecodeBase64(String base64String)
-        {
-            try
-            {
+        public static byte[] DecodeBase64(String base64String) {
+            try {
                 return Base64.Decode(base64String.GetBytes());
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 throw new XMPException("Invalid base64 string", XMPError.BADVALUE, e);
             }
         }

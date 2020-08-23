@@ -49,59 +49,47 @@ namespace iText.IO.Util.Collections
 {
     internal class EmptyEnumerator<T> : IEnumerator<T>
     {
-        public void Dispose()
-        {
+        public void Dispose() {
         }
 
-        public bool MoveNext()
-        {
+        public bool MoveNext() {
             return false;
         }
 
-        public void Reset()
-        {
+        public void Reset() {
         }
 
-        public T Current
-        {
-            get
-            {
+        public T Current {
+            get {
                 throw new InvalidOperationException();
             }
         }
 
-        object IEnumerator.Current
-        {
+        object IEnumerator.Current {
             get { return Current; }
         }
     }
 
-    internal class EmptyEnumerator : IEnumerator
-    {
-        public void Dispose()
-        {
-        }
+	internal class EmptyEnumerator : IEnumerator
+	{
+		public void Dispose() {
+		}
 
-        public bool MoveNext()
-        {
-            return false;
-        }
+		public bool MoveNext() {
+			return false;
+		}
 
-        public void Reset()
-        {
-        }
+		public void Reset() {
+		}
 
-        public object Current
-        {
-            get
-            {
-                throw new InvalidOperationException();
-            }
-        }
+		public object Current {
+			get {
+				throw new InvalidOperationException();
+			}
+		}
 
-        object IEnumerator.Current
-        {
-            get { return Current; }
-        }
-    }
+		object IEnumerator.Current {
+			get { return Current; }
+		}
+	}
 }

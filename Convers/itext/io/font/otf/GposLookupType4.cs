@@ -43,83 +43,67 @@ address: sales@itextpdf.com
 */
 using System.Collections.Generic;
 
-namespace iText.IO.Font.Otf
-{
+namespace iText.IO.Font.Otf {
     /// <summary>
     /// Lookup Type 4:
     /// MarkToBase Attachment Positioning Subtable
     /// </summary>
-    public class GposLookupType4 : OpenTableLookup
-    {
+    public class GposLookupType4 : OpenTableLookup {
         private readonly IList<GposLookupType4.MarkToBase> marksbases;
 
         public GposLookupType4(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations)
-            : base(openReader, lookupFlag, subTableLocations)
-        {
+            : base(openReader, lookupFlag, subTableLocations) {
             marksbases = new List<GposLookupType4.MarkToBase>();
             ReadSubTables();
         }
 
-        public override bool TransformOne(GlyphLine line)
-        {
-            if (line.idx >= line.end)
-            {
+        public override bool TransformOne(GlyphLine line) {
+            if (line.idx >= line.end) {
                 return false;
             }
-            if (openReader.IsSkip(line.Get(line.idx).GetCode(), lookupFlag))
-            {
+            if (openReader.IsSkip(line.Get(line.idx).GetCode(), lookupFlag)) {
                 line.idx++;
                 return false;
             }
             bool changed = false;
             OpenTableLookup.GlyphIndexer gi = null;
-            foreach (GposLookupType4.MarkToBase mb in marksbases)
-            {
+            foreach (GposLookupType4.MarkToBase mb in marksbases) {
                 OtfMarkRecord omr = mb.marks.Get(line.Get(line.idx).GetCode());
-                if (omr == null)
-                {
+                if (omr == null) {
                     continue;
                 }
-                if (gi == null)
-                {
+                if (gi == null) {
                     gi = new OpenTableLookup.GlyphIndexer();
                     gi.idx = line.idx;
                     gi.line = line;
-                    while (true)
-                    {
+                    while (true) {
                         gi.PreviousGlyph(openReader, lookupFlag);
-                        if (gi.glyph == null)
-                        {
+                        if (gi.glyph == null) {
                             break;
                         }
                         // not mark => base glyph
-                        if (!mb.marks.ContainsKey(gi.glyph.GetCode()))
-                        {
+                        if (!mb.marks.ContainsKey(gi.glyph.GetCode())) {
                             break;
                         }
                     }
-                    if (gi.glyph == null)
-                    {
+                    if (gi.glyph == null) {
                         break;
                     }
                 }
                 GposAnchor[] gpas = mb.bases.Get(gi.glyph.GetCode());
-                if (gpas == null)
-                {
+                if (gpas == null) {
                     continue;
                 }
                 int markClass = omr.markClass;
                 int xPlacement = 0;
                 int yPlacement = 0;
                 GposAnchor baseAnchor = gpas[markClass];
-                if (baseAnchor != null)
-                {
+                if (baseAnchor != null) {
                     xPlacement = baseAnchor.XCoordinate;
                     yPlacement = baseAnchor.YCoordinate;
                 }
                 GposAnchor markAnchor = omr.anchor;
-                if (markAnchor != null)
-                {
+                if (markAnchor != null) {
                     xPlacement -= markAnchor.XCoordinate;
                     yPlacement -= markAnchor.YCoordinate;
                 }
@@ -131,8 +115,7 @@ namespace iText.IO.Font.Otf
             return changed;
         }
 
-        protected internal override void ReadSubTable(int subTableLocation)
-        {
+        protected internal override void ReadSubTable(int subTableLocation) {
             openReader.rf.Seek(subTableLocation);
             // skip format, always 1
             openReader.rf.ReadUnsignedShort();
@@ -145,20 +128,17 @@ namespace iText.IO.Font.Otf
             IList<int> baseCoverage = openReader.ReadCoverageFormat(baseCoverageLocation);
             IList<OtfMarkRecord> markRecords = OtfReadCommon.ReadMarkArray(openReader, markArrayLocation);
             GposLookupType4.MarkToBase markToBase = new GposLookupType4.MarkToBase();
-            for (int k = 0; k < markCoverage.Count; ++k)
-            {
+            for (int k = 0; k < markCoverage.Count; ++k) {
                 markToBase.marks.Put(markCoverage[k], markRecords[k]);
             }
             IList<GposAnchor[]> baseArray = OtfReadCommon.ReadBaseArray(openReader, classCount, baseArrayLocation);
-            for (int k = 0; k < baseCoverage.Count; ++k)
-            {
+            for (int k = 0; k < baseCoverage.Count; ++k) {
                 markToBase.bases.Put(baseCoverage[k], baseArray[k]);
             }
             marksbases.Add(markToBase);
         }
 
-        public class MarkToBase
-        {
+        public class MarkToBase {
             public readonly IDictionary<int, OtfMarkRecord> marks = new Dictionary<int, OtfMarkRecord>();
 
             public readonly IDictionary<int, GposAnchor[]> bases = new Dictionary<int, GposAnchor[]>();

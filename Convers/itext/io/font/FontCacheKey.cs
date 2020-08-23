@@ -40,74 +40,59 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Util;
 using System;
+using iText.IO.Util;
 
-namespace iText.IO.Font
-{
-    public abstract class FontCacheKey
-    {
-        public static FontCacheKey Create(String fontName)
-        {
+namespace iText.IO.Font {
+    public abstract class FontCacheKey {
+        public static FontCacheKey Create(String fontName) {
             return new FontCacheKey.FontCacheStringKey(fontName);
         }
 
-        public static FontCacheKey Create(String fontName, int ttcIndex)
-        {
+        public static FontCacheKey Create(String fontName, int ttcIndex) {
             return new FontCacheKey.FontCacheTtcKey(fontName, ttcIndex);
         }
 
-        public static FontCacheKey Create(byte[] fontProgram)
-        {
+        public static FontCacheKey Create(byte[] fontProgram) {
             return new FontCacheKey.FontCacheBytesKey(fontProgram);
         }
 
-        public static FontCacheKey Create(byte[] fontProgram, int ttcIndex)
-        {
+        public static FontCacheKey Create(byte[] fontProgram, int ttcIndex) {
             return new FontCacheKey.FontCacheTtcKey(fontProgram, ttcIndex);
         }
 
-        private class FontCacheStringKey : FontCacheKey
-        {
+        private class FontCacheStringKey : FontCacheKey {
             private String fontName;
 
-            internal FontCacheStringKey(String fontName)
-            {
+            internal FontCacheStringKey(String fontName) {
                 this.fontName = fontName;
             }
 
-            public override bool Equals(Object o)
-            {
-                if (this == o)
-                {
+            public override bool Equals(Object o) {
+                if (this == o) {
                     return true;
                 }
-                if (o == null || GetType() != o.GetType())
-                {
+                if (o == null || GetType() != o.GetType()) {
                     return false;
                 }
                 FontCacheKey.FontCacheStringKey that = (FontCacheKey.FontCacheStringKey)o;
                 return fontName != null ? fontName.Equals(that.fontName) : that.fontName == null;
             }
 
-            public override int GetHashCode()
-            {
+            public override int GetHashCode() {
                 return fontName != null ? fontName.GetHashCode() : 0;
             }
         }
 
-        private class FontCacheBytesKey : FontCacheKey
-        {
+        private class FontCacheBytesKey : FontCacheKey {
             private byte[] firstFontBytes;
 
             private int fontLength;
 
             private int hashcode;
 
-            internal FontCacheBytesKey(byte[] fontBytes)
-            {
-                if (fontBytes != null)
-                {
+            internal FontCacheBytesKey(byte[] fontBytes) {
+                if (fontBytes != null) {
                     int maxBytesNum = 10000;
                     this.firstFontBytes = fontBytes.Length > maxBytesNum ? JavaUtil.ArraysCopyOf(fontBytes, maxBytesNum) : fontBytes;
                     this.fontLength = fontBytes.Length;
@@ -115,75 +100,61 @@ namespace iText.IO.Font
                 this.hashcode = CalcHashCode();
             }
 
-            public override bool Equals(Object o)
-            {
-                if (this == o)
-                {
+            public override bool Equals(Object o) {
+                if (this == o) {
                     return true;
                 }
-                if (o == null || GetType() != o.GetType())
-                {
+                if (o == null || GetType() != o.GetType()) {
                     return false;
                 }
                 FontCacheKey.FontCacheBytesKey that = (FontCacheKey.FontCacheBytesKey)o;
-                if (fontLength != that.fontLength)
-                {
+                if (fontLength != that.fontLength) {
                     return false;
                 }
                 return JavaUtil.ArraysEquals(firstFontBytes, that.firstFontBytes);
             }
 
-            public override int GetHashCode()
-            {
+            public override int GetHashCode() {
                 return hashcode;
             }
 
-            private int CalcHashCode()
-            {
+            private int CalcHashCode() {
                 int result = JavaUtil.ArraysHashCode(firstFontBytes);
                 result = 31 * result + fontLength;
                 return result;
             }
         }
 
-        private class FontCacheTtcKey : FontCacheKey
-        {
+        private class FontCacheTtcKey : FontCacheKey {
             private FontCacheKey ttcKey;
 
             private int ttcIndex;
 
-            internal FontCacheTtcKey(String fontName, int ttcIndex)
-            {
+            internal FontCacheTtcKey(String fontName, int ttcIndex) {
                 this.ttcKey = new FontCacheKey.FontCacheStringKey(fontName);
                 this.ttcIndex = ttcIndex;
             }
 
-            internal FontCacheTtcKey(byte[] fontBytes, int ttcIndex)
-            {
+            internal FontCacheTtcKey(byte[] fontBytes, int ttcIndex) {
                 this.ttcKey = new FontCacheKey.FontCacheBytesKey(fontBytes);
                 this.ttcIndex = ttcIndex;
             }
 
-            public override bool Equals(Object o)
-            {
-                if (this == o)
-                {
+            public override bool Equals(Object o) {
+                if (this == o) {
                     return true;
                 }
-                if (o == null || GetType() != o.GetType())
-                {
+                if (o == null || GetType() != o.GetType()) {
                     return false;
                 }
                 FontCacheKey.FontCacheTtcKey that = (FontCacheKey.FontCacheTtcKey)o;
-                if (ttcIndex != that.ttcIndex)
-                {
+                if (ttcIndex != that.ttcIndex) {
                     return false;
                 }
                 return ttcKey.Equals(that.ttcKey);
             }
 
-            public override int GetHashCode()
-            {
+            public override int GetHashCode() {
                 int result = ttcKey.GetHashCode();
                 result = 31 * result + ttcIndex;
                 return result;

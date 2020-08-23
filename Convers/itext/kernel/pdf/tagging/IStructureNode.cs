@@ -42,11 +42,10 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using System.Collections.Generic;
+using iText.Kernel.Pdf;
 
-namespace iText.Kernel.Pdf.Tagging
-{
-    public interface IStructureNode
-    {
+namespace iText.Kernel.Pdf.Tagging {
+    public interface IStructureNode {
         IStructureNode GetParent();
 
         IList<IStructureNode> GetKids();

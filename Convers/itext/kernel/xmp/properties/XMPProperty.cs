@@ -27,15 +27,13 @@
 //        SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //        http://www.adobe.com/devnet/xmp/library/eula-xmp-library-java.html
-using iText.Kernel.XMP.Options;
 using System;
+using iText.Kernel.XMP.Options;
 
-namespace iText.Kernel.XMP.Properties
-{
+namespace iText.Kernel.XMP.Properties {
     /// <summary>This interface is used to return a text property together with its and options.</summary>
     /// <since>23.01.2006</since>
-    public interface XMPProperty
-    {
+    public interface XMPProperty {
         /// <returns>Returns the value of the property.</returns>
         String GetValue();
 

@@ -41,22 +41,23 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Image;
-using iText.IO.Util;
-using iText.Kernel.Geom;
-using iText.Kernel.Pdf.Xobject;
 using System;
 using System.IO;
+using iText.IO.Image;
+using iText.IO.Util;
+using iText.Kernel;
+using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
+using iText.Kernel.Pdf.Canvas;
+using iText.Kernel.Pdf.Xobject;
 
-namespace iText.Kernel.Pdf.Canvas.Wmf
-{
+namespace iText.Kernel.Pdf.Canvas.Wmf {
     /// <summary>Helper class for the WmfImage implementation.</summary>
     /// <remarks>
     /// Helper class for the WmfImage implementation. Assists in the creation of a
     /// <see cref="iText.Kernel.Pdf.Xobject.PdfFormXObject"/>.
     /// </remarks>
-    public class WmfImageHelper
-    {
+    public class WmfImageHelper {
         /// <summary>Scales the WMF font size.</summary>
         /// <remarks>Scales the WMF font size. The default value is 0.86.</remarks>
         public static float wmfFontCorrection = 0.86f;
@@ -73,10 +74,8 @@ namespace iText.Kernel.Pdf.Canvas.Wmf
         /// <see cref="WmfImageData"/>
         /// object
         /// </param>
-        public WmfImageHelper(ImageData wmf)
-        {
-            if (wmf.GetOriginalType() != ImageType.WMF)
-            {
+        public WmfImageHelper(ImageData wmf) {
+            if (wmf.GetOriginalType() != ImageType.WMF) {
                 throw new ArgumentException("WMF image expected");
             }
             this.wmf = (WmfImageData)wmf;
@@ -84,25 +83,20 @@ namespace iText.Kernel.Pdf.Canvas.Wmf
         }
 
         /// <summary>This method checks if the image is a valid WMF and processes some parameters.</summary>
-        private void ProcessParameters()
-        {
+        private void ProcessParameters() {
             Stream @is = null;
-            try
-            {
+            try {
                 String errorID;
-                if (wmf.GetData() == null)
-                {
+                if (wmf.GetData() == null) {
                     @is = UrlUtil.OpenStream(wmf.GetUrl());
                     errorID = wmf.GetUrl().ToString();
                 }
-                else
-                {
+                else {
                     @is = new MemoryStream(wmf.GetData());
                     errorID = "Byte array";
                 }
                 InputMeta @in = new InputMeta(@is);
-                if (@in.ReadInt() != unchecked((int)(0x9AC6CDD7)))
-                {
+                if (@in.ReadInt() != unchecked((int)(0x9AC6CDD7))) {
                     throw new PdfException(PdfException._1IsNotAValidPlaceableWindowsMetafile, errorID);
                 }
                 @in.ReadWord();
@@ -115,20 +109,15 @@ namespace iText.Kernel.Pdf.Canvas.Wmf
                 wmf.SetHeight((float)(bottom - top) / inch * 72f);
                 wmf.SetWidth((float)(right - left) / inch * 72f);
             }
-            catch (System.IO.IOException)
-            {
+            catch (System.IO.IOException) {
                 throw new PdfException(PdfException.WmfImageException);
             }
-            finally
-            {
-                if (@is != null)
-                {
-                    try
-                    {
+            finally {
+                if (@is != null) {
+                    try {
                         @is.Dispose();
                     }
-                    catch (System.IO.IOException)
-                    {
+                    catch (System.IO.IOException) {
                     }
                 }
             }
@@ -141,38 +130,29 @@ namespace iText.Kernel.Pdf.Canvas.Wmf
         /// </remarks>
         /// <param name="document">PdfDocument to add the PdfXObject to</param>
         /// <returns>PdfXObject based on the WMF image</returns>
-        public virtual PdfXObject CreateFormXObject(PdfDocument document)
-        {
+        public virtual PdfXObject CreateFormXObject(PdfDocument document) {
             PdfFormXObject pdfForm = new PdfFormXObject(new Rectangle(0, 0, wmf.GetWidth(), wmf.GetHeight()));
             PdfCanvas canvas = new PdfCanvas(pdfForm, document);
             Stream @is = null;
-            try
-            {
-                if (wmf.GetData() == null)
-                {
+            try {
+                if (wmf.GetData() == null) {
                     @is = UrlUtil.OpenStream(wmf.GetUrl());
                 }
-                else
-                {
+                else {
                     @is = new MemoryStream(wmf.GetData());
                 }
                 MetaDo meta = new MetaDo(@is, canvas);
                 meta.ReadAll();
             }
-            catch (System.IO.IOException e)
-            {
+            catch (System.IO.IOException e) {
                 throw new PdfException(PdfException.WmfImageException, e);
             }
-            finally
-            {
-                if (@is != null)
-                {
-                    try
-                    {
+            finally {
+                if (@is != null) {
+                    try {
                         @is.Dispose();
                     }
-                    catch (System.IO.IOException)
-                    {
+                    catch (System.IO.IOException) {
                     }
                 }
             }

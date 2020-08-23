@@ -43,11 +43,10 @@ address: sales@itextpdf.com
 */
 using System;
 using System.Text;
+using iText.IO;
 
-namespace iText.IO.Util
-{
-    public class ImageMagickHelper
-    {
+namespace iText.IO.Util {
+    public class ImageMagickHelper {
         /// <summary>The name of the environment variable with the command to execute ImageMagic comparison operations.
         ///     </summary>
         public const String MAGICK_COMPARE_ENVIRONMENT_VARIABLE = "ITEXT_MAGICK_COMPARE_EXEC";
@@ -60,23 +59,18 @@ namespace iText.IO.Util
         private String compareExec;
 
         public ImageMagickHelper()
-            : this(null)
-        {
+            : this(null) {
         }
 
-        public ImageMagickHelper(String newCompareExec)
-        {
+        public ImageMagickHelper(String newCompareExec) {
             compareExec = newCompareExec;
-            if (compareExec == null)
-            {
+            if (compareExec == null) {
                 compareExec = SystemUtil.GetEnvironmentVariable(MAGICK_COMPARE_ENVIRONMENT_VARIABLE);
-                if (compareExec == null)
-                {
+                if (compareExec == null) {
                     compareExec = SystemUtil.GetEnvironmentVariable(MAGICK_COMPARE_ENVIRONMENT_VARIABLE_LEGACY);
                 }
             }
-            if (!CliCommandUtil.IsVersionCommandExecutable(compareExec, MAGICK_COMPARE_KEYWORD))
-            {
+            if (!CliCommandUtil.IsVersionCommandExecutable(compareExec, MAGICK_COMPARE_KEYWORD)) {
                 throw new ArgumentException(IoExceptionMessage.COMPARE_COMMAND_SPECIFIED_INCORRECTLY);
             }
         }
@@ -88,8 +82,7 @@ namespace iText.IO.Util
         /// methods invocation.
         /// </remarks>
         /// <returns>a string command</returns>
-        public virtual String GetCliExecutionCommand()
-        {
+        public virtual String GetCliExecutionCommand() {
             return compareExec;
         }
 
@@ -99,8 +92,7 @@ namespace iText.IO.Util
         /// <param name="diffImageName">Path to the difference output image file</param>
         /// <returns>boolean result of comparing: true - images are visually equal</returns>
         public virtual bool RunImageMagickImageCompare(String outImageFilePath, String cmpImageFilePath, String diffImageName
-            )
-        {
+            ) {
             return RunImageMagickImageCompare(outImageFilePath, cmpImageFilePath, diffImageName, null);
         }
 
@@ -115,8 +107,7 @@ namespace iText.IO.Util
         /// </param>
         /// <returns>boolean result of comparing: true - images are visually equal</returns>
         public virtual bool RunImageMagickImageCompare(String outImageFilePath, String cmpImageFilePath, String diffImageName
-            , String fuzzValue)
-        {
+            , String fuzzValue) {
             fuzzValue = (fuzzValue == null) ? "" : " -metric AE -fuzz <fuzzValue>%".Replace("<fuzzValue>", fuzzValue);
             StringBuilder currCompareParams = new StringBuilder();
             currCompareParams.Append(fuzzValue).Append(" '").Append(outImageFilePath).Append("' '").Append(cmpImageFilePath

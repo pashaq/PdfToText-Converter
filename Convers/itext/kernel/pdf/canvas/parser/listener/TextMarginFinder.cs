@@ -41,43 +41,36 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Util;
-using iText.Kernel.Geom;
-using iText.Kernel.Pdf.Canvas.Parser.Data;
 using System;
 using System.Collections.Generic;
+using iText.IO.Util;
+using iText.Kernel.Geom;
+using iText.Kernel.Pdf.Canvas.Parser;
+using iText.Kernel.Pdf.Canvas.Parser.Data;
 
-namespace iText.Kernel.Pdf.Canvas.Parser.Listener
-{
+namespace iText.Kernel.Pdf.Canvas.Parser.Listener {
     /// <summary>This class allows you to find the rectangle which contains all the text in the given content stream.
     ///     </summary>
-    public class TextMarginFinder : IEventListener
-    {
+    public class TextMarginFinder : IEventListener {
         private Rectangle textRectangle = null;
 
-        public virtual void EventOccurred(IEventData data, EventType type)
-        {
-            if (type == EventType.RENDER_TEXT)
-            {
+        public virtual void EventOccurred(IEventData data, EventType type) {
+            if (type == EventType.RENDER_TEXT) {
                 TextRenderInfo info = (TextRenderInfo)data;
-                if (textRectangle == null)
-                {
+                if (textRectangle == null) {
                     textRectangle = info.GetDescentLine().GetBoundingRectangle();
                 }
-                else
-                {
+                else {
                     textRectangle = Rectangle.GetCommonRectangle(textRectangle, info.GetDescentLine().GetBoundingRectangle());
                 }
                 textRectangle = Rectangle.GetCommonRectangle(textRectangle, info.GetAscentLine().GetBoundingRectangle());
             }
-            else
-            {
+            else {
                 throw new InvalidOperationException(MessageFormatUtil.Format("Event type not supported: {0}", type));
             }
         }
 
-        public virtual ICollection<EventType> GetSupportedEvents()
-        {
+        public virtual ICollection<EventType> GetSupportedEvents() {
             return new LinkedHashSet<EventType>(JavaCollectionsUtil.SingletonList(EventType.RENDER_TEXT));
         }
 
@@ -88,8 +81,7 @@ namespace iText.Kernel.Pdf.Canvas.Parser.Listener
         /// text has been found yet.
         /// </summary>
         /// <returns>common text rectangle</returns>
-        public virtual Rectangle GetTextRectangle()
-        {
+        public virtual Rectangle GetTextRectangle() {
             return textRectangle;
         }
     }

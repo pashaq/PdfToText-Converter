@@ -43,58 +43,48 @@ address: sales@itextpdf.com
 */
 
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
-namespace iText.IO.Util
-{
+namespace iText.IO.Util {
     /// <summary>
     /// This file is a helper class for internal usage only.
     /// Be aware that its API and functionality may be changed in future.
     /// </summary>
-    public static class StringUtil
-    {
-        public static String ReplaceAll(String srcString, String regex, String replacement)
-        {
+    public static class StringUtil {
+        public static String ReplaceAll(String srcString, String regex, String replacement) {
             return Regex.Replace(srcString, regex, replacement);
         }
 
-        public static Regex RegexCompile(String s)
-        {
+        public static Regex RegexCompile(String s) {
             return RegexCompile(s, RegexOptions.None);
         }
 
-        public static Regex RegexCompile(String s, RegexOptions options)
-        {
+        public static Regex RegexCompile(String s, RegexOptions options) {
             Regex regex = new Regex(s, options);
             //This is needed so the method throw an exception in case of invalid regular expression.
             regex.IsMatch("");
             return regex;
         }
 
-        public static Match Match(Regex r, String s)
-        {
+        public static Match Match(Regex r, String s) {
             return r.Match(s);
         }
 
-        public static String Group(Match match, int index)
-        {
+        public static String Group(Match match, int index) {
             return match.Groups[index].Success ? match.Groups[index].Value : null;
         }
 
-        public static String Group(Match match)
-        {
+        public static String Group(Match match) {
             return Group(match, 0);
         }
 
-        public static String Normalize(String s, NormalizationForm form)
-        {
+        public static String Normalize(String s, NormalizationForm form) {
             return s.Normalize(form);
         }
 
-        public static String[] Split(String srcStr, String splitSequence)
-        {
+        public static String[] Split(String srcStr, String splitSequence) {
             if (splitSequence.Length == 1)
                 return srcStr.TrimEnd().Split(splitSequence.ToCharArray());
 
@@ -102,8 +92,7 @@ namespace iText.IO.Util
             return Split(regex, srcStr);
         }
 
-        public static String[] Split(Regex regex, String srcStr)
-        {
+        public static String[] Split(Regex regex, String srcStr) {
             Match match = regex.Match(srcStr);
             String[] result;
             if (!match.Success)

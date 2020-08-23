@@ -41,31 +41,26 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.Kernel.Counter.Event;
 using System;
 using System.Collections.Generic;
+using iText.Kernel.Counter.Event;
 
-namespace iText.Kernel.Counter.Context
-{
+namespace iText.Kernel.Counter.Context {
     /// <summary>
     /// Generic context that allows
     /// <see cref="iText.Kernel.Counter.Event.IGenericEvent"/>
     /// based on the whitelist of supported IDs
     /// </summary>
-    public class GenericContext : IContext
-    {
+    public class GenericContext : IContext {
         private readonly ICollection<String> supported;
 
-        public GenericContext(ICollection<String> supported)
-        {
+        public GenericContext(ICollection<String> supported) {
             this.supported = new HashSet<String>();
             this.supported.AddAll(supported);
         }
 
-        public virtual bool Allow(IEvent @event)
-        {
-            if (@event is IGenericEvent)
-            {
+        public virtual bool Allow(IEvent @event) {
+            if (@event is IGenericEvent) {
                 return supported.Contains(((IGenericEvent)@event).GetOriginId());
             }
             return false;

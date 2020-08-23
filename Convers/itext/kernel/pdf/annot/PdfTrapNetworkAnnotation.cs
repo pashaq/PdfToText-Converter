@@ -41,13 +41,14 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System.Collections.Generic;
+using iText.Kernel;
 using iText.Kernel.Font;
 using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Xobject;
-using System.Collections.Generic;
 
-namespace iText.Kernel.Pdf.Annot
-{
+namespace iText.Kernel.Pdf.Annot {
     /// <summary>
     /// A
     /// <see cref="PdfTrapNetworkAnnotation"/>
@@ -64,8 +65,7 @@ namespace iText.Kernel.Pdf.Annot
     /// <para />
     /// See ISO-320001 14.11.6 "Trapping Support" and 14.11.6.2 "Trap Network Annotations" in particular.
     /// </remarks>
-    public class PdfTrapNetworkAnnotation : PdfAnnotation
-    {
+    public class PdfTrapNetworkAnnotation : PdfAnnotation {
         /// <summary>
         /// Creates a
         /// <see cref="PdfTrapNetworkAnnotation"/>
@@ -91,10 +91,8 @@ namespace iText.Kernel.Pdf.Annot
         /// See also ISO-320001 Table 367 "Additional entries specific to a trap network appearance stream".
         /// </param>
         public PdfTrapNetworkAnnotation(Rectangle rect, PdfFormXObject appearanceStream)
-            : base(rect)
-        {
-            if (appearanceStream.GetProcessColorModel() == null)
-            {
+            : base(rect) {
+            if (appearanceStream.GetProcessColorModel() == null) {
                 throw new PdfException("Process color model must be set in appearance stream for Trap Network annotation!"
                     );
             }
@@ -125,13 +123,11 @@ namespace iText.Kernel.Pdf.Annot
         /// </param>
         /// <seealso cref="PdfAnnotation.MakeAnnotation(iText.Kernel.Pdf.PdfObject)"/>
         protected internal PdfTrapNetworkAnnotation(PdfDictionary pdfObject)
-            : base(pdfObject)
-        {
+            : base(pdfObject) {
         }
 
         /// <summary><inheritDoc/></summary>
-        public override PdfName GetSubtype()
-        {
+        public override PdfName GetSubtype() {
             return PdfName.TrapNet;
         }
 
@@ -156,8 +152,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfTrapNetworkAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfTrapNetworkAnnotation SetLastModified(PdfDate lastModified)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfTrapNetworkAnnotation SetLastModified(PdfDate lastModified) {
             return (iText.Kernel.Pdf.Annot.PdfTrapNetworkAnnotation)Put(PdfName.LastModified, lastModified.GetPdfObject
                 ());
         }
@@ -170,8 +165,7 @@ namespace iText.Kernel.Pdf.Annot
         /// in ISO-320001 7.9.4, "Dates". See also
         /// <see cref="iText.Kernel.Pdf.PdfDate.Decode(System.String)"/>.
         /// </returns>
-        public virtual PdfString GetLastModified()
-        {
+        public virtual PdfString GetLastModified() {
             return GetPdfObject().GetAsString(PdfName.LastModified);
         }
 
@@ -211,8 +205,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfTrapNetworkAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfTrapNetworkAnnotation SetVersion(PdfArray version)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfTrapNetworkAnnotation SetVersion(PdfArray version) {
             return (iText.Kernel.Pdf.Annot.PdfTrapNetworkAnnotation)Put(PdfName.Version, version);
         }
 
@@ -226,8 +219,7 @@ namespace iText.Kernel.Pdf.Annot
         /// of all objects present in the page description at the time the trap networks
         /// were generated.
         /// </returns>
-        public virtual PdfArray GetVersion()
-        {
+        public virtual PdfArray GetVersion() {
             return GetPdfObject().GetAsArray(PdfName.Version);
         }
 
@@ -263,8 +255,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfTrapNetworkAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfTrapNetworkAnnotation SetAnnotStates(PdfArray annotStates)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfTrapNetworkAnnotation SetAnnotStates(PdfArray annotStates) {
             return (iText.Kernel.Pdf.Annot.PdfTrapNetworkAnnotation)Put(PdfName.AnnotStates, annotStates);
         }
 
@@ -280,8 +271,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfArray"/>
         /// of name objects representing the appearance states for annotations associated with the page,
         /// </returns>
-        public virtual PdfArray GetAnnotStates()
-        {
+        public virtual PdfArray GetAnnotStates() {
             return GetPdfObject().GetAsArray(PdfName.AnnotStates);
         }
 
@@ -301,8 +291,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfTrapNetworkAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfTrapNetworkAnnotation SetFauxedFonts(PdfArray fauxedFonts)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfTrapNetworkAnnotation SetFauxedFonts(PdfArray fauxedFonts) {
             return (iText.Kernel.Pdf.Annot.PdfTrapNetworkAnnotation)Put(PdfName.FontFauxing, fauxedFonts);
         }
 
@@ -322,11 +311,9 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="PdfTrapNetworkAnnotation"/>
         /// instance.
         /// </returns>
-        public virtual iText.Kernel.Pdf.Annot.PdfTrapNetworkAnnotation SetFauxedFonts(IList<PdfFont> fauxedFonts)
-        {
+        public virtual iText.Kernel.Pdf.Annot.PdfTrapNetworkAnnotation SetFauxedFonts(IList<PdfFont> fauxedFonts) {
             PdfArray arr = new PdfArray();
-            foreach (PdfFont f in fauxedFonts)
-            {
+            foreach (PdfFont f in fauxedFonts) {
                 arr.Add(f.GetPdfObject());
             }
             return SetFauxedFonts(arr);
@@ -343,8 +330,7 @@ namespace iText.Kernel.Pdf.Annot
         /// <see cref="iText.Kernel.Pdf.PdfDictionary"/>
         /// each of which represent font in the document.
         /// </returns>
-        public virtual PdfArray GetFauxedFonts()
-        {
+        public virtual PdfArray GetFauxedFonts() {
             return GetPdfObject().GetAsArray(PdfName.FontFauxing);
         }
     }

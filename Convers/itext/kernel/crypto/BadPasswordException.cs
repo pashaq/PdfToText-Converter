@@ -42,12 +42,11 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 using System;
+using iText.Kernel;
 
-namespace iText.Kernel.Crypto
-{
+namespace iText.Kernel.Crypto {
     /// <summary>Bad password exception.</summary>
-    public class BadPasswordException : PdfException
-    {
+    public class BadPasswordException : PdfException {
         public const String PdfReaderNotOpenedWithOwnerPassword = "PdfReader is not opened with owner password";
 
         /// <summary>Creates a new BadPasswordException.</summary>
@@ -58,15 +57,13 @@ namespace iText.Kernel.Crypto
         /// method).
         /// </param>
         public BadPasswordException(String message, Exception cause)
-            : base(message, cause)
-        {
+            : base(message, cause) {
         }
 
         /// <summary>Creates a new BadPasswordException.</summary>
         /// <param name="message">the detail message.</param>
         public BadPasswordException(String message)
-            : base(message)
-        {
+            : base(message) {
         }
     }
 }

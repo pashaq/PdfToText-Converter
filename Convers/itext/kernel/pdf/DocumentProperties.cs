@@ -43,18 +43,14 @@ address: sales@itextpdf.com
 */
 using iText.Kernel.Counter.Event;
 
-namespace iText.Kernel.Pdf
-{
-    public class DocumentProperties
-    {
+namespace iText.Kernel.Pdf {
+    public class DocumentProperties {
         protected internal IMetaInfo metaInfo = null;
 
-        public DocumentProperties()
-        {
+        public DocumentProperties() {
         }
 
-        public DocumentProperties(iText.Kernel.Pdf.DocumentProperties other)
-        {
+        public DocumentProperties(iText.Kernel.Pdf.DocumentProperties other) {
             this.metaInfo = other.metaInfo;
         }
 
@@ -72,8 +68,7 @@ namespace iText.Kernel.Pdf
         /// <see cref="DocumentProperties"/>
         /// instance
         /// </returns>
-        public virtual iText.Kernel.Pdf.DocumentProperties SetEventCountingMetaInfo(IMetaInfo metaInfo)
-        {
+        public virtual iText.Kernel.Pdf.DocumentProperties SetEventCountingMetaInfo(IMetaInfo metaInfo) {
             this.metaInfo = metaInfo;
             return this;
         }

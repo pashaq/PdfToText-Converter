@@ -29,18 +29,15 @@
 //        http://www.adobe.com/devnet/xmp/library/eula-xmp-library-java.html
 using System;
 
-namespace iText.Kernel.XMP.Impl
-{
+namespace iText.Kernel.XMP.Impl {
     /// <since>12.10.2006</since>
-    public class Latin1Converter
-    {
+    public class Latin1Converter {
         private const int STATE_START = 0;
 
         private const int STATE_UTF8CHAR = 11;
 
         /// <summary>Private constructor</summary>
-        private Latin1Converter()
-        {
+        private Latin1Converter() {
         }
 
         // EMPTY
@@ -73,10 +70,8 @@ namespace iText.Kernel.XMP.Impl
         /// </remarks>
         /// <param name="buffer">a byte buffer contain</param>
         /// <returns>Returns a new buffer containing valid UTF-8</returns>
-        public static ByteBuffer Convert(ByteBuffer buffer)
-        {
-            if ("UTF-8".Equals(buffer.GetEncoding()))
-            {
+        public static ByteBuffer Convert(ByteBuffer buffer) {
+            if ("UTF-8".Equals(buffer.GetEncoding())) {
                 // the buffer containing one UTF-8 char (up to 8 bytes) 
                 byte[] readAheadBuffer = new byte[8];
                 // the number of bytes read ahead.
@@ -86,77 +81,63 @@ namespace iText.Kernel.XMP.Impl
                 // output buffer with estimated length
                 ByteBuffer @out = new ByteBuffer(buffer.Length() * 4 / 3);
                 int state = STATE_START;
-                for (int i = 0; i < buffer.Length(); i++)
-                {
+                for (int i = 0; i < buffer.Length(); i++) {
                     int b = buffer.CharAt(i);
-                    switch (state)
-                    {
+                    switch (state) {
                         case STATE_START:
-                        default:
-                            {
-                                if (b < 0x7F)
-                                {
-                                    @out.Append((byte)b);
-                                }
-                                else
-                                {
-                                    if (b >= 0xC0)
-                                    {
-                                        // start of UTF8 sequence
-                                        expectedBytes = -1;
-                                        int test = b;
-                                        for (; expectedBytes < 8 && (test & 0x80) == 0x80; test = test << 1)
-                                        {
-                                            expectedBytes++;
-                                        }
-                                        readAheadBuffer[readAhead++] = (byte)b;
-                                        state = STATE_UTF8CHAR;
-                                    }
-                                    else
-                                    {
-                                        //  implicitly:  b >= 0x80  &&  b < 0xC0
-                                        // invalid UTF8 start char, assume to be Latin-1
-                                        byte[] utf8 = ConvertToUTF8((byte)b);
-                                        @out.Append(utf8);
-                                    }
-                                }
-                                break;
+                        default: {
+                            if (b < 0x7F) {
+                                @out.Append((byte)b);
                             }
-
-                        case STATE_UTF8CHAR:
-                            {
-                                if (expectedBytes > 0 && (b & 0xC0) == 0x80)
-                                {
-                                    // valid UTF8 char, add to readAheadBuffer
-                                    readAheadBuffer[readAhead++] = (byte)b;
-                                    expectedBytes--;
-                                    if (expectedBytes == 0)
-                                    {
-                                        @out.Append(readAheadBuffer, 0, readAhead);
-                                        readAhead = 0;
-                                        state = STATE_START;
+                            else {
+                                if (b >= 0xC0) {
+                                    // start of UTF8 sequence
+                                    expectedBytes = -1;
+                                    int test = b;
+                                    for (; expectedBytes < 8 && (test & 0x80) == 0x80; test = test << 1) {
+                                        expectedBytes++;
                                     }
+                                    readAheadBuffer[readAhead++] = (byte)b;
+                                    state = STATE_UTF8CHAR;
                                 }
-                                else
-                                {
-                                    // invalid UTF8 char: 
-                                    // 1. convert first of seq to UTF8 
-                                    byte[] utf8 = ConvertToUTF8(readAheadBuffer[0]);
+                                else {
+                                    //  implicitly:  b >= 0x80  &&  b < 0xC0
+                                    // invalid UTF8 start char, assume to be Latin-1
+                                    byte[] utf8 = ConvertToUTF8((byte)b);
                                     @out.Append(utf8);
-                                    // 2. continue processing at second byte of sequence
-                                    i = i - readAhead;
+                                }
+                            }
+                            break;
+                        }
+
+                        case STATE_UTF8CHAR: {
+                            if (expectedBytes > 0 && (b & 0xC0) == 0x80) {
+                                // valid UTF8 char, add to readAheadBuffer
+                                readAheadBuffer[readAhead++] = (byte)b;
+                                expectedBytes--;
+                                if (expectedBytes == 0) {
+                                    @out.Append(readAheadBuffer, 0, readAhead);
                                     readAhead = 0;
                                     state = STATE_START;
                                 }
-                                break;
                             }
+                            else {
+                                // invalid UTF8 char: 
+                                // 1. convert first of seq to UTF8 
+                                byte[] utf8 = ConvertToUTF8(readAheadBuffer[0]);
+                                @out.Append(utf8);
+                                // 2. continue processing at second byte of sequence
+                                i = i - readAhead;
+                                readAhead = 0;
+                                state = STATE_START;
+                            }
+                            break;
+                        }
                     }
                 }
                 // loop ends with "half" Utf8 char --> assume that the bytes are Latin-1
-                if (state == STATE_UTF8CHAR)
-                {
-                    for (int j = 0; j < readAhead; j++)
-                    {
+                if (state == STATE_UTF8CHAR) {
+                    for (int j = 0; j < readAhead; j++) {
                         byte b = readAheadBuffer[j];
                         byte[] utf8 = ConvertToUTF8(b);
                         @out.Append(utf8);
@@ -164,8 +145,7 @@ namespace iText.Kernel.XMP.Impl
                 }
                 return @out;
             }
-            else
-            {
+            else {
                 // Latin-1 fixing applies only to UTF-8
                 return buffer;
             }
@@ -183,15 +163,11 @@ namespace iText.Kernel.XMP.Impl
         /// </remarks>
         /// <param name="ch">an Cp1252 / Latin-1 byte</param>
         /// <returns>Returns a byte array containing a UTF-8 byte sequence.</returns>
-        private static byte[] ConvertToUTF8(byte ch)
-        {
+        private static byte[] ConvertToUTF8(byte ch) {
             int c = ch & 0xFF;
-            try
-            {
-                if (c >= 0x80)
-                {
-                    if (c == 0x81 || c == 0x8D || c == 0x8F || c == 0x90 || c == 0x9D)
-                    {
+            try {
+                if (c >= 0x80) {
+                    if (c == 0x81 || c == 0x8D || c == 0x8F || c == 0x90 || c == 0x9D) {
                         // space for undefined
                         return new byte[] { 0x20 };
                     }
@@ -199,8 +175,7 @@ namespace iText.Kernel.XMP.Impl
                     return iText.IO.Util.JavaUtil.GetStringForBytes(new byte[] { ch }, "cp1252").GetBytes("UTF-8");
                 }
             }
-            catch (ArgumentException)
-            {
+            catch (ArgumentException) {
             }
             // EMPTY
             return new byte[] { ch };

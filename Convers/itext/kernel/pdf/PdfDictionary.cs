@@ -41,12 +41,11 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.Kernel.Geom;
 using System;
 using System.Collections.Generic;
+using iText.Kernel.Geom;
 
-namespace iText.Kernel.Pdf
-{
+namespace iText.Kernel.Pdf {
     /// <summary>A representation of a Dictionary as described by the PDF Specification.</summary>
     /// <remarks>
     /// A representation of a Dictionary as described by the PDF Specification. A Dictionary is a mapping between keys
@@ -58,14 +57,12 @@ namespace iText.Kernel.Pdf
     /// adding a new value to an existing key will override the previous value. A value of null should be ignored when
     /// the PdfDocument is closed.
     /// </remarks>
-    public class PdfDictionary : PdfObject
-    {
+    public class PdfDictionary : PdfObject {
         private IDictionary<PdfName, PdfObject> map = new SortedDictionary<PdfName, PdfObject>();
 
         /// <summary>Creates a new PdfDictionary instance.</summary>
         public PdfDictionary()
-            : base()
-        {
+            : base() {
         }
 
         /// <summary>Creates a new PdfDictionary instance.</summary>
@@ -74,8 +71,7 @@ namespace iText.Kernel.Pdf
         /// PdfDictionary instance.
         /// </remarks>
         /// <param name="map">Map containing values to be inserted into PdfDictionary</param>
-        public PdfDictionary(IDictionary<PdfName, PdfObject> map)
-        {
+        public PdfDictionary(IDictionary<PdfName, PdfObject> map) {
             this.map.AddAll(map);
         }
 
@@ -85,10 +81,8 @@ namespace iText.Kernel.Pdf
         /// PdfDictionary instance.
         /// </remarks>
         /// <param name="entrySet">Set containing Map#Entries to be inserted into PdfDictionary</param>
-        public PdfDictionary(ICollection<KeyValuePair<PdfName, PdfObject>> entrySet)
-        {
-            foreach (KeyValuePair<PdfName, PdfObject> entry in entrySet)
-            {
+        public PdfDictionary(ICollection<KeyValuePair<PdfName, PdfObject>> entrySet) {
+            foreach (KeyValuePair<PdfName, PdfObject> entry in entrySet) {
                 this.map.Put(entry.Key, entry.Value);
             }
         }
@@ -99,46 +93,40 @@ namespace iText.Kernel.Pdf
         /// into this PdfDictionary instance.
         /// </remarks>
         /// <param name="dictionary">PdfDictionary containing values to be inserted into PdfDictionary</param>
-        public PdfDictionary(iText.Kernel.Pdf.PdfDictionary dictionary)
-        {
+        public PdfDictionary(iText.Kernel.Pdf.PdfDictionary dictionary) {
             map.AddAll(dictionary.map);
         }
 
         /// <summary>Returns the number of key-value pairs in this PdfDictionary.</summary>
         /// <returns>number of key-value pairs</returns>
-        public virtual int Size()
-        {
+        public virtual int Size() {
             return map.Count;
         }
 
         /// <summary>Returns true if there are no key-value pairs in this PdfDictionary.</summary>
         /// <returns>true if there are no key-value pairs in this PdfDictionary</returns>
-        public virtual bool IsEmpty()
-        {
+        public virtual bool IsEmpty() {
             return map.Count == 0;
         }
 
         /// <summary>Returns true if this PdfDictionary contains the specified key.</summary>
         /// <param name="key">the key to check</param>
         /// <returns>true if key is present in the PdfDictionary</returns>
-        public virtual bool ContainsKey(PdfName key)
-        {
+        public virtual bool ContainsKey(PdfName key) {
             return map.ContainsKey(key);
         }
 
         /// <summary>Returns true if this PdfDictionary contains the specified value.</summary>
         /// <param name="value">the value to check</param>
         /// <returns>true if value is present in the PdfDictionary</returns>
-        public virtual bool ContainsValue(PdfObject value)
-        {
+        public virtual bool ContainsValue(PdfObject value) {
             return map.Values.Contains(value);
         }
 
         /// <summary>Returns the value associated to this key.</summary>
         /// <param name="key">the key of which the associated value needs to be returned</param>
         /// <returns>the value associated with this key</returns>
-        public virtual PdfObject Get(PdfName key)
-        {
+        public virtual PdfObject Get(PdfName key) {
             return Get(key, true);
         }
 
@@ -147,11 +135,9 @@ namespace iText.Kernel.Pdf
         ///     </remarks>
         /// <param name="key">the key of which the associated value needs to be returned</param>
         /// <returns>PdfArray associated with this key</returns>
-        public virtual PdfArray GetAsArray(PdfName key)
-        {
+        public virtual PdfArray GetAsArray(PdfName key) {
             PdfObject direct = Get(key, true);
-            if (direct != null && direct.GetObjectType() == PdfObject.ARRAY)
-            {
+            if (direct != null && direct.GetObjectType() == PdfObject.ARRAY) {
                 return (PdfArray)direct;
             }
             return null;
@@ -162,11 +148,9 @@ namespace iText.Kernel.Pdf
         ///     </remarks>
         /// <param name="key">the key of which the associated value needs to be returned</param>
         /// <returns>PdfDictionary associated with this key</returns>
-        public virtual iText.Kernel.Pdf.PdfDictionary GetAsDictionary(PdfName key)
-        {
+        public virtual iText.Kernel.Pdf.PdfDictionary GetAsDictionary(PdfName key) {
             PdfObject direct = Get(key, true);
-            if (direct != null && direct.GetObjectType() == PdfObject.DICTIONARY)
-            {
+            if (direct != null && direct.GetObjectType() == PdfObject.DICTIONARY) {
                 return (iText.Kernel.Pdf.PdfDictionary)direct;
             }
             return null;
@@ -177,11 +161,9 @@ namespace iText.Kernel.Pdf
         ///     </remarks>
         /// <param name="key">the key of which the associated value needs to be returned</param>
         /// <returns>PdfStream associated with this key</returns>
-        public virtual PdfStream GetAsStream(PdfName key)
-        {
+        public virtual PdfStream GetAsStream(PdfName key) {
             PdfObject direct = Get(key, true);
-            if (direct != null && direct.GetObjectType() == PdfObject.STREAM)
-            {
+            if (direct != null && direct.GetObjectType() == PdfObject.STREAM) {
                 return (PdfStream)direct;
             }
             return null;
@@ -192,11 +174,9 @@ namespace iText.Kernel.Pdf
         ///     </remarks>
         /// <param name="key">the key of which the associated value needs to be returned</param>
         /// <returns>PdfNumber associated with this key</returns>
-        public virtual PdfNumber GetAsNumber(PdfName key)
-        {
+        public virtual PdfNumber GetAsNumber(PdfName key) {
             PdfObject direct = Get(key, true);
-            if (direct != null && direct.GetObjectType() == PdfObject.NUMBER)
-            {
+            if (direct != null && direct.GetObjectType() == PdfObject.NUMBER) {
                 return (PdfNumber)direct;
             }
             return null;
@@ -207,11 +187,9 @@ namespace iText.Kernel.Pdf
         ///     </remarks>
         /// <param name="key">the key of which the associated value needs to be returned</param>
         /// <returns>PdfName associated with this key</returns>
-        public virtual PdfName GetAsName(PdfName key)
-        {
+        public virtual PdfName GetAsName(PdfName key) {
             PdfObject direct = Get(key, true);
-            if (direct != null && direct.GetObjectType() == PdfObject.NAME)
-            {
+            if (direct != null && direct.GetObjectType() == PdfObject.NAME) {
                 return (PdfName)direct;
             }
             return null;
@@ -222,11 +200,9 @@ namespace iText.Kernel.Pdf
         ///     </remarks>
         /// <param name="key">the key of which the associated value needs to be returned</param>
         /// <returns>PdfString associated with this key</returns>
-        public virtual PdfString GetAsString(PdfName key)
-        {
+        public virtual PdfString GetAsString(PdfName key) {
             PdfObject direct = Get(key, true);
-            if (direct != null && direct.GetObjectType() == PdfObject.STRING)
-            {
+            if (direct != null && direct.GetObjectType() == PdfObject.STRING) {
                 return (PdfString)direct;
             }
             return null;
@@ -237,11 +213,9 @@ namespace iText.Kernel.Pdf
         ///     </remarks>
         /// <param name="key">the key of which the associated value needs to be returned</param>
         /// <returns>PdfBoolean associated with this key</returns>
-        public virtual PdfBoolean GetAsBoolean(PdfName key)
-        {
+        public virtual PdfBoolean GetAsBoolean(PdfName key) {
             PdfObject direct = Get(key, true);
-            if (direct != null && direct.GetObjectType() == PdfObject.BOOLEAN)
-            {
+            if (direct != null && direct.GetObjectType() == PdfObject.BOOLEAN) {
                 return (PdfBoolean)direct;
             }
             return null;
@@ -255,8 +229,7 @@ namespace iText.Kernel.Pdf
         /// <param name="key">the key of which the associated value needs to be returned</param>
         /// <returns>PdfArray associated with this key</returns>
         /// <seealso cref="PdfArray.ToRectangle()"/>
-        public virtual Rectangle GetAsRectangle(PdfName key)
-        {
+        public virtual Rectangle GetAsRectangle(PdfName key) {
             PdfArray a = GetAsArray(key);
             return a == null ? null : a.ToRectangle();
         }
@@ -266,12 +239,10 @@ namespace iText.Kernel.Pdf
         ///     </remarks>
         /// <param name="key">the key of which the associated value needs to be returned</param>
         /// <returns>Float associated with this key</returns>
-        public virtual float? GetAsFloat(PdfName key)
-        {
+        public virtual float? GetAsFloat(PdfName key) {
             PdfNumber number = GetAsNumber(key);
             float? floatNumber = null;
-            if (number != null)
-            {
+            if (number != null) {
                 floatNumber = number.FloatValue();
             }
             return floatNumber;
@@ -282,12 +253,10 @@ namespace iText.Kernel.Pdf
         ///     </remarks>
         /// <param name="key">the key of which the associated value needs to be returned</param>
         /// <returns>Integer associated with this key</returns>
-        public virtual int? GetAsInt(PdfName key)
-        {
+        public virtual int? GetAsInt(PdfName key) {
             PdfNumber number = GetAsNumber(key);
             int? intNumber = null;
-            if (number != null)
-            {
+            if (number != null) {
                 intNumber = number.IntValue();
             }
             return intNumber;
@@ -298,12 +267,10 @@ namespace iText.Kernel.Pdf
         ///     </remarks>
         /// <param name="key">the key of which the associated value needs to be returned</param>
         /// <returns>Boolean associated with this key</returns>
-        public virtual bool? GetAsBool(PdfName key)
-        {
+        public virtual bool? GetAsBool(PdfName key) {
             PdfBoolean b = GetAsBoolean(key);
             bool? booleanValue = null;
-            if (b != null)
-            {
+            if (b != null) {
                 booleanValue = b.GetValue();
             }
             return booleanValue;
@@ -317,8 +284,7 @@ namespace iText.Kernel.Pdf
         /// <param name="key">key to insert or to override</param>
         /// <param name="value">the value to associate with the specified key</param>
         /// <returns>the previous PdfObject associated with this key</returns>
-        public virtual PdfObject Put(PdfName key, PdfObject value)
-        {
+        public virtual PdfObject Put(PdfName key, PdfObject value) {
             System.Diagnostics.Debug.Assert(value != null);
             return map.Put(key, value);
         }
@@ -326,28 +292,24 @@ namespace iText.Kernel.Pdf
         /// <summary>Removes the specified key from this PdfDictionary.</summary>
         /// <param name="key">key to be removed</param>
         /// <returns>the removed value associated with the specified key</returns>
-        public virtual PdfObject Remove(PdfName key)
-        {
+        public virtual PdfObject Remove(PdfName key) {
             return map.JRemove(key);
         }
 
         /// <summary>Inserts all the key-value pairs into this PdfDictionary.</summary>
         /// <param name="d">PdfDictionary holding the key-value pairs to be copied</param>
-        public virtual void PutAll(iText.Kernel.Pdf.PdfDictionary d)
-        {
+        public virtual void PutAll(iText.Kernel.Pdf.PdfDictionary d) {
             map.AddAll(d.map);
         }
 
         /// <summary>Removes all key-value pairs from this PdfDictionary.</summary>
-        public virtual void Clear()
-        {
+        public virtual void Clear() {
             map.Clear();
         }
 
         /// <summary>Returns all the keys of this PdfDictionary as a Set.</summary>
         /// <returns>Set of keys</returns>
-        public virtual ICollection<PdfName> KeySet()
-        {
+        public virtual ICollection<PdfName> KeySet() {
             return map.Keys;
         }
 
@@ -359,14 +321,11 @@ namespace iText.Kernel.Pdf
         /// for the indirect objects in dictionary, otherwise it will contain collection of direct objects.
         /// </param>
         /// <returns>a Collection holding all the values</returns>
-        public virtual ICollection<PdfObject> Values(bool asDirects)
-        {
-            if (asDirects)
-            {
+        public virtual ICollection<PdfObject> Values(bool asDirects) {
+            if (asDirects) {
                 return Values();
             }
-            else
-            {
+            else {
                 return map.Values;
             }
         }
@@ -384,8 +343,7 @@ namespace iText.Kernel.Pdf
         /// method.
         /// </remarks>
         /// <returns>a Collection holding all the values</returns>
-        public virtual ICollection<PdfObject> Values()
-        {
+        public virtual ICollection<PdfObject> Values() {
             return new PdfDictionaryValues(map.Values);
         }
 
@@ -402,23 +360,18 @@ namespace iText.Kernel.Pdf
         /// method.
         /// </remarks>
         /// <returns>a Set of Map.Entry objects</returns>
-        public virtual ICollection<KeyValuePair<PdfName, PdfObject>> EntrySet()
-        {
+        public virtual ICollection<KeyValuePair<PdfName, PdfObject>> EntrySet() {
             return new PdfDictionaryEntrySet(map);
         }
 
-        public override byte GetObjectType()
-        {
+        public override byte GetObjectType() {
             return DICTIONARY;
         }
 
-        public override String ToString()
-        {
-            if (!IsFlushed())
-            {
+        public override String ToString() {
+            if (!IsFlushed()) {
                 String @string = "<<";
-                foreach (KeyValuePair<PdfName, PdfObject> entry in map)
-                {
+                foreach (KeyValuePair<PdfName, PdfObject> entry in map) {
                     PdfIndirectReference indirectReference = entry.Value.GetIndirectReference();
                     @string = @string + entry.Key.ToString() + " " + (indirectReference == null ? entry.Value.ToString() : indirectReference
                         .ToString()) + " ";
@@ -426,8 +379,7 @@ namespace iText.Kernel.Pdf
                 @string += ">>";
                 return @string;
             }
-            else
-            {
+            else {
                 return indirectReference.ToString();
             }
         }
@@ -439,14 +391,11 @@ namespace iText.Kernel.Pdf
         /// </remarks>
         /// <param name="excludeKeys">list of objects to exclude when cloning dictionary.</param>
         /// <returns>cloned dictionary.</returns>
-        public virtual iText.Kernel.Pdf.PdfDictionary Clone(IList<PdfName> excludeKeys)
-        {
+        public virtual iText.Kernel.Pdf.PdfDictionary Clone(IList<PdfName> excludeKeys) {
             IDictionary<PdfName, PdfObject> excluded = new SortedDictionary<PdfName, PdfObject>();
-            foreach (PdfName key in excludeKeys)
-            {
+            foreach (PdfName key in excludeKeys) {
                 PdfObject obj = map.Get(key);
-                if (obj != null)
-                {
+                if (obj != null) {
                     excluded.Put(key, map.JRemove(key));
                 }
             }
@@ -468,14 +417,11 @@ namespace iText.Kernel.Pdf
         /// </param>
         /// <returns>copied dictionary.</returns>
         public virtual iText.Kernel.Pdf.PdfDictionary CopyTo(PdfDocument document, IList<PdfName> excludeKeys, bool
-             allowDuplicating)
-        {
+             allowDuplicating) {
             IDictionary<PdfName, PdfObject> excluded = new SortedDictionary<PdfName, PdfObject>();
-            foreach (PdfName key in excludeKeys)
-            {
+            foreach (PdfName key in excludeKeys) {
                 PdfObject obj = map.Get(key);
-                if (obj != null)
-                {
+                if (obj != null) {
                     excluded.Put(key, map.JRemove(key));
                 }
             }
@@ -486,21 +432,16 @@ namespace iText.Kernel.Pdf
         }
 
         /// <param name="asDirect">true is to extract direct object always.</param>
-        public virtual PdfObject Get(PdfName key, bool asDirect)
-        {
-            if (!asDirect)
-            {
+        public virtual PdfObject Get(PdfName key, bool asDirect) {
+            if (!asDirect) {
                 return map.Get(key);
             }
-            else
-            {
+            else {
                 PdfObject obj = map.Get(key);
-                if (obj != null && obj.GetObjectType() == INDIRECT_REFERENCE)
-                {
+                if (obj != null && obj.GetObjectType() == INDIRECT_REFERENCE) {
                     return ((PdfIndirectReference)obj).GetRefersTo(true);
                 }
-                else
-                {
+                else {
                     return obj;
                 }
             }
@@ -508,35 +449,28 @@ namespace iText.Kernel.Pdf
 
         /// <summary>This method merges different fields from two dictionaries into the current one</summary>
         /// <param name="other">a dictionary whose fields should be merged into the current dictionary.</param>
-        public virtual void MergeDifferent(iText.Kernel.Pdf.PdfDictionary other)
-        {
-            foreach (PdfName key in other.KeySet())
-            {
-                if (!ContainsKey(key))
-                {
+        public virtual void MergeDifferent(iText.Kernel.Pdf.PdfDictionary other) {
+            foreach (PdfName key in other.KeySet()) {
+                if (!ContainsKey(key)) {
                     Put(key, other.Get(key));
                 }
             }
         }
 
-        protected internal override PdfObject NewInstance()
-        {
+        protected internal override PdfObject NewInstance() {
             return new iText.Kernel.Pdf.PdfDictionary();
         }
 
-        protected internal override void CopyContent(PdfObject from, PdfDocument document)
-        {
+        protected internal override void CopyContent(PdfObject from, PdfDocument document) {
             base.CopyContent(from, document);
             iText.Kernel.Pdf.PdfDictionary dictionary = (iText.Kernel.Pdf.PdfDictionary)from;
-            foreach (KeyValuePair<PdfName, PdfObject> entry in dictionary.map)
-            {
+            foreach (KeyValuePair<PdfName, PdfObject> entry in dictionary.map) {
                 map.Put(entry.Key, entry.Value.ProcessCopying(document, false));
             }
         }
 
         /// <summary>Release content of PdfDictionary.</summary>
-        protected internal virtual void ReleaseContent()
-        {
+        protected internal virtual void ReleaseContent() {
             map = null;
         }
     }

@@ -43,98 +43,81 @@ address: sales@itextpdf.com
 */
 
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Text;
+using System.IO;
+using System.Collections.Generic;
 
-namespace iText.IO.Util
-{
+namespace iText.IO.Util {
     /// <summary>
     /// Summary description for Properties.
     /// </summary>
-    public class Properties
-    {
+    public class Properties {
         private Dictionary<Object, Object> _col;
         private const String whiteSpaceChars = " \t\r\n\f";
         private const String keyValueSeparators = "=: \t\r\n\f";
         private const String strictKeyValueSeparators = "=:";
 
-        public Properties()
-        {
+        public Properties() {
             _col = new Dictionary<Object, Object>();
         }
 
-        public virtual String Remove(String key)
-        {
+        public virtual String Remove(String key) {
             Object retval;
             _col.TryGetValue(key, out retval);
             _col.Remove(key);
-            return (String)retval;
+            return (String) retval;
         }
 
-        public virtual Dictionary<Object, Object>.Enumerator GetEnumerator()
-        {
+        public virtual Dictionary<Object, Object>.Enumerator GetEnumerator() {
             return _col.GetEnumerator();
         }
 
-        public virtual bool ContainsKey(String key)
-        {
+        public virtual bool ContainsKey(String key) {
             return _col.ContainsKey(key);
         }
 
-        public virtual void Add(String key, String value)
-        {
+        public virtual void Add(String key, String value) {
             _col[key] = value;
         }
 
-        public virtual void AddAll(Properties col)
-        {
-            foreach (String itm in col.Keys)
-            {
+        public virtual void AddAll(Properties col) {
+            foreach (String itm in col.Keys) {
                 _col[itm] = col.GetProperty(itm);
             }
         }
 
-        public virtual int Count
-        {
+        public virtual int Count {
             get { return _col.Count; }
         }
 
-        public virtual String GetProperty(String key)
-        {
+        public virtual String GetProperty(String key) {
             Object retval;
             _col.TryGetValue(key, out retval);
-            return (String)retval;
+            return (String) retval;
         }
 
-        public virtual void SetProperty(String key, String value)
-        {
+        public virtual void SetProperty(String key, String value) {
             _col[key] = value;
         }
 
-        public virtual Dictionary<Object, Object>.KeyCollection Keys
-        {
+        public virtual Dictionary<Object, Object>.KeyCollection Keys {
             get { return _col.Keys; }
         }
 
-        public virtual void Clear()
-        {
+        public virtual void Clear() {
             _col.Clear();
         }
 
-        public virtual void Load(Stream inStream)
-        {
+        public virtual void Load(Stream inStream) {
             if (inStream == null) return;
             StreamReader inp = new StreamReader(inStream, EncodingUtil.GetEncoding(1252));
-            while (true)
-            {
+            while (true) {
                 // Get next line
                 String line = inp.ReadLine();
                 if (line == null)
                     return;
 
-                if (line.Length > 0)
-                {
+                if (line.Length > 0) {
                     // Find start of key
                     int len = line.Length;
                     int keyStart;
@@ -148,10 +131,8 @@ namespace iText.IO.Util
 
                     // Continue lines that end in slashes if they are not comments
                     char firstChar = line[keyStart];
-                    if ((firstChar != '#') && (firstChar != '!'))
-                    {
-                        while (ContinueLine(line))
-                        {
+                    if ((firstChar != '#') && (firstChar != '!')) {
+                        while (ContinueLine(line)) {
                             String nextLine = inp.ReadLine();
                             if (nextLine == null)
                                 nextLine = "";
@@ -168,8 +149,7 @@ namespace iText.IO.Util
 
                         // Find separation between key and value
                         int separatorIndex;
-                        for (separatorIndex = keyStart; separatorIndex < len; separatorIndex++)
-                        {
+                        for (separatorIndex = keyStart; separatorIndex < len; separatorIndex++) {
                             char currentChar = line[separatorIndex];
                             if (currentChar == '\\')
                                 separatorIndex++;
@@ -189,8 +169,7 @@ namespace iText.IO.Util
                                 valueIndex++;
 
                         // Skip over white space after other separators if any
-                        while (valueIndex < len)
-                        {
+                        while (valueIndex < len) {
                             if (whiteSpaceChars.IndexOf(line[valueIndex]) == -1)
                                 break;
                             valueIndex++;
@@ -212,27 +191,21 @@ namespace iText.IO.Util
         * and changes special saved chars to their original forms
         */
 
-        private String LoadConvert(String theString)
-        {
+        private String LoadConvert(String theString) {
             char aChar;
             int len = theString.Length;
             StringBuilder outBuffer = new StringBuilder(len);
 
-            for (int x = 0; x < len;)
-            {
+            for (int x = 0; x < len;) {
                 aChar = theString[x++];
-                if (aChar == '\\')
-                {
+                if (aChar == '\\') {
                     aChar = theString[x++];
-                    if (aChar == 'u')
-                    {
+                    if (aChar == 'u') {
                         // Read the xxxx
                         int value = 0;
-                        for (int i = 0; i < 4; i++)
-                        {
+                        for (int i = 0; i < 4; i++) {
                             aChar = theString[x++];
-                            switch (aChar)
-                            {
+                            switch (aChar) {
                                 case '0':
                                 case '1':
                                 case '2':
@@ -266,30 +239,26 @@ namespace iText.IO.Util
                                         "Malformed \\uxxxx encoding.");
                             }
                         }
-                        outBuffer.Append((char)value);
-                    }
-                    else
-                    {
+                        outBuffer.Append((char) value);
+                    } else {
                         if (aChar == 't') aChar = '\t';
                         else if (aChar == 'r') aChar = '\r';
                         else if (aChar == 'n') aChar = '\n';
                         else if (aChar == 'f') aChar = '\f';
                         outBuffer.Append(aChar);
                     }
-                }
-                else
+                } else
                     outBuffer.Append(aChar);
             }
             return outBuffer.ToString();
         }
 
-        private bool ContinueLine(String line)
-        {
+        private bool ContinueLine(String line) {
             int slashCount = 0;
             int index = line.Length - 1;
             while ((index >= 0) && (line[index--] == '\\'))
                 slashCount++;
-            return (slashCount % 2 == 1);
+            return (slashCount%2 == 1);
         }
     }
 }

@@ -41,10 +41,8 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-namespace iText.Kernel.Counter.Event
-{
+namespace iText.Kernel.Counter.Event {
     /// <summary>The meta info that can holds information about instance that throws the event</summary>
-    public interface IMetaInfo
-    {
+    public interface IMetaInfo {
     }
 }

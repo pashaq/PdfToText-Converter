@@ -41,28 +41,24 @@ For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
 
+using System;
+using System.IO;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.X509;
-using System;
-using System.IO;
 
-namespace iText.Kernel.Crypto
-{
+namespace iText.Kernel.Crypto {
     /// <summary>
     /// This file is a helper class for internal usage only.
     /// Be aware that it's API and functionality may be changed in future.
     /// </summary>
-    public static class CryptoUtil
-    {
+    public static class CryptoUtil {
 
-        public static X509Certificate ReadPublicCertificate(Stream s)
-        {
+        public static X509Certificate ReadPublicCertificate(Stream s) {
             return new X509CertificateParser().ReadCertificate(s);
         }
 
-        public static ICipherParameters ReadPrivateKeyFromPkcs12KeyStore(Stream keyStore, String pkAlias, char[] pkPassword)
-        {
+        public static ICipherParameters ReadPrivateKeyFromPkcs12KeyStore(Stream keyStore, String pkAlias, char[] pkPassword) {
             return new Pkcs12Store(keyStore, pkPassword).GetKey(pkAlias).Key;
         }
 

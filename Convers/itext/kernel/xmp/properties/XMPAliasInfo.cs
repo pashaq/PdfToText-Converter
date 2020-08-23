@@ -27,15 +27,13 @@
 //        SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //        http://www.adobe.com/devnet/xmp/library/eula-xmp-library-java.html
-using iText.Kernel.XMP.Options;
 using System;
+using iText.Kernel.XMP.Options;
 
-namespace iText.Kernel.XMP.Properties
-{
+namespace iText.Kernel.XMP.Properties {
     /// <summary>This interface is used to return info about an alias.</summary>
     /// <since>27.01.2006</since>
-    public interface XMPAliasInfo
-    {
+    public interface XMPAliasInfo {
         /// <returns>Returns Returns the namespace URI for the base property.</returns>
         String GetNamespace();
 

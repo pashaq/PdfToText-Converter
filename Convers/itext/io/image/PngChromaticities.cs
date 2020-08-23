@@ -20,10 +20,8 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-namespace iText.IO.Image
-{
-    public class PngChromaticities
-    {
+namespace iText.IO.Image {
+    public class PngChromaticities {
         private float xW;
 
         private float yW;
@@ -40,8 +38,7 @@ namespace iText.IO.Image
 
         private float yB;
 
-        public PngChromaticities(float xW, float yW, float xR, float yR, float xG, float yG, float xB, float yB)
-        {
+        public PngChromaticities(float xW, float yW, float xR, float yR, float xG, float yG, float xB, float yB) {
             this.xW = xW;
             this.yW = yW;
             this.xR = xR;
@@ -52,43 +49,35 @@ namespace iText.IO.Image
             this.yB = yB;
         }
 
-        public virtual float GetXW()
-        {
+        public virtual float GetXW() {
             return xW;
         }
 
-        public virtual float GetYW()
-        {
+        public virtual float GetYW() {
             return yW;
         }
 
-        public virtual float GetXR()
-        {
+        public virtual float GetXR() {
             return xR;
         }
 
-        public virtual float GetYR()
-        {
+        public virtual float GetYR() {
             return yR;
         }
 
-        public virtual float GetXG()
-        {
+        public virtual float GetXG() {
             return xG;
         }
 
-        public virtual float GetYG()
-        {
+        public virtual float GetYG() {
             return yG;
         }
 
-        public virtual float GetXB()
-        {
+        public virtual float GetXB() {
             return xB;
         }
 
-        public virtual float GetYB()
-        {
+        public virtual float GetYB() {
             return yB;
         }
     }

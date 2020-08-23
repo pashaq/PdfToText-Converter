@@ -41,15 +41,13 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
-using iText.IO.Util;
 using System;
 using System.Collections.Generic;
+using iText.IO.Util;
 
-namespace iText.Kernel
-{
+namespace iText.Kernel {
     /// <summary>Exception class for exceptions in kernel module.</summary>
-    public class PdfException : Exception
-    {
+    public class PdfException : Exception {
         public const String _1IsAnUnknownGraphicsStateDictionary = "{0} is an unknown graphics state dictionary.";
 
         public const String _1IsNotAnAcceptableValueForTheField2 = "{0} is not an acceptable value for the field {1}.";
@@ -548,8 +546,7 @@ namespace iText.Kernel
         /// <summary>Creates a new instance of PdfException.</summary>
         /// <param name="message">the detail message.</param>
         public PdfException(String message)
-            : base(message)
-        {
+            : base(message) {
         }
 
         /// <summary>Creates a new instance of PdfException.</summary>
@@ -559,16 +556,14 @@ namespace iText.Kernel
         /// method).
         /// </param>
         public PdfException(Exception cause)
-            : this(UnknownPdfException, cause)
-        {
+            : this(UnknownPdfException, cause) {
         }
 
         /// <summary>Creates a new instance of PdfException.</summary>
         /// <param name="message">the detail message.</param>
         /// <param name="obj">an object for more details.</param>
         public PdfException(String message, Object obj)
-            : this(message)
-        {
+            : this(message) {
             this.@object = obj;
         }
 
@@ -580,8 +575,7 @@ namespace iText.Kernel
         /// method).
         /// </param>
         public PdfException(String message, Exception cause)
-            : base(message, cause)
-        {
+            : base(message, cause) {
         }
 
         /// <summary>Creates a new instance of PdfException.</summary>
@@ -593,21 +587,16 @@ namespace iText.Kernel
         /// </param>
         /// <param name="obj">an object for more details.</param>
         public PdfException(String message, Exception cause, Object obj)
-            : this(message, cause)
-        {
+            : this(message, cause) {
             this.@object = obj;
         }
 
-        public override String Message
-        {
-            get
-            {
-                if (messageParams == null || messageParams.Count == 0)
-                {
+        public override String Message {
+            get {
+                if (messageParams == null || messageParams.Count == 0) {
                     return base.Message;
                 }
-                else
-                {
+                else {
                     return MessageFormatUtil.Format(base.Message, GetMessageParams());
                 }
             }
@@ -616,8 +605,7 @@ namespace iText.Kernel
         /// <summary>Sets additional params for Exception message.</summary>
         /// <param name="messageParams">additional params.</param>
         /// <returns>object itself.</returns>
-        public virtual iText.Kernel.PdfException SetMessageParams(params Object[] messageParams)
-        {
+        public virtual iText.Kernel.PdfException SetMessageParams(params Object[] messageParams) {
             this.messageParams = new List<Object>();
             this.messageParams.AddAll(messageParams);
             return this;
@@ -625,11 +613,9 @@ namespace iText.Kernel
 
         /// <summary>Gets additional params for Exception message.</summary>
         /// <returns>array of additional params</returns>
-        protected internal virtual Object[] GetMessageParams()
-        {
+        protected internal virtual Object[] GetMessageParams() {
             Object[] parameters = new Object[messageParams.Count];
-            for (int i = 0; i < messageParams.Count; i++)
-            {
+            for (int i = 0; i < messageParams.Count; i++) {
                 parameters[i] = messageParams[i];
             }
             return parameters;

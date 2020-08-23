@@ -42,12 +42,9 @@ address: sales@itextpdf.com
 */
 using System;
 
-namespace iText.IO.Font.Constants
-{
-    public sealed class FontResources
-    {
-        private FontResources()
-        {
+namespace iText.IO.Font.Constants {
+    public sealed class FontResources {
+        private FontResources() {
         }
 
         public const String ADOBE_GLYPH_LIST = "iText.IO.Font.AdobeGlyphList.txt";

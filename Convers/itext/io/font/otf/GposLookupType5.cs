@@ -43,69 +43,55 @@ address: sales@itextpdf.com
 */
 using System.Collections.Generic;
 
-namespace iText.IO.Font.Otf
-{
+namespace iText.IO.Font.Otf {
     /// <summary>
     /// Lookup Type 5:
     /// MarkToLigature Attachment Positioning Subtable
     /// </summary>
-    public class GposLookupType5 : OpenTableLookup
-    {
+    public class GposLookupType5 : OpenTableLookup {
         private readonly IList<GposLookupType5.MarkToLigature> marksligatures;
 
         public GposLookupType5(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations)
-            : base(openReader, lookupFlag, subTableLocations)
-        {
+            : base(openReader, lookupFlag, subTableLocations) {
             marksligatures = new List<GposLookupType5.MarkToLigature>();
             ReadSubTables();
         }
 
-        public override bool TransformOne(GlyphLine line)
-        {
-            if (line.idx >= line.end)
-            {
+        public override bool TransformOne(GlyphLine line) {
+            if (line.idx >= line.end) {
                 return false;
             }
-            if (openReader.IsSkip(line.Get(line.idx).GetCode(), lookupFlag))
-            {
+            if (openReader.IsSkip(line.Get(line.idx).GetCode(), lookupFlag)) {
                 line.idx++;
                 return false;
             }
             bool changed = false;
             OpenTableLookup.GlyphIndexer ligatureGlyphIndexer = null;
-            foreach (GposLookupType5.MarkToLigature mb in marksligatures)
-            {
+            foreach (GposLookupType5.MarkToLigature mb in marksligatures) {
                 OtfMarkRecord omr = mb.marks.Get(line.Get(line.idx).GetCode());
-                if (omr == null)
-                {
+                if (omr == null) {
                     continue;
                 }
-                if (ligatureGlyphIndexer == null)
-                {
+                if (ligatureGlyphIndexer == null) {
                     ligatureGlyphIndexer = new OpenTableLookup.GlyphIndexer();
                     ligatureGlyphIndexer.idx = line.idx;
                     ligatureGlyphIndexer.line = line;
-                    while (true)
-                    {
+                    while (true) {
                         ligatureGlyphIndexer.PreviousGlyph(openReader, lookupFlag);
-                        if (ligatureGlyphIndexer.glyph == null)
-                        {
+                        if (ligatureGlyphIndexer.glyph == null) {
                             break;
                         }
                         // not mark => ligature glyph
-                        if (!mb.marks.ContainsKey(ligatureGlyphIndexer.glyph.GetCode()))
-                        {
+                        if (!mb.marks.ContainsKey(ligatureGlyphIndexer.glyph.GetCode())) {
                             break;
                         }
                     }
-                    if (ligatureGlyphIndexer.glyph == null)
-                    {
+                    if (ligatureGlyphIndexer.glyph == null) {
                         break;
                     }
                 }
                 IList<GposAnchor[]> componentAnchors = mb.ligatures.Get(ligatureGlyphIndexer.glyph.GetCode());
-                if (componentAnchors == null)
-                {
+                if (componentAnchors == null) {
                     continue;
                 }
                 int markClass = omr.markClass;
@@ -122,10 +108,8 @@ namespace iText.IO.Font.Otf
                 //  For now we do not store all the substitution info and therefore not able to follow that logic.
                 //  We place the mark symbol in the last available place for now (seems to be better default than
                 //  first available place).
-                for (int component = componentAnchors.Count - 1; component >= 0; component--)
-                {
-                    if (componentAnchors[component][markClass] != null)
-                    {
+                for (int component = componentAnchors.Count - 1; component >= 0; component--) {
+                    if (componentAnchors[component][markClass] != null) {
                         GposAnchor baseAnchor = componentAnchors[component][markClass];
                         GposAnchor markAnchor = omr.anchor;
                         line.Set(line.idx, new Glyph(line.Get(line.idx), baseAnchor.XCoordinate - markAnchor.XCoordinate, baseAnchor
@@ -140,8 +124,7 @@ namespace iText.IO.Font.Otf
             return changed;
         }
 
-        protected internal override void ReadSubTable(int subTableLocation)
-        {
+        protected internal override void ReadSubTable(int subTableLocation) {
             openReader.rf.Seek(subTableLocation);
             // skip format, always 1
             openReader.rf.ReadUnsignedShort();
@@ -154,21 +137,18 @@ namespace iText.IO.Font.Otf
             IList<int> ligatureCoverage = openReader.ReadCoverageFormat(ligatureCoverageLocation);
             IList<OtfMarkRecord> markRecords = OtfReadCommon.ReadMarkArray(openReader, markArrayLocation);
             GposLookupType5.MarkToLigature markToLigature = new GposLookupType5.MarkToLigature();
-            for (int k = 0; k < markCoverage.Count; ++k)
-            {
+            for (int k = 0; k < markCoverage.Count; ++k) {
                 markToLigature.marks.Put(markCoverage[k], markRecords[k]);
             }
             IList<IList<GposAnchor[]>> ligatureArray = OtfReadCommon.ReadLigatureArray(openReader, classCount, ligatureArrayLocation
                 );
-            for (int k = 0; k < ligatureCoverage.Count; ++k)
-            {
+            for (int k = 0; k < ligatureCoverage.Count; ++k) {
                 markToLigature.ligatures.Put(ligatureCoverage[k], ligatureArray[k]);
             }
             marksligatures.Add(markToLigature);
         }
 
-        public class MarkToLigature
-        {
+        public class MarkToLigature {
             public readonly IDictionary<int, OtfMarkRecord> marks = new Dictionary<int, OtfMarkRecord>();
 
             // Glyph id to list of components, each component has a separate list of attachment points

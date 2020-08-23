@@ -44,56 +44,55 @@ address: sales@itextpdf.com
 using System;
 using System.IO;
 
-namespace iText.IO.Util
-{
+namespace iText.IO.Util {
     [System.ObsoleteAttribute(@"This output stream implementation will be removed in iText 7.2")]
     public class IdelOutputStream : Stream
-    {
-        public override void Flush()
-        {
+	{
+	    public override void Flush()
+	    {
+	        
+	    }
 
-        }
+	    public override long Seek(long offset, SeekOrigin origin)
+	    {
+	        throw new NotSupportedException();
+	    }
 
-        public override long Seek(long offset, SeekOrigin origin)
-        {
+	    public override void SetLength(long value)
+	    {
             throw new NotSupportedException();
-        }
+	    }
 
-        public override void SetLength(long value)
-        {
+	    public override int Read(byte[] buffer, int offset, int count)
+	    {
             throw new NotSupportedException();
-        }
+	    }
 
-        public override int Read(byte[] buffer, int offset, int count)
-        {
-            throw new NotSupportedException();
-        }
+	    public override void Write(byte[] buffer, int offset, int count)
+	    {
+	        
+	    }
 
-        public override void Write(byte[] buffer, int offset, int count)
-        {
+	    public override bool CanRead
+	    {
+	        get { return false; }
+	    }
 
-        }
+	    public override bool CanSeek
+	    {
+	        get { return false; }
+	    }
 
-        public override bool CanRead
-        {
-            get { return false; }
-        }
+	    public override bool CanWrite
+	    {
+	        get { return true; }
+	    }
 
-        public override bool CanSeek
-        {
-            get { return false; }
-        }
-
-        public override bool CanWrite
-        {
-            get { return true; }
-        }
-
-        public override long Length
-        {
+	    public override long Length
+	    {
             get { throw new NotSupportedException(); }
-        }
+	    }
 
-        public override long Position { get; set; }
-    }
+	    public override long Position { get; set; }
+	}
 }

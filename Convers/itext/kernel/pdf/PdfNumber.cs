@@ -41,15 +41,13 @@ source product.
 For more information, please contact iText Software Corp. at this
 address: sales@itextpdf.com
 */
+using System;
 using Common.Logging;
 using iText.IO.Source;
 using iText.IO.Util;
-using System;
 
-namespace iText.Kernel.Pdf
-{
-    public class PdfNumber : PdfPrimitiveObject
-    {
+namespace iText.Kernel.Pdf {
+    public class PdfNumber : PdfPrimitiveObject {
         private double value;
 
         private bool isDouble;
@@ -57,126 +55,102 @@ namespace iText.Kernel.Pdf
         private bool changed = false;
 
         public PdfNumber(double value)
-            : base()
-        {
+            : base() {
             SetValue(value);
         }
 
         public PdfNumber(int value)
-            : base()
-        {
+            : base() {
             SetValue(value);
         }
 
         public PdfNumber(byte[] content)
-            : base(content)
-        {
+            : base(content) {
             this.isDouble = true;
             this.value = double.NaN;
         }
 
         private PdfNumber()
-            : base()
-        {
+            : base() {
         }
 
-        public override byte GetObjectType()
-        {
+        public override byte GetObjectType() {
             return NUMBER;
         }
 
-        public virtual double GetValue()
-        {
-            if (double.IsNaN(value))
-            {
+        public virtual double GetValue() {
+            if (double.IsNaN(value)) {
                 GenerateValue();
             }
             return value;
         }
 
-        public virtual double DoubleValue()
-        {
+        public virtual double DoubleValue() {
             return GetValue();
         }
 
-        public virtual float FloatValue()
-        {
+        public virtual float FloatValue() {
             return (float)GetValue();
         }
 
-        public virtual long LongValue()
-        {
+        public virtual long LongValue() {
             return (long)GetValue();
         }
 
-        public virtual int IntValue()
-        {
+        public virtual int IntValue() {
             return (int)GetValue();
         }
 
-        public virtual void SetValue(int value)
-        {
+        public virtual void SetValue(int value) {
             this.value = value;
             this.isDouble = false;
             this.content = null;
             this.changed = true;
         }
 
-        public virtual void SetValue(double value)
-        {
+        public virtual void SetValue(double value) {
             this.value = value;
             this.isDouble = true;
             this.content = null;
         }
 
-        public virtual void Increment()
-        {
+        public virtual void Increment() {
             SetValue(++value);
         }
 
-        public virtual void Decrement()
-        {
+        public virtual void Decrement() {
             SetValue(--value);
         }
 
-        public override String ToString()
-        {
-            if (content != null)
-            {
+        public override String ToString() {
+            if (content != null) {
                 return iText.IO.Util.JavaUtil.GetStringForBytes(content, iText.IO.Util.EncodingUtil.ISO_8859_1);
             }
-            else
-            {
-                if (isDouble)
-                {
+            else {
+                if (isDouble) {
                     return iText.IO.Util.JavaUtil.GetStringForBytes(ByteUtils.GetIsoBytes(GetValue()), iText.IO.Util.EncodingUtil.ISO_8859_1
                         );
                 }
-                else
-                {
+                else {
                     return iText.IO.Util.JavaUtil.GetStringForBytes(ByteUtils.GetIsoBytes(IntValue()), iText.IO.Util.EncodingUtil.ISO_8859_1
                         );
                 }
             }
         }
 
-        public override bool Equals(Object o)
-        {
+        public override bool Equals(Object o) {
             return this == o || o != null && GetType() == o.GetType() && JavaUtil.DoubleCompare(((iText.Kernel.Pdf.PdfNumber
                 )o).value, value) == 0;
         }
 
         /// <summary>Checks if string representation of the value contains decimal point.</summary>
         /// <returns>true if contains so the number must be real not integer</returns>
-        public virtual bool HasDecimalPoint()
-        {
+        public virtual bool HasDecimalPoint() {
             return this.ToString().Contains(".");
         }
 
-        public override int GetHashCode()
-        {
-            if (changed)
-            {
+        public override int GetHashCode() {
+            if (changed) {
                 //if the instance was modified, hashCode also will be changed, it may cause inconsistency.
                 ILog logger = LogManager.GetLogger(typeof(PdfReader));
                 logger.Warn(iText.IO.LogMessageConstant.CALCULATE_HASHCODE_FOR_MODIFIED_PDFNUMBER);
@@ -186,44 +160,35 @@ namespace iText.Kernel.Pdf
             return (int)(hash ^ ((long)(((ulong)hash) >> 32)));
         }
 
-        protected internal override PdfObject NewInstance()
-        {
+        protected internal override PdfObject NewInstance() {
             return new iText.Kernel.Pdf.PdfNumber();
         }
 
-        protected internal virtual bool IsDoubleNumber()
-        {
+        protected internal virtual bool IsDoubleNumber() {
             return isDouble;
         }
 
-        protected internal override void GenerateContent()
-        {
-            if (isDouble)
-            {
+        protected internal override void GenerateContent() {
+            if (isDouble) {
                 content = ByteUtils.GetIsoBytes(value);
             }
-            else
-            {
+            else {
                 content = ByteUtils.GetIsoBytes((int)value);
             }
         }
 
-        protected internal virtual void GenerateValue()
-        {
-            try
-            {
+        protected internal virtual void GenerateValue() {
+            try {
                 value = Double.Parse(iText.IO.Util.JavaUtil.GetStringForBytes(content, iText.IO.Util.EncodingUtil.ISO_8859_1
                     ), System.Globalization.CultureInfo.InvariantCulture);
             }
-            catch (FormatException)
-            {
+            catch (FormatException) {
                 value = double.NaN;
             }
             isDouble = true;
         }
 
-        protected internal override void CopyContent(PdfObject from, PdfDocument document)
-        {
+        protected internal override void CopyContent(PdfObject from, PdfDocument document) {
             base.CopyContent(from, document);
             iText.Kernel.Pdf.PdfNumber number = (iText.Kernel.Pdf.PdfNumber)from;
             value = number.value;

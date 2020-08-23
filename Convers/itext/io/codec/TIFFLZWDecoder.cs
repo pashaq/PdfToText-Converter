@@ -45,11 +45,9 @@
 */
 using System;
 
-namespace iText.IO.Codec
-{
+namespace iText.IO.Codec {
     /// <summary>A class for performing LZW decoding.</summary>
-    public class TIFFLZWDecoder
-    {
+    public class TIFFLZWDecoder {
         internal byte[][] stringTable;
 
         internal byte[] data = null;
@@ -80,8 +78,7 @@ namespace iText.IO.Codec
 
         internal int[] andTable = new int[] { 511, 1023, 2047, 4095 };
 
-        public TIFFLZWDecoder(int w, int predictor, int samplesPerPixel)
-        {
+        public TIFFLZWDecoder(int w, int predictor, int samplesPerPixel) {
             this.w = w;
             this.predictor = predictor;
             this.samplesPerPixel = samplesPerPixel;
@@ -92,10 +89,8 @@ namespace iText.IO.Codec
         /// <param name="uncompData">Array to return the uncompressed data in</param>
         /// <param name="h">The number of rows the compressed data contains</param>
         /// <returns>The decoded data</returns>
-        public virtual byte[] Decode(byte[] data, byte[] uncompData, int h)
-        {
-            if (data[0] == (byte)0x00 && data[1] == (byte)0x01)
-            {
+        public virtual byte[] Decode(byte[] data, byte[] uncompData, int h) {
+            if (data[0] == (byte)0x00 && data[1] == (byte)0x01) {
                 throw new iText.IO.IOException(iText.IO.IOException.Tiff50StyleLzwCodesAreNotSupported);
             }
             InitializeStringTable();
@@ -111,30 +106,24 @@ namespace iText.IO.Codec
             int code;
             int oldCode = 0;
             byte[] str;
-            while (((code = GetNextCode()) != 257) && dstIndex < uncompData.Length)
-            {
-                if (code == 256)
-                {
+            while (((code = GetNextCode()) != 257) && dstIndex < uncompData.Length) {
+                if (code == 256) {
                     InitializeStringTable();
                     code = GetNextCode();
-                    if (code == 257)
-                    {
+                    if (code == 257) {
                         break;
                     }
                     WriteString(stringTable[code]);
                     oldCode = code;
                 }
-                else
-                {
-                    if (code < tableIndex)
-                    {
+                else {
+                    if (code < tableIndex) {
                         str = stringTable[code];
                         WriteString(str);
                         AddStringToTable(stringTable[oldCode], str[0]);
                         oldCode = code;
                     }
-                    else
-                    {
+                    else {
                         str = stringTable[oldCode];
                         str = ComposeString(str, str[0]);
                         WriteString(str);
@@ -144,14 +133,11 @@ namespace iText.IO.Codec
                 }
             }
             // Horizontal Differencing Predictor
-            if (predictor == 2)
-            {
+            if (predictor == 2) {
                 int count;
-                for (int j = 0; j < h; j++)
-                {
+                for (int j = 0; j < h; j++) {
                     count = samplesPerPixel * (j * w + 1);
-                    for (int i = samplesPerPixel; i < w * samplesPerPixel; i++)
-                    {
+                    for (int i = samplesPerPixel; i < w * samplesPerPixel; i++) {
                         uncompData[count] += uncompData[count - samplesPerPixel];
                         count++;
                     }
@@ -161,11 +147,9 @@ namespace iText.IO.Codec
         }
 
         /// <summary>Initialize the string table.</summary>
-        public virtual void InitializeStringTable()
-        {
+        public virtual void InitializeStringTable() {
             stringTable = new byte[4096][];
-            for (int i = 0; i < 256; i++)
-            {
+            for (int i = 0; i < 256; i++) {
                 stringTable[i] = new byte[1];
                 stringTable[i][0] = (byte)i;
             }
@@ -175,12 +159,10 @@ namespace iText.IO.Codec
 
         /// <summary>Write out the string just uncompressed.</summary>
         /// <param name="str">the byte string for uncompressed write out</param>
-        public virtual void WriteString(byte[] str)
-        {
+        public virtual void WriteString(byte[] str) {
             // Fix for broken tiff files
             int max = uncompData.Length - dstIndex;
-            if (str.Length < max)
-            {
+            if (str.Length < max) {
                 max = str.Length;
             }
             Array.Copy(str, 0, uncompData, dstIndex, max);
@@ -193,28 +175,22 @@ namespace iText.IO.Codec
         /// will be written and which will be added to the string table
         /// </param>
         /// <param name="newString">the byte to be written to the end of the old string</param>
-        public virtual void AddStringToTable(byte[] oldString, byte newString)
-        {
+        public virtual void AddStringToTable(byte[] oldString, byte newString) {
             int length = oldString.Length;
             byte[] str = new byte[length + 1];
             Array.Copy(oldString, 0, str, 0, length);
             str[length] = newString;
             // Add this new String to the table
             stringTable[tableIndex++] = str;
-            if (tableIndex == 511)
-            {
+            if (tableIndex == 511) {
                 bitsToGet = 10;
             }
-            else
-            {
-                if (tableIndex == 1023)
-                {
+            else {
+                if (tableIndex == 1023) {
                     bitsToGet = 11;
                 }
-                else
-                {
-                    if (tableIndex == 2047)
-                    {
+                else {
+                    if (tableIndex == 2047) {
                         bitsToGet = 12;
                     }
                 }
@@ -223,24 +199,18 @@ namespace iText.IO.Codec
 
         /// <summary>Add a new string to the string table.</summary>
         /// <param name="str">the byte string which will be added to the string table</param>
-        public virtual void AddStringToTable(byte[] str)
-        {
+        public virtual void AddStringToTable(byte[] str) {
             // Add this new String to the table
             stringTable[tableIndex++] = str;
-            if (tableIndex == 511)
-            {
+            if (tableIndex == 511) {
                 bitsToGet = 10;
             }
-            else
-            {
-                if (tableIndex == 1023)
-                {
+            else {
+                if (tableIndex == 1023) {
                     bitsToGet = 11;
                 }
-                else
-                {
-                    if (tableIndex == 2047)
-                    {
+                else {
+                    if (tableIndex == 2047) {
                         bitsToGet = 12;
                     }
                 }
@@ -251,8 +221,7 @@ namespace iText.IO.Codec
         /// <param name="oldString">the byte string at the end of which the new string will be written</param>
         /// <param name="newString">the byte to be written to the end of the old string</param>
         /// <returns>the byte string which is the sum of the new string and the old string</returns>
-        public virtual byte[] ComposeString(byte[] oldString, byte newString)
-        {
+        public virtual byte[] ComposeString(byte[] oldString, byte newString) {
             int length = oldString.Length;
             byte[] str = new byte[length + 1];
             Array.Copy(oldString, 0, str, 0, length);
@@ -261,18 +230,15 @@ namespace iText.IO.Codec
         }
 
         // Returns the next 9, 10, 11 or 12 bits
-        public virtual int GetNextCode()
-        {
+        public virtual int GetNextCode() {
             // Attempt to get the next code. The exception is caught to make
             // this robust to cases wherein the EndOfInformation code has been
             // omitted from a strip. Examples of such cases have been observed
             // in practice.
-            try
-            {
+            try {
                 nextData = (nextData << 8) | (data[bytePointer++] & 0xff);
                 nextBits += 8;
-                if (nextBits < bitsToGet)
-                {
+                if (nextBits < bitsToGet) {
                     nextData = (nextData << 8) | (data[bytePointer++] & 0xff);
                     nextBits += 8;
                 }
@@ -280,8 +246,7 @@ namespace iText.IO.Codec
                 nextBits -= bitsToGet;
                 return code;
             }
-            catch (IndexOutOfRangeException)
-            {
+            catch (IndexOutOfRangeException) {
                 // Strip not terminated as expected: return EndOfInformation code.
                 return 257;
             }

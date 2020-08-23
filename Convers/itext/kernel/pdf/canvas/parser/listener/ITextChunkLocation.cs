@@ -42,10 +42,8 @@ address: sales@itextpdf.com
 */
 using iText.Kernel.Geom;
 
-namespace iText.Kernel.Pdf.Canvas.Parser.Listener
-{
-    public interface ITextChunkLocation
-    {
+namespace iText.Kernel.Pdf.Canvas.Parser.Listener {
+    public interface ITextChunkLocation {
         float DistParallelEnd();
 
         float DistParallelStart();
