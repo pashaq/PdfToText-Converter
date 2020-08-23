@@ -3,7 +3,7 @@ Converting the Pdf and Fb2 documents to text or to the list of articles.
 
 Using open source itext7.
 
-Dependence as dependence itext7.
+Dependences as dependences itext7.
 
 Correct articles definition.
 
