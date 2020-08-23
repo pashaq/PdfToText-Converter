@@ -30,7 +30,7 @@ namespace Convers.test
 
             using (var writer = File.CreateText("d:/fb2.txt"))
             {
-                writer.Write(text);
+                writer.Write(text1);
             }
         }
     }
