@@ -1,7 +1,8 @@
 # PdfToText-Converter
-Converting the Pdf document to text or to the list of articles.
+Converting the Pdf and Fb2 documents to text or to the list of articles.
 
 Using open source itext7.
+
 Dependence as dependence itext7.
 
 Correct articles definition.
@@ -20,9 +21,14 @@ namespace Convers.test
             //var lines = Converter.PdfConverter.ToStrings("d:/pdf.pdf");
             var text = Converter.PdfConverter.ToText("d:/pdf.pdf");
 
-            text = text.Replace('\t', ' ');
-
             using (var writer = File.CreateText("d:/pdf.txt"))
+            {
+                writer.Write(text);
+            }
+            
+            var text1 = Converter.Fb2Converter.ToText("d:/fb2.fb2");
+
+            using (var writer = File.CreateText("d:/fb2.txt"))
             {
                 writer.Write(text);
             }
